@@ -6,25 +6,25 @@ const Products = () => {
     {
       title: 'Freios a Disco',
       description: 'Alta performance e segurança para suas descidas mais radicais.',
-      image: '/images/brakes-placeholder.jpg', // TODO: Replace with actual image
+      image: '/images/brake-disc-1.jpg',
       link: 'https://store.ghenortrs.com.br',
     },
     {
       title: 'Pedivelas',
       description: 'Componentes resistentes para máxima transferência de potência.',
-      image: '/images/cranks-placeholder.jpg', // TODO: Replace with actual image
+      image: '/images/brake-disc-2.jpg',
       link: 'https://store.ghenortrs.com.br',
     },
     {
       title: 'Componentes',
       description: 'Guidões, stems, selins e muito mais para customizar sua bike.',
-      image: '/images/components-placeholder.jpg', // TODO: Replace with actual image
+      image: '/images/brake-disc-1.jpg',
       link: 'https://store.ghenortrs.com.br',
     },
     {
       title: 'Acessórios',
       description: 'Ferramentas e acessórios essenciais para manutenção e performance.',
-      image: '/images/accessories-placeholder.jpg', // TODO: Replace with actual image
+      image: '/images/brake-disc-2.jpg',
       link: 'https://store.ghenortrs.com.br',
     },
   ];
@@ -58,20 +58,13 @@ const Products = () => {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="group relative bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-brand-red transition-all duration-300"
             >
-              {/* Image Placeholder */}
+              {/* Product Image */}
               <div className="relative h-64 bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-6xl text-gray-700 group-hover:text-brand-red transition-colors duration-300">
-                    🚵
-                  </div>
-                </div>
-                {/* TODO: Replace with actual product images
                 <img
                   src={category.image}
                   alt={category.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                */}
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300" />
               </div>
 

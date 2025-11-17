@@ -33,13 +33,11 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <a href="#home" className="flex items-center space-x-2">
-              {/* Placeholder for logo - replace with actual logo */}
-              <div className="w-12 h-12 bg-brand-red rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">GR</span>
-              </div>
-              <span className="text-2xl font-bold text-white">
-                Gheno<span className="text-brand-red">RTRS</span>
-              </span>
+              <img
+                src="/images/logo.png"
+                alt="GhenoRTRS Logo"
+                className="h-10 md:h-12 w-auto object-contain"
+              />
             </a>
           </div>
 
