@@ -40,12 +40,24 @@ const Hero = () => {
             Freios a disco, peças e acessórios de qualidade internacional.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#products" className="btn-primary">
+            <motion.a
+              href="#products"
+              className="btn-primary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
               Ver Produtos
-            </a>
-            <a href="#b2b" className="btn-secondary">
+            </motion.a>
+            <motion.a
+              href="#b2b"
+              className="btn-secondary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
               Revenda Conosco
-            </a>
+            </motion.a>
           </div>
         </motion.div>
 

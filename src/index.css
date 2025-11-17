@@ -21,11 +21,11 @@
   }
 
   .btn-primary {
-    @apply bg-brand-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-brand-red/50;
+    @apply bg-brand-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 shadow-lg hover:shadow-brand-red/50 inline-block;
   }
 
   .btn-secondary {
-    @apply border-2 border-brand-red text-brand-red hover:bg-brand-red hover:text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105;
+    @apply border-2 border-brand-red text-brand-red hover:bg-brand-red hover:text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 inline-block;
   }
 
   .heading-xl {
