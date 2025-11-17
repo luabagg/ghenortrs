@@ -63,12 +63,12 @@ const Hero = () => {
 
         {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <a href="#about">
-            <ChevronDownIcon className="h-8 w-8 text-brand-red" />
+          <a href="#about" className="block">
+            <ChevronDownIcon className="h-8 w-8 text-brand-red mx-auto" />
           </a>
         </motion.div>
       </div>
