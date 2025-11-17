@@ -1,17 +1,30 @@
 import { useState, useEffect } from 'react';
+import type { BlingProduct, BlingApiResponse, UseBlingReturn } from '../types';
+
+// Bling API raw response types
+interface BlingProductRaw {
+  id: number | string;
+  nome: string;
+  descricao?: string;
+  descricaoCurta?: string;
+  codigo: string;
+  imagem?: Array<{ link: string }>;
+  imageThumbnail?: string;
+  categoria?: { descricao: string };
+}
 
 /**
  * Custom hook to fetch products from Bling API
  * Only fetches images, names, and descriptions (NOT prices)
  * Prices are maintained in Nuvemshop
  */
-export const useBling = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const useBling = (): UseBlingReturn => {
+  const [products, setProducts] = useState<BlingProduct[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBlingProducts = async () => {
+    const fetchBlingProducts = async (): Promise<void> => {
       try {
         setLoading(true);
 
@@ -25,7 +38,7 @@ export const useBling = () => {
 
           if (age < fourHours) {
             // Use cached data
-            setProducts(JSON.parse(cachedData));
+            setProducts(JSON.parse(cachedData) as BlingProduct[]);
             setLoading(false);
             return;
           }
@@ -38,14 +51,14 @@ export const useBling = () => {
           throw new Error(`Bling API error: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: BlingApiResponse & { products?: BlingProductRaw[] } = await response.json();
 
         if (!data.success || !data.products) {
           throw new Error('No products returned from Bling');
         }
 
         // Format products (exclude price)
-        const formattedProducts = data.products.map(product => ({
+        const formattedProducts: BlingProduct[] = data.products.map((product: BlingProductRaw) => ({
           id: product.id,
           name: product.nome,
           description: product.descricao || product.descricaoCurta || '',
@@ -54,7 +67,7 @@ export const useBling = () => {
           images: product.imagem?.map(img => img.link) || [],
           category: product.categoria?.descricao || 'Componentes',
           // NO PRICE - link to Nuvemshop for pricing
-          storeUrl: `https://store.ghenortrs.com.br/produtos/${product.codigo}`, // Adjust based on your Nuvemshop URL structure
+          storeUrl: `https://store.ghenortrs.com.br/produtos/${product.codigo}`,
         }));
 
         // Cache the data
@@ -65,12 +78,12 @@ export const useBling = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching Bling products:', err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
 
         // Try to use cached data even if expired
         const cachedData = localStorage.getItem('bling_products');
         if (cachedData) {
-          setProducts(JSON.parse(cachedData));
+          setProducts(JSON.parse(cachedData) as BlingProduct[]);
         }
       } finally {
         setLoading(false);
@@ -86,10 +99,14 @@ export const useBling = () => {
 /**
  * Hook to fetch a single product by SKU
  */
-export const useBlingProduct = (sku) => {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const useBlingProduct = (sku: string | undefined): {
+  product: BlingProduct | null;
+  loading: boolean;
+  error: string | null;
+} => {
+  const [product, setProduct] = useState<BlingProduct | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!sku) {
@@ -97,7 +114,7 @@ export const useBlingProduct = (sku) => {
       return;
     }
 
-    const fetchProduct = async () => {
+    const fetchProduct = async (): Promise<void> => {
       try {
         setLoading(true);
 
@@ -107,29 +124,29 @@ export const useBlingProduct = (sku) => {
           throw new Error(`Bling API error: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: BlingApiResponse & { product?: BlingProductRaw } = await response.json();
 
         if (!data.success || !data.product) {
           throw new Error('Product not found');
         }
 
-        const product = data.product;
-        const formattedProduct = {
-          id: product.id,
-          name: product.nome,
-          description: product.descricao || product.descricaoCurta || '',
-          sku: product.codigo,
-          imageUrl: product.imagem?.[0]?.link || product.imageThumbnail || null,
-          images: product.imagem?.map(img => img.link) || [],
-          category: product.categoria?.descricao || 'Componentes',
-          storeUrl: `https://store.ghenortrs.com.br/produtos/${product.codigo}`,
+        const rawProduct = data.product;
+        const formattedProduct: BlingProduct = {
+          id: rawProduct.id,
+          name: rawProduct.nome,
+          description: rawProduct.descricao || rawProduct.descricaoCurta || '',
+          sku: rawProduct.codigo,
+          imageUrl: rawProduct.imagem?.[0]?.link || rawProduct.imageThumbnail || null,
+          images: rawProduct.imagem?.map(img => img.link) || [],
+          category: rawProduct.categoria?.descricao || 'Componentes',
+          storeUrl: `https://store.ghenortrs.com.br/produtos/${rawProduct.codigo}`,
         };
 
         setProduct(formattedProduct);
         setError(null);
       } catch (err) {
         console.error('Error fetching Bling product:', err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
