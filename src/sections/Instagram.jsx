@@ -1,44 +1,23 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { useInstagram } from '../hooks/useInstagram';
 
 const Instagram = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Get Instagram access token from environment variables
+  const accessToken = import.meta.env.VITE_INSTAGRAM_ACCESS_TOKEN;
+  const { posts, loading, error } = useInstagram(accessToken, 6);
 
-  useEffect(() => {
-    fetchInstagramPosts();
-  }, []);
-
-  const fetchInstagramPosts = async () => {
-    try {
-      // Try to fetch from Instagram API
-      const response = await fetch('http://localhost:3002/api/instagram/posts?limit=6');
-      const data = await response.json();
-
-      if (data.success && data.posts.length > 0) {
-        setPosts(data.posts);
-      } else {
-        // Fallback to placeholder posts if API is not configured
-        setPosts(getPlaceholderPosts());
-      }
-    } catch (err) {
-      console.log('Instagram API not configured, using placeholder posts');
-      setPosts(getPlaceholderPosts());
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getPlaceholderPosts = () => [
-    { id: 1, mediaUrl: '/images/brake-disc-1.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
-    { id: 2, mediaUrl: '/images/brake-disc-2.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
-    { id: 3, mediaUrl: '/images/brake-disc-1.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
-    { id: 4, mediaUrl: '/images/brake-disc-2.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
-    { id: 5, mediaUrl: '/images/brake-disc-1.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
-    { id: 6, mediaUrl: '/images/brake-disc-2.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
+  // Fallback to placeholder posts if API is not configured or fails
+  const placeholderPosts = [
+    { id: 1, imageUrl: '/images/brake-disc-1.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
+    { id: 2, imageUrl: '/images/brake-disc-2.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
+    { id: 3, imageUrl: '/images/brake-disc-1.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
+    { id: 4, imageUrl: '/images/brake-disc-2.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
+    { id: 5, imageUrl: '/images/brake-disc-1.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
+    { id: 6, imageUrl: '/images/brake-disc-2.jpg', permalink: 'https://www.instagram.com/gheno_rtrs' },
   ];
+
+  const displayPosts = posts.length > 0 ? posts : placeholderPosts;
 
   return (
     <section id="instagram" className="py-20 bg-black">
@@ -78,7 +57,7 @@ const Instagram = () => {
               />
             ))
           ) : (
-            posts.map((post, index) => (
+            displayPosts.map((post, index) => (
               <motion.a
                 key={post.id}
                 href={post.permalink || 'https://www.instagram.com/gheno_rtrs'}
@@ -92,7 +71,7 @@ const Instagram = () => {
               >
                 {/* Instagram Image */}
                 <img
-                  src={post.mediaUrl}
+                  src={post.imageUrl || post.thumbnailUrl}
                   alt={post.caption || `Instagram post ${post.id}`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
@@ -112,6 +91,13 @@ const Instagram = () => {
             ))
           )}
         </div>
+
+        {/* Error message (subtle, doesn't break the design) */}
+        {error && posts.length === 0 && (
+          <p className="text-center text-gray-500 text-sm mb-8">
+            Mostrando posts em destaque. Configure o Instagram API para atualizações automáticas.
+          </p>
+        )}
 
         {/* CTA */}
         <motion.div
