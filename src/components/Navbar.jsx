@@ -58,8 +58,6 @@ const Navbar = () => {
           <div className="hidden md:block">
             <a
               href="https://store.ghenortrs.com.br"
-              target="_blank"
-              rel="noopener noreferrer"
               className="btn-primary"
             >
               Loja Online
@@ -102,8 +100,6 @@ const Navbar = () => {
               ))}
               <a
                 href="https://store.ghenortrs.com.br"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="block btn-primary text-center"
               >
                 Loja Online

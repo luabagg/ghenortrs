@@ -75,8 +75,6 @@ const Products = () => {
                 <p className="text-gray-400 mb-4">{category.description}</p>
                 <a
                   href={category.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="inline-flex items-center text-brand-red hover:text-red-400 font-medium"
                 >
                   Ver produtos
@@ -97,8 +95,6 @@ const Products = () => {
         >
           <a
             href="https://store.ghenortrs.com.br"
-            target="_blank"
-            rel="noopener noreferrer"
             className="btn-primary inline-flex items-center"
           >
             Ver Todos os Produtos
