@@ -107,6 +107,100 @@ app.post('/api/b2b-contact', async (req, res) => {
   }
 });
 
+// Bling API Integration
+// Fetch all products from Bling (images & descriptions only, NO prices)
+app.get('/api/bling/products', async (req, res) => {
+  try {
+    const blingApiKey = process.env.BLING_API_KEY;
+
+    if (!blingApiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Bling API key not configured',
+      });
+    }
+
+    // Bling API v3 endpoint
+    const response = await fetch(
+      'https://www.bling.com.br/Api/v3/produtos?pagina=1&limite=100&criterio=1',
+      {
+        headers: {
+          'Authorization': `Bearer ${blingApiKey}`,
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Bling API error: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    res.status(200).json({
+      success: true,
+      products: data.data || [],
+      total: data.data?.length || 0,
+    });
+  } catch (error) {
+    console.error('Error fetching from Bling:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// Fetch single product by SKU from Bling
+app.get('/api/bling/products/:sku', async (req, res) => {
+  try {
+    const { sku } = req.params;
+    const blingApiKey = process.env.BLING_API_KEY;
+
+    if (!blingApiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Bling API key not configured',
+      });
+    }
+
+    // Search product by codigo (SKU)
+    const response = await fetch(
+      `https://www.bling.com.br/Api/v3/produtos?codigo=${sku}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${blingApiKey}`,
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Bling API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      product: data.data[0],
+    });
+  } catch (error) {
+    console.error('Error fetching product from Bling:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
