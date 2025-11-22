@@ -1,5 +1,5 @@
 import express from 'express';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -12,15 +12,8 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Email transporter configuration
-// TODO: Configure with your actual email credentials
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // or your email service
-  auth: {
-    user: process.env.EMAIL_USER, // your email
-    pass: process.env.EMAIL_PASS, // your email password or app password
-  },
-});
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // B2B Contact Form endpoint
 app.post('/api/b2b-contact', async (req, res) => {
@@ -38,9 +31,14 @@ app.post('/api/b2b-contact', async (req, res) => {
       message,
     } = req.body;
 
+    // Check if Resend API key is configured
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY not configured');
+    }
+
     // Email to your team
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    const teamEmail = await resend.emails.send({
+      from: 'GhenoRTRS <onboarding@resend.dev>', // Will be replaced with your verified domain
       to: 'contato@ghenortrs.com.br',
       subject: `Nova Solicitação B2B - ${companyName}`,
       html: `
@@ -61,11 +59,11 @@ app.post('/api/b2b-contact', async (req, res) => {
         <hr>
         <p><small>Enviado via formulário B2B do site GhenoRTRS</small></p>
       `,
-    };
+    });
 
     // Auto-reply to the customer
-    const autoReplyOptions = {
-      from: process.env.EMAIL_USER,
+    const autoReply = await resend.emails.send({
+      from: 'GhenoRTRS <onboarding@resend.dev>', // Will be replaced with your verified domain
       to: email,
       subject: 'Recebemos sua solicitação - GhenoRTRS',
       html: `
@@ -88,11 +86,9 @@ app.post('/api/b2b-contact', async (req, res) => {
         <p>Atenciosamente,<br><strong>Equipe GhenoRTRS</strong></p>
         <p><small>contato@ghenortrs.com.br</small></p>
       `,
-    };
+    });
 
-    // Send both emails
-    await transporter.sendMail(mailOptions);
-    await transporter.sendMail(autoReplyOptions);
+    console.log('Emails sent successfully:', { teamEmail: teamEmail.data?.id, autoReply: autoReply.data?.id });
 
     res.status(200).json({
       success: true,
