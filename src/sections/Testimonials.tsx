@@ -1,35 +1,23 @@
 import { motion } from 'framer-motion';
-import { StarIcon } from '@heroicons/react/24/solid';
+import TestimonialCard from '../components/TestimonialCard';
 
 const Testimonials = () => {
   const testimonials = [
     {
-      name: 'Carlos Silva',
-      role: 'Piloto Profissional',
-      location: 'São Paulo, SP',
-      content: 'Os freios Elite da GhenoRTRS mudaram completamente minha performance nas trilhas. Frenagem precisa e confiável mesmo nas descidas mais técnicas.',
-      rating: 5,
-    },
-    {
       name: 'Bike Shop Torres',
-      role: 'Loja Parceira',
+      role: 'Loja Parceira - Cliente Principal',
       location: 'Porto Alegre, RS',
-      content: 'Excelente parceria B2B! Produtos de qualidade, preços competitivos e suporte excepcional. Nossos clientes adoram os componentes GhenoRTRS.',
-      rating: 5,
-    },
-    {
-      name: 'Mariana Costa',
-      role: 'Ciclista Amadora',
-      location: 'Curitiba, PR',
-      content: 'Qualidade internacional com preço justo. Comprei meu kit de freios e não me arrependo. Instalação fácil e resultado profissional.',
-      rating: 5,
+      content: 'Parceria B2B excepcional! Produtos de qualidade superior, preços competitivos e suporte dedicado. Nossos clientes adoram os componentes GhenoRTRS e sempre voltam para comprar mais.',
+      thumbnailUrl: '/images/testimonials/bike-shop-torres-thumb.jpg',
+      videoUrl: '/videos/testimonials/bike-shop-torres.mp4',
     },
     {
       name: 'Pedal Forte MTB',
-      role: 'Equipe de Competição',
+      role: 'Equipe Profissional de Competição',
       location: 'Florianópolis, SC',
-      content: 'Toda nossa equipe usa componentes GhenoRTRS. A durabilidade e performance são impressionantes. Recomendamos de olhos fechados!',
-      rating: 5,
+      content: 'Toda nossa equipe profissional confia nos componentes GhenoRTRS. A durabilidade e performance em competições extremas são impressionantes. Recomendamos com total confiança!',
+      thumbnailUrl: '/images/testimonials/pedal-forte-thumb.jpg',
+      videoUrl: '/videos/testimonials/pedal-forte.mp4',
     },
   ];
 
@@ -79,47 +67,26 @@ const Testimonials = () => {
           className="text-center mb-16"
         >
           <h2 className="heading-lg mb-4">
-            O Que Dizem <span className="text-brand-red">Nossos Clientes</span>
+            Nossos <span className="text-brand-red">Clientes Principais</span>
           </h2>
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-            Depoimentos reais de ciclistas e parceiros que confiam na qualidade GhenoRTRS.
+            Conheça alguns dos principais parceiros que confiam na qualidade GhenoRTRS.
+            <br />
+            <span className="text-sm text-brand-red/80">Passe o mouse sobre os cards por 500ms para ver os vídeos</span>
           </p>
         </motion.div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Interactive Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-gray-800/50 backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-gray-700 hover:border-brand-red/50 transition-all duration-300"
+              transition={{ duration: 0.6, delay: index * 0.2 }}
             >
-              {/* Rating Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <StarIcon key={i} className="h-5 w-5 text-yellow-400" />
-                ))}
-              </div>
-
-              {/* Content */}
-              <p className="text-gray-300 mb-6 italic leading-relaxed">
-                "{testimonial.content}"
-              </p>
-
-              {/* Author Info */}
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-red to-red-700 flex items-center justify-center text-white font-bold text-lg">
-                  {testimonial.name.charAt(0)}
-                </div>
-                <div>
-                  <div className="font-bold text-white">{testimonial.name}</div>
-                  <div className="text-sm text-gray-400">{testimonial.role}</div>
-                  <div className="text-xs text-gray-500">{testimonial.location}</div>
-                </div>
-              </div>
+              <TestimonialCard {...testimonial} />
             </motion.div>
           ))}
         </div>
