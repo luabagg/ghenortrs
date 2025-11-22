@@ -80,7 +80,7 @@ const Testimonials = () => {
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             Conheça alguns dos principais parceiros que confiam na qualidade GhenoRTRS.
             <br />
-            <span className="text-sm text-brand-red/80">Clique em "Assistir Depoimento" para ver os vídeos</span>
+            <span className="text-sm text-brand-red/80">Passe o mouse sobre os cards para assistir os depoimentos</span>
           </p>
         </motion.div>
 
