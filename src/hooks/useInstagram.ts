@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
+import type { InstagramPost, InstagramApiResponse, UseInstagramReturn } from '../types';
 
 /**
  * Custom hook to fetch Instagram posts using Basic Display API
  * Includes caching to avoid hitting rate limits
  */
-export const useInstagram = (accessToken, limit = 6) => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const useInstagram = (
+  accessToken: string | undefined,
+  limit: number = 6
+): UseInstagramReturn => {
+  const [posts, setPosts] = useState<InstagramPost[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!accessToken) {
@@ -16,7 +20,7 @@ export const useInstagram = (accessToken, limit = 6) => {
       return;
     }
 
-    const fetchInstagramPosts = async () => {
+    const fetchInstagramPosts = async (): Promise<void> => {
       try {
         setLoading(true);
 
@@ -30,7 +34,7 @@ export const useInstagram = (accessToken, limit = 6) => {
 
           if (age < oneHour) {
             // Use cached data
-            setPosts(JSON.parse(cachedData));
+            setPosts(JSON.parse(cachedData) as InstagramPost[]);
             setLoading(false);
             return;
           }
@@ -45,15 +49,19 @@ export const useInstagram = (accessToken, limit = 6) => {
           throw new Error(`Instagram API error: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: InstagramApiResponse = await response.json();
 
         if (!data.data) {
           throw new Error('No data returned from Instagram');
         }
 
         // Filter only images and videos, format the data
-        const formattedPosts = data.data
-          .filter(post => post.media_type === 'IMAGE' || post.media_type === 'VIDEO' || post.media_type === 'CAROUSEL_ALBUM')
+        const formattedPosts: InstagramPost[] = data.data
+          .filter(post =>
+            post.media_type === 'IMAGE' ||
+            post.media_type === 'VIDEO' ||
+            post.media_type === 'CAROUSEL_ALBUM'
+          )
           .map(post => ({
             id: post.id,
             imageUrl: post.media_url,
@@ -61,7 +69,7 @@ export const useInstagram = (accessToken, limit = 6) => {
             caption: post.caption || '',
             permalink: post.permalink,
             timestamp: post.timestamp,
-            mediaType: post.media_type,
+            mediaType: post.media_type as 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM',
           }))
           .slice(0, limit);
 
@@ -73,12 +81,12 @@ export const useInstagram = (accessToken, limit = 6) => {
         setError(null);
       } catch (err) {
         console.error('Error fetching Instagram posts:', err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
 
         // Try to use cached data even if expired
         const cachedData = localStorage.getItem('instagram_posts');
         if (cachedData) {
-          setPosts(JSON.parse(cachedData));
+          setPosts(JSON.parse(cachedData) as InstagramPost[]);
         }
       } finally {
         setLoading(false);
