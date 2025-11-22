@@ -44,9 +44,9 @@ const About = () => {
             Sobre a <span className="text-brand-red">GhenoRTRS</span>
           </h2>
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-            Somos uma empresa do sul do Brasil especializada em componentes de downhill e mountain bike.
-            Nossa missão é trazer o melhor da tecnologia internacional e produção nacional para os
-            apaixonados por MTB.
+            Do sul do Brasil, trazemos componentes de downhill e mountain bike com expertise vinda da competição.
+            Fundada por um campeão brasileiro de downhill, unimos importação de qualidade internacional
+            com fabricação nacional de alta performance.
           </p>
         </motion.div>
 
