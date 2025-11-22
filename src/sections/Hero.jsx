@@ -1,23 +1,19 @@
 import { motion } from 'framer-motion';
+import HeroCarousel from '../components/HeroCarousel';
 
 const Hero = () => {
+  // Hero carousel images - Add your images to public/images/hero/
+  const heroImages = [
+    // '/images/hero/downhill-1.jpg',
+    // '/images/hero/downhill-2.jpg',
+    // '/images/hero/downhill-3.jpg',
+    // '/images/hero/products-1.jpg',
+  ];
+
   return (
     <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Video Background */}
-      <div className="video-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900" />
-        {/* TODO: Uncomment when you add your video
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/videos/hero-downhill.mp4" type="video/mp4" />
-        </video>
-        */}
-      </div>
+      {/* Hero Carousel Background */}
+      <HeroCarousel images={heroImages} />
 
       {/* Premium Multi-Layer Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black" />

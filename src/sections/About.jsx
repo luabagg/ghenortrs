@@ -43,10 +43,14 @@ const About = () => {
           <h2 className="heading-lg mb-4">
             Sobre a <span className="text-brand-red">GhenoRTRS</span>
           </h2>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-            Somos uma empresa do sul do Brasil especializada em componentes de downhill e mountain bike.
-            Nossa missão é trazer o melhor da tecnologia internacional e produção nacional para os
-            apaixonados por MTB.
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-6">
+            <span className="text-white font-semibold">Nascemos na competição.</span> Fundada por um{' '}
+            <span className="text-brand-red font-bold">Campeão Brasileiro de Downhill</span>, a GhenoRTRS
+            traz a experiência das pistas para cada componente que fabricamos e importamos.
+          </p>
+          <p className="text-base text-gray-400 max-w-2xl mx-auto">
+            Do sul do Brasil para todo o país, oferecemos freios a disco, peças e acessórios de alta performance
+            testados em competições extremas.
           </p>
         </motion.div>
 
