@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,11 +16,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Início', href: '#home' },
-    { name: 'Sobre', href: '#about' },
-    { name: 'Produtos', href: '#products' },
-    { name: 'FAQ', href: '#faq' },
-    { name: 'Revenda B2B', href: '#b2b' },
+    { name: 'Início', href: '/#home' },
+    { name: 'Sobre', href: '/#about' },
+    { name: 'Produtos', href: '/#products' },
+    { name: 'FAQ', href: '/#faq' },
+    { name: 'Revenda B2B', href: '/#b2b' },
   ];
 
   return (
@@ -32,13 +33,13 @@ const Navbar = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="#home" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
               <img
                 src="/images/logo.png"
                 alt="GhenoRTRS Logo"
                 className="h-10 md:h-12 w-auto object-contain"
               />
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
