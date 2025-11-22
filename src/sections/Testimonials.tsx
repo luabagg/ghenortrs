@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import TestimonialCard from '../components/TestimonialCard';
+import VideoModal from '../components/VideoModal';
 
 const Testimonials = () => {
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState({ url: '', name: '' });
+
   const testimonials = [
     {
       name: 'Bike Shop Torres',
       role: 'Loja Parceira - Cliente Principal',
       location: 'Porto Alegre, RS',
       content: 'Parceria B2B excepcional! Produtos de qualidade superior, preços competitivos e suporte dedicado. Nossos clientes adoram os componentes GhenoRTRS e sempre voltam para comprar mais.',
-      thumbnailUrl: '/images/testimonials/bike-shop-torres-thumb.jpg',
       videoUrl: '/videos/testimonials/bike-shop-torres.mp4',
     },
     {
@@ -16,10 +20,14 @@ const Testimonials = () => {
       role: 'Equipe Profissional de Competição',
       location: 'Florianópolis, SC',
       content: 'Toda nossa equipe profissional confia nos componentes GhenoRTRS. A durabilidade e performance em competições extremas são impressionantes. Recomendamos com total confiança!',
-      thumbnailUrl: '/images/testimonials/pedal-forte-thumb.jpg',
       videoUrl: '/videos/testimonials/pedal-forte.mp4',
     },
   ];
+
+  const handlePlayVideo = (videoUrl: string, clientName: string) => {
+    setSelectedVideo({ url: videoUrl, name: clientName });
+    setVideoModalOpen(true);
+  };
 
   const stats = [
     { number: '5000+', label: 'Produtos Vendidos' },
@@ -72,7 +80,7 @@ const Testimonials = () => {
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             Conheça alguns dos principais parceiros que confiam na qualidade GhenoRTRS.
             <br />
-            <span className="text-sm text-brand-red/80">Passe o mouse sobre os cards por 500ms para ver os vídeos</span>
+            <span className="text-sm text-brand-red/80">Clique em "Assistir Depoimento" para ver os vídeos</span>
           </p>
         </motion.div>
 
@@ -86,10 +94,21 @@ const Testimonials = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
             >
-              <TestimonialCard {...testimonial} />
+              <TestimonialCard
+                {...testimonial}
+                onPlayVideo={() => handlePlayVideo(testimonial.videoUrl, testimonial.name)}
+              />
             </motion.div>
           ))}
         </div>
+
+        {/* Video Modal */}
+        <VideoModal
+          isOpen={videoModalOpen}
+          onClose={() => setVideoModalOpen(false)}
+          videoUrl={selectedVideo.url}
+          clientName={selectedVideo.name}
+        />
 
         {/* Trust Badges */}
         <motion.div
