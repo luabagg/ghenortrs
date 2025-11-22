@@ -5,6 +5,7 @@ import Hero from './sections/Hero';
 import About from './sections/About';
 import Products from './sections/Products';
 import Testimonials from './sections/Testimonials';
+import FAQ from './sections/FAQ';
 import B2BContact from './sections/B2BContact';
 import Instagram from './sections/Instagram';
 
@@ -16,6 +17,7 @@ function App() {
       <About />
       <Products />
       <Testimonials />
+      <FAQ />
       <B2BContact />
       <Instagram />
       <Footer />

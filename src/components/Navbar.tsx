@@ -18,8 +18,8 @@ const Navbar = () => {
     { name: 'Início', href: '#home' },
     { name: 'Sobre', href: '#about' },
     { name: 'Produtos', href: '#products' },
+    { name: 'FAQ', href: '#faq' },
     { name: 'Revenda B2B', href: '#b2b' },
-    { name: 'Contato', href: '#contact' },
   ];
 
   return (
