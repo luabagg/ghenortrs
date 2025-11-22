@@ -3,6 +3,7 @@ import {
   MapPinIcon,
   PhoneIcon,
 } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -125,12 +126,9 @@ const Footer = () => {
               © {currentYear} GhenoRTRS. Todos os direitos reservados.
             </p>
             <div className="flex space-x-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-brand-red transition-colors duration-300">
+              <Link to="/politica-de-privacidade" className="text-gray-400 hover:text-brand-red transition-colors duration-300">
                 Política de Privacidade
-              </a>
-              <a href="#" className="text-gray-400 hover:text-brand-red transition-colors duration-300">
-                Termos de Uso
-              </a>
+              </Link>
             </div>
           </div>
         </div>
