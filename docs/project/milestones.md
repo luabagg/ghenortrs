@@ -7,15 +7,15 @@ This file is the local milestone index for execution. Use it as the default plan
 
 ## Milestones
 
-| Milestone                                 | Status    | Target     | Goal                                                                                                                             |
-| ----------------------------------------- | --------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `M0: Discovery And Project Definition`    | `active`  | 2026-05-01 | Audit the store, references, categories, commerce handoff, and Portuguese content architecture.                                  |
-| `M1: Vite Architecture Setup`             | `ready`   | 2026-05-08 | Create the frontend foundation: Vite, React, TypeScript, Tailwind, shadcn/ui, routing, quality tooling, and deployment baseline. |
-| `M2: Landing Page MVP`                    | `planned` | 2026-05-15 | Build the responsive marketing experience: hero, proof bar, component showcase, technology proof, B2B teaser, CTA, and footer.   |
-| `M3: B2B Lead Capture`                    | `planned` | 2026-05-22 | Add the B2B form, validation states, Resend delivery, and abuse protection.                                                      |
-| `M4: Nuvemshop Commerce Bridge`           | `planned` | 2026-05-29 | Wire commerce CTAs to Nuvemshop and track outbound commerce intent.                                                              |
-| `M5: SEO, Analytics, Performance, And QA` | `planned` | 2026-06-05 | Prepare launch metadata, analytics, accessibility, responsiveness, and performance.                                              |
-| `M6: Deferred Integration Research`       | `planned` | 2026-06-12 | Research post-MVP integrations and advanced animation decisions.                                                                 |
+| Milestone                                 | Status     | Target     | Goal                                                                                                                             |
+| ----------------------------------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `M0: Discovery And Project Definition`    | `active`   | 2026-05-01 | Audit the store, references, categories, commerce handoff, and Portuguese content architecture.                                  |
+| `M1: Vite Architecture Setup`             | `verified` | 2026-05-08 | Create the frontend foundation: Vite, React, TypeScript, Tailwind, shadcn/ui, routing, quality tooling, and deployment baseline. |
+| `M2: Landing Page MVP`                    | `planned`  | 2026-05-15 | Build the responsive marketing experience: hero, proof bar, component showcase, technology proof, B2B teaser, CTA, and footer.   |
+| `M3: B2B Lead Capture`                    | `planned`  | 2026-05-22 | Add the B2B form, validation states, Resend delivery, and abuse protection.                                                      |
+| `M4: Nuvemshop Commerce Bridge`           | `planned`  | 2026-05-29 | Wire commerce CTAs to Nuvemshop and track outbound commerce intent.                                                              |
+| `M5: SEO, Analytics, Performance, And QA` | `planned`  | 2026-06-05 | Prepare launch metadata, analytics, accessibility, responsiveness, and performance.                                              |
+| `M6: Deferred Integration Research`       | `planned`  | 2026-06-12 | Research post-MVP integrations and advanced animation decisions.                                                                 |
 
 ## Dependency Order
 
@@ -26,6 +26,11 @@ This file is the local milestone index for execution. Use it as the default plan
 5. `M4` connects store destinations and commerce tracking.
 6. `M5` hardens the launch candidate.
 7. `M6` stays out of the MVP critical path.
+
+## Status Notes
+
+- `M1` is already implemented in the local codebase and was re-verified on `2026-05-11` with `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run format:check`.
+- `M2` is still blocked on the missing local outputs from `M0` even though the app foundation is present.
 
 ## Detailed Files
 

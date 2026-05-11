@@ -4,26 +4,25 @@ Last synced: 2026-05-11
 
 ## Active Milestone
 
-`M0: Discovery And Project Definition`
+`M1: Vite Architecture Setup`
 
 ## Objective
 
-Create the local execution contract for GHENO before implementation branches drift: design rules, landing-page content structure, Nuvemshop destination mapping, and store/state audit.
+Close the frontend-foundation milestone with a verified local baseline while backfilling the remaining discovery artifacts that still gate `M2`.
 
 ## Next Tasks
 
-1. Keep [DESIGN.md](/Users/luabagg/development/personal/ghenortrs/DESIGN.md) as the authoritative visual system.
-2. Complete or verify the store audit from `LUA-15`.
-3. Complete the component/category destination map from `LUA-18`.
-4. Lock the landing-page content architecture from `LUA-17`.
-5. Once those discovery outputs are stable, move execution to `M1`.
+1. Keep [DESIGN.md](/Users/luabagg/development/personal/ghenortrs/DESIGN.md) as the authoritative visual system for the implemented shell and primitives.
+2. Treat the current Vite/React/Tailwind/shadcn foundation as verified and avoid reopening setup decisions unless a defect is found.
+3. Complete or verify the missing discovery artifacts from `LUA-15`, `LUA-17`, and `LUA-18` so `M2` has store, content, and CTA inputs.
+4. Use [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/m1-vite-architecture-setup.md) as the implementation contract for any new UI work.
+5. Do not advance `M2` beyond shell-level experiments until the missing `M0` docs are restored locally.
 
 ## Immediate Success Criteria
 
-- The visual system is explicit enough to guide implementation.
-- The content sections and CTA hierarchy are locked.
-- Each product/category CTA has a destination or fallback.
-- The current storefront boundary is documented.
+- The M1 foundation stays green on `test`, `lint`, `typecheck`, `build`, and `format:check`.
+- Discovery gaps are explicit instead of being hidden by the already-implemented shell.
+- `M2` has a clear dependency boundary: use the current app foundation, but wait for finalized content/store docs before full landing-page buildout.
 
 ## Not In Scope Yet
 
@@ -34,6 +33,6 @@ Create the local execution contract for GHENO before implementation branches dri
 
 ## Next Milestone After This
 
-`M1: Vite Architecture Setup`
+`M2: Landing Page MVP`
 
-See [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs/docs/project/m1-vite-architecture-setup.md).
+Use [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs/docs/project/m1-vite-architecture-setup.md) as the verified technical baseline until a dedicated `M2` implementation brief is written.

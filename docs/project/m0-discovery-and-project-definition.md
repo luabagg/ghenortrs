@@ -9,6 +9,10 @@ Linear milestone: `M0: Discovery And Project Definition`
 
 Lock the inputs that implementation depends on: GHENO visual rules, landing-page story structure, current store boundaries, and CTA destination mapping.
 
+## Downstream Status
+
+`M1` has already been implemented locally ahead of full `M0` closure. `M0` still owns the missing store audit, content architecture, and CTA destination artifacts that must exist before `M2` can move beyond the verified shell.
+
 ## Linear Issues
 
 - `LUA-15` Audit current Nuvemshop storefront

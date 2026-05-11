@@ -1,6 +1,6 @@
 # M1: Vite Architecture Setup
 
-Status: ready
+Status: verified
 Target: 2026-05-08
 Depends on: `M0: Discovery And Project Definition`
 Linear milestone: `M1: Vite Architecture Setup`
@@ -8,6 +8,12 @@ Linear milestone: `M1: Vite Architecture Setup`
 ## Goal
 
 Build the local frontend foundation that `M2` can implement against without revisiting app setup decisions.
+
+## Verification Snapshot
+
+- Re-verified locally on `2026-05-11`
+- Commands: `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, `npm run format:check`
+- Current dependency note: the technical baseline is complete, but `M2` still depends on the missing local discovery outputs owned by `M0`
 
 ## Linear Issues
 
