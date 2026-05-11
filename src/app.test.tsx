@@ -11,6 +11,12 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
+    expect(screen.getByTestId('app-shell')).toHaveClass(
+      'min-h-screen',
+      'bg-background',
+      'text-primary',
+      'font-body',
+    );
     expect(
       screen.getByRole('heading', { name: 'GHENO components' }),
     ).toBeInTheDocument();
@@ -18,6 +24,12 @@ describe('App', () => {
       screen.getByRole('heading', { name: 'Performance-first MTB components' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Componentes' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Explorar componentes' }),
+    ).toHaveClass('bg-accent', 'text-on-accent');
+    expect(
+      screen.getByRole('link', { name: 'Falar com GHENO B2B' }),
+    ).toHaveClass('border', 'border-strong', 'bg-background-soft');
   });
 
   it('renders the components route', () => {
