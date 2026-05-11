@@ -11,6 +11,7 @@ import {
 import { DotMatrixLoader } from './dot-matrix-loader';
 import { Input } from './input';
 import { Label } from './label';
+import { MetaLabel } from './meta-label';
 import { Textarea } from './textarea';
 
 describe('ui primitives', () => {
@@ -80,6 +81,34 @@ describe('ui primitives', () => {
       'border-strong',
       'bg-background-soft',
       'text-primary',
+    );
+  });
+
+  it('renders a reusable GHENO meta label primitive for eyebrow copy and pill tags', () => {
+    render(
+      <div>
+        <MetaLabel>Componentes</MetaLabel>
+        <MetaLabel asChild>
+          <a href="/b2b">B2B</a>
+        </MetaLabel>
+      </div>,
+    );
+
+    expect(screen.getByText('Componentes')).toHaveAttribute(
+      'data-slot',
+      'meta-label',
+    );
+    expect(screen.getByText('Componentes')).toHaveClass(
+      'rounded-pill',
+      'bg-accent-dark',
+      'text-xs',
+      'font-extrabold',
+      'tracking-[0.18em]',
+      'text-on-accent',
+    );
+    expect(screen.getByRole('link', { name: 'B2B' })).toHaveAttribute(
+      'data-slot',
+      'meta-label',
     );
   });
 

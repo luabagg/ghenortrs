@@ -52,6 +52,10 @@ describe('App', () => {
         'Sincronizando famílias, acabamentos e provas técnicas.',
       ),
     ).toBeInTheDocument();
+    expect(screen.getByText('COMPONENTES')).toHaveAttribute(
+      'data-slot',
+      'meta-label',
+    );
   });
 
   it('renders the B2B route', () => {

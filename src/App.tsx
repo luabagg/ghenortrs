@@ -11,6 +11,7 @@ import {
 import { DotMatrixLoader } from '@/components/ui/dot-matrix-loader';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MetaLabel } from '@/components/ui/meta-label';
 import { Textarea } from '@/components/ui/textarea';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -28,9 +29,9 @@ function AppShell() {
       <header className="border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-[90rem] flex-col gap-4 px-6 py-5 sm:px-10 lg:flex-row lg:items-center lg:justify-between lg:px-16">
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-accent">
+            <MetaLabel className="bg-transparent px-0 py-0 text-accent">
               GHENO
-            </p>
+            </MetaLabel>
             <p className="text-sm text-secondary">
               Componentes de alto desempenho para MTB
             </p>
@@ -69,9 +70,7 @@ function PageIntro({
   return (
     <Card className="bg-surface px-0 py-0 shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
       <CardHeader className="px-6 py-8 sm:px-8 sm:py-10">
-        <p className="mb-1 inline-flex w-fit rounded-pill bg-accent-dark px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em] text-on-accent">
-          {eyebrow}
-        </p>
+        <MetaLabel className="mb-1">{eyebrow}</MetaLabel>
         <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
           {title}
         </h1>
@@ -98,9 +97,7 @@ function HomePage() {
   return (
     <section className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.85fr)] lg:items-start">
       <div className="rounded-panel border border-border bg-surface px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:px-8 sm:py-10">
-        <p className="inline-flex rounded-pill bg-accent-dark px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em] text-on-accent">
-          Performance-first MTB components
-        </p>
+        <MetaLabel>Performance-first MTB components</MetaLabel>
         <h1 className="mt-6 max-w-4xl font-heading text-5xl leading-[0.94] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
           GHENO components
         </h1>
