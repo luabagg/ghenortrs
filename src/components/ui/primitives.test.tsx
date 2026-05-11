@@ -81,4 +81,15 @@ describe('ui primitives', () => {
     ).toBeVisible();
     expect(screen.getAllByTestId('dot-matrix-cell')).toHaveLength(9);
   });
+
+  it('keeps the dot matrix loader motion-safe for reduced-motion users', () => {
+    render(<DotMatrixLoader aria-label="Carregando catálogo GHENO" />);
+
+    const [firstCell] = screen.getAllByTestId('dot-matrix-cell');
+
+    expect(firstCell).toHaveClass(
+      'motion-reduce:animate-none',
+      'motion-reduce:opacity-100',
+    );
+  });
 });

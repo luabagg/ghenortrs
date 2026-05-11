@@ -7,6 +7,7 @@ type DotMatrixLoaderProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const matrixCells = Array.from({ length: 9 }, (_, index) => index);
+const motionOffsets = [0, 0.12, 0.24, 0.12, 0.36, 0.12, 0.24, 0.12, 0.48];
 
 function DotMatrixLoader({
   'aria-label': ariaLabel,
@@ -39,9 +40,10 @@ function DotMatrixLoader({
         >
           {matrixCells.map((cell) => (
             <span
-              className="gnhf-dot-matrix__cell block h-3 w-3 rounded-pill bg-accent"
+              className="block h-3 w-3 rounded-pill bg-accent [animation:gnhf-dot-matrix-pulse_1.2s_ease-in-out_infinite] motion-reduce:animate-none motion-reduce:opacity-100"
               data-testid="dot-matrix-cell"
               key={cell}
+              style={{ animationDelay: `${motionOffsets[cell]}s` }}
             />
           ))}
         </div>
