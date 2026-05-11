@@ -94,13 +94,7 @@ function ActionLink({
   );
 }
 
-function InfoCard({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) {
+function InfoCard({ title, body }: { title: string; body: string }) {
   return (
     <article className="rounded-panel border border-border bg-surface-elevated p-6">
       <h2 className="font-heading text-2xl leading-tight tracking-[-0.04em] text-primary">

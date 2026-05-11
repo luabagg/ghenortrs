@@ -5,15 +5,15 @@ Last synced: 2026-05-11
 
 ## Sequence
 
-| Phase | Target | Milestone | Notes |
-| --- | --- | --- | --- |
-| Discovery | 2026-05-01 | `M0: Discovery And Project Definition` | Lock references, content structure, and destination mapping before implementation spreads. |
-| Foundation | 2026-05-08 | `M1: Vite Architecture Setup` | Establish the app shell, tooling, tokens, and routing baseline. |
-| UI Build | 2026-05-15 | `M2: Landing Page MVP` | Implement the core landing page experience. |
-| Lead Capture | 2026-05-22 | `M3: B2B Lead Capture` | Add the commercial conversion path. |
-| Commerce Bridge | 2026-05-29 | `M4: Nuvemshop Commerce Bridge` | Connect the marketing surface to the store. |
-| Launch Hardening | 2026-06-05 | `M5: SEO, Analytics, Performance, And QA` | Validate, instrument, and optimize for launch. |
-| Deferred Research | 2026-06-12 | `M6: Deferred Integration Research` | Keep non-critical R&D outside the main delivery path. |
+| Phase             | Target     | Milestone                                 | Notes                                                                                      |
+| ----------------- | ---------- | ----------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Discovery         | 2026-05-01 | `M0: Discovery And Project Definition`    | Lock references, content structure, and destination mapping before implementation spreads. |
+| Foundation        | 2026-05-08 | `M1: Vite Architecture Setup`             | Establish the app shell, tooling, tokens, and routing baseline.                            |
+| UI Build          | 2026-05-15 | `M2: Landing Page MVP`                    | Implement the core landing page experience.                                                |
+| Lead Capture      | 2026-05-22 | `M3: B2B Lead Capture`                    | Add the commercial conversion path.                                                        |
+| Commerce Bridge   | 2026-05-29 | `M4: Nuvemshop Commerce Bridge`           | Connect the marketing surface to the store.                                                |
+| Launch Hardening  | 2026-06-05 | `M5: SEO, Analytics, Performance, And QA` | Validate, instrument, and optimize for launch.                                             |
+| Deferred Research | 2026-06-12 | `M6: Deferred Integration Research`       | Keep non-critical R&D outside the main delivery path.                                      |
 
 ## Operating Rules
 

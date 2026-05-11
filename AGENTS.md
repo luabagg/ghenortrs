@@ -5,7 +5,7 @@ If you update Linear project structure, milestones, issue scope, or priorities, 
 <claude-mem-context>
 # Memory Context
 
-# [ghenortrs/you-need-to-implemen-9db8a2] recent context, 2026-05-11 5:21pm GMT-3
+# [ghenortrs/you-need-to-implemen-9db8a2] recent context, 2026-05-11 5:26pm GMT-3
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
@@ -14,6 +14,7 @@ Fetch details: get_observations([IDs]) | Search: mem-search skill
 Stats: 6 obs (1,924t read) | 68,850t work | 97% savings
 
 ### May 11, 2026
+
 243 11:42a ✅ code-review-graph MCP and AGENTS.md setup for ghenortrs
 244 11:58a 🔵 code-review-graph does not support --tools flag on serve
 245 11:59a 🔵 ghenortrs project structure and design identity
@@ -24,10 +25,8 @@ Stats: 6 obs (1,924t read) | 68,850t work | 97% savings
 Access 69k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
-
-
-
 <!-- code-review-graph MCP tools -->
+
 ## MCP Tools: code-review-graph
 
 **IMPORTANT: This project has a knowledge graph. ALWAYS use the
@@ -48,16 +47,16 @@ Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
 
 ### Key Tools
 
-| Tool | Use when |
-| ------ | ---------- |
-| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
-| `get_review_context` | Need source snippets for review — token-efficient |
-| `get_impact_radius` | Understanding blast radius of a change |
-| `get_affected_flows` | Finding which execution paths are impacted |
-| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
-| `semantic_search_nodes` | Finding functions/classes by name or keyword |
-| `get_architecture_overview` | Understanding high-level codebase structure |
-| `refactor_tool` | Planning renames, finding dead code |
+| Tool                        | Use when                                               |
+| --------------------------- | ------------------------------------------------------ |
+| `detect_changes`            | Reviewing code changes — gives risk-scored analysis    |
+| `get_review_context`        | Need source snippets for review — token-efficient      |
+| `get_impact_radius`         | Understanding blast radius of a change                 |
+| `get_affected_flows`        | Finding which execution paths are impacted             |
+| `query_graph`               | Tracing callers, callees, imports, tests, dependencies |
+| `semantic_search_nodes`     | Finding functions/classes by name or keyword           |
+| `get_architecture_overview` | Understanding high-level codebase structure            |
+| `refactor_tool`             | Planning renames, finding dead code                    |
 
 ### Workflow
 

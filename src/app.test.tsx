@@ -23,7 +23,9 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Performance-first MTB components' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Componentes' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Componentes' }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Explorar componentes' }),
     ).toHaveClass('bg-accent', 'text-on-accent');
@@ -52,7 +54,9 @@ describe('App', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Atendimento para lojistas e oficinas' }),
+      screen.getByRole('heading', {
+        name: 'Atendimento para lojistas e oficinas',
+      }),
     ).toBeInTheDocument();
   });
 
