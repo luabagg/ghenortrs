@@ -99,3 +99,6 @@ http-client.private.env.json
 node_modules/
 dist/
 *.tsbuildinfo
+.env
+.env.*
+!.env.example
