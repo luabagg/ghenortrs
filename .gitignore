@@ -92,3 +92,6 @@ http-client.private.env.json
 
 # Added by code-review-graph
 .code-review-graph/
+
+# macOS Finder metadata
+.DS_Store
