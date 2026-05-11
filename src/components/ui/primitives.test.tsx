@@ -10,6 +10,7 @@ import {
 } from './card';
 import { DotMatrixLoader } from './dot-matrix-loader';
 import { Input } from './input';
+import { Label } from './label';
 import { Textarea } from './textarea';
 
 describe('ui primitives', () => {
@@ -38,7 +39,7 @@ describe('ui primitives', () => {
     );
   });
 
-  it('renders GHENO card, input, and textarea primitives with branded surface styling', () => {
+  it('renders GHENO card, label, input, and textarea primitives with branded surface styling', () => {
     render(
       <div>
         <Card>
@@ -48,6 +49,7 @@ describe('ui primitives', () => {
           </CardHeader>
           <CardContent>Pronto para o M2.</CardContent>
         </Card>
+        <Label htmlFor="cnpj">CNPJ</Label>
         <Input aria-label="CNPJ" placeholder="00.000.000/0000-00" />
         <Textarea
           aria-label="Necessidades comerciais"
@@ -60,6 +62,13 @@ describe('ui primitives', () => {
       'rounded-panel',
       'border-border',
       'bg-surface-elevated',
+    );
+    expect(screen.getByText('CNPJ')).toHaveClass(
+      'text-sm',
+      'font-bold',
+      'uppercase',
+      'tracking-[0.12em]',
+      'text-secondary',
     );
     expect(screen.getByLabelText('CNPJ')).toHaveClass(
       'border-strong',

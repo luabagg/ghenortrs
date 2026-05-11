@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { DotMatrixLoader } from '@/components/ui/dot-matrix-loader';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -166,13 +167,22 @@ function B2BPage() {
             futuros campos reais.
           </CardDescription>
         </CardHeader>
-        <div className="grid gap-3 px-6 pb-6">
-          <Input aria-label="Empresa" placeholder="Nome da empresa" />
-          <Input aria-label="CNPJ" placeholder="00.000.000/0000-00" />
-          <Textarea
-            aria-label="Necessidades comerciais"
-            placeholder="Conte o mix, volume e tipo de atendimento."
-          />
+        <div className="grid gap-4 px-6 pb-6">
+          <div className="grid gap-2">
+            <Label htmlFor="b2b-company">Empresa</Label>
+            <Input id="b2b-company" placeholder="Nome da empresa" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="b2b-cnpj">CNPJ</Label>
+            <Input id="b2b-cnpj" placeholder="00.000.000/0000-00" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="b2b-needs">Necessidades comerciais</Label>
+            <Textarea
+              id="b2b-needs"
+              placeholder="Conte o mix, volume e tipo de atendimento."
+            />
+          </div>
           <Button type="button" variant="secondary">
             Estruturar fluxo B2B
           </Button>

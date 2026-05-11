@@ -66,6 +66,12 @@ describe('App', () => {
         name: 'Atendimento para lojistas e oficinas',
       }),
     ).toBeInTheDocument();
+    expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
+    expect(screen.getByText('CNPJ')).toHaveAttribute('for', 'b2b-cnpj');
+    expect(screen.getByText('Necessidades comerciais')).toHaveAttribute(
+      'for',
+      'b2b-needs',
+    );
     expect(screen.getByLabelText('Necessidades comerciais')).toHaveAttribute(
       'placeholder',
       'Conte o mix, volume e tipo de atendimento.',
