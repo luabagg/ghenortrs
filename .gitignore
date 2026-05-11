@@ -94,3 +94,8 @@ http-client.private.env.json
 
 # macOS Finder metadata
 .DS_Store
+
+# Node / Vite
+node_modules/
+dist/
+*.tsbuildinfo
