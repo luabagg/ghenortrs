@@ -35,6 +35,7 @@ Build the local frontend foundation that `M2` can implement against without revi
 - Shared layout shell
 - Quality baseline
 - Loader installation for real waiting states
+- Loader usage rules for catalog, media, and future B2B submission states
 
 ## Excluded Scope
 
@@ -66,3 +67,8 @@ Build the local frontend foundation that `M2` can implement against without revi
 - Installing component primitives before token setup will create restyling churn.
 - Building landing sections before the route shell exists will cause duplicate layout work.
 - Treating shadcn defaults as final will violate the design direction from `M0`.
+
+## Supporting Docs
+
+- [loading-baseline.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/loading-baseline.md)
+- [deployment-baseline.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/deployment-baseline.md)
