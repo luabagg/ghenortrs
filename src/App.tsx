@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { DotMatrixLoader } from '@/components/ui/dot-matrix-loader';
 import { Input } from '@/components/ui/input';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -134,11 +135,17 @@ function HomePage() {
 
 function ComponentsPage() {
   return (
-    <PageIntro
-      eyebrow="COMPONENTES"
-      title="Componentes GHENO"
-      description="Estrutura inicial para a vitrine de pastilhas, cubos, aros e rotores com o mesmo ritmo visual e tokens do shell principal."
-    />
+    <section className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
+      <PageIntro
+        eyebrow="COMPONENTES"
+        title="Componentes GHENO"
+        description="Estrutura inicial para a vitrine de pastilhas, cubos, aros e rotores com o mesmo ritmo visual e tokens do shell principal."
+      />
+      <DotMatrixLoader
+        aria-label="Carregando vitrine de componentes GHENO"
+        caption="Sincronizando famílias, acabamentos e provas técnicas."
+      />
+    </section>
   );
 }
 

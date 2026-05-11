@@ -44,6 +44,14 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Componentes GHENO' }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Carregando vitrine de componentes GHENO'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Sincronizando famílias, acabamentos e provas técnicas.',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders the B2B route', () => {

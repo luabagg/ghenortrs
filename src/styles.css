@@ -45,6 +45,43 @@ body {
     linear-gradient(180deg, #050505 0%, #09090a 48%, #050505 100%);
 }
 
+@keyframes gnhf-dot-matrix-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.gnhf-dot-matrix__cell {
+  animation: gnhf-dot-matrix-pulse 1.2s ease-in-out infinite;
+}
+
+.gnhf-dot-matrix__cell:nth-child(2),
+.gnhf-dot-matrix__cell:nth-child(4),
+.gnhf-dot-matrix__cell:nth-child(6),
+.gnhf-dot-matrix__cell:nth-child(8) {
+  animation-delay: 0.12s;
+}
+
+.gnhf-dot-matrix__cell:nth-child(3),
+.gnhf-dot-matrix__cell:nth-child(7) {
+  animation-delay: 0.24s;
+}
+
+.gnhf-dot-matrix__cell:nth-child(5) {
+  animation-delay: 0.36s;
+}
+
+.gnhf-dot-matrix__cell:nth-child(9) {
+  animation-delay: 0.48s;
+}
+
 a {
   color: inherit;
   text-decoration: none;

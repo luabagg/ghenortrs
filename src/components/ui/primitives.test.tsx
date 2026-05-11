@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from './card';
+import { DotMatrixLoader } from './dot-matrix-loader';
 import { Input } from './input';
 
 describe('ui primitives', () => {
@@ -60,5 +61,24 @@ describe('ui primitives', () => {
       'bg-background-soft',
       'text-primary',
     );
+  });
+
+  it('renders an accessible GHENO dot matrix loader with the expected grid rhythm', () => {
+    render(
+      <DotMatrixLoader
+        aria-label="Carregando vitrine GHENO"
+        caption="Sincronizando famílias de componentes."
+      />,
+    );
+
+    expect(screen.getByLabelText('Carregando vitrine GHENO')).toHaveClass(
+      'rounded-panel',
+      'border-border',
+      'bg-surface',
+    );
+    expect(
+      screen.getByText('Sincronizando famílias de componentes.'),
+    ).toBeVisible();
+    expect(screen.getAllByTestId('dot-matrix-cell')).toHaveLength(9);
   });
 });

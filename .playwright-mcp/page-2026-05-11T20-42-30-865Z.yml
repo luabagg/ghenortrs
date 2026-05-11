@@ -1,0 +1,23 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - paragraph [ref=e7]: GHENO
+        - paragraph [ref=e8]: Componentes de alto desempenho para MTB
+      - navigation "Principal" [ref=e9]:
+        - link "Início" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Componentes" [ref=e11] [cursor=pointer]:
+          - /url: /componentes
+        - link "B2B" [ref=e12] [cursor=pointer]:
+          - /url: /b2b
+  - main [ref=e13]:
+    - generic [ref=e15]:
+      - generic [ref=e17]:
+        - paragraph [ref=e18]: COMPONENTES
+        - heading "Componentes GHENO" [level=1] [ref=e19]
+        - paragraph [ref=e20]: Estrutura inicial para a vitrine de pastilhas, cubos, aros e rotores com o mesmo ritmo visual e tokens do shell principal.
+      - status "Carregando vitrine de componentes GHENO" [ref=e21]:
+        - generic [ref=e23]:
+          - paragraph [ref=e24]: Loading state
+          - paragraph [ref=e25]: Sincronizando famílias, acabamentos e provas técnicas.
