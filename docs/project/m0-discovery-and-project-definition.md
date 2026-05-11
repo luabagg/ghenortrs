@@ -66,3 +66,4 @@ Lock the inputs that implementation depends on: GHENO visual rules, landing-page
 ## Local Outputs
 
 - [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md) captures the current Nuvemshop CTA routing contract and fallbacks for unpublished categories.
+- [storefront-audit.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/storefront-audit.md) captures the live storefront URL baseline, product inventory shape, checkout handoff, and broken category links.
