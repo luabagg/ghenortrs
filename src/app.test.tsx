@@ -27,6 +27,13 @@ describe('App', () => {
       screen.getByRole('link', { name: 'Componentes' }),
     ).toBeInTheDocument();
     expect(
+      screen.getByRole('navigation', { name: 'Principal' }).parentElement,
+    ).toHaveClass(
+      'bg-surface-glass/80',
+      'backdrop-blur-xl',
+      'shadow-[0_20px_48px_rgba(0,0,0,0.24)]',
+    );
+    expect(
       screen.getByRole('link', { name: 'Explorar componentes' }),
     ).toHaveClass('bg-accent', 'text-on-accent');
     expect(

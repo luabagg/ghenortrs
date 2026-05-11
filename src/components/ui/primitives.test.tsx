@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from './card';
 import { DotMatrixLoader } from './dot-matrix-loader';
+import { GlassPanel } from './glass-panel';
 import { Input } from './input';
 import { Label } from './label';
 import { MetaLabel } from './meta-label';
@@ -109,6 +110,22 @@ describe('ui primitives', () => {
     expect(screen.getByRole('link', { name: 'B2B' })).toHaveAttribute(
       'data-slot',
       'meta-label',
+    );
+  });
+
+  it('renders a reusable smoked-glass panel primitive for overlay navigation and utility surfaces', () => {
+    render(<GlassPanel>Menu técnico</GlassPanel>);
+
+    expect(screen.getByText('Menu técnico')).toHaveAttribute(
+      'data-slot',
+      'glass-panel',
+    );
+    expect(screen.getByText('Menu técnico')).toHaveClass(
+      'rounded-panel',
+      'border-border',
+      'bg-surface-glass/80',
+      'backdrop-blur-xl',
+      'text-primary',
     );
   });
 

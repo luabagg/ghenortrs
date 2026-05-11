@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { DotMatrixLoader } from '@/components/ui/dot-matrix-loader';
+import { GlassPanel } from '@/components/ui/glass-panel';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MetaLabel } from '@/components/ui/meta-label';
@@ -36,17 +37,19 @@ function AppShell() {
               Componentes de alto desempenho para MTB
             </p>
           </div>
-          <nav aria-label="Principal" className="flex flex-wrap gap-3">
-            <NavLink className={navigationLinkClassName} to="/">
-              Início
-            </NavLink>
-            <NavLink className={navigationLinkClassName} to="/componentes">
-              Componentes
-            </NavLink>
-            <NavLink className={navigationLinkClassName} to="/b2b">
-              B2B
-            </NavLink>
-          </nav>
+          <GlassPanel className="p-2">
+            <nav aria-label="Principal" className="flex flex-wrap gap-3">
+              <NavLink className={navigationLinkClassName} to="/">
+                Início
+              </NavLink>
+              <NavLink className={navigationLinkClassName} to="/componentes">
+                Componentes
+              </NavLink>
+              <NavLink className={navigationLinkClassName} to="/b2b">
+                B2B
+              </NavLink>
+            </nav>
+          </GlassPanel>
         </div>
       </header>
       <main className="mx-auto flex w-full max-w-[90rem] flex-1 px-6 py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-18">
