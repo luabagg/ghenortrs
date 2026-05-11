@@ -13,6 +13,7 @@ import { GlassPanel } from '@/components/ui/glass-panel';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MetaLabel } from '@/components/ui/meta-label';
+import { SectionBand } from '@/components/ui/section-band';
 import { Textarea } from '@/components/ui/textarea';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -154,11 +155,25 @@ function ComponentsPage() {
 function B2BPage() {
   return (
     <section className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-      <PageIntro
-        eyebrow="B2B"
-        title="Atendimento para lojistas e oficinas"
-        description="Base para a futura jornada comercial voltada a distribuidores, oficinas e revendas com superfícies e CTAs coerentes com a marca."
-      />
+      <div className="grid gap-6">
+        <PageIntro
+          eyebrow="B2B"
+          title="Atendimento para lojistas e oficinas"
+          description="Base para a futura jornada comercial voltada a distribuidores, oficinas e revendas com superfícies e CTAs coerentes com a marca."
+        />
+        <SectionBand className="grid gap-3">
+          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-on-primary/70">
+            Comercial
+          </p>
+          <h2 className="max-w-xl font-heading text-3xl leading-none tracking-[-0.04em] sm:text-4xl">
+            Atendimento comercial direto
+          </h2>
+          <p className="max-w-xl text-sm leading-6 text-on-primary/78 sm:text-base">
+            Leitura rápida para operações que precisam comprar com contexto
+            técnico antes do M3.
+          </p>
+        </SectionBand>
+      </div>
       <Card className="bg-surface px-0 py-0">
         <CardHeader>
           <CardTitle>Pré-cadastro comercial</CardTitle>

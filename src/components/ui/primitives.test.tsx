@@ -13,6 +13,7 @@ import { GlassPanel } from './glass-panel';
 import { Input } from './input';
 import { Label } from './label';
 import { MetaLabel } from './meta-label';
+import { SectionBand } from './section-band';
 import { Textarea } from './textarea';
 
 describe('ui primitives', () => {
@@ -126,6 +127,24 @@ describe('ui primitives', () => {
       'bg-surface-glass/80',
       'backdrop-blur-xl',
       'text-primary',
+    );
+  });
+
+  it('renders a reusable light-band primitive for commercial contrast sections', () => {
+    render(
+      <SectionBand>
+        <h2>Atendimento comercial</h2>
+        <p>Revendas, oficinas e distribuidores com briefing direto.</p>
+      </SectionBand>,
+    );
+
+    expect(
+      screen.getByText('Atendimento comercial').parentElement,
+    ).toHaveAttribute('data-slot', 'section-band');
+    expect(screen.getByText('Atendimento comercial').parentElement).toHaveClass(
+      'bg-success',
+      'text-on-primary',
+      'rounded-none',
     );
   });
 

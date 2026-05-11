@@ -87,6 +87,14 @@ describe('App', () => {
       'placeholder',
       'Conte o mix, volume e tipo de atendimento.',
     );
+    expect(
+      screen.getByRole('heading', { name: 'Atendimento comercial direto' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Leitura rápida para operações que precisam comprar com contexto técnico antes do M3.',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders the not found route', () => {
