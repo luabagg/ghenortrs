@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { DotMatrixLoader } from '@/components/ui/dot-matrix-loader';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
   buttonVariants({
@@ -168,6 +169,10 @@ function B2BPage() {
         <div className="grid gap-3 px-6 pb-6">
           <Input aria-label="Empresa" placeholder="Nome da empresa" />
           <Input aria-label="CNPJ" placeholder="00.000.000/0000-00" />
+          <Textarea
+            aria-label="Necessidades comerciais"
+            placeholder="Conte o mix, volume e tipo de atendimento."
+          />
           <Button type="button" variant="secondary">
             Estruturar fluxo B2B
           </Button>

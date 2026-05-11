@@ -66,6 +66,10 @@ describe('App', () => {
         name: 'Atendimento para lojistas e oficinas',
       }),
     ).toBeInTheDocument();
+    expect(screen.getByLabelText('Necessidades comerciais')).toHaveAttribute(
+      'placeholder',
+      'Conte o mix, volume e tipo de atendimento.',
+    );
   });
 
   it('renders the not found route', () => {
