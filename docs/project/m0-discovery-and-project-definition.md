@@ -11,7 +11,7 @@ Lock the inputs that implementation depends on: GHENO visual rules, landing-page
 
 ## Downstream Status
 
-`M1` has already been implemented locally ahead of full `M0` closure. `M0` still owns the missing store audit, content architecture, and CTA destination artifacts that must exist before `M2` can move beyond the verified shell.
+`M1` has already been implemented locally ahead of full `M0` closure. `M0` still owns the remaining store audit and content architecture artifacts that must exist before `M2` can move beyond the verified shell.
 
 ## Linear Issues
 
@@ -54,7 +54,7 @@ Lock the inputs that implementation depends on: GHENO visual rules, landing-page
 1. Finalize visual rules from `LUA-16`.
 2. Audit the current storefront from `LUA-15`.
 3. Define section architecture from `LUA-17`.
-4. Map CTA destinations from `LUA-18`.
+4. Refresh the `LUA-18` destination map only if the live store taxonomy changes.
 5. Freeze the discovery outputs and move to `M1`.
 
 ## Risks
@@ -62,3 +62,7 @@ Lock the inputs that implementation depends on: GHENO visual rules, landing-page
 - Starting implementation before destination mapping exists will create CTA rework.
 - Starting component work before the content hierarchy is locked will cause layout churn.
 - Letting discovery sprawl into implementation will blur milestone boundaries.
+
+## Local Outputs
+
+- [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md) captures the current Nuvemshop CTA routing contract and fallbacks for unpublished categories.

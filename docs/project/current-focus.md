@@ -14,7 +14,7 @@ Close the frontend-foundation milestone with a verified local baseline while bac
 
 1. Keep [DESIGN.md](/Users/luabagg/development/personal/ghenortrs/DESIGN.md) as the authoritative visual system for the implemented shell and primitives.
 2. Treat the current Vite/React/Tailwind/shadcn foundation as verified and avoid reopening setup decisions unless a defect is found.
-3. Complete or verify the missing discovery artifacts from `LUA-15`, `LUA-17`, and `LUA-18` so `M2` has store, content, and CTA inputs.
+3. Complete or verify the remaining discovery artifacts from `LUA-15` and `LUA-17`; `LUA-18` is now covered by the local destination map.
 4. Use [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/m1-vite-architecture-setup.md) as the implementation contract for any new UI work.
 5. Do not advance `M2` beyond shell-level experiments until the missing `M0` docs are restored locally.
 
@@ -22,6 +22,7 @@ Close the frontend-foundation milestone with a verified local baseline while bac
 
 - The M1 foundation stays green on `test`, `lint`, `typecheck`, `build`, and `format:check`.
 - Discovery gaps are explicit instead of being hidden by the already-implemented shell.
+- The current CTA destination contract is documented locally, including the fallback rules for unpublished categories.
 - `M2` has a clear dependency boundary: use the current app foundation, but wait for finalized content/store docs before full landing-page buildout.
 
 ## Not In Scope Yet

@@ -19,6 +19,6 @@ Last synced: 2026-05-11
 
 - Treat the timeline as ordered, not parallel by default.
 - Do not start `M2` implementation until `M0` and `M1` have produced usable inputs.
-- Treat the current app shell as the approved technical baseline for `M2`, but keep `M2` feature work blocked until the missing `M0` docs are restored.
+- Treat the current app shell as the approved technical baseline for `M2`, but keep `M2` feature work blocked until the remaining `M0` docs are restored.
 - Keep `M6` out of active implementation unless explicitly requested.
 - If work starts to span multiple milestones, split it and record the dependency in the relevant milestone file.
