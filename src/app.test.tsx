@@ -18,10 +18,17 @@ describe('App', () => {
       'font-body',
     );
     expect(
-      screen.getByRole('heading', { name: 'GHENO components' }),
+      screen.getByText('COMPONENTES MTB DE ALTO DESEMPENHO'),
+    ).toHaveAttribute('data-slot', 'meta-label');
+    expect(
+      screen.getByRole('heading', {
+        name: 'Pastilhas e componentes GHENO para quem exige frenagem, controle e consistência na trilha.',
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Performance-first MTB components' }),
+      screen.getByText(
+        'GHENO é marca para rider, oficina e lojista que precisa de componente com resposta previsível, acabamento firme e presença real no pedal.',
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Componentes' }),
@@ -34,11 +41,23 @@ describe('App', () => {
       'shadow-[0_20px_48px_rgba(0,0,0,0.24)]',
     );
     expect(
-      screen.getByRole('link', { name: 'Explorar componentes' }),
+      screen.getByRole('link', { name: 'Ver catálogo GHENO' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    expect(
+      screen.getByRole('link', { name: 'Ver catálogo GHENO' }),
     ).toHaveClass('bg-accent', 'text-on-accent');
     expect(
       screen.getByRole('link', { name: 'Falar com GHENO B2B' }),
     ).toHaveClass('border', 'border-strong', 'bg-background-soft');
+    expect(screen.getByText('Catálogo ativo no ar')).toBeInTheDocument();
+    expect(
+      screen.getByText('Checkout delegado à Nuvemshop'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Atendimento comercial para linhas sem catálogo publicado',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders the components route', () => {

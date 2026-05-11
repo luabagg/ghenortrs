@@ -99,38 +99,52 @@ function InfoCard({ title, body }: { title: string; body: string }) {
 
 function HomePage() {
   return (
-    <section className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.85fr)] lg:items-start">
-      <div className="rounded-panel border border-border bg-surface px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:px-8 sm:py-10">
-        <MetaLabel>Performance-first MTB components</MetaLabel>
-        <h1 className="mt-6 max-w-4xl font-heading text-5xl leading-[0.94] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
-          GHENO components
-        </h1>
-        <h2 className="mt-4 max-w-3xl font-heading text-3xl leading-tight tracking-[-0.04em] text-primary sm:text-4xl">
-          Performance-first MTB components
-        </h2>
-        <p className="mt-6 max-w-2xl text-base leading-7 text-secondary sm:text-xl sm:leading-8">
-          Base Vite + React + TypeScript scaffold wired to the GHENO visual
-          system, ready for landing-page implementation without default-theme
-          churn.
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Button asChild>
-            <Link to="/componentes">Explorar componentes</Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link to="/b2b">Falar com GHENO B2B</Link>
-          </Button>
+    <section className="grid gap-6">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.85fr)] lg:items-start">
+        <div className="rounded-panel border border-border bg-surface px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:px-8 sm:py-10">
+          <MetaLabel>COMPONENTES MTB DE ALTO DESEMPENHO</MetaLabel>
+          <h1 className="mt-6 max-w-5xl font-heading text-5xl leading-[0.94] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+            Pastilhas e componentes GHENO para quem exige frenagem, controle e
+            consistência na trilha.
+          </h1>
+          <p className="mt-6 max-w-3xl text-base leading-7 text-secondary sm:text-xl sm:leading-8">
+            GHENO é marca para rider, oficina e lojista que precisa de
+            componente com resposta previsível, acabamento firme e presença real
+            no pedal.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button asChild>
+              <a href="https://store.ghenortrs.com.br/produtos/">
+                Ver catálogo GHENO
+              </a>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link to="/b2b">Falar com GHENO B2B</Link>
+            </Button>
+          </div>
+        </div>
+        <div className="grid gap-4">
+          <InfoCard
+            title="Pastilhas com catálogo ativo"
+            body="A jornada principal do MVP já aponta para o catálogo GHENO ao vivo, sem prometer famílias que ainda não têm destino publicado."
+          />
+          <InfoCard
+            title="Linha técnica em expansão"
+            body="Cubos, aros e rotores entram como prova de linha e conversa comercial, mantendo a promessa do site alinhada com a realidade da operação."
+          />
         </div>
       </div>
-      <div className="grid gap-4">
-        <InfoCard
-          title="Shell técnico"
-          body="Tokens de cor, tipografia e superfícies já estão ativos para sustentar as próximas seções sem retrabalho visual."
-        />
-        <InfoCard
-          title="Rotas prontas"
-          body="Início, componentes, B2B e not-found seguem o mesmo contorno estrutural para acelerar a implementação do M2."
-        />
+
+      <div className="grid gap-3 rounded-panel border border-border bg-surface-elevated px-6 py-5 sm:grid-cols-3 sm:gap-4 sm:px-8">
+        <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
+          Catálogo ativo no ar
+        </p>
+        <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
+          Checkout delegado à Nuvemshop
+        </p>
+        <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
+          Atendimento comercial para linhas sem catálogo publicado
+        </p>
       </div>
     </section>
   );
