@@ -87,8 +87,7 @@ http-client.private.env.json
 .idea/**/copilot.data.migration.*.xml
 
 ############### CODEBASE IGNORE
-/temp
-/reference_images
+/tmp
 
 # Added by code-review-graph
 .code-review-graph/
