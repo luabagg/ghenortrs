@@ -1,12 +1,20 @@
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button-variants';
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
-  [
-    'rounded-pill border px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] transition-colors',
-    isActive
-      ? 'border-accent bg-accent text-on-accent'
-      : 'border-transparent text-secondary hover:border-border hover:text-primary',
-  ].join(' ');
+  buttonVariants({
+    size: 'nav',
+    variant: isActive ? 'nav-active' : 'nav',
+  });
 
 function AppShell() {
   return (
@@ -56,52 +64,30 @@ function PageIntro({
   description: string;
 }) {
   return (
-    <section className="rounded-panel border border-border bg-surface px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] sm:px-8 sm:py-10">
-      <p className="mb-4 inline-flex rounded-pill bg-accent-dark px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em] text-on-accent">
-        {eyebrow}
-      </p>
-      <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
-        {title}
-      </h1>
-      <p className="mt-5 max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        {description}
-      </p>
-    </section>
-  );
-}
-
-function ActionLink({
-  children,
-  to,
-  tone,
-}: {
-  children: string;
-  to: string;
-  tone: 'primary' | 'secondary';
-}) {
-  const toneClassName =
-    tone === 'primary'
-      ? 'bg-accent text-on-accent hover:bg-accent-dark'
-      : 'border border-strong bg-background-soft text-primary hover:border-accent hover:text-accent';
-
-  return (
-    <Link
-      className={`inline-flex min-h-13 items-center justify-center rounded-button px-5 text-sm font-bold uppercase tracking-[0.08em] transition-colors ${toneClassName}`}
-      to={to}
-    >
-      {children}
-    </Link>
+    <Card className="bg-surface px-0 py-0 shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
+      <CardHeader className="px-6 py-8 sm:px-8 sm:py-10">
+        <p className="mb-1 inline-flex w-fit rounded-pill bg-accent-dark px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em] text-on-accent">
+          {eyebrow}
+        </p>
+        <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
+          {title}
+        </h1>
+        <CardDescription className="max-w-2xl text-base leading-7 sm:text-lg">
+          {description}
+        </CardDescription>
+      </CardHeader>
+    </Card>
   );
 }
 
 function InfoCard({ title, body }: { title: string; body: string }) {
   return (
-    <article className="rounded-panel border border-border bg-surface-elevated p-6">
-      <h2 className="font-heading text-2xl leading-tight tracking-[-0.04em] text-primary">
-        {title}
-      </h2>
-      <p className="mt-3 text-sm leading-6 text-secondary">{body}</p>
-    </article>
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{body}</CardDescription>
+      </CardHeader>
+    </Card>
   );
 }
 
@@ -124,12 +110,12 @@ function HomePage() {
           churn.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <ActionLink to="/componentes" tone="primary">
-            Explorar componentes
-          </ActionLink>
-          <ActionLink to="/b2b" tone="secondary">
-            Falar com GHENO B2B
-          </ActionLink>
+          <Button asChild>
+            <Link to="/componentes">Explorar componentes</Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link to="/b2b">Falar com GHENO B2B</Link>
+          </Button>
         </div>
       </div>
       <div className="grid gap-4">
@@ -158,11 +144,29 @@ function ComponentsPage() {
 
 function B2BPage() {
   return (
-    <PageIntro
-      eyebrow="B2B"
-      title="Atendimento para lojistas e oficinas"
-      description="Base para a futura jornada comercial voltada a distribuidores, oficinas e revendas com superfícies e CTAs coerentes com a marca."
-    />
+    <section className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
+      <PageIntro
+        eyebrow="B2B"
+        title="Atendimento para lojistas e oficinas"
+        description="Base para a futura jornada comercial voltada a distribuidores, oficinas e revendas com superfícies e CTAs coerentes com a marca."
+      />
+      <Card className="bg-surface px-0 py-0">
+        <CardHeader>
+          <CardTitle>Pré-cadastro comercial</CardTitle>
+          <CardDescription>
+            Placeholder do formulário do M3 usando o mesmo contorno técnico dos
+            futuros campos reais.
+          </CardDescription>
+        </CardHeader>
+        <div className="grid gap-3 px-6 pb-6">
+          <Input aria-label="Empresa" placeholder="Nome da empresa" />
+          <Input aria-label="CNPJ" placeholder="00.000.000/0000-00" />
+          <Button type="button" variant="secondary">
+            Estruturar fluxo B2B
+          </Button>
+        </div>
+      </Card>
+    </section>
   );
 }
 

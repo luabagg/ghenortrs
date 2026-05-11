@@ -6,6 +6,7 @@
     "skipLibCheck": true,
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
+    "types": ["node"],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
