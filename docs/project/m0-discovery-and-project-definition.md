@@ -1,6 +1,6 @@
 # M0: Discovery And Project Definition
 
-Status: active
+Status: verified
 Target: 2026-05-01
 Depends on: none
 Linear milestone: `M0: Discovery And Project Definition`
@@ -11,7 +11,7 @@ Lock the inputs that implementation depends on: GHENO visual rules, landing-page
 
 ## Downstream Status
 
-`M1` has already been implemented locally ahead of full `M0` closure. `M0` still owns the remaining store audit and content architecture artifacts that must exist before `M2` can move beyond the verified shell.
+`M1` was implemented locally ahead of full `M0` closure. The missing `LUA-17` content architecture artifact is now documented locally, so `M2` can use this milestone's outputs without reopening discovery.
 
 ## Linear Issues
 
@@ -67,3 +67,4 @@ Lock the inputs that implementation depends on: GHENO visual rules, landing-page
 
 - [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md) captures the current Nuvemshop CTA routing contract and fallbacks for unpublished categories.
 - [storefront-audit.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/storefront-audit.md) captures the live storefront URL baseline, product inventory shape, checkout handoff, and broken category links.
+- [landing-page-content-architecture.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/landing-page-content-architecture.md) defines the Portuguese homepage narrative, section order, and CTA hierarchy for `M2`.

@@ -4,26 +4,26 @@ Last synced: 2026-05-11
 
 ## Active Milestone
 
-`M1: Vite Architecture Setup`
+`M2: Landing Page MVP`
 
 ## Objective
 
-Close the frontend-foundation milestone with a verified local baseline while backfilling the remaining discovery artifacts that still gate `M2`.
+Use the verified `M0` discovery layer and `M1` frontend baseline to start building the real landing-page experience.
 
 ## Next Tasks
 
-1. Keep [DESIGN.md](/Users/luabagg/development/personal/ghenortrs/DESIGN.md) as the authoritative visual system for the implemented shell and primitives.
-2. Treat the current Vite/React/Tailwind/shadcn foundation as verified and avoid reopening setup decisions unless a defect is found.
-3. Treat `LUA-15` and `LUA-18` as locally documented; the remaining discovery blocker is `LUA-17`'s Portuguese landing-page content architecture.
-4. Use [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/m1-vite-architecture-setup.md) as the implementation contract for any new UI work.
-5. Do not advance `M2` beyond shell-level experiments until the missing `M0` docs are restored locally.
+1. Keep [DESIGN.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/DESIGN.md) as the authoritative visual system for the landing page.
+2. Use [landing-page-content-architecture.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/landing-page-content-architecture.md) as the source of truth for section order, Portuguese messaging, and CTA hierarchy.
+3. Treat the current Vite/React/Tailwind/shadcn shell as verified and avoid reopening setup decisions unless a defect is found.
+4. Keep [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md) tied to any CTA copy or routing work so category promises stay honest.
+5. Start `M2` by converting the existing homepage shell into the real section architecture before expanding secondary routes.
 
 ## Immediate Success Criteria
 
-- The M1 foundation stays green on `test`, `lint`, `typecheck`, `build`, and `format:check`.
-- Discovery gaps are explicit instead of being hidden by the already-implemented shell.
-- The current CTA destination contract and storefront audit are documented locally, including the fallback rules for unpublished categories and broken category links.
-- `M2` has a clear dependency boundary: use the current app foundation, but wait for finalized content/store docs before full landing-page buildout.
+- The M2 homepage implementation follows the documented section order instead of inventing structure ad hoc.
+- Consumer and commercial CTA copy stays aligned with the verified store-routing contract.
+- The M1 foundation stays green on `test`, `lint`, `typecheck`, `build`, and `format:check` while homepage work begins.
+- New landing-page implementation work uses the existing shell and primitives rather than reopening tooling or token decisions.
 
 ## Not In Scope Yet
 
