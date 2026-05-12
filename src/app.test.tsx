@@ -221,7 +221,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Atendimento comercial para oficinas, revendas e distribuidores.',
+        name: 'Para lojistas, oficinas e revendas que buscam performance real.',
       }),
     ).toBeInTheDocument();
     expect(
@@ -256,12 +256,15 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Compre o que já está pronto para rodar. Consulte o que ainda depende de atendimento.',
+        name: 'Pronto para elevar a performance das suas bikes?',
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Consultar componentes' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+      screen.getByRole('link', { name: 'Acessar Loja B2B' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    expect(
+      screen.getByRole('link', { name: 'Ver componentes' }),
+    ).toHaveAttribute('href', '/componentes');
   });
 
   it('renders the footer with verified store links', () => {

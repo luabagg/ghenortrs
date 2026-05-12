@@ -918,7 +918,7 @@ function B2BTeaserSection() {
             B2B
           </p>
           <h2 className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl">
-            Atendimento comercial para oficinas, revendas e distribuidores.
+            Para lojistas, oficinas e revendas que buscam performance real.
           </h2>
           <p className="mt-2 max-w-xl text-base leading-7 text-on-primary/80 sm:text-lg">
             Conversa direta sobre mix, disponibilidade e contexto técnico. Sem
@@ -972,19 +972,16 @@ function ClosingCTASection() {
           className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
           id="fechamento-heading"
         >
-          Compre o que já está pronto para rodar. Consulte o que ainda depende
-          de atendimento.
+          Pronto para elevar a performance das suas bikes?
         </h2>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button asChild>
             <a href="https://store.ghenortrs.com.br/produtos/">
-              Ver catálogo GHENO
+              Acessar Loja B2B
             </a>
           </Button>
           <Button asChild variant="secondary">
-            <a href="https://store.ghenortrs.com.br/contato/">
-              Consultar componentes
-            </a>
+            <Link to="/componentes">Ver componentes</Link>
           </Button>
         </div>
       </div>
