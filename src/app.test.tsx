@@ -20,6 +20,14 @@ describe('App', () => {
     expect(
       screen.getByText('COMPONENTES MTB DE ALTO DESEMPENHO'),
     ).toHaveAttribute('data-slot', 'meta-label');
+    expect(screen.getAllByAltText('GHENO')[0]).toHaveAttribute(
+      'src',
+      '/brand/logo-wide.png',
+    );
+    expect(screen.getByAltText('Rider GHENO em trilha')).toHaveAttribute(
+      'src',
+      '/reference-images/mtb-action-hero.jpg',
+    );
     expect(
       screen.getByRole('heading', {
         name: 'Pastilhas e componentes GHENO para quem exige frenagem, controle e consistência na trilha.',
@@ -81,6 +89,22 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Rotores' }),
     ).toBeInTheDocument();
+    expect(screen.getByAltText('Pastilha de freio GHENO')).toHaveAttribute(
+      'src',
+      '/reference-images/pastilhas-gheno.jpg',
+    );
+    expect(screen.getByAltText('Cubo GHENO')).toHaveAttribute(
+      'src',
+      '/reference-images/cubo-gheno.jpg',
+    );
+    expect(screen.getByAltText('Aro GHENO')).toHaveAttribute(
+      'src',
+      '/reference-images/aro-gheno.jpg',
+    );
+    expect(screen.getByAltText('Rotor GHENO')).toHaveAttribute(
+      'src',
+      '/reference-images/rotor-gheno.jpg',
+    );
 
     const pastilhasLinks = screen.getAllByRole('link', {
       name: 'Ver catálogo GHENO',
