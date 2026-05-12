@@ -24,10 +24,9 @@ describe('App', () => {
       'src',
       '/brand/logo-wide.png',
     );
-    expect(screen.getByAltText('Rider GHENO em trilha')).toHaveAttribute(
-      'src',
-      '/reference-images/mtb-action-hero.jpg',
-    );
+    expect(
+      screen.getByAltText('Rider GHENO em trilha com controle total'),
+    ).toHaveAttribute('src', '/reference-images/mtb-action-hero.jpg');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Componentes de performance para MTB de verdade.',
     );

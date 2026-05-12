@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 
@@ -1122,17 +1122,49 @@ function ClosingCTASection() {
   );
 }
 
+const HERO_SLIDES = [
+  {
+    src: '/reference-images/mtb-action-hero.jpg',
+    alt: 'Rider GHENO em trilha com controle total',
+  },
+  {
+    src: '/reference-images/hero-gheno-jump.jpg',
+    alt: 'Rider com componentes GHENO em salto de competição',
+  },
+  {
+    src: '/reference-images/hero-red-trail.jpg',
+    alt: 'Rider em trilha de terra vermelha com velocidade',
+  },
+] as const;
+
 function HomePage() {
+  const [heroIdx, setHeroIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(
+      () => setHeroIdx((i) => (i + 1) % HERO_SLIDES.length),
+      6000,
+    );
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <div className="flex flex-col gap-16 sm:gap-24">
       <section>
         <div className="relative overflow-hidden rounded-panel border border-border bg-surface shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
-          <img
-            alt="Rider GHENO em trilha"
-            className="absolute inset-0 h-full w-full object-cover opacity-62"
-            fetchPriority="high"
-            src="/reference-images/mtb-action-hero.jpg"
-          />
+          {HERO_SLIDES.map((slide, i) => (
+            <img
+              key={slide.src}
+              alt={slide.alt}
+              className={cn(
+                'absolute inset-0 h-full w-full object-cover transition-opacity duration-1000',
+                i === heroIdx ? 'opacity-62' : 'opacity-0',
+              )}
+              fetchPriority={i === 0 ? 'high' : undefined}
+              loading={i === 0 ? undefined : 'lazy'}
+              src={slide.src}
+            />
+          ))}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/88 to-background/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/65" />
           <div className="relative min-h-[34rem] px-6 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-14">
