@@ -72,7 +72,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Uma linha pensada para frenagem, rolagem e montagem com critério técnico.',
+        name: 'Um sistema. Quatro pilares de performance.',
       }),
     ).toBeInTheDocument();
 
@@ -266,13 +266,12 @@ describe('App', () => {
     const footer = screen.getByRole('contentinfo');
     expect(footer).toBeInTheDocument();
 
-    expect(screen.getByRole('link', { name: 'Produtos' })).toHaveAttribute(
+    expect(
+      screen.getByRole('link', { name: 'Entrar na Loja' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    expect(screen.getByRole('link', { name: 'Pastilhas' })).toHaveAttribute(
       'href',
       'https://store.ghenortrs.com.br/produtos/',
-    );
-    expect(screen.getByRole('link', { name: 'Contato' })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/contato/',
     );
     expect(
       screen.getByRole('link', { name: 'Política de Privacidade' }),
@@ -280,10 +279,9 @@ describe('App', () => {
       'href',
       'https://store.ghenortrs.com.br/politica-de-privacidade/',
     );
-    expect(screen.getByRole('link', { name: 'Instagram' })).toHaveAttribute(
-      'href',
-      'https://www.instagram.com/ghenortrs/',
-    );
+    expect(
+      screen.getByRole('link', { name: 'Instagram GHENO' }),
+    ).toHaveAttribute('href', 'https://www.instagram.com/ghenortrs/');
   });
 
   it('renders the components route', () => {
