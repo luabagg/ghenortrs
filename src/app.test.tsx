@@ -262,9 +262,21 @@ describe('App', () => {
     expect(
       screen.getByAltText('Detalhe de freio e rotor em bicicleta de MTB'),
     ).toHaveAttribute('src', '/reference-images/b2b-brake-detail.jpg');
+    expect(
+      screen.getByAltText(
+        'Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista frontal',
+      ),
+    ).toHaveAttribute('src', '/reference-images/rotor-installed-front.jpg');
+    expect(
+      screen.getByAltText(
+        'Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista traseira',
+      ),
+    ).toHaveAttribute('src', '/reference-images/rotor-installed-rear.jpg');
     expect(screen.getByText('Prova real')).toBeInTheDocument();
     expect(screen.getByText('Demanda técnica')).toBeInTheDocument();
     expect(screen.getByText('Mix consultivo')).toBeInTheDocument();
+    expect(screen.getByText('Rotor instalado')).toBeInTheDocument();
+    expect(screen.getByText('Em campo')).toBeInTheDocument();
   });
 
   it('renders the closing CTA section with correct destinations', () => {

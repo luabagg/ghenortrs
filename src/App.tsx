@@ -1061,7 +1061,7 @@ function B2BTeaserSection() {
       </div>
       <div
         aria-label="Contexto visual para atendimento B2B GHENO"
-        className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-3"
+        className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-3"
       >
         <B2BMediaCard
           imageAlt="Rider em prova de MTB diante do público"
@@ -1077,6 +1077,16 @@ function B2BTeaserSection() {
           imageAlt="Detalhe de freio e rotor em bicicleta de MTB"
           imageSrc="/reference-images/b2b-brake-detail.jpg"
           title="Mix consultivo"
+        />
+        <B2BMediaCard
+          imageAlt="Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista frontal"
+          imageSrc="/reference-images/rotor-installed-front.jpg"
+          title="Rotor instalado"
+        />
+        <B2BMediaCard
+          imageAlt="Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista traseira"
+          imageSrc="/reference-images/rotor-installed-rear.jpg"
+          title="Em campo"
         />
       </div>
     </SectionBand>
