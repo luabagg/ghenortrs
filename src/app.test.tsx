@@ -191,6 +191,21 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Contato comercial' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+    expect(
+      screen.getByLabelText('Contexto visual para atendimento B2B GHENO'),
+    ).toHaveClass('snap-x', 'overflow-x-auto');
+    expect(
+      screen.getByAltText('Rider em prova de MTB diante do público'),
+    ).toHaveAttribute('src', '/reference-images/b2b-race-context.jpg');
+    expect(
+      screen.getByAltText('Rider em curva de trilha com terreno solto'),
+    ).toHaveAttribute('src', '/reference-images/b2b-trail-validation.jpg');
+    expect(
+      screen.getByAltText('Detalhe de freio e rotor em bicicleta de MTB'),
+    ).toHaveAttribute('src', '/reference-images/b2b-brake-detail.jpg');
+    expect(screen.getByText('Prova real')).toBeInTheDocument();
+    expect(screen.getByText('Demanda técnica')).toBeInTheDocument();
+    expect(screen.getByText('Mix consultivo')).toBeInTheDocument();
   });
 
   it('renders the closing CTA section with correct destinations', () => {

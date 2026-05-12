@@ -243,6 +243,32 @@ function TechnicalMediaCard({
   );
 }
 
+function B2BMediaCard({
+  title,
+  imageAlt,
+  imageSrc,
+}: {
+  title: string;
+  imageAlt: string;
+  imageSrc: string;
+}) {
+  return (
+    <figure className="relative min-h-60 min-w-[15rem] snap-start overflow-hidden rounded-panel border border-on-primary/14 bg-on-primary/8 sm:min-w-0">
+      <img
+        alt={imageAlt}
+        className="absolute inset-0 h-full w-full object-cover opacity-88 saturate-75"
+        src={imageSrc}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-on-primary/82 via-on-primary/8 to-transparent" />
+      <figcaption className="absolute inset-x-0 bottom-0 p-4">
+        <p className="font-heading text-xl leading-tight tracking-[-0.03em] text-background">
+          {title}
+        </p>
+      </figcaption>
+    </figure>
+  );
+}
+
 function ComponentFamiliesSection() {
   return (
     <section aria-labelledby="familias-heading" className="grid gap-8">
@@ -364,28 +390,50 @@ function TechnicalProofSection() {
 
 function B2BTeaserSection() {
   return (
-    <SectionBand className="grid gap-6">
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-on-primary/70">
-          B2B
-        </p>
-        <h2 className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl">
-          Atendimento comercial para oficinas, revendas e distribuidores.
-        </h2>
-        <p className="mt-2 max-w-xl text-base leading-7 text-on-primary/80 sm:text-lg">
-          Conversa direta sobre mix, disponibilidade e contexto técnico. Sem
-          formulário automatizado, sem espera de sistema.
-        </p>
+    <SectionBand className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-on-primary/70">
+            B2B
+          </p>
+          <h2 className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl">
+            Atendimento comercial para oficinas, revendas e distribuidores.
+          </h2>
+          <p className="mt-2 max-w-xl text-base leading-7 text-on-primary/80 sm:text-lg">
+            Conversa direta sobre mix, disponibilidade e contexto técnico. Sem
+            formulário automatizado, sem espera de sistema.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button asChild>
+            <Link to="/b2b">Abrir frente B2B</Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <a href="https://store.ghenortrs.com.br/contato/">
+              Contato comercial
+            </a>
+          </Button>
+        </div>
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button asChild>
-          <Link to="/b2b">Abrir frente B2B</Link>
-        </Button>
-        <Button asChild variant="secondary">
-          <a href="https://store.ghenortrs.com.br/contato/">
-            Contato comercial
-          </a>
-        </Button>
+      <div
+        aria-label="Contexto visual para atendimento B2B GHENO"
+        className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-3"
+      >
+        <B2BMediaCard
+          imageAlt="Rider em prova de MTB diante do público"
+          imageSrc="/reference-images/b2b-race-context.jpg"
+          title="Prova real"
+        />
+        <B2BMediaCard
+          imageAlt="Rider em curva de trilha com terreno solto"
+          imageSrc="/reference-images/b2b-trail-validation.jpg"
+          title="Demanda técnica"
+        />
+        <B2BMediaCard
+          imageAlt="Detalhe de freio e rotor em bicicleta de MTB"
+          imageSrc="/reference-images/b2b-brake-detail.jpg"
+          title="Mix consultivo"
+        />
       </div>
     </SectionBand>
   );
