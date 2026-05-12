@@ -313,10 +313,9 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Entrar na Loja' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
-    expect(screen.getByRole('link', { name: 'Pastilhas' })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/produtos/',
-    );
+    expect(
+      screen.getAllByRole('link', { name: 'Pastilhas' })[0],
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
       screen.getByRole('navigation', { name: 'Links institucionais' }),
     ).toBeInTheDocument();
