@@ -617,24 +617,6 @@ function ProductFamilyCard({
   );
 }
 
-function TechProofBlock({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex flex-col gap-3 rounded-panel border border-border bg-surface px-5 py-5 sm:px-6">
-      <div className="h-px w-8 bg-accent" />
-      <h3 className="font-heading text-xl leading-tight tracking-[-0.03em] text-primary">
-        {title}
-      </h3>
-      <p className="text-sm leading-6 text-secondary">{description}</p>
-    </div>
-  );
-}
-
 function TechnicalMediaCard({
   title,
   caption,
@@ -750,61 +732,104 @@ function ComponentFamiliesSection() {
   );
 }
 
+const TECH_FEATURES = [
+  'Liga de aço de alta resistência',
+  'Compatível com Shimano, SRAM e TRP',
+  'Validado em competição e uso intenso',
+  'Modulação sem fade em calor extremo',
+] as const;
+
 function TechnicalProofSection() {
   return (
     <section aria-labelledby="tecnica-heading" className="grid gap-8">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-start">
+      <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-12">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <MetaLabel>PROVA TÉCNICA</MetaLabel>
+            <MetaLabel>TECNOLOGIA APLICADA</MetaLabel>
             <h2
               className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
               id="tecnica-heading"
             >
-              Engenharia que aparece no pedal, não só no catálogo.
+              Tecnologia que você sente na trilha.
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <TechProofBlock
-              description="Composição que entrega resposta igual na primeira descida e na centésima. Sem variação de modulação por temperatura ou ciclos repetidos."
-              title="Frenagem previsível"
-            />
-            <TechProofBlock
-              description="Modulação que não some quando a trilha esquenta. Confiança na freada mais longa, sem fade e sem perda de controle."
-              title="Controle sob pressão"
-            />
-            <TechProofBlock
-              description="Superfície limpa, espessura coerente, acomodação rápida. Sem irregularidades que comprometem o primeiro uso."
-              title="Acabamento técnico"
-            />
-            <TechProofBlock
-              description="Fabricado para montar certo. Tolerância adequada para encaixe direto, sem ajuste em campo."
-              title="Montagem direta"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5 rounded-panel border border-border bg-surface px-4 py-4">
+              <p className="font-heading text-3xl font-black leading-none tracking-[-0.04em] text-accent">
+                +300°C
+              </p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-primary">
+                Resistência
+              </p>
+              <p className="text-xs leading-5 text-secondary">
+                Operação estável em descidas longas e frenagens repetidas.
+              </p>
+            </div>
+            <div className="flex flex-col gap-1.5 rounded-panel border border-border bg-surface px-4 py-4">
+              <p className="font-heading text-3xl font-black leading-none tracking-[-0.04em] text-accent">
+                4×
+              </p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-primary">
+                Compostos
+              </p>
+              <p className="text-xs leading-5 text-secondary">
+                Opções para cada uso — DH, XC, enduro e trilha livre.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {TECH_FEATURES.map((feat) => (
+              <div key={feat} className="flex items-center gap-3">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
+                  <svg
+                    className="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 12 12"
+                  >
+                    <path
+                      d="M2 6l2.5 2.5L9.5 3.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                    />
+                  </svg>
+                </div>
+                <p className="text-sm leading-5 text-primary">{feat}</p>
+              </div>
+            ))}
+          </div>
+          <div>
+            <Button asChild variant="secondary">
+              <Link to="/componentes">Explorar componentes</Link>
+            </Button>
           </div>
         </div>
         <div
-          aria-label="Imagens de teste em trilha"
-          className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
+          aria-label="Imagens de tecnologia GHENO"
+          className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-1"
         >
+          <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
+            <img
+              alt="Rotor de freio GHENO — disco de alta performance para MTB"
+              className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+              src="/reference-images/rotor-gheno.jpg"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+            <figcaption className="absolute inset-x-0 bottom-0 p-5">
+              <MetaLabel className="mb-2 w-fit">ROTOR GHENO</MetaLabel>
+              <h3 className="font-heading text-2xl leading-tight tracking-[-0.03em] text-primary">
+                Dissipação precisa.
+              </h3>
+            </figcaption>
+          </figure>
           <TechnicalMediaCard
             caption="Validação em terreno solto, com frenagens repetidas e mudança rápida de apoio."
             imageAlt="Rider GHENO freando em trecho técnico de downhill"
             imageSrc="/reference-images/trilha-frenagem-gheno.jpg"
-            title="Freio sob pressão"
-          />
-          <TechnicalMediaCard
-            caption="Controle em curva e leitura de aderência para componente que precisa responder sem surpresa."
-            imageAlt="Rider GHENO mantendo controle em curva de trilha"
-            imageSrc="/reference-images/trilha-controle-gheno.jpg"
-            title="Controle em curva"
+            title="Testado onde importa."
           />
         </div>
-      </div>
-      <div>
-        <Button asChild variant="secondary">
-          <Link to="/componentes">Explorar componentes</Link>
-        </Button>
       </div>
     </section>
   );

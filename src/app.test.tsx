@@ -121,7 +121,7 @@ describe('App', () => {
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
   });
 
-  it('renders the technical proof section with correct CTA', () => {
+  it('renders the technical proof section with stats, features, and media', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -130,37 +130,45 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Engenharia que aparece no pedal, não só no catálogo.',
+        name: 'Tecnologia que você sente na trilha.',
       }),
     ).toBeInTheDocument();
 
+    expect(screen.getByText('+300°C')).toBeInTheDocument();
+    expect(screen.getByText('Resistência')).toBeInTheDocument();
+    expect(screen.getByText('4×')).toBeInTheDocument();
+    expect(screen.getByText('Compostos')).toBeInTheDocument();
+
     expect(
-      screen.getByRole('heading', { name: 'Frenagem previsível' }),
+      screen.getByText('Liga de aço de alta resistência'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Controle sob pressão' }),
+      screen.getByText('Compatível com Shimano, SRAM e TRP'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Acabamento técnico' }),
+      screen.getByText('Validado em competição e uso intenso'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Montagem direta' }),
+      screen.getByText('Modulação sem fade em calor extremo'),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText('Imagens de teste em trilha')).toHaveClass(
+
+    expect(screen.getByLabelText('Imagens de tecnologia GHENO')).toHaveClass(
       'snap-x',
       'overflow-x-auto',
     );
     expect(
+      screen.getByAltText(
+        'Rotor de freio GHENO — disco de alta performance para MTB',
+      ),
+    ).toHaveAttribute('src', '/reference-images/rotor-gheno.jpg');
+    expect(
       screen.getByAltText('Rider GHENO freando em trecho técnico de downhill'),
     ).toHaveAttribute('src', '/reference-images/trilha-frenagem-gheno.jpg');
     expect(
-      screen.getByAltText('Rider GHENO mantendo controle em curva de trilha'),
-    ).toHaveAttribute('src', '/reference-images/trilha-controle-gheno.jpg');
-    expect(
-      screen.getByRole('heading', { name: 'Freio sob pressão' }),
+      screen.getByRole('heading', { name: 'Dissipação precisa.' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Controle em curva' }),
+      screen.getByRole('heading', { name: 'Testado onde importa.' }),
     ).toBeInTheDocument();
 
     expect(
