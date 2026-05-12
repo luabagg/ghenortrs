@@ -329,7 +329,7 @@ describe('App', () => {
     ).toHaveAttribute('href', 'https://www.instagram.com/ghenortrs/');
   });
 
-  it('renders the components route', () => {
+  it('renders the components route with product families', () => {
     render(
       <MemoryRouter initialEntries={['/componentes']}>
         <App />
@@ -337,20 +337,23 @@ describe('App', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Componentes GHENO' }),
+      screen.getByRole('heading', { name: 'Pastilhas de freio' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByLabelText('Carregando vitrine de componentes GHENO'),
+      screen.getByRole('heading', { name: 'Cubos de alta rolagem' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Sincronizando famílias, acabamentos e provas técnicas.',
-      ),
+      screen.getByRole('heading', { name: 'Aros de carbono e alumínio' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('COMPONENTES')).toHaveAttribute(
-      'data-slot',
-      'meta-label',
-    );
+    expect(
+      screen.getByRole('heading', { name: 'Rotores de dissipação' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Ver catálogo de pastilhas' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    expect(
+      screen.getByRole('link', { name: 'Pré-cadastro comercial' }),
+    ).toHaveAttribute('href', '/b2b');
   });
 
   it('renders the B2B route with full lead form', () => {
