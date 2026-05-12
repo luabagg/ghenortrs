@@ -320,6 +320,7 @@ function MobileMenuOverlay({
             <img
               alt="GHENO"
               className="h-7 w-auto rounded-sm"
+              loading="lazy"
               src="/brand/logo-wide.png"
             />
             <p className="text-sm font-semibold leading-tight text-primary">
@@ -415,6 +416,7 @@ function AppShell() {
               <img
                 alt="GHENO"
                 className="h-8 w-auto rounded-sm"
+                loading="lazy"
                 src="/brand/logo-wide.png"
               />
               <p className="max-w-xs text-sm leading-6 text-secondary">
@@ -643,6 +645,7 @@ function ProductFamilyCard({
         <img
           alt={imageAlt}
           className="h-full w-full object-cover opacity-82 saturate-75"
+          loading="lazy"
           src={imageSrc}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/10 to-transparent" />
@@ -692,6 +695,7 @@ function TechnicalMediaCard({
       <img
         alt={imageAlt}
         className="absolute inset-0 h-full w-full object-cover opacity-75 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+        loading="lazy"
         src={imageSrc}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/54 to-transparent" />
@@ -720,6 +724,7 @@ function B2BMediaCard({
       <img
         alt={imageAlt}
         className="absolute inset-0 h-full w-full object-cover opacity-88 saturate-75"
+        loading="lazy"
         src={imageSrc}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-on-primary/82 via-on-primary/8 to-transparent" />
@@ -880,6 +885,7 @@ function TechnicalProofSection() {
             <img
               alt="Rotor de freio GHENO — disco de alta performance para MTB"
               className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="lazy"
               src="/reference-images/rotor-gheno.jpg"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
@@ -953,6 +959,7 @@ function CompetitionProofSection() {
             <img
               alt={shot.alt}
               className="absolute inset-0 h-full w-full object-cover opacity-80 saturate-75 transition-transform duration-500 group-hover:scale-[1.04]"
+              loading="lazy"
               src={shot.src}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/88 via-transparent to-transparent" />
@@ -1085,6 +1092,7 @@ function HomePage() {
           <img
             alt="Rider GHENO em trilha"
             className="absolute inset-0 h-full w-full object-cover opacity-62"
+            fetchPriority="high"
             src="/reference-images/mtb-action-hero.jpg"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/88 to-background/20" />
@@ -1093,6 +1101,7 @@ function HomePage() {
             <img
               alt="GHENO"
               className="h-12 w-auto rounded-sm"
+              fetchPriority="high"
               src="/brand/logo-wide.png"
             />
             <div className="mt-20 max-w-4xl sm:mt-28">
