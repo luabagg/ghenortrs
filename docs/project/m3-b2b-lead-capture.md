@@ -1,6 +1,6 @@
 # M3: B2B Lead Capture
 
-Status: planned
+Status: active
 Target: 2026-05-22
 Depends on: `M2: Landing Page MVP`
 Linear milestone: `M3: B2B Lead Capture`
@@ -11,10 +11,10 @@ Add the commercial lead path for lojistas, oficinas, revendas, and distributors 
 
 ## Linear Issues
 
-- `LUA-27` Build B2B lead form UI
-- `LUA-28` Implement B2B form validation states
-- `LUA-29` Connect Resend email delivery
-- `LUA-30` Add basic lead form abuse protection
+- `LUA-27` Build B2B lead form UI — **code-complete** (2026-05-12)
+- `LUA-28` Implement B2B form validation states — **code-complete** (2026-05-12)
+- `LUA-29` Connect Resend email delivery — **blocked**: requires a server-side endpoint (`VITE_B2B_SUBMIT_URL`); form fails safely to a WhatsApp fallback when unconfigured
+- `LUA-30` Add basic lead form abuse protection — **code-complete** (2026-05-12)
 
 ## Deliverables
 

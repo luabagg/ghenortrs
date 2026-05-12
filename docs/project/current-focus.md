@@ -25,20 +25,29 @@ All `M2` sections verified as of 2026-05-12:
 
 Linear tickets `LUA-19` through `LUA-26` are code-complete and verified.
 
+## M3 Progress (as of 2026-05-12)
+
+Done:
+
+- `LUA-27` B2B lead form UI — 5-field form (Empresa, CNPJ, Telefone/WhatsApp, E-mail, Necessidades) with loading/success/error/no-config states and left-column value-prop checklist
+- `LUA-28` Form validation — inline errors for required fields, CNPJ 14-digit check, Brazilian phone DDD check, email regex
+- `LUA-30` Abuse protection — honeypot field + duplicate-submit guard (button disabled during loading)
+
+Remaining:
+
+- `LUA-29` Resend email delivery — blocked on server-side endpoint; form falls back to WhatsApp link when `VITE_B2B_SUBMIT_URL` is unset
+
 ## Next Tasks
 
-1. Implement the B2B lead-capture form on the `/b2b` route.
-2. Add form field validation (company, CNPJ, needs/message).
-3. Wire Resend email delivery to the contact endpoint.
-4. Add basic abuse protection (rate limiting or honeypot).
-5. Keep [DESIGN.md](../../DESIGN.md) as the authoritative visual system.
-6. Keep [store-destination-map.md](./store-destination-map.md) tied to any CTA routing.
+1. Configure `VITE_B2B_SUBMIT_URL` with a Resend-backed serverless endpoint (e.g., Vercel function or Netlify Function).
+2. Wire Resend delivery in the serverless function — not client-side.
+3. Keep [DESIGN.md](../../DESIGN.md) as the authoritative visual system.
+4. Keep [store-destination-map.md](./store-destination-map.md) tied to any CTA routing.
 
 ## Immediate Success Criteria
 
-- B2B form submits and delivers via Resend.
-- Form has client-side validation for required fields.
-- The `/b2b` route matches the design's visual language (no new token invention).
+- Valid leads are delivered via Resend when `VITE_B2B_SUBMIT_URL` is configured.
+- Missing configuration continues to fail safely to WhatsApp fallback.
 - `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run format:check` stay green.
 
 ## Not In Scope Yet
