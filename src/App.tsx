@@ -86,7 +86,7 @@ const QUICK_ACTIONS = [
     ),
     title: 'Tecnologia',
     description: 'Engenharia aplicada à performance',
-    to: '/',
+    href: '/#tecnologia',
     badge: null as string | null,
   },
   {
@@ -828,7 +828,11 @@ const TECH_FEATURES = [
 
 function TechnicalProofSection() {
   return (
-    <section aria-labelledby="tecnica-heading" className="grid gap-8">
+    <section
+      aria-labelledby="tecnica-heading"
+      className="grid gap-8"
+      id="tecnologia"
+    >
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-12">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
