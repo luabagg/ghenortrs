@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -24,14 +26,168 @@ const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
     variant: isActive ? 'nav-active' : 'nav',
   });
 
+function MobileMenuOverlay({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex sm:hidden"
+      role="dialog"
+    >
+      <button
+        aria-label="Fechar menu"
+        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+        onClick={onClose}
+        tabIndex={-1}
+      />
+      <div className="absolute inset-y-0 right-0 flex w-72 flex-col gap-6 border-l border-border bg-surface-glass/90 px-6 py-8 backdrop-blur-xl">
+        <div className="flex items-center justify-between">
+          <img
+            alt="GHENO"
+            className="h-8 w-auto rounded-sm"
+            src="/brand/logo-wide.png"
+          />
+          <button
+            aria-label="Fechar menu"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:text-primary"
+            onClick={onClose}
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M6 18L18 6M6 6l12 12"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </button>
+        </div>
+        <nav
+          aria-label="Menu principal"
+          className="flex flex-col gap-1"
+          onClick={onClose}
+        >
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.18em] text-secondary/60">
+            Navegação
+          </p>
+          <NavLink
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-colors',
+                isActive
+                  ? 'bg-accent/12 text-accent'
+                  : 'text-primary hover:bg-surface-elevated',
+              )
+            }
+            to="/"
+          >
+            <svg
+              className="h-4 w-4 opacity-60"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+              />
+            </svg>
+            Início
+          </NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-colors',
+                isActive
+                  ? 'bg-accent/12 text-accent'
+                  : 'text-primary hover:bg-surface-elevated',
+              )
+            }
+            to="/componentes"
+          >
+            <svg
+              className="h-4 w-4 opacity-60"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+              />
+            </svg>
+            Componentes
+          </NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-colors',
+                isActive
+                  ? 'bg-accent/12 text-accent'
+                  : 'text-primary hover:bg-surface-elevated',
+              )
+            }
+            to="/b2b"
+          >
+            <svg
+              className="h-4 w-4 opacity-60"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+              />
+            </svg>
+            B2B
+          </NavLink>
+        </nav>
+        <div className="mt-auto flex flex-col gap-3 border-t border-border pt-6">
+          <Button asChild>
+            <a href="https://store.ghenortrs.com.br/produtos/">
+              Entrar na Loja B2B
+            </a>
+          </Button>
+          <Button asChild variant="secondary">
+            <a href="https://store.ghenortrs.com.br/contato/">
+              Falar com GHENO
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AppShell() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div
       data-testid="app-shell"
       className="flex min-h-screen flex-col bg-background font-body text-primary"
     >
+      <MobileMenuOverlay onClose={() => setMenuOpen(false)} open={menuOpen} />
       <header className="border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[90rem] flex-col gap-4 px-6 py-5 sm:px-10 lg:flex-row lg:items-center lg:justify-between lg:px-16">
+        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-6 py-5 sm:px-10 lg:px-16">
           <div>
             <img
               alt="GHENO"
@@ -42,11 +198,27 @@ function AppShell() {
               Componentes de alto desempenho para MTB
             </p>
           </div>
-          <GlassPanel className="p-2">
-            <nav
-              aria-label="Principal"
-              className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3"
+          <button
+            aria-label="Abrir menu"
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface-elevated text-primary sm:hidden"
+            onClick={() => setMenuOpen(true)}
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
+              <path
+                d="M4 6h16M4 12h16M4 18h16"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </button>
+          <GlassPanel className="hidden p-2 sm:block">
+            <nav aria-label="Principal" className="flex flex-wrap gap-3">
               <NavLink className={navigationLinkClassName} to="/">
                 Início
               </NavLink>
