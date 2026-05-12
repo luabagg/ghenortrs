@@ -1,6 +1,6 @@
 # M4: Nuvemshop Commerce Bridge
 
-Status: planned
+Status: verified
 Target: 2026-05-29
 Depends on: `M2: Landing Page MVP`
 Linear milestone: `M4: Nuvemshop Commerce Bridge`

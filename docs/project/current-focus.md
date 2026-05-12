@@ -4,68 +4,56 @@ Last synced: 2026-05-12
 
 ## Active Milestone
 
-`M4: Nuvemshop Commerce Bridge`
+`M5: SEO, Analytics, Performance, And QA`
 
 ## Objective
 
-Wire commerce CTAs to Nuvemshop and track outbound commerce intent. `M3` B2B Lead Capture is verified and provides the lead path. `M2` landing page is verified and provides the marketing surface.
+Harden the launch candidate with metadata, analytics, accessibility, responsive QA, and
+performance validation. `M4` Nuvemshop Commerce Bridge is verified and provides outbound
+click tracking. `M3` B2B Lead Capture is verified and provides the lead path. `M2` landing
+page is verified and provides the marketing surface.
 
-## M2 Completion Summary
+## M4 Completion Summary
 
-All `M2` sections verified as of 2026-05-12:
+All `M4` issues code-complete as of 2026-05-12:
 
-- Responsive navigation with mobile hamburger overlay and command-palette menu
-- Hero section with real GHENO logo, MTB action image, correct CTA hierarchy
-- Proof bar (2×2 grid on mobile, 4-column on desktop) with icon-led items
-- Component families section (2-column mobile, 4-column desktop) with product images
-- Technical proof section: stats grid (+300°C / 4× compostos), checklist, rotor product shot
-- Competition proof section: 4-image horizontal carousel / 4-column desktop grid
-- B2B teaser section with value prop grid and image rail
-- Closing CTA band and 5-column footer
+- `LUA-31` Commerce CTA wiring — all CTAs verified against
+  [store-destination-map.md](./store-destination-map.md); Pastilhas → `/produtos/`,
+  Cubos/Aros/Rotores → `/contato/`, generic store CTAs → `/produtos/`
+- `LUA-32` Outbound commerce tracking — `src/lib/tracking.ts` event-delegation listener;
+  fires `outbound_commerce_click` with `section` + `destination` to `window.dataLayer`
+  and `window.gtag`; `data-section` attributes added to all key section wrappers
+- `LUA-33` Checkout boundary documentation — [checkout-boundary.md](./checkout-boundary.md)
+  documents what Nuvemshop owns, the CTA handoff contract, and deferred native commerce scope
 
-Linear tickets `LUA-19` through `LUA-26` are code-complete and verified.
-
-## M3 Progress (as of 2026-05-12)
+## M5 Progress (as of 2026-05-12)
 
 Done:
 
-- `LUA-27` B2B lead form UI — 5-field form (Empresa, CNPJ, Telefone/WhatsApp, E-mail, Necessidades) with loading/success/error/no-config states and left-column value-prop checklist
-- `LUA-28` Form validation — inline errors for required fields, CNPJ 14-digit check, Brazilian phone DDD check, email regex
-- `LUA-30` Abuse protection — honeypot field + duplicate-submit guard (button disabled during loading)
+- `LUA-34` SEO metadata — complete meta block in `index.html`: title, description,
+  keywords, robots, OG, Twitter Card, favicon (logo-square.jpg), apple-touch-icon (iteration 34)
 
 Remaining:
 
-- `LUA-29` Resend email delivery — **code-complete** (2026-05-12): `api/b2b-submit.ts` Vercel Edge Function; requires `RESEND_API_KEY` + `RESEND_TO_EMAIL` set in Vercel dashboard; set `VITE_B2B_SUBMIT_URL` to the deployed endpoint URL to activate
-
-## M3 Completion Summary
-
-All `M3` issues code-complete as of 2026-05-12:
-
-- `LUA-27` B2B lead form UI — 5-field form with loading/success/error/no-config states
-- `LUA-28` Form validation — inline errors for required fields, CNPJ, phone, email
-- `LUA-29` Resend delivery — `api/b2b-submit.ts` Vercel Edge Function using Resend REST API
-- `LUA-30` Abuse protection — honeypot field + duplicate-submit guard
-
-## Next Tasks
-
-1. Deploy to Vercel and set `RESEND_API_KEY`, `RESEND_TO_EMAIL`, `VITE_B2B_SUBMIT_URL` in Vercel dashboard.
-2. Keep [DESIGN.md](../../DESIGN.md) as the authoritative visual system.
-3. Keep [store-destination-map.md](./store-destination-map.md) tied to any CTA routing.
+- `LUA-35` Analytics events for key conversion paths
+- `LUA-36` Responsive visual QA
+- `LUA-37` Accessibility QA
+- `LUA-38` Performance pass
 
 ## Immediate Success Criteria
 
-- Valid leads are delivered via Resend when `VITE_B2B_SUBMIT_URL` is configured.
-- Missing configuration continues to fail safely to WhatsApp fallback.
-- `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run format:check` stay green.
+- `LUA-35`: Conversion events (form submit, store click) are recorded without blocking interaction.
+- `LUA-36`: No mobile horizontal overflow or incoherent text overlap.
+- `LUA-37`: Main navigation and B2B form are keyboard usable.
+- `LUA-38`: Mobile Lighthouse performance target is 85 or higher.
+- `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and
+  `npm run format:check` stay green.
 
 ## Not In Scope Yet
 
-- Nuvemshop commerce bridge (M4)
-- Analytics, SEO, and performance tuning (M5)
+- Nuvemshop native cart or checkout (M4+ scope)
 - Spline, Hyperframe, Instagram, or Bling research (M6)
 
 ## Next Milestone After This
 
-`M4: Nuvemshop Commerce Bridge`
-
-Use [m2-landing-page-mvp.md](./m2-landing-page-mvp.md) as the verified landing surface baseline while implementing `M3`.
+`M6: Deferred Integration Research`

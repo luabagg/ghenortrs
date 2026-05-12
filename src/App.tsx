@@ -476,6 +476,7 @@ function AppShell() {
       <footer
         aria-label="Rodapé"
         className="border-t border-border bg-background-soft"
+        data-section="footer"
       >
         <div className="mx-auto max-w-[90rem] px-6 py-12 sm:px-10 lg:px-16">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
@@ -806,7 +807,11 @@ function B2BMediaCard({
 
 function ComponentFamiliesSection() {
   return (
-    <section aria-labelledby="familias-heading" className="grid gap-8">
+    <section
+      aria-labelledby="familias-heading"
+      className="grid gap-8"
+      data-section="component-families"
+    >
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <MetaLabel>COMPONENTES</MetaLabel>
@@ -1080,7 +1085,10 @@ function CompetitionProofSection() {
 
 function B2BTeaserSection() {
   return (
-    <SectionBand className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
+    <SectionBand
+      className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end"
+      data-section="b2b-teaser"
+    >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-on-primary/70">
@@ -1173,6 +1181,7 @@ function ClosingCTASection() {
     <section
       aria-labelledby="fechamento-heading"
       className="rounded-panel border border-border bg-surface px-6 py-10 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:px-8 sm:py-14 lg:px-12"
+      data-section="closing-cta"
     >
       <div className="flex flex-col gap-6">
         <MetaLabel>PRONTO PARA RODAR</MetaLabel>
@@ -1225,7 +1234,7 @@ function HomePage() {
 
   return (
     <div className="flex flex-col gap-16 sm:gap-24">
-      <section>
+      <section data-section="hero">
         <div className="relative overflow-hidden rounded-panel border border-border bg-surface shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
           {HERO_SLIDES.map((slide, i) => (
             <img
@@ -1470,7 +1479,7 @@ const PRODUCT_FAMILIES = [
 
 function ComponentsPage() {
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12" data-section="componentes-page">
       <div className="flex flex-col gap-3">
         <MetaLabel>COMPONENTES</MetaLabel>
         <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
