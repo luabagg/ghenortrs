@@ -17,7 +17,7 @@ Define the minimum deployment contract for the Vite app so later milestones can 
 
 ## Environment Contract
 
-Use [.env.example](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/.env.example) as the source of truth for local setup.
+Use [.env.example](../../.env.example) as the source of truth for local setup.
 
 | Variable                 | Purpose                                                                | First consumer |
 | ------------------------ | ---------------------------------------------------------------------- | -------------- |

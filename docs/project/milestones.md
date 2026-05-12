@@ -31,16 +31,23 @@ This file is the local milestone index for execution. Use it as the default plan
 
 - `M1` is already implemented in the local codebase and was re-verified on `2026-05-11` with `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run format:check`.
 - `M2` is now unblocked locally because the missing `LUA-17` content-architecture artifact has been restored in `docs/project/landing-page-content-architecture.md`.
+- The first `M2` homepage slice is implemented: Portuguese hero, proof bar, live catalog CTA, B2B secondary path, and regression coverage.
 - `LUA-15` is now documented locally in `docs/project/storefront-audit.md`, including the live URL baseline, published brake-pad inventory shape, and the broken `Pastilhas de freio` category link.
 - `LUA-18` is now documented locally in `docs/project/store-destination-map.md`, including the current fallback behavior for unpublished store categories.
 - `LUA-17` is now documented locally in `docs/project/landing-page-content-architecture.md`, including the Portuguese homepage narrative, section order, and CTA hierarchy.
+- Linear ticket comments were synced on `2026-05-12` after the correct `Luabagg` workspace/project became visible.
 
 ## Detailed Files
 
-- [current-focus.md](/Users/luabagg/development/personal/ghenortrs/docs/project/current-focus.md)
-- [timeline.md](/Users/luabagg/development/personal/ghenortrs/docs/project/timeline.md)
-- [m0-discovery-and-project-definition.md](/Users/luabagg/development/personal/ghenortrs/docs/project/m0-discovery-and-project-definition.md)
-- [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs/docs/project/m1-vite-architecture-setup.md)
-- [landing-page-content-architecture.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/landing-page-content-architecture.md)
-- [storefront-audit.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/storefront-audit.md)
-- [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md)
+- [current-focus.md](./current-focus.md)
+- [timeline.md](./timeline.md)
+- [m0-discovery-and-project-definition.md](./m0-discovery-and-project-definition.md)
+- [m1-vite-architecture-setup.md](./m1-vite-architecture-setup.md)
+- [m2-landing-page-mvp.md](./m2-landing-page-mvp.md)
+- [m3-b2b-lead-capture.md](./m3-b2b-lead-capture.md)
+- [m4-nuvemshop-commerce-bridge.md](./m4-nuvemshop-commerce-bridge.md)
+- [m5-seo-analytics-performance-and-qa.md](./m5-seo-analytics-performance-and-qa.md)
+- [m6-deferred-integration-research.md](./m6-deferred-integration-research.md)
+- [landing-page-content-architecture.md](./landing-page-content-architecture.md)
+- [storefront-audit.md](./storefront-audit.md)
+- [store-destination-map.md](./store-destination-map.md)

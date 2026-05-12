@@ -12,11 +12,16 @@ Use the verified `M0` discovery layer and `M1` frontend baseline to start buildi
 
 ## Next Tasks
 
-1. Keep [DESIGN.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/DESIGN.md) as the authoritative visual system for the landing page.
-2. Use [landing-page-content-architecture.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/landing-page-content-architecture.md) as the source of truth for section order, Portuguese messaging, and CTA hierarchy.
+1. Keep [DESIGN.md](../../DESIGN.md) as the authoritative visual system for the landing page.
+2. Use [landing-page-content-architecture.md](./landing-page-content-architecture.md) as the source of truth for section order, Portuguese messaging, and CTA hierarchy.
 3. Treat the current Vite/React/Tailwind/shadcn shell as verified and avoid reopening setup decisions unless a defect is found.
-4. Keep [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md) tied to any CTA copy or routing work so category promises stay honest.
-5. Start `M2` by converting the existing homepage shell into the real section architecture before expanding secondary routes.
+4. Keep [store-destination-map.md](./store-destination-map.md) tied to any CTA copy or routing work so category promises stay honest.
+5. Continue `M2` by expanding the homepage beyond the completed hero/proof-bar slice into the remaining documented sections.
+
+## Recent Progress
+
+- The first `M2` homepage slice is implemented: Portuguese hero, proof bar, live catalog CTA, B2B secondary path, and regression coverage.
+- Linear issue updates are still pending because the currently connected Linear workspace does not expose the `LUA-*` issues.
 
 ## Immediate Success Criteria
 
@@ -34,6 +39,6 @@ Use the verified `M0` discovery layer and `M1` frontend baseline to start buildi
 
 ## Next Milestone After This
 
-`M2: Landing Page MVP`
+`M3: B2B Lead Capture`
 
-Use [m1-vite-architecture-setup.md](/Users/luabagg/development/personal/ghenortrs/docs/project/m1-vite-architecture-setup.md) as the verified technical baseline until a dedicated `M2` implementation brief is written.
+Use [m1-vite-architecture-setup.md](./m1-vite-architecture-setup.md) as the verified technical baseline while implementing `M2`.

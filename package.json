@@ -3,12 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@11.1.1",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 0",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"docs/**/*.md\" \"{package,package-lock,components}.json\" \"{README,DESIGN}.md\" \"index.html\" \"{vite,eslint}.config.{ts,js}\" \"tsconfig*.json\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"docs/**/*.md\" \"{package,package-lock,components}.json\" \"{README,DESIGN}.md\" \"index.html\" \"{vite,eslint}.config.{ts,js}\" \"tsconfig*.json\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"docs/**/*.md\" \"{package,components}.json\" \"pnpm-lock.yaml\" \"{README,DESIGN}.md\" \"index.html\" \"{vite,eslint}.config.{ts,js}\" \"tsconfig*.json\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"docs/**/*.md\" \"{package,components}.json\" \"pnpm-lock.yaml\" \"{README,DESIGN}.md\" \"index.html\" \"{vite,eslint}.config.{ts,js}\" \"tsconfig*.json\"",
     "preview": "vite preview",
     "test": "vitest",
     "typecheck": "tsc -b"

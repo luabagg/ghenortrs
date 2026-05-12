@@ -13,7 +13,7 @@ Build the local frontend foundation that `M2` can implement against without revi
 
 - Re-verified locally on `2026-05-11`
 - Commands: `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, `npm run format:check`
-- Current dependency note: the technical baseline is complete, but `M2` still depends on the missing local discovery outputs owned by `M0`
+- Current dependency note: the technical baseline is complete, and `M2` can now build on the verified `M0` discovery outputs.
 
 ## Linear Issues
 
@@ -76,5 +76,5 @@ Build the local frontend foundation that `M2` can implement against without revi
 
 ## Supporting Docs
 
-- [loading-baseline.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/loading-baseline.md)
-- [deployment-baseline.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/deployment-baseline.md)
+- [loading-baseline.md](./loading-baseline.md)
+- [deployment-baseline.md](./deployment-baseline.md)

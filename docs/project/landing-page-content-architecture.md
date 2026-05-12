@@ -2,7 +2,7 @@
 
 Last defined: 2026-05-11
 Scope owner: `LUA-17`
-Depends on: [DESIGN.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/DESIGN.md), [storefront-audit.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/storefront-audit.md), [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md)
+Depends on: [DESIGN.md](../../DESIGN.md), [storefront-audit.md](./storefront-audit.md), [store-destination-map.md](./store-destination-map.md)
 
 ## Goal
 
@@ -73,4 +73,4 @@ The landing page should move in a simple sequence:
 - Preserve the section order above unless user research or new store reality forces a change.
 - Reuse the existing `/componentes` and `/b2b` shell routes as internal extensions of the homepage narrative.
 - The homepage should visually prioritize `Pastilhas` as the only live commerce family without visually demoting the other families into dead ends.
-- If store taxonomy changes before `M4`, update this document and [store-destination-map.md](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/docs/project/store-destination-map.md) in the same session.
+- If store taxonomy changes before `M4`, update this document and [store-destination-map.md](./store-destination-map.md) in the same session.

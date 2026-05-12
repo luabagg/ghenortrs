@@ -10,7 +10,7 @@ Define the first GHENO loading-state contract so `M2` and `M3` can reuse the Dot
 
 ## Active Primitive
 
-- The current shared loading primitive is `DotMatrixLoader` in [src/components/ui/dot-matrix-loader.tsx](/Users/luabagg/development/personal/ghenortrs-gnhf-worktrees/you-need-to-implemen-9db8a2/src/components/ui/dot-matrix-loader.tsx).
+- The current shared loading primitive is `DotMatrixLoader` in [src/components/ui/dot-matrix-loader.tsx](../../src/components/ui/dot-matrix-loader.tsx).
 - It is already exercised on `/componentes` as the placeholder for future catalog and product-family loading.
 - The component should stay accessible: `role="status"`, a descriptive `aria-label`, and reduced-motion-safe behavior are part of the baseline.
 
