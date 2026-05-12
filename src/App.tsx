@@ -677,7 +677,15 @@ function ComponentFamiliesSection() {
   return (
     <section aria-labelledby="familias-heading" className="grid gap-8">
       <div className="flex flex-col gap-3">
-        <MetaLabel>COMPONENTES</MetaLabel>
+        <div className="flex items-center justify-between gap-4">
+          <MetaLabel>COMPONENTES</MetaLabel>
+          <a
+            className="text-xs font-extrabold uppercase tracking-[0.14em] text-secondary transition-colors hover:text-primary"
+            href="https://store.ghenortrs.com.br/produtos/"
+          >
+            Ver todos →
+          </a>
+        </div>
         <h2
           className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
           id="familias-heading"
@@ -1029,7 +1037,7 @@ function HomePage() {
 
       <section
         aria-label="Destaques operacionais"
-        className="grid gap-4 rounded-panel border border-border bg-surface-elevated px-6 py-6 sm:grid-cols-2 sm:gap-5 sm:px-8 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-4 rounded-panel border border-border bg-surface-elevated px-6 py-6 sm:gap-5 sm:px-8 lg:grid-cols-4"
       >
         <div className="flex items-start gap-4">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
