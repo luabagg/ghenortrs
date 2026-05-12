@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom';
 
@@ -183,6 +183,12 @@ function MobileMenuOverlay({
   open: boolean;
   onClose: () => void;
 }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (open) closeRef.current?.focus();
+  }, [open]);
+
   if (!open) return null;
   return (
     <div
@@ -202,6 +208,7 @@ function MobileMenuOverlay({
             gheno
           </span>
           <button
+            ref={closeRef}
             aria-label="Fechar menu"
             className="flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:bg-surface-elevated hover:text-primary"
             onClick={onClose}
@@ -413,7 +420,7 @@ function AppShell() {
                     />
                   </svg>
                 </NavLink>
-                <div className="invisible absolute left-0 top-full z-50 mt-1 min-w-[11rem] rounded-panel border border-border bg-background/95 p-1 opacity-0 shadow-lg backdrop-blur-xl transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                <div className="invisible absolute left-0 top-full z-50 mt-1 min-w-[11rem] rounded-panel border border-border bg-background/95 p-1 opacity-0 shadow-lg backdrop-blur-xl transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                   <Link
                     className="flex w-full rounded-sm px-3 py-2 text-sm text-secondary transition-colors hover:bg-surface hover:text-primary"
                     to="/componentes"
@@ -1226,6 +1233,7 @@ function HomePage() {
   const [heroIdx, setHeroIdx] = useState(0);
 
   useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const t = setInterval(
       () => setHeroIdx((i) => (i + 1) % HERO_SLIDES.length),
       6000,
@@ -1304,7 +1312,7 @@ function HomePage() {
               />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
               Controle extremo
             </p>
@@ -1329,7 +1337,7 @@ function HomePage() {
               />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
               Materiais premium
             </p>
@@ -1354,7 +1362,7 @@ function HomePage() {
               />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
               Testado em condições reais
             </p>
@@ -1379,7 +1387,7 @@ function HomePage() {
               />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
               Performance que dá confiança
             </p>

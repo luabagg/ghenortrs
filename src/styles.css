@@ -41,9 +41,20 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: clip;
   background:
     radial-gradient(circle at top left, rgb(232 20 20 / 0.22), transparent 28%),
     linear-gradient(180deg, #050505 0%, #09090a 48%, #050505 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @keyframes gnhf-dot-matrix-pulse {

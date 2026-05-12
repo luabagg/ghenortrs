@@ -13,8 +13,8 @@ Harden the launch candidate with metadata, analytics, accessibility, responsive 
 
 - `LUA-34` Add SEO metadata and social preview assets — **Done** (2026-05-12, iteration 34)
 - `LUA-35` Add analytics events for key conversion paths — **Done** (2026-05-12, iteration 37)
-- `LUA-36` Run responsive visual QA
-- `LUA-37` Run accessibility QA
+- `LUA-36` Run responsive visual QA — **Done** (2026-05-12, iteration 38)
+- `LUA-37` Run accessibility QA — **Done** (2026-05-12, iteration 38)
 - `LUA-38` Run performance pass
 
 ## Deliverables

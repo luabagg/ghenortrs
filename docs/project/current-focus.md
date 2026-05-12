@@ -36,17 +36,18 @@ Done:
   `b2b_form_submit_attempt`, `b2b_form_validation_error`, `b2b_form_submit_success`, and
   `b2b_form_submit_error` to `window.dataLayer` (GTM) and `window.gtag` (GA4) without
   blocking interaction (iteration 37)
+- `LUA-36` Responsive visual QA — `overflow-x: clip` on body prevents any element causing
+  page horizontal scroll; `min-w-0` added to all 4 proof bar text containers (iteration 38)
+- `LUA-37` Accessibility QA — `prefers-reduced-motion` guard on hero carousel auto-rotate;
+  nav dropdown now also opens on keyboard focus via `group-focus-within`; mobile menu focuses
+  close button on open via `useRef` (iteration 38)
 
 Remaining:
 
-- `LUA-36` Responsive visual QA
-- `LUA-37` Accessibility QA
 - `LUA-38` Performance pass
 
 ## Immediate Success Criteria
 
-- `LUA-36`: No mobile horizontal overflow or incoherent text overlap.
-- `LUA-37`: Main navigation and B2B form are keyboard usable.
 - `LUA-38`: Mobile Lighthouse performance target is 85 or higher.
 - `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and
   `npm run format:check` stay green.
