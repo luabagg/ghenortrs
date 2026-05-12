@@ -1,6 +1,6 @@
 # M6: Deferred Integration Research
 
-Status: planned
+Status: verified
 Target: 2026-06-12
 Depends on: `M5: SEO, Analytics, Performance, And QA`
 Linear milestone: `M6: Deferred Integration Research`
@@ -18,10 +18,14 @@ Research post-MVP integrations and advanced motion choices without blocking the 
 
 ## Deliverables
 
-- Bling inventory sync recommendation
-- Instagram display recommendation
-- Spline/Hyperframe recommendation
-- v1 animation scope decision
+- Bling inventory sync recommendation —
+  [lua-39-bling-inventory-sync-recommendation.md](./research/lua-39-bling-inventory-sync-recommendation.md)
+- Instagram display recommendation —
+  [lua-40-instagram-display-recommendation.md](./research/lua-40-instagram-display-recommendation.md)
+- Spline/Hyperframe recommendation —
+  [lua-41-spline-hyperframe-recommendation.md](./research/lua-41-spline-hyperframe-recommendation.md)
+- v1 animation scope decision —
+  [lua-42-v1-animation-scope-decision.md](./research/lua-42-v1-animation-scope-decision.md)
 
 ## Included Scope
 

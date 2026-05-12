@@ -57,20 +57,30 @@ All `M5` issues code-complete as of 2026-05-12:
 - `LUA-37` Accessibility QA — reduced-motion, keyboard nav dropdown, focus-on-open
 - `LUA-38` Performance pass — font preconnect, LCP preload, logo CLS elimination
 
-## Active Milestone
+## M6 Completion Summary
 
-`M6: Deferred Integration Research`
+All `M6` research issues completed as of 2026-05-12:
 
-## Immediate Success Criteria
+- `LUA-39` Bling inventory sync — deferred; not required for MVP; Nuvemshop handles
+  inventory; revisit only if real-time stock badges or B2B lead-to-order automation is
+  requested (see `docs/project/research/lua-39-bling-inventory-sync-recommendation.md`)
+- `LUA-40` Instagram video display — deferred; viable as v1.1 section using Basic
+  Display API + Vercel Edge Function proxy; not in v1 design
+  (see `docs/project/research/lua-40-instagram-display-recommendation.md`)
+- `LUA-41` Spline and Hyperframe — recommended against for v1; both add runtime weight
+  and reliability risk; existing CSS transitions are sufficient
+  (see `docs/project/research/lua-41-spline-hyperframe-recommendation.md`)
+- `LUA-42` v1 animation scope decision — CSS-only, no third-party animation runtime;
+  hero carousel + CSS hover transitions + reduced-motion guard cover v1 needs
+  (see `docs/project/research/lua-42-v1-animation-scope-decision.md`)
 
-- `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and
-  `npm run format:check` stay green.
+## Project Status
 
-## Not In Scope Yet
+All milestones M0–M6 are **verified**. The GHENO landing page is launch-ready.
 
-- Nuvemshop native cart or checkout (M4+ scope)
-- Spline, Hyperframe, Instagram, or Bling research (M6)
+## Post-Launch Candidates (Not In Active Scope)
 
-## Next Milestone After This
-
-`M6: Deferred Integration Research`
+- Scroll-driven section reveals (`IntersectionObserver`, no dependency, low effort)
+- Instagram feed section (Basic Display API, requires client OAuth + token rotation)
+- 3D rotor showcase (Spline self-hosted, revisit after performance budget confirmed)
+- Bling inventory sync (requires client to provision Bling OAuth credentials)

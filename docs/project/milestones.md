@@ -15,7 +15,7 @@ This file is the local milestone index for execution. Use it as the default plan
 | `M3: B2B Lead Capture`                    | `verified` | 2026-05-22 | Add the B2B form, validation states, Resend delivery, and abuse protection.                                                      |
 | `M4: Nuvemshop Commerce Bridge`           | `verified` | 2026-05-29 | Wire commerce CTAs to Nuvemshop and track outbound commerce intent.                                                              |
 | `M5: SEO, Analytics, Performance, And QA` | `verified` | 2026-06-05 | Prepare launch metadata, analytics, accessibility, responsiveness, and performance.                                              |
-| `M6: Deferred Integration Research`       | `planned`  | 2026-06-12 | Research post-MVP integrations and advanced animation decisions.                                                                 |
+| `M6: Deferred Integration Research`       | `verified` | 2026-06-12 | Research post-MVP integrations and advanced animation decisions.                                                                 |
 
 ## Dependency Order
 
