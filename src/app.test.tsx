@@ -41,10 +41,10 @@ describe('App', () => {
       'shadow-[0_20px_48px_rgba(0,0,0,0.24)]',
     );
     expect(
-      screen.getByRole('link', { name: 'Ver catálogo GHENO' }),
+      screen.getAllByRole('link', { name: 'Ver catálogo GHENO' })[0],
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getByRole('link', { name: 'Ver catálogo GHENO' }),
+      screen.getAllByRole('link', { name: 'Ver catálogo GHENO' })[0],
     ).toHaveClass('bg-accent', 'text-on-accent');
     expect(
       screen.getByRole('link', { name: 'Falar com GHENO B2B' }),
@@ -58,6 +58,146 @@ describe('App', () => {
         'Atendimento comercial para linhas sem catálogo publicado',
       ),
     ).toBeInTheDocument();
+  });
+
+  it('renders the component families section with correct CTAs', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Uma linha pensada para frenagem, rolagem e montagem com critério técnico.',
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('heading', { name: 'Pastilhas' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Cubos' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Aros' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Rotores' }),
+    ).toBeInTheDocument();
+
+    const pastilhasLinks = screen.getAllByRole('link', {
+      name: 'Ver catálogo GHENO',
+    });
+    expect(pastilhasLinks.length).toBeGreaterThanOrEqual(1);
+    expect(pastilhasLinks[0]).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/produtos/',
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'Consultar cubos' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+    expect(
+      screen.getByRole('link', { name: 'Consultar aros' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+    expect(
+      screen.getByRole('link', { name: 'Consultar rotores' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+  });
+
+  it('renders the technical proof section with correct CTA', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Engenharia que aparece no pedal, não só no catálogo.',
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('heading', { name: 'Frenagem previsível' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Controle sob pressão' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Acabamento técnico' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Montagem direta' }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('link', { name: 'Explorar componentes' }),
+    ).toHaveAttribute('href', '/componentes');
+  });
+
+  it('renders the B2B teaser section with correct CTAs', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Atendimento comercial para oficinas, revendas e distribuidores.',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Abrir frente B2B' }),
+    ).toHaveAttribute('href', '/b2b');
+    expect(
+      screen.getByRole('link', { name: 'Contato comercial' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+  });
+
+  it('renders the closing CTA section with correct destinations', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Compre o que já está pronto para rodar. Consulte o que ainda depende de atendimento.',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Consultar componentes' }),
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+  });
+
+  it('renders the footer with verified store links', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    const footer = screen.getByRole('contentinfo');
+    expect(footer).toBeInTheDocument();
+
+    expect(screen.getByRole('link', { name: 'Produtos' })).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/produtos/',
+    );
+    expect(screen.getByRole('link', { name: 'Contato' })).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/contato/',
+    );
+    expect(
+      screen.getByRole('link', { name: 'Política de Privacidade' }),
+    ).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/politica-de-privacidade/',
+    );
+    expect(screen.getByRole('link', { name: 'Instagram' })).toHaveAttribute(
+      'href',
+      'https://www.instagram.com/ghenortrs/',
+    );
   });
 
   it('renders the components route', () => {
