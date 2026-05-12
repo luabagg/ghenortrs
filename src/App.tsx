@@ -26,6 +26,135 @@ const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
     variant: isActive ? 'nav-active' : 'nav',
   });
 
+const QUICK_ACTIONS = [
+  {
+    icon: (
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M4 6h16M4 10h16M4 14h16M4 18h16"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+        />
+      </svg>
+    ),
+    title: 'Ver componentes',
+    description: 'Pastilhas, cubos, aros e rotores',
+    to: '/componentes',
+    badge: null as string | null,
+  },
+  {
+    icon: (
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+        />
+      </svg>
+    ),
+    title: 'Buscar compatibilidade',
+    description: 'Encontre a peça certa para sua bike',
+    href: 'https://store.ghenortrs.com.br/produtos/',
+    badge: null as string | null,
+  },
+  {
+    icon: (
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M13 10V3L4 14h7v7l9-11h-7z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+        />
+      </svg>
+    ),
+    title: 'Tecnologia',
+    description: 'Engenharia aplicada à performance',
+    to: '/',
+    badge: null as string | null,
+  },
+  {
+    icon: (
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+        />
+      </svg>
+    ),
+    title: 'Loja B2B',
+    description: 'Acesse nossa loja para revendas',
+    href: 'https://store.ghenortrs.com.br/produtos/',
+    badge: 'Novo',
+  },
+  {
+    icon: (
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+        />
+      </svg>
+    ),
+    title: 'Falar com a GHENO',
+    description: 'Atendimento rápido via WhatsApp',
+    href: 'https://store.ghenortrs.com.br/contato/',
+    badge: null as string | null,
+  },
+  {
+    icon: (
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+        />
+      </svg>
+    ),
+    title: 'Sobre a GHENO',
+    description: 'Nossa história e propósito',
+    to: '/',
+    badge: null as string | null,
+  },
+] as const;
+
 function MobileMenuOverlay({
   open,
   onClose,
@@ -42,20 +171,18 @@ function MobileMenuOverlay({
     >
       <button
         aria-label="Fechar menu"
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-background/70 backdrop-blur-sm"
         onClick={onClose}
         tabIndex={-1}
       />
-      <div className="absolute inset-y-0 right-0 flex w-72 flex-col gap-6 border-l border-border bg-surface-glass/90 px-6 py-8 backdrop-blur-xl">
-        <div className="flex items-center justify-between">
-          <img
-            alt="GHENO"
-            className="h-8 w-auto rounded-sm"
-            src="/brand/logo-wide.png"
-          />
+      <div className="absolute inset-x-0 top-0 flex max-h-[92dvh] flex-col overflow-hidden rounded-b-2xl border-b border-border bg-surface-glass/95 shadow-2xl backdrop-blur-2xl">
+        <div className="flex items-center justify-between px-5 py-5">
+          <span className="font-heading text-xl font-black tracking-[-0.04em] text-accent">
+            gheno
+          </span>
           <button
             aria-label="Fechar menu"
-            className="flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:text-primary"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:bg-surface-elevated hover:text-primary"
             onClick={onClose}
           >
             <svg
@@ -73,104 +200,121 @@ function MobileMenuOverlay({
             </svg>
           </button>
         </div>
-        <nav
-          aria-label="Menu principal"
-          className="flex flex-col gap-1"
-          onClick={onClose}
-        >
-          <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.18em] text-secondary/60">
-            Navegação
+
+        <div className="px-5 pb-4">
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-background/60 px-4 py-3">
+            <svg
+              className="h-4 w-4 shrink-0 text-secondary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+              />
+            </svg>
+            <span className="text-sm text-secondary/60">
+              Buscar componentes, compatibilidade, páginas...
+            </span>
+          </div>
+        </div>
+
+        <div className="overflow-y-auto px-5 pb-5">
+          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.2em] text-secondary/50">
+            Ações rápidas
           </p>
-          <NavLink
-            className={({ isActive }) =>
-              cn(
-                'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-colors',
-                isActive
-                  ? 'bg-accent/12 text-accent'
-                  : 'text-primary hover:bg-surface-elevated',
-              )
-            }
-            to="/"
+          <nav aria-label="Ações rápidas" className="flex flex-col">
+            {QUICK_ACTIONS.map((action) => {
+              const content = (
+                <>
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-secondary">
+                    {action.icon}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-primary">
+                        {action.title}
+                      </span>
+                      {'badge' in action && action.badge && (
+                        <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-background">
+                          {action.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-secondary">
+                      {action.description}
+                    </p>
+                  </div>
+                  <svg
+                    className="h-4 w-4 shrink-0 text-secondary/40"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M9 5l7 7-7 7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                    />
+                  </svg>
+                </>
+              );
+              const className =
+                'flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-surface-elevated active:bg-surface-elevated';
+              if ('to' in action && action.to) {
+                return (
+                  <Link
+                    key={action.title}
+                    className={className}
+                    onClick={onClose}
+                    to={action.to}
+                  >
+                    {content}
+                  </Link>
+                );
+              }
+              return (
+                <a
+                  key={action.title}
+                  className={className}
+                  href={'href' in action ? action.href : '#'}
+                  onClick={onClose}
+                >
+                  {content}
+                </a>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="mx-5 mb-5 flex items-center justify-between gap-4 rounded-xl border border-border bg-accent/8 px-5 py-4">
+          <div className="flex items-center gap-3">
+            <img
+              alt="GHENO"
+              className="h-7 w-auto rounded-sm"
+              src="/brand/logo-wide.png"
+            />
+            <p className="text-sm font-semibold leading-tight text-primary">
+              Componentes desenvolvidos para uso intenso e real.
+            </p>
+          </div>
+          <svg
+            className="h-4 w-4 shrink-0 text-accent"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="h-4 w-4 opacity-60"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-              />
-            </svg>
-            Início
-          </NavLink>
-          <NavLink
-            className={({ isActive }) =>
-              cn(
-                'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-colors',
-                isActive
-                  ? 'bg-accent/12 text-accent'
-                  : 'text-primary hover:bg-surface-elevated',
-              )
-            }
-            to="/componentes"
-          >
-            <svg
-              className="h-4 w-4 opacity-60"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-              />
-            </svg>
-            Componentes
-          </NavLink>
-          <NavLink
-            className={({ isActive }) =>
-              cn(
-                'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-colors',
-                isActive
-                  ? 'bg-accent/12 text-accent'
-                  : 'text-primary hover:bg-surface-elevated',
-              )
-            }
-            to="/b2b"
-          >
-            <svg
-              className="h-4 w-4 opacity-60"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-              />
-            </svg>
-            B2B
-          </NavLink>
-        </nav>
-        <div className="mt-auto flex flex-col gap-3 border-t border-border pt-6">
-          <Button asChild>
-            <a href="https://store.ghenortrs.com.br/produtos/">
-              Entrar na Loja B2B
-            </a>
-          </Button>
-          <Button asChild variant="secondary">
-            <a href="https://store.ghenortrs.com.br/contato/">
-              Falar com GHENO
-            </a>
-          </Button>
+            <path
+              d="M9 5l7 7-7 7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
         </div>
       </div>
     </div>
