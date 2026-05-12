@@ -32,17 +32,19 @@ Done:
 
 - `LUA-34` SEO metadata — complete meta block in `index.html`: title, description,
   keywords, robots, OG, Twitter Card, favicon (logo-square.jpg), apple-touch-icon (iteration 34)
+- `LUA-35` Analytics events — `trackFormEvent` added to `src/lib/tracking.ts`; fires
+  `b2b_form_submit_attempt`, `b2b_form_validation_error`, `b2b_form_submit_success`, and
+  `b2b_form_submit_error` to `window.dataLayer` (GTM) and `window.gtag` (GA4) without
+  blocking interaction (iteration 37)
 
 Remaining:
 
-- `LUA-35` Analytics events for key conversion paths
 - `LUA-36` Responsive visual QA
 - `LUA-37` Accessibility QA
 - `LUA-38` Performance pass
 
 ## Immediate Success Criteria
 
-- `LUA-35`: Conversion events (form submit, store click) are recorded without blocking interaction.
 - `LUA-36`: No mobile horizontal overflow or incoherent text overlap.
 - `LUA-37`: Main navigation and B2B form are keyboard usable.
 - `LUA-38`: Mobile Lighthouse performance target is 85 or higher.

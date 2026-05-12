@@ -5,29 +5,47 @@ interface OutboundClickPayload {
   destination: string;
 }
 
-function fireOutboundEvent(payload: OutboundClickPayload) {
+type FormEventName =
+  | 'b2b_form_submit_attempt'
+  | 'b2b_form_validation_error'
+  | 'b2b_form_submit_success'
+  | 'b2b_form_submit_error';
+
+interface FormEventPayload {
+  form: 'b2b_lead';
+  error_count?: number;
+}
+
+function fireEvent(eventName: string, payload: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
 
   const w = window as unknown as Record<string, unknown>;
 
   if (Array.isArray(w['dataLayer'])) {
-    (w['dataLayer'] as unknown[]).push({
-      event: 'outbound_commerce_click',
-      ...payload,
-    });
+    (w['dataLayer'] as unknown[]).push({ event: eventName, ...payload });
   }
 
   if (typeof w['gtag'] === 'function') {
-    (w['gtag'] as (...args: unknown[]) => void)(
-      'event',
-      'outbound_commerce_click',
-      payload,
-    );
+    (w['gtag'] as (...args: unknown[]) => void)('event', eventName, payload);
   }
 
   if (import.meta.env.DEV) {
-    console.info('[GHENO tracking] outbound_commerce_click', payload);
+    console.info(`[GHENO tracking] ${eventName}`, payload);
   }
+}
+
+function fireOutboundEvent(payload: OutboundClickPayload) {
+  fireEvent(
+    'outbound_commerce_click',
+    payload as unknown as Record<string, unknown>,
+  );
+}
+
+export function trackFormEvent(
+  eventName: FormEventName,
+  payload: FormEventPayload,
+) {
+  fireEvent(eventName, payload as unknown as Record<string, unknown>);
 }
 
 export function initOutboundTracking() {

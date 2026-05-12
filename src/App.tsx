@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { MetaLabel } from '@/components/ui/meta-label';
 import { SectionBand } from '@/components/ui/section-band';
 import { Textarea } from '@/components/ui/textarea';
+import { trackFormEvent } from '@/lib/tracking';
 import { cn } from '@/lib/utils';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -1638,9 +1639,14 @@ function B2BPage() {
       setStatus('success');
       return;
     }
+    trackFormEvent('b2b_form_submit_attempt', { form: 'b2b_lead' });
     const errs = validateB2BFields(fields);
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      trackFormEvent('b2b_form_validation_error', {
+        form: 'b2b_lead',
+        error_count: Object.keys(errs).length,
+      });
       return;
     }
     setErrors({});
@@ -1658,8 +1664,10 @@ function B2BPage() {
       });
       if (!res.ok) throw new Error('submit_failed');
       setStatus('success');
+      trackFormEvent('b2b_form_submit_success', { form: 'b2b_lead' });
     } catch {
       setStatus('error');
+      trackFormEvent('b2b_form_submit_error', { form: 'b2b_lead' });
     }
   }
 
