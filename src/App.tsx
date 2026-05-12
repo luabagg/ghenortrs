@@ -1013,11 +1013,13 @@ function B2BTeaserSection() {
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button asChild>
-            <Link to="/b2b">Abrir frente B2B</Link>
+            <a href="https://store.ghenortrs.com.br/produtos/">
+              Entrar na Loja B2B →
+            </a>
           </Button>
           <Button asChild variant="secondary">
             <a href="https://store.ghenortrs.com.br/contato/">
-              Contato comercial
+              Falar com a GHENO
             </a>
           </Button>
         </div>

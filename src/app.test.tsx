@@ -225,10 +225,10 @@ describe('App', () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Abrir frente B2B' }),
-    ).toHaveAttribute('href', '/b2b');
+      screen.getAllByRole('link', { name: 'Entrar na Loja B2B →' })[1],
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getByRole('link', { name: 'Contato comercial' }),
+      screen.getByRole('link', { name: 'Falar com a GHENO' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
     expect(
       screen.getByLabelText('Contexto visual para atendimento B2B GHENO'),
