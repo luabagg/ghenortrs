@@ -287,8 +287,9 @@ describe('App', () => {
       'https://store.ghenortrs.com.br/produtos/',
     );
     expect(
-      screen.getByRole('link', { name: 'Política de Privacidade' }),
-    ).toHaveAttribute(
+      screen.getByRole('navigation', { name: 'Links institucionais' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Privacidade' })).toHaveAttribute(
       'href',
       'https://store.ghenortrs.com.br/politica-de-privacidade/',
     );

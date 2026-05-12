@@ -410,7 +410,7 @@ function AppShell() {
         className="border-t border-border bg-background-soft"
       >
         <div className="mx-auto max-w-[90rem] px-6 py-12 sm:px-10 lg:px-16">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
             <div className="flex flex-col gap-4">
               <img
                 alt="GHENO"
@@ -517,6 +517,41 @@ function AppShell() {
 
             <div className="flex flex-col gap-4">
               <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary">
+                Institucional
+              </p>
+              <nav
+                aria-label="Links institucionais"
+                className="flex flex-col gap-2.5"
+              >
+                <Link
+                  className="text-sm text-secondary transition-colors hover:text-primary"
+                  to="/"
+                >
+                  Sobre a GHENO
+                </Link>
+                <Link
+                  className="text-sm text-secondary transition-colors hover:text-primary"
+                  to="/"
+                >
+                  Tecnologia
+                </Link>
+                <a
+                  className="text-sm text-secondary transition-colors hover:text-primary"
+                  href="https://store.ghenortrs.com.br/contato/"
+                >
+                  Contato
+                </a>
+                <a
+                  className="text-sm text-secondary transition-colors hover:text-primary"
+                  href="https://store.ghenortrs.com.br/politica-de-privacidade/"
+                >
+                  Privacidade
+                </a>
+              </nav>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary">
                 Contato
               </p>
               <nav
@@ -537,9 +572,9 @@ function AppShell() {
                 </a>
                 <a
                   className="text-sm text-secondary transition-colors hover:text-primary"
-                  href="https://store.ghenortrs.com.br/politica-de-privacidade/"
+                  href="https://www.youtube.com/@ghenortrs"
                 >
-                  Política de Privacidade
+                  YouTube
                 </a>
               </nav>
             </div>
