@@ -47,13 +47,13 @@ describe('App', () => {
       'shadow-[0_20px_48px_rgba(0,0,0,0.24)]',
     );
     expect(
-      screen.getAllByRole('link', { name: 'Ver catálogo GHENO' })[0],
+      screen.getAllByRole('link', { name: 'Entrar na Loja B2B →' })[0],
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getAllByRole('link', { name: 'Ver catálogo GHENO' })[0],
+      screen.getAllByRole('link', { name: 'Entrar na Loja B2B →' })[0],
     ).toHaveClass('bg-accent', 'text-on-accent');
     expect(
-      screen.getByRole('link', { name: 'Falar com GHENO B2B' }),
+      screen.getAllByRole('link', { name: 'Ver componentes' })[0],
     ).toHaveClass('border', 'border-strong', 'bg-background-soft');
     expect(screen.getByText('Controle extremo')).toBeInTheDocument();
     expect(screen.getByText('Materiais premium')).toBeInTheDocument();
@@ -263,7 +263,9 @@ describe('App', () => {
       screen.getByRole('link', { name: 'Acessar Loja B2B' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getByRole('link', { name: 'Ver componentes' }),
+      screen
+        .getAllByRole('link', { name: 'Ver componentes' })
+        .find((el) => el.closest('[aria-labelledby="fechamento-heading"]')),
     ).toHaveAttribute('href', '/componentes');
   });
 

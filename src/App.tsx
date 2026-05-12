@@ -949,6 +949,33 @@ function B2BTeaserSection() {
             formulário automatizado, sem espera de sistema.
           </p>
         </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            {
+              label: 'Institucional e branding',
+              desc: 'Materiais, identidade e presença de marca',
+            },
+            {
+              label: 'Preços e condições',
+              desc: 'Tabelas, margens e volumes para revendas',
+            },
+            {
+              label: 'Logística e suporte',
+              desc: 'Entrega, estoque e suporte pós-venda',
+            },
+            {
+              label: 'Garantia e troca',
+              desc: 'Políticas claras para o canal de revenda',
+            },
+          ].map(({ label, desc }) => (
+            <div key={label} className="flex flex-col gap-1">
+              <p className="text-xs font-extrabold uppercase tracking-[0.1em] text-on-primary/90">
+                {label}
+              </p>
+              <p className="text-xs leading-5 text-on-primary/60">{desc}</p>
+            </div>
+          ))}
+        </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button asChild>
             <Link to="/b2b">Abrir frente B2B</Link>
@@ -1044,11 +1071,11 @@ function HomePage() {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild>
                   <a href="https://store.ghenortrs.com.br/produtos/">
-                    Ver catálogo GHENO
+                    Entrar na Loja B2B →
                   </a>
                 </Button>
                 <Button asChild variant="secondary">
-                  <Link to="/b2b">Falar com GHENO B2B</Link>
+                  <Link to="/componentes">Ver componentes</Link>
                 </Button>
               </div>
             </div>
