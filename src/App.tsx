@@ -580,7 +580,7 @@ function ProductFamilyCard({
 }) {
   return (
     <Card className="flex flex-col justify-between gap-0 overflow-hidden bg-surface">
-      <div className="relative h-44 overflow-hidden border-b border-border bg-background-soft">
+      <div className="relative h-32 overflow-hidden border-b border-border bg-background-soft sm:h-44">
         <img
           alt={imageAlt}
           className="h-full w-full object-cover opacity-82 saturate-75"
@@ -588,7 +588,7 @@ function ProductFamilyCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/10 to-transparent" />
       </div>
-      <CardHeader>
+      <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
         <MetaLabel
           className={cn(
             !isLive &&
@@ -597,12 +597,14 @@ function ProductFamilyCard({
         >
           {eyebrow}
         </MetaLabel>
-        <h3 className="font-heading text-2xl leading-tight tracking-[-0.04em] text-primary">
+        <h3 className="font-heading text-lg leading-tight tracking-[-0.04em] text-primary sm:text-2xl">
           {title}
         </h3>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription className="hidden sm:block">
+          {description}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
         <Button
           asChild
           className="w-full"
@@ -702,7 +704,7 @@ function ComponentFamiliesSection() {
           <span className="text-secondary">Quatro pilares de performance.</span>
         </h2>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <ProductFamilyCard
           ctaHref="https://store.ghenortrs.com.br/produtos/"
           ctaLabel="Ver catálogo GHENO"
