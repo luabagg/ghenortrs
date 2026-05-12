@@ -151,6 +151,22 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Montagem direta' }),
     ).toBeInTheDocument();
+    expect(screen.getByLabelText('Imagens de teste em trilha')).toHaveClass(
+      'snap-x',
+      'overflow-x-auto',
+    );
+    expect(
+      screen.getByAltText('Rider GHENO freando em trecho técnico de downhill'),
+    ).toHaveAttribute('src', '/reference-images/trilha-frenagem-gheno.jpg');
+    expect(
+      screen.getByAltText('Rider GHENO mantendo controle em curva de trilha'),
+    ).toHaveAttribute('src', '/reference-images/trilha-controle-gheno.jpg');
+    expect(
+      screen.getByRole('heading', { name: 'Freio sob pressão' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Controle em curva' }),
+    ).toBeInTheDocument();
 
     expect(
       screen.getByRole('link', { name: 'Explorar componentes' }),

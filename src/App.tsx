@@ -213,6 +213,36 @@ function TechProofBlock({
   );
 }
 
+function TechnicalMediaCard({
+  title,
+  caption,
+  imageAlt,
+  imageSrc,
+}: {
+  title: string;
+  caption: string;
+  imageAlt: string;
+  imageSrc: string;
+}) {
+  return (
+    <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
+      <img
+        alt={imageAlt}
+        className="absolute inset-0 h-full w-full object-cover opacity-75 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+        src={imageSrc}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/54 to-transparent" />
+      <figcaption className="absolute inset-x-0 bottom-0 grid gap-2 p-5 sm:p-6">
+        <MetaLabel className="w-fit">TESTADO EM USO REAL</MetaLabel>
+        <h3 className="font-heading text-2xl leading-tight tracking-[-0.03em] text-primary">
+          {title}
+        </h3>
+        <p className="text-sm leading-6 text-primary/76">{caption}</p>
+      </figcaption>
+    </figure>
+  );
+}
+
 function ComponentFamiliesSection() {
   return (
     <section aria-labelledby="familias-heading" className="grid gap-8">
@@ -275,32 +305,53 @@ function ComponentFamiliesSection() {
 function TechnicalProofSection() {
   return (
     <section aria-labelledby="tecnica-heading" className="grid gap-8">
-      <div className="flex flex-col gap-3">
-        <MetaLabel>PROVA TÉCNICA</MetaLabel>
-        <h2
-          className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
-          id="tecnica-heading"
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-start">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <MetaLabel>PROVA TÉCNICA</MetaLabel>
+            <h2
+              className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
+              id="tecnica-heading"
+            >
+              Engenharia que aparece no pedal, não só no catálogo.
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            <TechProofBlock
+              description="Composição que entrega resposta igual na primeira descida e na centésima. Sem variação de modulação por temperatura ou ciclos repetidos."
+              title="Frenagem previsível"
+            />
+            <TechProofBlock
+              description="Modulação que não some quando a trilha esquenta. Confiança na freada mais longa, sem fade e sem perda de controle."
+              title="Controle sob pressão"
+            />
+            <TechProofBlock
+              description="Superfície limpa, espessura coerente, acomodação rápida. Sem irregularidades que comprometem o primeiro uso."
+              title="Acabamento técnico"
+            />
+            <TechProofBlock
+              description="Fabricado para montar certo. Tolerância adequada para encaixe direto, sem ajuste em campo."
+              title="Montagem direta"
+            />
+          </div>
+        </div>
+        <div
+          aria-label="Imagens de teste em trilha"
+          className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
         >
-          Engenharia que aparece no pedal, não só no catálogo.
-        </h2>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <TechProofBlock
-          description="Composição que entrega resposta igual na primeira descida e na centésima. Sem variação de modulação por temperatura ou ciclos repetidos."
-          title="Frenagem previsível"
-        />
-        <TechProofBlock
-          description="Modulação que não some quando a trilha esquenta. Confiança na freada mais longa, sem fade e sem perda de controle."
-          title="Controle sob pressão"
-        />
-        <TechProofBlock
-          description="Superfície limpa, espessura coerente, acomodação rápida. Sem irregularidades que comprometem o primeiro uso."
-          title="Acabamento técnico"
-        />
-        <TechProofBlock
-          description="Fabricado para montar certo. Tolerância adequada para encaixe direto, sem ajuste em campo."
-          title="Montagem direta"
-        />
+          <TechnicalMediaCard
+            caption="Validação em terreno solto, com frenagens repetidas e mudança rápida de apoio."
+            imageAlt="Rider GHENO freando em trecho técnico de downhill"
+            imageSrc="/reference-images/trilha-frenagem-gheno.jpg"
+            title="Freio sob pressão"
+          />
+          <TechnicalMediaCard
+            caption="Controle em curva e leitura de aderência para componente que precisa responder sem surpresa."
+            imageAlt="Rider GHENO mantendo controle em curva de trilha"
+            imageSrc="/reference-images/trilha-controle-gheno.jpg"
+            title="Controle em curva"
+          />
+        </div>
       </div>
       <div>
         <Button asChild variant="secondary">
