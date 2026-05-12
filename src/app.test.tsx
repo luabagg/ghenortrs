@@ -28,14 +28,12 @@ describe('App', () => {
       'src',
       '/reference-images/mtb-action-hero.jpg',
     );
-    expect(
-      screen.getByRole('heading', {
-        name: 'Pastilhas e componentes GHENO para quem exige frenagem, controle e consistência na trilha.',
-      }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Componentes de performance para MTB de verdade.',
+    );
     expect(
       screen.getByText(
-        'GHENO é marca para rider, oficina e lojista que precisa de componente com resposta previsível, acabamento firme e presença real no pedal.',
+        'Pastilhas, cubos, aros e rotores desenvolvidos para controle, resistência e confiança em uso intenso.',
       ),
     ).toBeInTheDocument();
     expect(
@@ -57,14 +55,11 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Falar com GHENO B2B' }),
     ).toHaveClass('border', 'border-strong', 'bg-background-soft');
-    expect(screen.getByText('Catálogo ativo no ar')).toBeInTheDocument();
+    expect(screen.getByText('Controle extremo')).toBeInTheDocument();
+    expect(screen.getByText('Materiais premium')).toBeInTheDocument();
+    expect(screen.getByText('Testado em condições reais')).toBeInTheDocument();
     expect(
-      screen.getByText('Checkout delegado à Nuvemshop'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Atendimento comercial para linhas sem catálogo publicado',
-      ),
+      screen.getByText('Performance que dá confiança'),
     ).toBeInTheDocument();
   });
 
