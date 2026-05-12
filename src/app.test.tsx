@@ -184,7 +184,7 @@ describe('App', () => {
     ).toHaveAttribute('href', '/componentes');
   });
 
-  it('renders the competition proof section with four race images', () => {
+  it('renders the competition proof section with six race images', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -214,10 +214,22 @@ describe('App', () => {
     expect(
       screen.getByAltText('Rider em trilha florestal de competição'),
     ).toHaveAttribute('src', '/reference-images/comp-dh-forest.jpg');
+    expect(
+      screen.getByAltText(
+        'Rider em trecho técnico de downhill durante competição',
+      ),
+    ).toHaveAttribute('src', '/reference-images/comp-dh-technical.jpg');
+    expect(
+      screen.getByAltText(
+        'Rider em alta velocidade em descida de competição de MTB',
+      ),
+    ).toHaveAttribute('src', '/reference-images/comp-dh-speed.jpg');
     expect(screen.getByText('Velocidade máxima')).toBeInTheDocument();
     expect(screen.getByText('Terreno rochoso')).toBeInTheDocument();
     expect(screen.getByText('Pressão de prova')).toBeInTheDocument();
     expect(screen.getByText('Controle em floresta')).toBeInTheDocument();
+    expect(screen.getByText('Trecho técnico')).toBeInTheDocument();
+    expect(screen.getByText('Descida em DH')).toBeInTheDocument();
   });
 
   it('renders the B2B teaser section with correct CTAs', () => {

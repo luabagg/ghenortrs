@@ -948,6 +948,16 @@ function CompetitionProofSection() {
       alt: 'Rider em trilha florestal de competição',
       caption: 'Controle em floresta',
     },
+    {
+      src: '/reference-images/comp-dh-technical.jpg',
+      alt: 'Rider em trecho técnico de downhill durante competição',
+      caption: 'Trecho técnico',
+    },
+    {
+      src: '/reference-images/comp-dh-speed.jpg',
+      alt: 'Rider em alta velocidade em descida de competição de MTB',
+      caption: 'Descida em DH',
+    },
   ] as const;
 
   return (
@@ -967,7 +977,7 @@ function CompetitionProofSection() {
       </div>
       <div
         aria-label="Imagens de competição MTB"
-        className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 sm:pb-0"
+        className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0"
       >
         {shots.map((shot) => (
           <figure
