@@ -1,6 +1,6 @@
 # M2: Landing Page MVP
 
-Status: active
+Status: verified
 Target: 2026-05-15
 Depends on: `M0: Discovery And Project Definition`, `M1: Vite Architecture Setup`
 Linear milestone: `M2: Landing Page MVP`

@@ -742,7 +742,7 @@ function ComponentFamiliesSection() {
             className="text-xs font-extrabold uppercase tracking-[0.14em] text-secondary transition-colors hover:text-primary"
             href="https://store.ghenortrs.com.br/produtos/"
           >
-            Ver todos →
+            Ver todos os componentes →
           </a>
         </div>
         <h2

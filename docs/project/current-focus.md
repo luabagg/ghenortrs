@@ -1,44 +1,54 @@
 # Current Focus
 
-Last synced: 2026-05-11
+Last synced: 2026-05-12
 
 ## Active Milestone
 
-`M2: Landing Page MVP`
+`M3: B2B Lead Capture`
 
 ## Objective
 
-Use the verified `M0` discovery layer and `M1` frontend baseline to start building the real landing-page experience.
+Build the B2B lead-capture form: form fields, validation, Resend email delivery, and abuse protection. The `M2` landing page is verified and provides the context surface users land on before entering the commercial path.
+
+## M2 Completion Summary
+
+All `M2` sections verified as of 2026-05-12:
+
+- Responsive navigation with mobile hamburger overlay and command-palette menu
+- Hero section with real GHENO logo, MTB action image, correct CTA hierarchy
+- Proof bar (2×2 grid on mobile, 4-column on desktop) with icon-led items
+- Component families section (2-column mobile, 4-column desktop) with product images
+- Technical proof section: stats grid (+300°C / 4× compostos), checklist, rotor product shot
+- Competition proof section: 4-image horizontal carousel / 4-column desktop grid
+- B2B teaser section with value prop grid and image rail
+- Closing CTA band and 5-column footer
+
+Linear tickets `LUA-19` through `LUA-26` are code-complete and verified.
 
 ## Next Tasks
 
-1. Keep [DESIGN.md](../../DESIGN.md) as the authoritative visual system for the landing page.
-2. Use [landing-page-content-architecture.md](./landing-page-content-architecture.md) as the source of truth for section order, Portuguese messaging, and CTA hierarchy.
-3. Treat the current Vite/React/Tailwind/shadcn shell as verified and avoid reopening setup decisions unless a defect is found.
-4. Keep [store-destination-map.md](./store-destination-map.md) tied to any CTA copy or routing work so category promises stay honest.
-5. Continue `M2` by expanding the homepage beyond the completed hero/proof-bar slice into the remaining documented sections.
-
-## Recent Progress
-
-- The first `M2` homepage slice is implemented: Portuguese hero, proof bar, live catalog CTA, B2B secondary path, and regression coverage.
-- Linear issue updates are still pending because the currently connected Linear workspace does not expose the `LUA-*` issues.
+1. Implement the B2B lead-capture form on the `/b2b` route.
+2. Add form field validation (company, CNPJ, needs/message).
+3. Wire Resend email delivery to the contact endpoint.
+4. Add basic abuse protection (rate limiting or honeypot).
+5. Keep [DESIGN.md](../../DESIGN.md) as the authoritative visual system.
+6. Keep [store-destination-map.md](./store-destination-map.md) tied to any CTA routing.
 
 ## Immediate Success Criteria
 
-- The M2 homepage implementation follows the documented section order instead of inventing structure ad hoc.
-- Consumer and commercial CTA copy stays aligned with the verified store-routing contract.
-- The M1 foundation stays green on `test`, `lint`, `typecheck`, `build`, and `format:check` while homepage work begins.
-- New landing-page implementation work uses the existing shell and primitives rather than reopening tooling or token decisions.
+- B2B form submits and delivers via Resend.
+- Form has client-side validation for required fields.
+- The `/b2b` route matches the design's visual language (no new token invention).
+- `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run format:check` stay green.
 
 ## Not In Scope Yet
 
-- Full landing page implementation
-- B2B form implementation
-- Analytics, SEO, and performance tuning
-- Spline, Hyperframe, Instagram, or Bling research
+- Nuvemshop commerce bridge (M4)
+- Analytics, SEO, and performance tuning (M5)
+- Spline, Hyperframe, Instagram, or Bling research (M6)
 
 ## Next Milestone After This
 
-`M3: B2B Lead Capture`
+`M4: Nuvemshop Commerce Bridge`
 
-Use [m1-vite-architecture-setup.md](./m1-vite-architecture-setup.md) as the verified technical baseline while implementing `M2`.
+Use [m2-landing-page-mvp.md](./m2-landing-page-mvp.md) as the verified landing surface baseline while implementing `M3`.
