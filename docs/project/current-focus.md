@@ -42,13 +42,27 @@ Done:
   nav dropdown now also opens on keyboard focus via `group-focus-within`; mobile menu focuses
   close button on open via `useRef` (iteration 38)
 
-Remaining:
+- `LUA-38` Performance pass — Google Fonts moved from render-blocking CSS `@import` to
+  `<link>` tags with preconnect hints in `index.html`; `<link rel="preload">` added for
+  the LCP hero image; `width`/`height` attributes added to all logo `<img>` elements to
+  eliminate CLS (iteration 39)
 
-- `LUA-38` Performance pass
+## M5 Completion Summary
+
+All `M5` issues code-complete as of 2026-05-12:
+
+- `LUA-34` SEO metadata — complete meta block, favicon, OG, Twitter Card
+- `LUA-35` Analytics events — `trackFormEvent` for B2B form conversion paths
+- `LUA-36` Responsive visual QA — overflow-x:clip, min-w-0 proof bar containers
+- `LUA-37` Accessibility QA — reduced-motion, keyboard nav dropdown, focus-on-open
+- `LUA-38` Performance pass — font preconnect, LCP preload, logo CLS elimination
+
+## Active Milestone
+
+`M6: Deferred Integration Research`
 
 ## Immediate Success Criteria
 
-- `LUA-38`: Mobile Lighthouse performance target is 85 or higher.
 - `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and
   `npm run format:check` stay green.
 

@@ -327,8 +327,10 @@ function MobileMenuOverlay({
             <img
               alt="GHENO"
               className="h-7 w-auto rounded-sm"
+              height={250}
               loading="lazy"
               src="/brand/logo-wide.png"
+              width={500}
             />
             <p className="text-sm font-semibold leading-tight text-primary">
               Componentes desenvolvidos para uso intenso e real.
@@ -368,7 +370,9 @@ function AppShell() {
             <img
               alt="GHENO"
               className="h-10 w-auto rounded-sm"
+              height={250}
               src="/brand/logo-wide.png"
+              width={500}
             />
             <p className="text-sm text-secondary">
               Componentes de alto desempenho para MTB
@@ -492,8 +496,10 @@ function AppShell() {
               <img
                 alt="GHENO"
                 className="h-8 w-auto rounded-sm"
+                height={250}
                 loading="lazy"
                 src="/brand/logo-wide.png"
+                width={500}
               />
               <p className="max-w-xs text-sm leading-6 text-secondary">
                 Componentes de alto desempenho para MTB. Pastilhas, cubos, aros
@@ -1265,7 +1271,9 @@ function HomePage() {
               alt="GHENO"
               className="h-12 w-auto rounded-sm"
               fetchPriority="high"
+              height={250}
               src="/brand/logo-wide.png"
+              width={500}
             />
             <div className="mt-20 max-w-4xl sm:mt-28">
               <MetaLabel>COMPONENTES MTB DE ALTO DESEMPENHO</MetaLabel>

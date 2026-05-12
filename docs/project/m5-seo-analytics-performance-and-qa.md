@@ -1,6 +1,6 @@
 # M5: SEO, Analytics, Performance, And QA
 
-Status: active
+Status: verified
 Target: 2026-06-05
 Depends on: `M2: Landing Page MVP`, `M3: B2B Lead Capture`, `M4: Nuvemshop Commerce Bridge`
 Linear milestone: `M5: SEO, Analytics, Performance, And QA`
@@ -15,7 +15,7 @@ Harden the launch candidate with metadata, analytics, accessibility, responsive 
 - `LUA-35` Add analytics events for key conversion paths — **Done** (2026-05-12, iteration 37)
 - `LUA-36` Run responsive visual QA — **Done** (2026-05-12, iteration 38)
 - `LUA-37` Run accessibility QA — **Done** (2026-05-12, iteration 38)
-- `LUA-38` Run performance pass
+- `LUA-38` Run performance pass — **Done** (2026-05-12, iteration 39)
 
 ## Deliverables
 
