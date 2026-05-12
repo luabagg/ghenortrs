@@ -1,6 +1,6 @@
 # M3: B2B Lead Capture
 
-Status: active
+Status: verified
 Target: 2026-05-22
 Depends on: `M2: Landing Page MVP`
 Linear milestone: `M3: B2B Lead Capture`
@@ -13,7 +13,7 @@ Add the commercial lead path for lojistas, oficinas, revendas, and distributors 
 
 - `LUA-27` Build B2B lead form UI — **code-complete** (2026-05-12)
 - `LUA-28` Implement B2B form validation states — **code-complete** (2026-05-12)
-- `LUA-29` Connect Resend email delivery — **blocked**: requires a server-side endpoint (`VITE_B2B_SUBMIT_URL`); form fails safely to a WhatsApp fallback when unconfigured
+- `LUA-29` Connect Resend email delivery — **code-complete** (2026-05-12): `api/b2b-submit.ts` Vercel Edge Function delivers leads via Resend REST API; requires `RESEND_API_KEY` + `RESEND_TO_EMAIL` env vars at deploy time; `VITE_B2B_SUBMIT_URL` must point to the deployed function URL
 - `LUA-30` Add basic lead form abuse protection — **code-complete** (2026-05-12)
 
 ## Deliverables
