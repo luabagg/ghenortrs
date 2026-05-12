@@ -388,15 +388,27 @@ function AppShell() {
           </button>
           <GlassPanel className="hidden p-2 sm:block">
             <nav aria-label="Principal" className="flex flex-wrap gap-3">
-              <NavLink className={navigationLinkClassName} to="/">
-                Início
-              </NavLink>
               <NavLink className={navigationLinkClassName} to="/componentes">
                 Componentes
+              </NavLink>
+              <NavLink className={navigationLinkClassName} to="/#tecnologia">
+                Tecnologia
               </NavLink>
               <NavLink className={navigationLinkClassName} to="/b2b">
                 B2B
               </NavLink>
+              <a
+                className={buttonVariants({ size: 'nav', variant: 'nav' })}
+                href="https://store.ghenortrs.com.br/"
+              >
+                Sobre a GHENO
+              </a>
+              <a
+                className={buttonVariants({ size: 'nav', variant: 'nav' })}
+                href="https://store.ghenortrs.com.br/contato/"
+              >
+                Contato
+              </a>
             </nav>
           </GlassPanel>
         </div>
@@ -757,6 +769,10 @@ function ComponentFamiliesSection() {
           Um sistema.{' '}
           <span className="text-secondary">Quatro pilares de performance.</span>
         </h2>
+        <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
+          Pastilhas com diferentes compostos, cubos de alta rolagem, aros
+          resistentes e rotores de dissipação eficiente.
+        </p>
       </div>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <ProductFamilyCard
