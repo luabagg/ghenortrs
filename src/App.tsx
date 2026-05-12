@@ -879,7 +879,7 @@ function TechnicalProofSection() {
         </div>
         <div
           aria-label="Imagens de tecnologia GHENO"
-          className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-1"
+          className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
         >
           <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
             <img
@@ -902,6 +902,24 @@ function TechnicalProofSection() {
             imageSrc="/reference-images/trilha-frenagem-gheno.jpg"
             title="Testado onde importa."
           />
+          <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:col-span-2 sm:min-w-0 sm:min-h-56">
+            <img
+              alt="Pinça de freio Hayes Dominion A4 — produto compatível com pastilhas GHENO"
+              className="absolute inset-0 h-full w-full object-cover object-center opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="lazy"
+              src="/reference-images/hayes-a4-caliper.jpg"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/30 to-transparent" />
+            <figcaption className="absolute inset-y-0 left-0 flex flex-col justify-end p-5 sm:justify-center">
+              <MetaLabel className="mb-2 w-fit">COMPATIBILIDADE</MetaLabel>
+              <h3 className="font-heading text-2xl leading-tight tracking-[-0.03em] text-primary">
+                Hayes Dominion A4.
+              </h3>
+              <p className="mt-1 text-sm text-primary/76">
+                Pastilhas GHENO com encaixe direto.
+              </p>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>

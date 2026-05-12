@@ -170,6 +170,14 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Testado onde importa.' }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByAltText(
+        'Pinça de freio Hayes Dominion A4 — produto compatível com pastilhas GHENO',
+      ),
+    ).toHaveAttribute('src', '/reference-images/hayes-a4-caliper.jpg');
+    expect(
+      screen.getByRole('heading', { name: 'Hayes Dominion A4.' }),
+    ).toBeInTheDocument();
 
     expect(
       screen.getByRole('link', { name: 'Explorar componentes' }),
