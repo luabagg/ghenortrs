@@ -173,6 +173,42 @@ describe('App', () => {
     ).toHaveAttribute('href', '/componentes');
   });
 
+  it('renders the competition proof section with four race images', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Componentes desenvolvidos para aguentar o que a prova cobra.',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Imagens de competição MTB')).toHaveClass(
+      'snap-x',
+      'overflow-x-auto',
+    );
+    expect(
+      screen.getByAltText(
+        'Rider em alta velocidade durante prova de DH com público ao fundo',
+      ),
+    ).toHaveAttribute('src', '/reference-images/comp-panned-action.jpg');
+    expect(
+      screen.getByAltText('Rider descendo trecho rochoso em prova de downhill'),
+    ).toHaveAttribute('src', '/reference-images/comp-dh-rocky.jpg');
+    expect(
+      screen.getByAltText('Rider em prova de DH com espectadores acompanhando'),
+    ).toHaveAttribute('src', '/reference-images/comp-dh-crowd.jpg');
+    expect(
+      screen.getByAltText('Rider em trilha florestal de competição'),
+    ).toHaveAttribute('src', '/reference-images/comp-dh-forest.jpg');
+    expect(screen.getByText('Velocidade máxima')).toBeInTheDocument();
+    expect(screen.getByText('Terreno rochoso')).toBeInTheDocument();
+    expect(screen.getByText('Pressão de prova')).toBeInTheDocument();
+    expect(screen.getByText('Controle em floresta')).toBeInTheDocument();
+  });
+
   it('renders the B2B teaser section with correct CTAs', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
