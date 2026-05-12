@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { App } from './App';
@@ -322,7 +322,7 @@ describe('App', () => {
     );
   });
 
-  it('renders the B2B route', () => {
+  it('renders the B2B route with full lead form', () => {
     render(
       <MemoryRouter initialEntries={['/b2b']}>
         <App />
@@ -336,6 +336,11 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
     expect(screen.getByText('CNPJ')).toHaveAttribute('for', 'b2b-cnpj');
+    expect(screen.getByText('Telefone / WhatsApp')).toHaveAttribute(
+      'for',
+      'b2b-phone',
+    );
+    expect(screen.getByText('E-mail')).toHaveAttribute('for', 'b2b-email');
     expect(screen.getByText('Necessidades comerciais')).toHaveAttribute(
       'for',
       'b2b-needs',
@@ -345,13 +350,47 @@ describe('App', () => {
       'Conte o mix, volume e tipo de atendimento.',
     );
     expect(
-      screen.getByRole('heading', { name: 'Atendimento comercial direto' }),
+      screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
     ).toBeInTheDocument();
+    expect(screen.getByText('Pré-cadastro comercial')).toBeInTheDocument();
+  });
+
+  it('shows inline validation errors when B2B form is submitted empty', () => {
+    render(
+      <MemoryRouter initialEntries={['/b2b']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
+    );
+
     expect(
-      screen.getByText(
-        'Leitura rápida para operações que precisam comprar com contexto técnico antes do M3.',
-      ),
+      screen.getByText('Nome da empresa é obrigatório.'),
     ).toBeInTheDocument();
+    expect(screen.getByText('CNPJ é obrigatório.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Telefone/WhatsApp é obrigatório.'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('E-mail é obrigatório.')).toBeInTheDocument();
+  });
+
+  it('shows CNPJ digit-count error for short CNPJ input', () => {
+    render(
+      <MemoryRouter initialEntries={['/b2b']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText('CNPJ'), {
+      target: { value: '12.345.678/0001-9' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
+    );
+
+    expect(screen.getByText('CNPJ deve ter 14 dígitos.')).toBeInTheDocument();
   });
 
   it('renders the not found route', () => {
