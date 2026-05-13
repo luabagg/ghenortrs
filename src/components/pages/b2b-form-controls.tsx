@@ -1,5 +1,6 @@
 import { type ComponentProps } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,6 +10,26 @@ import {
   type B2BFields,
   type SubmitStatus,
 } from './b2b-form-types';
+
+type B2BHoneypotFieldProps = {
+  onChange: (value: string) => void;
+  value: string;
+};
+
+export function B2BHoneypotField({ onChange, value }: B2BHoneypotFieldProps) {
+  return (
+    <input
+      aria-hidden="true"
+      autoComplete="off"
+      className="pointer-events-none absolute -left-[9999px] opacity-0"
+      name="website"
+      tabIndex={-1}
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  );
+}
 
 type B2BInputFieldProps = {
   error?: string;
@@ -115,5 +136,13 @@ export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
         </p>
       )}
     </div>
+  );
+}
+
+export function B2BSubmitButton({ status }: { status: SubmitStatus }) {
+  return (
+    <Button disabled={status === 'loading'} type="submit">
+      {status === 'loading' ? 'Enviando...' : 'Enviar pré-cadastro'}
+    </Button>
   );
 }

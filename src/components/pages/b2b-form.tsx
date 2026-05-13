@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardDescription,
@@ -7,7 +6,9 @@ import {
 } from '@/components/ui/card';
 import {
   B2BFormStatusAlert,
+  B2BHoneypotField,
   B2BInputField,
+  B2BSubmitButton,
   B2BTextareaField,
 } from '@/components/pages/b2b-form-controls';
 import {
@@ -45,17 +46,7 @@ export function B2BForm({
         </CardDescription>
       </CardHeader>
       <form className="grid gap-4 px-6 pb-6" noValidate onSubmit={onSubmit}>
-        {/* honeypot — bots fill this; humans don't see it */}
-        <input
-          aria-hidden="true"
-          autoComplete="off"
-          className="pointer-events-none absolute -left-[9999px] opacity-0"
-          name="website"
-          tabIndex={-1}
-          type="text"
-          value={honeypot}
-          onChange={(e) => onHoneypotChange(e.target.value)}
-        />
+        <B2BHoneypotField value={honeypot} onChange={onHoneypotChange} />
         <B2BInputField
           error={errors.empresa}
           field="empresa"
@@ -102,9 +93,7 @@ export function B2BForm({
           onFieldChange={onFieldChange}
         />
         <B2BFormStatusAlert status={status} />
-        <Button disabled={status === 'loading'} type="submit">
-          {status === 'loading' ? 'Enviando...' : 'Enviar pré-cadastro'}
-        </Button>
+        <B2BSubmitButton status={status} />
       </form>
     </Card>
   );
