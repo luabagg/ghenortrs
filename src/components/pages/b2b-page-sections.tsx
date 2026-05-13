@@ -1,3 +1,4 @@
+import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -69,6 +70,19 @@ export function B2BBenefitsSection() {
   );
 }
 
+export function B2BLeadIntroSection() {
+  return (
+    <div className="grid gap-6">
+      <PageIntro
+        description="Converse com nossa equipe sobre mix, condições e disponibilidade. Sem formulário automatizado — atendimento direto."
+        eyebrow="B2B"
+        title="Atendimento para lojistas e oficinas"
+      />
+      <B2BBenefitsSection />
+    </div>
+  );
+}
+
 export function B2BSuccessCard() {
   return (
     <Card className="bg-surface px-0 py-0">
@@ -90,5 +104,21 @@ export function B2BSuccessCard() {
         </Button>
       </div>
     </Card>
+  );
+}
+
+export function B2BSuccessSection() {
+  return (
+    <section
+      aria-live="polite"
+      className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]"
+    >
+      <PageIntro
+        description="Entraremos em contato em breve para alinhar mix, condições e atendimento."
+        eyebrow="B2B"
+        title="Atendimento para lojistas e oficinas"
+      />
+      <B2BSuccessCard />
+    </section>
   );
 }
