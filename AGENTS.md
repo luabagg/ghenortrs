@@ -6,30 +6,97 @@ After completing work tied to Linear issues or milestones, update the relevant L
 <claude-mem-context>
 # Memory Context
 
-# [ghenortrs] recent context, 2026-05-12 3:21pm GMT-3
+# [ghenortrs] recent context, 2026-05-13 12:34am GMT-3
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 12 obs (3,643t read) | 82,217t work | 96% savings
+Stats: 50 obs (19,487t read) | 1,405,431t work | 99% savings
 
-### May 11, 2026
-243 11:42a ✅ code-review-graph MCP and AGENTS.md setup for ghenortrs
-244 11:58a 🔵 code-review-graph does not support --tools flag on serve
-245 11:59a 🔵 ghenortrs project structure and design identity
-246 12:00p 🔵 ghenortrs has 7 HTML prototype iterations in temp/
-247 " ✅ AGENTS.md enriched with project context and graph update instructions
-248 12:01p ✅ AGENTS.md committed to ghenortrs main branch
 ### May 12, 2026
-342 1:18p 🚨 TanStack Supply Chain Compromise Check + Renovate Policy Hardening
-343 " 🔵 ghenortrs Has No TanStack Dependencies
-344 " 🔵 ghenortrs Confirmed Clear of All TanStack Compromise Indicators
-345 1:19p 🔵 pnpm Not Installed; Corepack Fails Due to No Network Access
-346 " 🔵 pnpm 11.1.1 Available via Corepack with Network Access
-347 1:20p ✅ pnpm Migration Started: packageManager Pinned and pnpm-workspace.yaml Created
+447 6:17p 🔵 app.test.tsx Has Two Describe Blocks — Old Tests Still Present
+448 " 🔵 Project Tech Stack and Tooling Confirmed
+449 " 🔵 .env.example Has No Resend API Key Placeholder Yet
+450 " 🔵 UI Component Library — 9 Components Available for M3 Form
+452 6:21p 🔵 M2 Landing Page Complete - Linear MCP Unavailable in Autonomous Sessions
+453 " 🔵 Project Document Architecture for ghenortrs Landing Page
+454 " 🔵 Design Assets Inventory in tmp/ Directory
+455 " 🔵 ghenortrs Source Tree Structure
+456 6:22p 🔵 Full App.tsx Architecture - All M2 Landing Page Sections Implemented
+457 " 🔵 Mobile Homepage Design Reference Loaded for Implementation Comparison
+S41 Observer session monitoring autonomous gnhf iteration 14 finalizing GHENO MTB landing page mobile improvements (May 12 at 6:23 PM)
+S40 Iteration 11: Design fidelity improvements to GHENO MTB landing page — mobile-menu.png reviewed, hero headline and proof bar upgraded to match design reference (May 12 at 6:23 PM)
+459 6:24p 🔵 GHENO M2 Landing Page - Complete Implementation State (Iterations 1-13)
+460 " 🔵 Linear MCP Confirmed Absent in Iteration 14 Session
+461 6:26p 🔵 GHENO Project File Structure - src/ is Single-File App
+462 " 🔵 Design Reference tmp/mobile-homepage.png Reviewed in Iteration 14
+S42 GHENO MTB Landing Page — Autonomous Implementation Observer (Iterations 1–43, M0–M6 Complete) (May 12 at 6:27 PM)
+469 7:00p 🔵 M2 Landing Page Complete - Linear MCP Unavailable in Autonomous Sessions
+470 " 🔵 GHENO Landing Page - Complete M2 Implementation State After 21 Iterations
+471 " 🔵 Linear MCP Confirmed Absent in Iteration 10 Autonomous Session
+472 " 🔵 GHENO M2 Landing Page - Complete Implementation State (Iterations 1-18)
+473 " 🔵 GHENO Landing Page M2 - Complete Implementation History (Iterations 1-20)
+474 " 🔵 GHENO M2 Landing Page: Full Iteration History and Current State
+475 " 🔵 Linear MCP OAuth Unavailable in Autonomous gnhf Sessions
+476 " 🔵 Component Directory Structure Only Has ui/ Subdirectory
+477 " 🔵 Landing Page Has Flat Component Architecture - All Sections in App.tsx
+478 7:01p 🔵 Project Structure: Monolithic App.tsx with All Components Inlined
+479 " 🟣 GHENO Landing Page Full Implementation - src/App.tsx Architecture
+480 " 🔵 tmp/ Directory Contains Unused Reference Images Not Yet Used in Implementation
+481 " 🔵 App.tsx is 1,271 Lines with All Components Defined Inline
+482 " 🔵 App.tsx Full Structure Mapped - 1335 Lines, All Sections Inline
+483 " 🔵 GHENO Landing Page Project: Full Iteration History (M0–M6 Complete)
+484 " 🔵 Linear MCP Unavailable in All Autonomous gnhf Sessions
+485 " 🟣 Vercel Edge Function for B2B Lead Capture (LUA-29)
+486 " 🟣 Outbound Click Tracking and Form Analytics (M4/M5)
+487 " 🟣 Performance and Accessibility Hardening (M5 LUA-36/37/38)
+488 " 🔵 Production Build Clean at 301KB JS / 38KB CSS
+489 " 🔵 GHENO Landing Page - Complete src/App.tsx Architecture
+490 " 🔵 GHENO Landing Page: Complete Component Architecture in src/App.tsx
+491 " 🔵 Optimized Reference Image Inventory in public/reference-images/
+492 " 🔵 Public Asset Inventory - 14 Reference Images + 1 Logo Serving Landing Page
+493 " 🔵 Design Reference Loaded: mobile-homepage.png Shows Complete Layout Requirements
+494 " 🔵 Linear MCP Confirmed Unavailable in Iteration 20
+495 " 🔵 Design Reference - Mobile Homepage PNG Analyzed for Iteration 21
+496 " 🔵 Unused Reference Images Remaining in tmp/reference_images/
+497 " 🔵 Mobile Homepage Design Mockup Reviewed - Implementation Matches Design Intent
+498 " 🔵 Production Build Clean at 303KB JS / 39KB CSS at Start of Iteration 22
+499 " 🔵 Linear MCP Confirmed Absent in Iteration 43
+500 " 🔵 Production Build Verified Clean at Iteration 43 Baseline
+501 " 🔵 Mobile Menu Design Reference Inspected in Iteration 20
+502 7:02p 🔵 Public Reference Images Inventory - 14 Optimized Assets Currently Deployed
+503 " 🔵 Iteration 43 Halted: Project Complete, Linear MCP Blocks Final Ticket Closure
+504 " 🔵 Design Reference Files Confirmed - 4 PNG Design Specs in tmp/
+S43 GHENO MTB landing page — iteration 21 design fidelity audit and B2B CTA correction (May 12 at 7:02 PM)
+S44 GHENO M2 Landing Page - Mobile hamburger navigation implemented in iteration 11 (May 12 at 7:02 PM)
+S45 Observer session monitoring GHENO MTB landing page implementation — iteration 19 design fidelity review and fixes (May 12 at 7:03 PM)
+**Investigated**: - Full App.tsx (1,271 lines) reviewed across multiple read windows (lines 100-300, 600-900, 900-1200+)
+    - Design references mobile-homepage.png and mobile-menu.png were inspected by the primary session agent
+    - app.test.tsx (366 lines) reviewed for existing test coverage
+    - All 9 homepage sections verified: Hero, ProofBar, ComponentFamilies, TechnicalProof, CompetitionCarousel, B2BTeaserSection, ClosingCTA, Footer, MobileMenuOverlay
+    - Build pipeline: tsc + vite build, vitest, ESLint, Prettier
 
-Access 82k tokens of past work via get_observations([IDs]) or mem-search skill.
+**Learned**: - Hero CTA buttons had been wrong since iteration 1: design shows "ENTRAR NA LOJA B2B →" and "VER COMPONENTES" but code had "Ver catálogo GHENO" (primary → store) and "Falar com GHENO B2B" (secondary → /b2b) — never caught in 18 previous design-fidelity passes
+    - Duplicate link names across sections ("Ver componentes" in hero + ClosingCTA) causes getByRole to throw "multiple elements found" — test selectors must use getAllByRole[0] or closest() ancestor query
+    - B2B section was missing the 4-column value proposition grid visible in the desktop design (Institucional e branding, Preços e condições, Logística e suporte, Garantia e troca)
+    - Linear MCP consistently unavailable in autonomous gnhf sessions due to OAuth token expiry — LUA-19, LUA-23, LUA-25, LUA-26 remain Todo and need manual update in a user-present session
+    - QUICK_ACTIONS must remain module-level const (not inside component) for ESLint/Prettier compliance
+
+**Completed**: - Iteration 19 complete: two design fidelity gaps fixed:
+      1. Hero CTA buttons updated: primary → "Entrar na Loja B2B →" (href: store URL), secondary → "Ver componentes" (to: /componentes)
+      2. B2B section: added 4-column value prop grid above CTAs with items: Institucional e branding, Preços e condições, Logística e suporte, Garantia e troca
+    - Regression tests updated: hero CTA assertions use new labels, "Ver componentes" disambiguation handled via getAllByRole[0] and closest() ancestor selector
+    - Prettier formatting fixed on both src/App.tsx and src/app.test.tsx
+    - Final state: 17/17 tests pass, build clean (302.23KB JS, 38.94KB CSS, 233ms), ESLint no issues, Prettier clean
+    - StructuredOutput emitted with success=true
+
+**Next Steps**: - Linear ticket updates (LUA-19, LUA-23, LUA-25, LUA-26) remain blocked — require user-present session for OAuth re-authentication with Linear MCP
+    - No further code changes planned; all M2 landing page sections are complete and verified against design references
+    - Session appears concluded — gnhf orchestrator received success=true from iteration 19
+
+
+Access 1405k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
 <!-- code-review-graph MCP tools -->
