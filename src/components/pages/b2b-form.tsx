@@ -1,5 +1,3 @@
-import { type ChangeEvent, type FormEvent } from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -7,35 +5,26 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-
-export type B2BFields = {
-  empresa: string;
-  cnpj: string;
-  telefone: string;
-  email: string;
-  mensagem: string;
-};
-
-export type SubmitStatus =
-  | 'idle'
-  | 'loading'
-  | 'success'
-  | 'error'
-  | 'no-config';
+import {
+  B2BFormStatusAlert,
+  B2BInputField,
+  B2BTextareaField,
+} from '@/components/pages/b2b-form-controls';
+import {
+  type B2BFieldChangeHandler,
+  type B2BFields,
+  type B2BSubmitHandler,
+  type SubmitStatus,
+} from '@/components/pages/b2b-form-types';
 
 type B2BFormProps = {
   errors: Partial<B2BFields>;
   fields: B2BFields;
   honeypot: string;
   status: SubmitStatus;
-  onFieldChange: (
-    key: keyof B2BFields,
-  ) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onFieldChange: B2BFieldChangeHandler;
   onHoneypotChange: (value: string) => void;
-  onSubmit: (e: FormEvent) => void;
+  onSubmit: B2BSubmitHandler;
 };
 
 export function B2BForm({
@@ -67,124 +56,52 @@ export function B2BForm({
           value={honeypot}
           onChange={(e) => onHoneypotChange(e.target.value)}
         />
-        <div className="grid gap-2">
-          <Label htmlFor="b2b-company">Empresa</Label>
-          <Input
-            aria-describedby={errors.empresa ? 'b2b-company-error' : undefined}
-            aria-invalid={!!errors.empresa}
-            id="b2b-company"
-            placeholder="Nome da empresa"
-            value={fields.empresa}
-            onChange={onFieldChange('empresa')}
-          />
-          {errors.empresa && (
-            <p
-              className="text-xs text-accent"
-              id="b2b-company-error"
-              role="alert"
-            >
-              {errors.empresa}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="b2b-cnpj">CNPJ</Label>
-          <Input
-            aria-describedby={errors.cnpj ? 'b2b-cnpj-error' : undefined}
-            aria-invalid={!!errors.cnpj}
-            id="b2b-cnpj"
-            placeholder="00.000.000/0000-00"
-            value={fields.cnpj}
-            onChange={onFieldChange('cnpj')}
-          />
-          {errors.cnpj && (
-            <p className="text-xs text-accent" id="b2b-cnpj-error" role="alert">
-              {errors.cnpj}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="b2b-phone">Telefone / WhatsApp</Label>
-          <Input
-            aria-describedby={errors.telefone ? 'b2b-phone-error' : undefined}
-            aria-invalid={!!errors.telefone}
-            id="b2b-phone"
-            placeholder="(11) 99999-9999"
-            type="tel"
-            value={fields.telefone}
-            onChange={onFieldChange('telefone')}
-          />
-          {errors.telefone && (
-            <p
-              className="text-xs text-accent"
-              id="b2b-phone-error"
-              role="alert"
-            >
-              {errors.telefone}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="b2b-email">E-mail</Label>
-          <Input
-            aria-describedby={errors.email ? 'b2b-email-error' : undefined}
-            aria-invalid={!!errors.email}
-            id="b2b-email"
-            placeholder="contato@empresa.com.br"
-            type="email"
-            value={fields.email}
-            onChange={onFieldChange('email')}
-          />
-          {errors.email && (
-            <p
-              className="text-xs text-accent"
-              id="b2b-email-error"
-              role="alert"
-            >
-              {errors.email}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="b2b-needs">Necessidades comerciais</Label>
-          <Textarea
-            id="b2b-needs"
-            placeholder="Conte o mix, volume e tipo de atendimento."
-            rows={4}
-            value={fields.mensagem}
-            onChange={onFieldChange('mensagem')}
-          />
-        </div>
-        {(status === 'no-config' || status === 'error') && (
-          <div
-            className="rounded-panel border border-border bg-surface-elevated px-4 py-3"
-            role="alert"
-          >
-            {status === 'no-config' ? (
-              <p className="text-sm text-secondary">
-                Formulário ainda não configurado.{' '}
-                <a
-                  className="font-semibold text-primary underline"
-                  href="https://store.ghenortrs.com.br/contato/"
-                >
-                  Fale via WhatsApp
-                </a>{' '}
-                para atendimento imediato.
-              </p>
-            ) : (
-              <p className="text-sm text-secondary">
-                Erro ao enviar. Tente novamente ou{' '}
-                <a
-                  className="font-semibold text-primary underline"
-                  href="https://store.ghenortrs.com.br/contato/"
-                >
-                  contate pelo WhatsApp
-                </a>
-                .
-              </p>
-            )}
-          </div>
-        )}
+        <B2BInputField
+          error={errors.empresa}
+          field="empresa"
+          id="b2b-company"
+          label="Empresa"
+          placeholder="Nome da empresa"
+          value={fields.empresa}
+          onFieldChange={onFieldChange}
+        />
+        <B2BInputField
+          error={errors.cnpj}
+          field="cnpj"
+          id="b2b-cnpj"
+          label="CNPJ"
+          placeholder="00.000.000/0000-00"
+          value={fields.cnpj}
+          onFieldChange={onFieldChange}
+        />
+        <B2BInputField
+          error={errors.telefone}
+          field="telefone"
+          id="b2b-phone"
+          label="Telefone / WhatsApp"
+          placeholder="(11) 99999-9999"
+          type="tel"
+          value={fields.telefone}
+          onFieldChange={onFieldChange}
+        />
+        <B2BInputField
+          error={errors.email}
+          field="email"
+          id="b2b-email"
+          label="E-mail"
+          placeholder="contato@empresa.com.br"
+          type="email"
+          value={fields.email}
+          onFieldChange={onFieldChange}
+        />
+        <B2BTextareaField
+          id="b2b-needs"
+          label="Necessidades comerciais"
+          placeholder="Conte o mix, volume e tipo de atendimento."
+          value={fields.mensagem}
+          onFieldChange={onFieldChange}
+        />
+        <B2BFormStatusAlert status={status} />
         <Button disabled={status === 'loading'} type="submit">
           {status === 'loading' ? 'Enviando...' : 'Enviar pré-cadastro'}
         </Button>

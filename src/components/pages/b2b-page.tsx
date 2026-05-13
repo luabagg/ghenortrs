@@ -1,15 +1,15 @@
 import { type ChangeEvent, type FormEvent, useState } from 'react';
 
 import { PageIntro } from '@/components/landing/section-cards';
-import {
-  B2BForm,
-  type B2BFields,
-  type SubmitStatus,
-} from '@/components/pages/b2b-form';
+import { B2BForm } from '@/components/pages/b2b-form';
 import {
   B2BBenefitsSection,
   B2BSuccessCard,
 } from '@/components/pages/b2b-page-sections';
+import {
+  type B2BFields,
+  type SubmitStatus,
+} from '@/components/pages/b2b-form-types';
 import { trackFormEvent } from '@/lib/tracking';
 
 function validateB2BFields(f: B2BFields): Partial<B2BFields> {
