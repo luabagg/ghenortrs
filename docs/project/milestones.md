@@ -1,7 +1,7 @@
 # GHENO Milestones
 
 Source: Linear project `Gheno rotors`
-Last synced: 2026-05-11
+Last synced: 2026-05-13
 
 This file is the local milestone index for execution. Use it as the default planning source unless it is explicitly stale.
 
@@ -29,13 +29,13 @@ This file is the local milestone index for execution. Use it as the default plan
 
 ## Status Notes
 
-- `M1` is already implemented in the local codebase and was re-verified on `2026-05-11` with `npm run test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run format:check`.
-- `M2` is now unblocked locally because the missing `LUA-17` content-architecture artifact has been restored in `docs/project/landing-page-content-architecture.md`.
-- The first `M2` homepage slice is implemented: Portuguese hero, proof bar, live catalog CTA, B2B secondary path, and regression coverage.
-- `LUA-15` is now documented locally in `docs/project/storefront-audit.md`, including the live URL baseline, published brake-pad inventory shape, and the broken `Pastilhas de freio` category link.
-- `LUA-18` is now documented locally in `docs/project/store-destination-map.md`, including the current fallback behavior for unpublished store categories.
-- `LUA-17` is now documented locally in `docs/project/landing-page-content-architecture.md`, including the Portuguese homepage narrative, section order, and CTA hierarchy.
-- Linear ticket comments were synced on `2026-05-12` after the correct `Luabagg` workspace/project became visible.
+- All planned milestones `M0` through `M6` are verified locally and synced to Linear as of `2026-05-13`.
+- Linear has no remaining `Backlog` or `Todo` issues in project `Gheno rotors`.
+- `M2` landing page implementation is complete: responsive navigation, hero, proof bar, component showcase, technology proof, competition proof, B2B teaser, final CTA, and footer.
+- `M3` B2B lead capture is complete: form UI, validation states, Resend Edge Function delivery, and basic abuse protection.
+- `M4` commerce bridge is complete: CTA destinations, outbound commerce tracking, and checkout boundary documentation.
+- `M5` launch hardening is complete: SEO metadata, analytics events, responsive QA, accessibility QA, and performance pass.
+- `M6` deferred research is complete: Bling, Instagram, Spline/Hyperframe, and v1 animation-scope recommendations are documented.
 
 ## Detailed Files
 
