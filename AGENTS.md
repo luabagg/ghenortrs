@@ -6,17 +6,16 @@ After completing work tied to Linear issues or milestones, update the relevant L
 <claude-mem-context>
 # Memory Context
 
-# [ghenortrs] recent context, 2026-05-13 1:00am GMT-3
+# [ghenortrs] recent context, 2026-05-13 1:04am GMT-3
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (19,487t read) | 1,405,431t work | 99% savings
+Stats: 50 obs (19,572t read) | 1,407,125t work | 99% savings
 
 ### May 12, 2026
-447 6:17p 🔵 app.test.tsx Has Two Describe Blocks — Old Tests Still Present
-448 " 🔵 Project Tech Stack and Tooling Confirmed
+448 6:17p 🔵 Project Tech Stack and Tooling Confirmed
 449 " 🔵 .env.example Has No Resend API Key Placeholder Yet
 450 " 🔵 UI Component Library — 9 Components Available for M3 Form
 452 6:21p 🔵 M2 Landing Page Complete - Linear MCP Unavailable in Autonomous Sessions
@@ -71,32 +70,10 @@ S42 GHENO MTB Landing Page — Autonomous Implementation Observer (Iterations 1�
 S43 GHENO MTB landing page — iteration 21 design fidelity audit and B2B CTA correction (May 12 at 7:02 PM)
 S44 GHENO M2 Landing Page - Mobile hamburger navigation implemented in iteration 11 (May 12 at 7:02 PM)
 S45 Observer session monitoring GHENO MTB landing page implementation — iteration 19 design fidelity review and fixes (May 12 at 7:03 PM)
-**Investigated**: - Full App.tsx (1,271 lines) reviewed across multiple read windows (lines 100-300, 600-900, 900-1200+)
-    - Design references mobile-homepage.png and mobile-menu.png were inspected by the primary session agent
-    - app.test.tsx (366 lines) reviewed for existing test coverage
-    - All 9 homepage sections verified: Hero, ProofBar, ComponentFamilies, TechnicalProof, CompetitionCarousel, B2BTeaserSection, ClosingCTA, Footer, MobileMenuOverlay
-    - Build pipeline: tsc + vite build, vitest, ESLint, Prettier
+### May 13, 2026
+505 1:03a 🔵 App.tsx Refactor Progress: 3 Iterations Complete, ~540 Lines Removed
 
-**Learned**: - Hero CTA buttons had been wrong since iteration 1: design shows "ENTRAR NA LOJA B2B →" and "VER COMPONENTES" but code had "Ver catálogo GHENO" (primary → store) and "Falar com GHENO B2B" (secondary → /b2b) — never caught in 18 previous design-fidelity passes
-    - Duplicate link names across sections ("Ver componentes" in hero + ClosingCTA) causes getByRole to throw "multiple elements found" — test selectors must use getAllByRole[0] or closest() ancestor query
-    - B2B section was missing the 4-column value proposition grid visible in the desktop design (Institucional e branding, Preços e condições, Logística e suporte, Garantia e troca)
-    - Linear MCP consistently unavailable in autonomous gnhf sessions due to OAuth token expiry — LUA-19, LUA-23, LUA-25, LUA-26 remain Todo and need manual update in a user-present session
-    - QUICK_ACTIONS must remain module-level const (not inside component) for ESLint/Prettier compliance
-
-**Completed**: - Iteration 19 complete: two design fidelity gaps fixed:
-      1. Hero CTA buttons updated: primary → "Entrar na Loja B2B →" (href: store URL), secondary → "Ver componentes" (to: /componentes)
-      2. B2B section: added 4-column value prop grid above CTAs with items: Institucional e branding, Preços e condições, Logística e suporte, Garantia e troca
-    - Regression tests updated: hero CTA assertions use new labels, "Ver componentes" disambiguation handled via getAllByRole[0] and closest() ancestor selector
-    - Prettier formatting fixed on both src/App.tsx and src/app.test.tsx
-    - Final state: 17/17 tests pass, build clean (302.23KB JS, 38.94KB CSS, 233ms), ESLint no issues, Prettier clean
-    - StructuredOutput emitted with success=true
-
-**Next Steps**: - Linear ticket updates (LUA-19, LUA-23, LUA-25, LUA-26) remain blocked — require user-present session for OAuth re-authentication with Linear MCP
-    - No further code changes planned; all M2 landing page sections are complete and verified against design references
-    - Session appears concluded — gnhf orchestrator received success=true from iteration 19
-
-
-Access 1405k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 1407k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
 <!-- code-review-graph MCP tools -->
