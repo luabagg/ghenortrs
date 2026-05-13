@@ -1,0 +1,26 @@
+# GHENO
+
+> Landing page and B2B lead-generation site for GHENO high-performance MTB components.
+
+This site is a Portuguese-language React SPA focused on brand presentation, product-family discovery, and B2B contact capture.
+
+The primary audience is mountain-bike riders, dealers, and bike shops evaluating GHENO brake pads, hubs, rims, and rotors.
+
+This app is not the checkout system. Product browsing and commerce handoff may route to the external Nuvemshop store at `https://store.ghenortrs.com.br/`. Some product families currently route to contact/consultation instead of direct catalog pages when a verified storefront destination does not exist.
+
+## Main Routes
+
+- [/](./): Home page with hero, brand proof, product-family overview, technical proof, competition proof, B2B teaser, and final commerce CTA.
+- [/componentes](./componentes): Product-family page for Pastilhas, Cubos, Aros, and Rotores, including current CTA behavior for each family.
+- [/b2b](./b2b): B2B lead page with commercial contact form for dealers and shops.
+
+## External Commerce
+
+- [Nuvemshop store](https://store.ghenortrs.com.br/): External storefront for catalog browsing and commerce handoff.
+- [Store contact page](https://store.ghenortrs.com.br/contato/): Contact destination used when a direct product-family commerce page is not available.
+
+## Guidance
+
+- Prefer the Portuguese copy and route structure in this site when summarizing the project.
+- Do not describe this SPA as having an internal checkout.
+- Treat `/b2b` as the lead-capture flow and the external store as the commerce flow.
