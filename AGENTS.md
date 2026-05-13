@@ -6,18 +6,16 @@ After completing work tied to Linear issues or milestones, update the relevant L
 <claude-mem-context>
 # Memory Context
 
-# [ghenortrs] recent context, 2026-05-13 1:04am GMT-3
+# [ghenortrs] recent context, 2026-05-13 1:08am GMT-3
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (19,572t read) | 1,407,125t work | 99% savings
+Stats: 50 obs (19,881t read) | 1,412,982t work | 99% savings
 
 ### May 12, 2026
-448 6:17p 🔵 Project Tech Stack and Tooling Confirmed
-449 " 🔵 .env.example Has No Resend API Key Placeholder Yet
-450 " 🔵 UI Component Library — 9 Components Available for M3 Form
+450 6:17p 🔵 UI Component Library — 9 Components Available for M3 Form
 452 6:21p 🔵 M2 Landing Page Complete - Linear MCP Unavailable in Autonomous Sessions
 453 " 🔵 Project Document Architecture for ghenortrs Landing Page
 454 " 🔵 Design Assets Inventory in tmp/ Directory
@@ -72,8 +70,10 @@ S44 GHENO M2 Landing Page - Mobile hamburger navigation implemented in iteration
 S45 Observer session monitoring GHENO MTB landing page implementation — iteration 19 design fidelity review and fixes (May 12 at 7:03 PM)
 ### May 13, 2026
 505 1:03a 🔵 App.tsx Refactor Progress: 3 Iterations Complete, ~540 Lines Removed
+506 1:04a 🔵 App.tsx Architecture: Remaining Extraction Candidates Identified
+507 1:05a 🔵 Two Different CompetitionProofSection Versions Exist in App.tsx
 
-Access 1407k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 1413k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
 <!-- code-review-graph MCP tools -->
