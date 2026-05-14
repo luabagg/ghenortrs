@@ -108,7 +108,7 @@ function TechnicalMediaGrid() {
   return (
     <div
       aria-label="Imagens de tecnologia GHENO"
-      className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
+      className="-mx-6 flex max-w-[100vw] snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:max-w-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
     >
       <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
         <img

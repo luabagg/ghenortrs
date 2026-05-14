@@ -1,3 +1,5 @@
+import { GlassPanel } from '@/components/ui/glass-panel';
+
 const OPERATIONAL_HIGHLIGHTS = [
   {
     title: 'Controle extremo',
@@ -28,36 +30,42 @@ export function OperationalHighlightsSection() {
   return (
     <section
       aria-label="Destaques operacionais"
-      className="grid grid-cols-2 gap-4 rounded-panel border border-border bg-surface-elevated px-6 py-6 sm:gap-5 sm:px-8 lg:grid-cols-4"
+      className="absolute inset-x-0 bottom-8 z-10 mx-auto w-[calc(100%-3rem)] max-w-[84rem] sm:bottom-10 sm:w-[calc(100%-5rem)] lg:bottom-12"
+      data-section="operational-highlights"
     >
-      {OPERATIONAL_HIGHLIGHTS.map((item) => (
-        <div key={item.title} className="flex items-start gap-4">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <svg
-              aria-hidden="true"
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d={item.iconPath}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-              />
-            </svg>
+      <GlassPanel className="grid min-h-36 grid-cols-2 place-items-center gap-4 overflow-hidden rounded-lg px-4 py-5 sm:px-8 sm:py-7 lg:grid-cols-4 lg:divide-x lg:divide-white/10">
+        {OPERATIONAL_HIGHLIGHTS.map((item) => (
+          <div
+            key={item.title}
+            className="flex min-w-0 flex-col items-center justify-center gap-3 text-center lg:min-h-24 lg:flex-row lg:px-8 lg:text-left first:lg:pl-0 last:lg:pr-0"
+          >
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-transparent text-accent lg:text-primary">
+              <svg
+                aria-hidden="true"
+                className="h-7 w-7"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d={item.iconPath}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-extrabold leading-tight text-primary sm:text-base lg:text-xs lg:uppercase lg:tracking-[0.14em]">
+                {item.title}
+              </p>
+              <p className="mt-1 hidden text-xs leading-5 text-secondary lg:block">
+                {item.description}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
-              {item.title}
-            </p>
-            <p className="mt-0.5 text-xs leading-5 text-secondary">
-              {item.description}
-            </p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </GlassPanel>
     </section>
   );
 }

@@ -65,7 +65,11 @@ export function ComponentFamilyCard({
         <ComponentHighlights highlights={family.highlights} />
         <div>
           <Button asChild variant={family.isLive ? 'primary' : 'secondary'}>
-            <a href={family.ctaHref}>{family.ctaLabel}</a>
+            {family.ctaHref.startsWith('/') ? (
+              <Link to={family.ctaHref}>{family.ctaLabel}</Link>
+            ) : (
+              <a href={family.ctaHref}>{family.ctaLabel}</a>
+            )}
           </Button>
         </div>
       </div>
@@ -113,11 +117,6 @@ export function ComponentsB2BCTA() {
       </div>
       <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
         <Button asChild>
-          <a href="https://store.ghenortrs.com.br/produtos/">
-            Entrar na Loja B2B →
-          </a>
-        </Button>
-        <Button asChild variant="secondary">
           <Link to="/b2b">Pré-cadastro comercial</Link>
         </Button>
       </div>

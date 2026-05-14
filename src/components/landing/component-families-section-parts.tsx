@@ -7,11 +7,11 @@ import { MetaLabel } from '@/components/ui/meta-label';
 
 export function ComponentFamiliesIntro() {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-5 lg:pt-3">
       <div className="flex items-center justify-between gap-4">
         <MetaLabel>COMPONENTES</MetaLabel>
         <a
-          className="text-xs font-extrabold uppercase tracking-[0.14em] text-secondary transition-colors hover:text-primary"
+          className="text-xs font-extrabold uppercase tracking-[0.14em] text-secondary transition-colors hover:text-primary lg:hidden"
           href="https://store.ghenortrs.com.br/produtos/"
         >
           Ver todos os componentes →
@@ -25,16 +25,22 @@ export function ComponentFamiliesIntro() {
         <span className="text-secondary">Quatro pilares de performance.</span>
       </h2>
       <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Pastilhas com diferentes compostos, cubos de alta rolagem, aros
-        resistentes e rotores de dissipação eficiente.
+        Cada componente trabalha junto para entregar controle, precisão e
+        confiança total. Construído para quem vive o MTB de verdade.
       </p>
+      <a
+        className="hidden border-t border-border pt-7 text-xs font-extrabold uppercase tracking-[0.14em] text-primary transition-colors hover:text-accent lg:block"
+        href="https://store.ghenortrs.com.br/produtos/"
+      >
+        Ver todos os componentes →
+      </a>
     </div>
   );
 }
 
 export function ComponentFamiliesGrid() {
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-3">
       {COMPONENT_FAMILIES.map((family) => (
         <ComponentFamilyItem key={family.title} family={family} />
       ))}

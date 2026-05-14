@@ -33,15 +33,15 @@ export const componentMenuLinks: HeaderMenuLink[] = [
   },
   {
     label: 'Cubos',
-    href: 'https://store.ghenortrs.com.br/contato/',
+    to: '/contato',
   },
   {
     label: 'Aros',
-    href: 'https://store.ghenortrs.com.br/contato/',
+    to: '/contato',
   },
   {
     label: 'Rotores',
-    href: 'https://store.ghenortrs.com.br/contato/',
+    to: '/contato',
   },
 ];
 
@@ -56,10 +56,10 @@ export const primaryNavLinks: HeaderNavLink[] = [
   },
   {
     label: 'Sobre a GHENO',
-    href: 'https://store.ghenortrs.com.br/',
+    to: '/sobre',
   },
   {
     label: 'Contato',
-    href: 'https://store.ghenortrs.com.br/contato/',
+    to: '/contato',
   },
 ];

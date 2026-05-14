@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { App } from './App';
@@ -17,9 +17,10 @@ describe('App', () => {
       'text-primary',
       'font-body',
     );
-    expect(
-      screen.getByText('COMPONENTES MTB DE ALTO DESEMPENHO'),
-    ).toHaveAttribute('data-slot', 'meta-label');
+    expect(screen.getByText('GHENO COMPONENTES')).toHaveAttribute(
+      'data-slot',
+      'meta-label',
+    );
     expect(screen.getAllByAltText('GHENO')[0]).toHaveAttribute(
       'src',
       '/brand/logo-wide.png',
@@ -32,7 +33,7 @@ describe('App', () => {
     );
     expect(
       screen.getByText(
-        'Pastilhas, cubos, aros e rotores desenvolvidos para controle, resistência e confiança em uso intenso.',
+        'Pastilhas, cubos, aros e rotores desenvolvidos para controle, resistência e confiança total em qualquer terreno.',
       ),
     ).toBeInTheDocument();
     expect(
@@ -40,20 +41,16 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('navigation', { name: 'Principal' }).parentElement,
-    ).toHaveClass(
-      'bg-surface-glass/80',
-      'backdrop-blur-xl',
-      'shadow-[0_20px_48px_rgba(0,0,0,0.24)]',
-    );
+    ).not.toHaveAttribute('data-slot', 'glass-panel');
     expect(
-      screen.getAllByRole('link', { name: 'Entrar na Loja B2B →' })[0],
+      screen.getByRole('link', { name: 'Ver loja online →' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getAllByRole('link', { name: 'Entrar na Loja B2B →' })[0],
+      screen.getByRole('link', { name: 'Ver loja online →' }),
     ).toHaveClass('bg-accent', 'text-on-accent');
     expect(
-      screen.getAllByRole('link', { name: 'Ver componentes' })[0],
-    ).toHaveClass('border', 'border-strong', 'bg-background-soft');
+      screen.getAllByRole('link', { name: 'Ver componentes →' })[0],
+    ).toHaveClass('border', 'border-strong', 'bg-background/35');
     expect(screen.getByText('Controle extremo')).toBeInTheDocument();
     expect(screen.getByText('Materiais premium')).toBeInTheDocument();
     expect(screen.getByText('Testado em condições reais')).toBeInTheDocument();
@@ -100,24 +97,20 @@ describe('App', () => {
       '/reference-images/rotor-gheno.jpg',
     );
 
-    const pastilhasLinks = screen.getAllByRole('link', {
-      name: 'Ver catálogo GHENO',
-    });
-    expect(pastilhasLinks.length).toBeGreaterThanOrEqual(1);
-    expect(pastilhasLinks[0]).toHaveAttribute(
+    const productLinks = [
+      screen.getByRole('link', { name: 'Ver catálogo GHENO →' }),
+      screen.getByRole('link', { name: 'Consultar cubos →' }),
+      screen.getByRole('link', { name: 'Consultar aros →' }),
+      screen.getByRole('link', { name: 'Consultar rotores →' }),
+    ];
+    expect(productLinks[0]).toHaveAttribute(
       'href',
       'https://store.ghenortrs.com.br/produtos/',
     );
 
-    expect(
-      screen.getByRole('link', { name: 'Consultar cubos' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
-    expect(
-      screen.getByRole('link', { name: 'Consultar aros' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
-    expect(
-      screen.getByRole('link', { name: 'Consultar rotores' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+    expect(productLinks[1]).toHaveAttribute('href', '/contato');
+    expect(productLinks[2]).toHaveAttribute('href', '/contato');
+    expect(productLinks[3]).toHaveAttribute('href', '/contato');
   });
 
   it('renders the technical proof section with stats, features, and media', () => {
@@ -244,11 +237,16 @@ describe('App', () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getAllByRole('link', { name: 'Entrar na Loja B2B →' })[1],
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+      screen.getByRole('link', { name: 'Acessar produtos B2B →' }),
+    ).toHaveAttribute('href', '/b2b');
+    const b2bTeaser = screen
+      .getByLabelText('Contexto visual para atendimento B2B GHENO')
+      .closest('[data-section="b2b-teaser"]');
     expect(
-      screen.getByRole('link', { name: 'Falar com a GHENO' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/contato/');
+      within(b2bTeaser as HTMLElement).queryByRole('link', {
+        name: 'Falar com a GHENO',
+      }),
+    ).toBeNull();
     expect(
       screen.getByLabelText('Contexto visual para atendimento B2B GHENO'),
     ).toHaveClass('snap-x', 'overflow-x-auto');
@@ -291,7 +289,9 @@ describe('App', () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Acessar Loja B2B' }),
+      screen
+        .getAllByRole('link', { name: 'Ver loja online' })
+        .find((el) => el.closest('[aria-labelledby="fechamento-heading"]')),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
       screen
@@ -311,7 +311,7 @@ describe('App', () => {
     expect(footer).toBeInTheDocument();
 
     expect(
-      screen.getByRole('link', { name: 'Entrar na Loja' }),
+      within(footer).getByRole('link', { name: 'Ver loja online' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
       screen.getAllByRole('link', { name: 'Pastilhas' })[0],
@@ -325,7 +325,7 @@ describe('App', () => {
     );
     expect(
       screen.getByRole('link', { name: 'Instagram GHENO' }),
-    ).toHaveAttribute('href', 'https://www.instagram.com/ghenortrs/');
+    ).toHaveAttribute('href', 'https://www.instagram.com/gheno_rtrs/');
   });
 
   it('renders the components route with product families', () => {
@@ -355,7 +355,7 @@ describe('App', () => {
     ).toHaveAttribute('href', '/b2b');
   });
 
-  it('renders the B2B route with full lead form', () => {
+  it('renders the B2B route with access login and lead form', () => {
     render(
       <MemoryRouter initialEntries={['/b2b']}>
         <App />
@@ -364,7 +364,18 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Atendimento para lojistas e oficinas',
+        name: 'Produtos B2B GHENO para revendedores aprovados.',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Acessar produtos B2B' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Continuar' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: 'Não possui cadastro?',
       }),
     ).toBeInTheDocument();
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');

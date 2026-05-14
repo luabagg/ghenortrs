@@ -123,9 +123,6 @@ describe('ui primitives', () => {
     );
     expect(screen.getByText('Menu técnico')).toHaveClass(
       'rounded-panel',
-      'border-border',
-      'bg-surface-glass/80',
-      'backdrop-blur-xl',
       'text-primary',
     );
   });

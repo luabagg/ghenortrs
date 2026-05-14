@@ -7,74 +7,74 @@ After completing work tied to Linear issues or milestones, update the relevant L
 <claude-mem-context>
 # Memory Context
 
-# [ghenortrs] recent context, 2026-05-13 1:47am GMT-3
+# [ghenortrs] recent context, 2026-05-13 11:17pm GMT-3
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (19,881t read) | 1,412,982t work | 99% savings
+Stats: 50 obs (17,047t read) | 160,840t work | 89% savings
 
 ### May 12, 2026
-450 6:17p 🔵 UI Component Library — 9 Components Available for M3 Form
-452 6:21p 🔵 M2 Landing Page Complete - Linear MCP Unavailable in Autonomous Sessions
-453 " 🔵 Project Document Architecture for ghenortrs Landing Page
-454 " 🔵 Design Assets Inventory in tmp/ Directory
-455 " 🔵 ghenortrs Source Tree Structure
-456 6:22p 🔵 Full App.tsx Architecture - All M2 Landing Page Sections Implemented
-457 " 🔵 Mobile Homepage Design Reference Loaded for Implementation Comparison
 S41 Observer session monitoring autonomous gnhf iteration 14 finalizing GHENO MTB landing page mobile improvements (May 12 at 6:23 PM)
 S40 Iteration 11: Design fidelity improvements to GHENO MTB landing page — mobile-menu.png reviewed, hero headline and proof bar upgraded to match design reference (May 12 at 6:23 PM)
-459 6:24p 🔵 GHENO M2 Landing Page - Complete Implementation State (Iterations 1-13)
-460 " 🔵 Linear MCP Confirmed Absent in Iteration 14 Session
-461 6:26p 🔵 GHENO Project File Structure - src/ is Single-File App
-462 " 🔵 Design Reference tmp/mobile-homepage.png Reviewed in Iteration 14
 S42 GHENO MTB Landing Page — Autonomous Implementation Observer (Iterations 1–43, M0–M6 Complete) (May 12 at 6:27 PM)
-469 7:00p 🔵 M2 Landing Page Complete - Linear MCP Unavailable in Autonomous Sessions
-470 " 🔵 GHENO Landing Page - Complete M2 Implementation State After 21 Iterations
-471 " 🔵 Linear MCP Confirmed Absent in Iteration 10 Autonomous Session
-472 " 🔵 GHENO M2 Landing Page - Complete Implementation State (Iterations 1-18)
-473 " 🔵 GHENO Landing Page M2 - Complete Implementation History (Iterations 1-20)
-474 " 🔵 GHENO M2 Landing Page: Full Iteration History and Current State
-475 " 🔵 Linear MCP OAuth Unavailable in Autonomous gnhf Sessions
-476 " 🔵 Component Directory Structure Only Has ui/ Subdirectory
-477 " 🔵 Landing Page Has Flat Component Architecture - All Sections in App.tsx
-478 7:01p 🔵 Project Structure: Monolithic App.tsx with All Components Inlined
-479 " 🟣 GHENO Landing Page Full Implementation - src/App.tsx Architecture
-480 " 🔵 tmp/ Directory Contains Unused Reference Images Not Yet Used in Implementation
-481 " 🔵 App.tsx is 1,271 Lines with All Components Defined Inline
-482 " 🔵 App.tsx Full Structure Mapped - 1335 Lines, All Sections Inline
-483 " 🔵 GHENO Landing Page Project: Full Iteration History (M0–M6 Complete)
-484 " 🔵 Linear MCP Unavailable in All Autonomous gnhf Sessions
-485 " 🟣 Vercel Edge Function for B2B Lead Capture (LUA-29)
-486 " 🟣 Outbound Click Tracking and Form Analytics (M4/M5)
-487 " 🟣 Performance and Accessibility Hardening (M5 LUA-36/37/38)
-488 " 🔵 Production Build Clean at 301KB JS / 38KB CSS
-489 " 🔵 GHENO Landing Page - Complete src/App.tsx Architecture
-490 " 🔵 GHENO Landing Page: Complete Component Architecture in src/App.tsx
-491 " 🔵 Optimized Reference Image Inventory in public/reference-images/
-492 " 🔵 Public Asset Inventory - 14 Reference Images + 1 Logo Serving Landing Page
-493 " 🔵 Design Reference Loaded: mobile-homepage.png Shows Complete Layout Requirements
-494 " 🔵 Linear MCP Confirmed Unavailable in Iteration 20
-495 " 🔵 Design Reference - Mobile Homepage PNG Analyzed for Iteration 21
-496 " 🔵 Unused Reference Images Remaining in tmp/reference_images/
-497 " 🔵 Mobile Homepage Design Mockup Reviewed - Implementation Matches Design Intent
-498 " 🔵 Production Build Clean at 303KB JS / 39KB CSS at Start of Iteration 22
-499 " 🔵 Linear MCP Confirmed Absent in Iteration 43
-500 " 🔵 Production Build Verified Clean at Iteration 43 Baseline
-501 " 🔵 Mobile Menu Design Reference Inspected in Iteration 20
-502 7:02p 🔵 Public Reference Images Inventory - 14 Optimized Assets Currently Deployed
-503 " 🔵 Iteration 43 Halted: Project Complete, Linear MCP Blocks Final Ticket Closure
-504 " 🔵 Design Reference Files Confirmed - 4 PNG Design Specs in tmp/
 S43 GHENO MTB landing page — iteration 21 design fidelity audit and B2B CTA correction (May 12 at 7:02 PM)
 S44 GHENO M2 Landing Page - Mobile hamburger navigation implemented in iteration 11 (May 12 at 7:02 PM)
 S45 Observer session monitoring GHENO MTB landing page implementation — iteration 19 design fidelity review and fixes (May 12 at 7:03 PM)
 ### May 13, 2026
-505 1:03a 🔵 App.tsx Refactor Progress: 3 Iterations Complete, ~540 Lines Removed
-506 1:04a 🔵 App.tsx Architecture: Remaining Extraction Candidates Identified
-507 1:05a 🔵 Two Different CompetitionProofSection Versions Exist in App.tsx
+567 5:18a 🔵 Complete Component Directory Structure After Refactor
+568 " 🔄 App.tsx Updated to Import Card Components from section-cards.tsx
+569 " 🔵 Iteration 23 Entry State: Only ComponentsPage Remains as >=80-Line Hotspot
+570 " 🔵 AppShell and B2BPage Structure in App.tsx
+571 " 🔄 App.tsx Reduced from 1971 to 1835 Lines After First Extraction
+572 " 🔄 Final src/App.tsx: 30-Line Pure Route Wiring
+573 " 🔵 Remaining Large Functions in App.tsx After Iteration 5
+574 " 🔵 Current >=80-Line Function Hotspots in src/components (Iteration 20 Baseline)
+575 " 🔵 Code Review Graph Shows Stale Line Numbers vs Actual App.tsx
+576 " 🔄 ComponentsPage Product Data Extracted to Dedicated Data Module
+577 " 🔵 Iteration 12 Has No Uncommitted Code Changes
+578 " 🔵 Architecture Graph: 6 Clean Communities, Zero Cross-Community Coupling
+579 " 🔵 Code Review Graph Last Updated Before Iteration 7 Changes
+580 " 🔵 Six Components Still Exceed 80-Line Threshold at Iteration 18 Start
+581 " 🔵 App.tsx Uses React Router DOM (Not Wouter) and @/ Path Aliases
+582 " 🔵 AppShell Structure: 322-Line Navigation Shell with Inline Desktop Nav
+583 " 🔴 Test Failure: cn Import Removed from App.tsx But Still Used at Line 410
+584 " 🔵 Remaining Large Function Hotspots in src/components (>=40 lines)
+585 " 🔵 Remaining Size Hotspots After 14 Iterations
+586 " 🔴 ESLint Error: CardContent Import Unused After Extraction
+587 " 🔵 ComponentsPage Structure: PRODUCT_FAMILIES Data Array + Inline Article Grid
+588 " 🔵 App.tsx Uses React Router DOM, Not Query-String Navigation
+589 " 🔵 AppShell Contains Footer and Additional Inline Sections Beyond Header
+590 " 🔵 Project Status: All Milestones M0-M6 Verified, Launch-Ready
+591 " 🔵 cn Used at 3 Locations in App.tsx After Extraction, Not Just Line 410
+592 " 🔵 b2b-page.tsx Interface Mismatch: Notes vs Actual Code
+593 " 🔵 Component Directory Structure: No pages/ Subdirectory Exists Yet
+594 " 🔄 components-page.tsx Slimmed by Removing Inline Product Arrays
+595 " 🔄 Extracted MobileMenuActions from mobile-menu-overlay.tsx into Dedicated Module
+596 " 🔵 HomePage Structure: Hero Carousel + Highlights Grid + Section Composition
+597 " 🔵 App.tsx Structure Diverged from Iteration 1 Notes: Imports and Component Signatures Changed
+598 " 🔵 B2BPage Contains Full Inline Lead Form Logic - Primary Extraction Target
+599 " 🔴 Fixed App.tsx Imports: Removed CardContent, Restored cn
+600 " 🔵 ComponentsPage Structure Analyzed: Already Well-Decomposed Despite 109-Line Count
+601 5:19a 🔵 AppHeader Structure Analysis - Iteration 20 Target
+602 " 🔵 Post-Data-Extraction Large Function Hotspot Snapshot
+603 " 🔵 MobileMenuOverlay Renders QUICK_ACTIONS and AppShell Owns Menu State
+604 " 🔵 App.tsx Large Function Inventory After Iteration 2
+605 " 🔵 Architecture Graph: 6 Communities, Zero Cross-Community Coupling
+606 " 🔵 AppFooter Structure Analysis - SVG Icons Drive Line Count
+607 " 🔵 Architecture Graph Updated: MobileMenuActions Adds 2 Nodes, 6 Communities Maintained
+608 " 🔵 Component Directory Structure: UI Primitives Extracted, Landing Has One File
+609 " 🔄 All 19 Tests Pass After Import Fix — Extraction Iteration 1 Complete
+610 " 🔄 mobile-menu-overlay.tsx Reduced from 332 to 120 Lines After MobileMenuActions Extraction
+611 " 🔵 AppHeader Structure Analysis - Inline SVGs and Dropdown Drive Line Count
+612 " 🔄 Extracted CompetitionProofSection into Dedicated Module
+613 " 🔄 Iteration 18: ComponentsPage Catalog Section Extracted into Dedicated Module
+614 " 🔵 App.tsx Hook and State Usage Map: B2BPage Owns Most Form Complexity
+615 " 🔵 Git Status Shows No New Changes Staged After Data Extraction
+616 " 🔵 PRODUCT_FAMILIES Data Differs Between App.tsx and Extracted components-page.tsx
 
-Access 1413k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 161k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
 <!-- code-review-graph MCP tools -->

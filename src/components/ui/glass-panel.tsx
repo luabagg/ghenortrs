@@ -1,17 +1,32 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
-function GlassPanel({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+type GlassPanelProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+  density?: 'default' | 'strong';
+};
+
+const baseGlassClassName = 'gheno-glass relative rounded-panel text-primary';
+
+function GlassPanel({
+  children,
+  className,
+  density = 'default',
+  ...props
+}: GlassPanelProps) {
   return (
     <div
       className={cn(
-        'rounded-panel border border-border bg-surface-glass/80 text-primary shadow-[0_20px_48px_rgba(0,0,0,0.24)] backdrop-blur-xl',
+        baseGlassClassName,
+        density === 'strong' ? 'gheno-glass-strong' : '',
         className,
       )}
       data-slot="glass-panel"
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }
 

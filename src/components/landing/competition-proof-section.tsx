@@ -51,7 +51,7 @@ export function CompetitionProofSection() {
       </div>
       <div
         aria-label="Imagens de competição MTB"
-        className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0"
+        className="-mx-6 flex max-w-[100vw] snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:max-w-none sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0"
       >
         {COMPETITION_SHOTS.map((shot) => (
           <figure

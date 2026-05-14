@@ -85,15 +85,14 @@ function B2BValueGrid() {
 
 function B2BTeaserActions() {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
-      <Button asChild>
-        <a href="https://store.ghenortrs.com.br/produtos/">
-          Entrar na Loja B2B →
-        </a>
+    <div className="flex flex-col items-start gap-3">
+      <Button asChild className="w-fit min-w-0 px-6 shadow-[0_16px_34px_rgba(232,20,20,0.28)]">
+        <a href="/b2b">Acessar produtos B2B →</a>
       </Button>
-      <Button asChild variant="secondary">
-        <a href="https://store.ghenortrs.com.br/contato/">Falar com a GHENO</a>
-      </Button>
+      <p className="max-w-md text-xs leading-5 text-on-primary/62">
+        O acesso é exclusivo para revendedores cadastrados. Quem ainda não tem
+        cadastro poderá solicitar aprovação na tela de login.
+      </p>
     </div>
   );
 }
@@ -102,7 +101,7 @@ function B2BMediaStrip() {
   return (
     <div
       aria-label="Contexto visual para atendimento B2B GHENO"
-      className="-mx-6 flex snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-3"
+      className="-mx-6 flex max-w-[100vw] snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:max-w-none sm:grid-cols-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-3"
     >
       {B2B_MEDIA_ITEMS.map((item) => (
         <B2BMediaCard key={item.title} {...item} />
@@ -114,15 +113,17 @@ function B2BMediaStrip() {
 export function B2BTeaserSection() {
   return (
     <SectionBand
-      className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end"
+      className="overflow-hidden px-0"
       data-section="b2b-teaser"
     >
-      <div className="flex flex-col gap-6">
-        <B2BTeaserIntro />
-        <B2BValueGrid />
-        <B2BTeaserActions />
+      <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 sm:px-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:px-16">
+        <div className="flex min-w-0 flex-col gap-6">
+          <B2BTeaserIntro />
+          <B2BValueGrid />
+          <B2BTeaserActions />
+        </div>
+        <B2BMediaStrip />
       </div>
-      <B2BMediaStrip />
     </SectionBand>
   );
 }

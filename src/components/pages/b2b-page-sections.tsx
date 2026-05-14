@@ -1,7 +1,10 @@
+import { Link } from 'react-router-dom';
+
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -26,6 +29,52 @@ const B2B_BENEFITS = [
     desc: 'Termos claros de garantia, troca e reposição',
   },
 ];
+
+export function B2BAccessHeroSection() {
+  return (
+    <section className="grid min-h-[calc(100dvh-9rem)] items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.78fr)]">
+      <div className="grid max-w-2xl gap-5">
+        <p className="w-fit rounded-full bg-accent px-3 py-2 text-xs font-extrabold uppercase tracking-[0.14em] text-on-accent">
+          Acesso B2B
+        </p>
+        <h1 className="font-heading text-5xl leading-[0.95] tracking-[-0.05em] sm:text-6xl">
+          Produtos B2B GHENO para revendedores aprovados.
+        </h1>
+        <p className="max-w-xl text-lg leading-8 text-secondary">
+          Entre com seu e-mail comercial para acessar a área de produtos,
+          condições e materiais do canal B2B.
+        </p>
+      </div>
+
+      <Card className="bg-surface px-0 py-0 shadow-[0_28px_90px_rgba(0,0,0,0.38)]">
+        <CardHeader>
+          <CardTitle>Acessar produtos B2B</CardTitle>
+          <CardDescription>
+            O acesso é liberado apenas para revendedores cadastrados.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 px-6 pb-6">
+          <label className="grid gap-2 text-sm font-bold text-primary">
+            E-mail comercial
+            <input
+              className="min-h-13 rounded-button border border-border-strong bg-background-soft px-4 text-base font-medium text-primary outline-none transition-colors placeholder:text-secondary/70 focus:border-accent"
+              placeholder="voce@sualoja.com.br"
+              type="email"
+            />
+          </label>
+          <Button type="button">Continuar</Button>
+          <p className="text-sm leading-6 text-secondary">
+            Não possui cadastro?{' '}
+            <a className="font-bold text-primary underline" href="#cadastro">
+              Solicite aprovação comercial
+            </a>
+            .
+          </p>
+        </CardContent>
+      </Card>
+    </section>
+  );
+}
 
 function CheckIcon({ className }: { className: string }) {
   return (
@@ -74,9 +123,9 @@ export function B2BLeadIntroSection() {
   return (
     <div className="grid gap-6">
       <PageIntro
-        description="Converse com nossa equipe sobre mix, condições e disponibilidade. Sem formulário automatizado — atendimento direto."
+        description="Preencha os dados da sua loja para solicitar aprovação. Após a análise, enviaremos o acesso por e-mail."
         eyebrow="B2B"
-        title="Atendimento para lojistas e oficinas"
+        title="Não possui cadastro?"
       />
       <B2BBenefitsSection />
     </div>
@@ -98,9 +147,7 @@ export function B2BSuccessCard() {
       </CardHeader>
       <div className="px-6 pb-6">
         <Button asChild variant="secondary">
-          <a href="https://store.ghenortrs.com.br/contato/">
-            Falar via WhatsApp agora
-          </a>
+          <Link to="/contato">Ver canais de contato</Link>
         </Button>
       </div>
     </Card>

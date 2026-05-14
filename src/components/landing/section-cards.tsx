@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -52,11 +51,11 @@ export function ProductFamilyCard({
   imageSrc: string;
 }) {
   return (
-    <Card className="flex flex-col justify-between gap-0 overflow-hidden bg-surface">
-      <div className="relative h-32 overflow-hidden border-b border-border bg-background-soft sm:h-44">
+    <Card className="group flex flex-col justify-between gap-0 overflow-hidden rounded-lg border-border-strong bg-surface/72">
+      <div className="relative h-36 overflow-hidden bg-background-soft sm:h-48 lg:h-44">
         <img
           alt={imageAlt}
-          className="h-full w-full object-cover opacity-82 saturate-75"
+          className="h-full w-full object-cover opacity-88 saturate-75 transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
           src={imageSrc}
         />
@@ -65,8 +64,8 @@ export function ProductFamilyCard({
       <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
         <MetaLabel
           className={cn(
-            !isLive &&
-              'border border-border bg-surface-elevated text-secondary',
+            'border-0 bg-transparent p-0 text-accent',
+            !isLive && 'border-0 bg-transparent text-accent',
           )}
         >
           {eyebrow}
@@ -79,13 +78,12 @@ export function ProductFamilyCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
-        <Button
-          asChild
-          className="w-full"
-          variant={isLive ? 'primary' : 'secondary'}
+        <a
+          className="flex items-center justify-between text-xs font-extrabold uppercase tracking-[0.12em] text-primary transition-colors hover:text-accent"
+          href={ctaHref}
         >
-          <a href={ctaHref}>{ctaLabel}</a>
-        </Button>
+          {ctaLabel} <span className="text-lg text-accent">→</span>
+        </a>
       </CardContent>
     </Card>
   );
@@ -139,9 +137,9 @@ export function B2BMediaCard({
         loading="lazy"
         src={imageSrc}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-on-primary/82 via-on-primary/8 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-on-primary/78 via-on-primary/16 to-transparent" />
       <figcaption className="absolute inset-x-0 bottom-0 p-4">
-        <p className="font-heading text-xl leading-tight tracking-[-0.03em] text-background">
+        <p className="w-fit rounded-sm bg-accent/92 px-2 py-1 font-heading text-lg leading-tight tracking-[-0.03em] text-on-accent shadow-[0_10px_28px_rgba(0,0,0,0.42)]">
           {title}
         </p>
       </figcaption>

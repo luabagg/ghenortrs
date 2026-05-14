@@ -1,6 +1,6 @@
 # Checkout Boundary
 
-Last updated: 2026-05-12
+Last updated: 2026-05-13
 
 ## What the marketing site owns
 
@@ -8,7 +8,8 @@ The `ghenortrs` Vite app is a marketing and lead-capture surface. It owns:
 
 - Landing page content and navigation
 - Product family presentation (`/componentes`)
-- B2B lead capture form (`/b2b`) — collects intent and delivers via Resend
+- Owned company and contact pages (`/sobre`, `/contato`)
+- B2B access entry and lead capture form (`/b2b`) — presents a login-style gate for approved sellers and collects registration requests via Resend
 
 ## What Nuvemshop owns
 
@@ -24,14 +25,15 @@ The marketing site never touches cart state, product inventory, or payment data.
 
 ## CTA handoff contract
 
-Every outbound commerce CTA links to one of two Nuvemshop destinations:
+Outbound commerce CTAs keep product purchase intent on Nuvemshop while contact
+and B2B intent stay on owned routes:
 
 | Intent                           | Destination URL                                    |
 | -------------------------------- | -------------------------------------------------- |
 | Browse / buy (Pastilhas)         | `https://store.ghenortrs.com.br/produtos/`         |
-| Enquire (Cubos / Aros / Rotores) | `https://store.ghenortrs.com.br/contato/`          |
-| B2B store entry                  | `https://store.ghenortrs.com.br/produtos/`         |
-| Social / contact                 | `https://www.instagram.com/ghenortrs/` or WhatsApp |
+| Enquire (Cubos / Aros / Rotores) | `/contato`                                         |
+| B2B access request               | `/b2b`                                             |
+| Social contact                   | `https://www.instagram.com/gheno_rtrs/`            |
 
 See [store-destination-map.md](./store-destination-map.md) for per-category routing rationale.
 

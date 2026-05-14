@@ -1,5 +1,7 @@
 import { type ComponentProps } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -115,23 +117,23 @@ export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
       {status === 'no-config' ? (
         <p className="text-sm text-secondary">
           Formulário ainda não configurado.{' '}
-          <a
+          <Link
             className="font-semibold text-primary underline"
-            href="https://store.ghenortrs.com.br/contato/"
+            to="/contato"
           >
-            Fale via WhatsApp
-          </a>{' '}
+            veja os canais de contato
+          </Link>{' '}
           para atendimento imediato.
         </p>
       ) : (
         <p className="text-sm text-secondary">
           Erro ao enviar. Tente novamente ou{' '}
-          <a
+          <Link
             className="font-semibold text-primary underline"
-            href="https://store.ghenortrs.com.br/contato/"
+            to="/contato"
           >
-            contate pelo WhatsApp
-          </a>
+            use os canais de contato
+          </Link>
           .
         </p>
       )}

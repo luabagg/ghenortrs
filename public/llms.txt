@@ -6,21 +6,25 @@ This site is a Portuguese-language React SPA focused on brand presentation, prod
 
 The primary audience is mountain-bike riders, dealers, and bike shops evaluating GHENO brake pads, hubs, rims, and rotors.
 
-This app is not the checkout system. Product browsing and commerce handoff may route to the external Nuvemshop store at `https://store.ghenortrs.com.br/`. Some product families currently route to contact/consultation instead of direct catalog pages when a verified storefront destination does not exist.
+This app is not the checkout system. Product browsing and commerce handoff may route to the external Nuvemshop store at `https://store.ghenortrs.com.br/`. Contact, about, B2B access entry, and B2B lead capture are owned by this SPA.
 
 ## Main Routes
 
 - [/](./): Home page with hero, brand proof, product-family overview, technical proof, competition proof, B2B teaser, and final commerce CTA.
 - [/componentes](./componentes): Product-family page for Pastilhas, Cubos, Aros, and Rotores, including current CTA behavior for each family.
-- [/b2b](./b2b): B2B lead page with commercial contact form for dealers and shops.
+- [/b2b](./b2b): B2B access/login entry for approved sellers, with a registration request form for dealers and shops that do not yet have access.
+- [/sobre](./sobre): Owned about page for GHENO positioning and company context.
+- [/contato](./contato): Owned contact routing page for retail, B2B, and social channels.
 
 ## External Commerce
 
 - [Nuvemshop store](https://store.ghenortrs.com.br/): External storefront for catalog browsing and commerce handoff.
-- [Store contact page](https://store.ghenortrs.com.br/contato/): Contact destination used when a direct product-family commerce page is not available.
+- [B2C catalog](https://store.ghenortrs.com.br/produtos/): Public retail catalog destination.
+- [Instagram](https://www.instagram.com/gheno_rtrs/): Official social channel.
 
 ## Guidance
 
 - Prefer the Portuguese copy and route structure in this site when summarizing the project.
 - Do not describe this SPA as having an internal checkout.
-- Treat `/b2b` as the lead-capture flow and the external store as the commerce flow.
+- Treat `/b2b` as the B2B access and registration-request flow; the external store remains the public B2C commerce flow.
+- Use `/contato` for contact intent instead of the old Nuvemshop contact page.

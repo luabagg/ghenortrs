@@ -22,7 +22,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     title: 'Pastilhas',
   },
   {
-    ctaHref: 'https://store.ghenortrs.com.br/contato/',
+    ctaHref: '/contato',
     ctaLabel: 'Consultar cubos',
     description:
       'Rolamento de alta performance para trilha técnica e competição. Disponível via consulta comercial.',
@@ -33,7 +33,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     title: 'Cubos',
   },
   {
-    ctaHref: 'https://store.ghenortrs.com.br/contato/',
+    ctaHref: '/contato',
     ctaLabel: 'Consultar aros',
     description:
       'Rigidez e leveza para rider exigente. Disponível via consulta comercial.',
@@ -44,7 +44,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     title: 'Aros',
   },
   {
-    ctaHref: 'https://store.ghenortrs.com.br/contato/',
+    ctaHref: '/contato',
     ctaLabel: 'Consultar rotores',
     description:
       'Dissipação de calor e modulação em descidas longas. Disponível via consulta comercial.',

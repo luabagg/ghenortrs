@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
 import { MobileMenuActions } from '@/components/navigation/mobile-menu-actions';
+import { GlassPanel } from '@/components/ui/glass-panel';
 
 export function MobileMenuOverlay({
   open,
@@ -19,28 +20,33 @@ export function MobileMenuOverlay({
   return (
     <div
       aria-modal="true"
-      className="fixed inset-0 z-50 flex sm:hidden"
+      className="fixed inset-0 z-50 flex overflow-hidden bg-background sm:hidden"
       role="dialog"
     >
       <button
         aria-label="Fechar menu"
-        className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+        className="absolute inset-0"
         onClick={onClose}
         tabIndex={-1}
       />
-      <div className="absolute inset-x-0 top-0 flex max-h-[92dvh] flex-col overflow-hidden rounded-b-2xl border-b border-border bg-surface-glass/95 shadow-2xl backdrop-blur-2xl">
-        <MobileMenuHeader closeRef={closeRef} onClose={onClose} />
+      <img
+        alt=""
+        className="absolute inset-0 h-[47dvh] w-full object-cover opacity-50"
+        src="/reference-images/mtb-action-hero.jpg"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/35 via-background/72 to-background" />
+      <MobileMenuHeader closeRef={closeRef} onClose={onClose} />
 
+      <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-32 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
         <MobileMenuSearchPrompt />
 
-        <div className="overflow-y-auto px-5 pb-5">
-          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.2em] text-secondary/50">
+        <div className="overflow-y-auto px-5 pb-5 min-[420px]:px-7">
+          <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-secondary">
             Ações rápidas
           </p>
           <MobileMenuActions onClose={onClose} />
+          <MobileMenuBrandNote />
         </div>
-
-        <MobileMenuBrandNote />
       </div>
     </div>
   );
@@ -54,14 +60,18 @@ function MobileMenuHeader({
   onClose: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between px-5 py-5">
-      <span className="font-heading text-xl font-black tracking-[-0.04em] text-accent">
-        gheno
-      </span>
+    <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-10 pt-16">
+      <img
+        alt="GHENO"
+        className="h-12 w-auto"
+        height={250}
+        src="/brand/logo-wide.png"
+        width={500}
+      />
       <button
         ref={closeRef}
         aria-label="Fechar menu"
-        className="flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:bg-surface-elevated hover:text-primary"
+        className="flex h-16 w-16 items-center justify-center rounded-lg border border-border-strong bg-surface-elevated text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-surface"
         onClick={onClose}
       >
         <svg
@@ -84,10 +94,13 @@ function MobileMenuHeader({
 
 function MobileMenuSearchPrompt() {
   return (
-    <div className="px-5 pb-4">
-      <div className="flex items-center gap-3 rounded-lg border border-border bg-background/60 px-4 py-3">
+    <div className="px-5 pb-4 pt-3 min-[420px]:px-7">
+      <GlassPanel
+        className="flex min-h-14 items-center gap-3 rounded-lg px-4"
+        density="strong"
+      >
         <svg
-          className="h-4 w-4 shrink-0 text-secondary"
+          className="h-6 w-6 shrink-0 text-primary"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -99,32 +112,34 @@ function MobileMenuSearchPrompt() {
             strokeWidth={1.5}
           />
         </svg>
-        <span className="flex-1 text-sm text-secondary/60">
+        <span className="min-w-0 flex-1 truncate text-sm text-secondary min-[420px]:text-base">
           Buscar componentes, compatibilidade, páginas...
         </span>
-        <kbd className="hidden rounded border border-border px-1.5 py-0.5 font-mono text-[10px] text-secondary/50 sm:inline">
-          ⌘K
-        </kbd>
-      </div>
+      </GlassPanel>
     </div>
   );
 }
 
 function MobileMenuBrandNote() {
   return (
-    <div className="mx-5 mb-5 flex items-center justify-between gap-4 rounded-xl border border-border bg-accent/8 px-5 py-4">
+    <div className="mt-8 flex items-center justify-between gap-4 rounded-xl border border-border-strong bg-background/32 p-4">
       <div className="flex items-center gap-3">
         <img
           alt="GHENO"
-          className="h-7 w-auto rounded-sm"
+          className="h-16 w-24 rounded-lg object-cover min-[420px]:h-20 min-[420px]:w-32"
           height={250}
           loading="lazy"
-          src="/brand/logo-wide.png"
+          src="/reference-images/pastilhas-gheno.jpg"
           width={500}
         />
-        <p className="text-sm font-semibold leading-tight text-primary">
-          Componentes desenvolvidos para uso intenso e real.
-        </p>
+        <div>
+          <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-accent">
+            Desempenho que dá confiança
+          </p>
+          <p className="mt-2 text-base font-bold leading-tight text-primary min-[420px]:text-xl">
+            Componentes desenvolvidos para uso intenso e real.
+          </p>
+        </div>
       </div>
       <svg
         className="h-4 w-4 shrink-0 text-accent"

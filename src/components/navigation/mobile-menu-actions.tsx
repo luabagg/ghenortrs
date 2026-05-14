@@ -4,7 +4,7 @@ const QUICK_ACTIONS = [
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -25,7 +25,7 @@ const QUICK_ACTIONS = [
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -40,13 +40,13 @@ const QUICK_ACTIONS = [
     ),
     title: 'Buscar compatibilidade',
     description: 'Encontre a peça certa para sua bike',
-    href: 'https://store.ghenortrs.com.br/produtos/',
+    to: '/componentes',
     badge: null as string | null,
   },
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ const QUICK_ACTIONS = [
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -80,15 +80,15 @@ const QUICK_ACTIONS = [
         />
       </svg>
     ),
-    title: 'Loja B2B',
-    description: 'Acesse nossa loja para revendas',
-    href: 'https://store.ghenortrs.com.br/produtos/',
+    title: 'Cadastro B2B',
+    description: 'Solicite atendimento para revenda',
+    to: '/b2b',
     badge: 'Novo',
   },
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -102,14 +102,14 @@ const QUICK_ACTIONS = [
       </svg>
     ),
     title: 'Falar com a GHENO',
-    description: 'Atendimento rápido via WhatsApp',
-    href: 'https://store.ghenortrs.com.br/contato/',
+    description: 'Canais oficiais de atendimento',
+    to: '/contato',
     badge: null as string | null,
   },
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -124,13 +124,13 @@ const QUICK_ACTIONS = [
     ),
     title: 'Sobre a GHENO',
     description: 'Nossa história e propósito',
-    to: '/',
+    to: '/sobre',
     badge: null as string | null,
   },
   {
     icon: (
       <svg
-        className="h-4 w-4"
+        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -152,16 +152,25 @@ const QUICK_ACTIONS = [
 
 export function MobileMenuActions({ onClose }: { onClose: () => void }) {
   return (
-    <nav aria-label="Ações rápidas" className="flex flex-col">
+    <nav
+      aria-label="Ações rápidas"
+      className="overflow-hidden rounded-xl border border-border-strong bg-background/18"
+    >
       {QUICK_ACTIONS.map((action) => {
         const content = (
           <>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-secondary">
+            <div
+              className={
+                action.title === 'Falar com a GHENO'
+                  ? 'flex h-10 w-10 shrink-0 items-center justify-center text-[#67d82f] min-[420px]:h-12 min-[420px]:w-12'
+                  : 'flex h-10 w-10 shrink-0 items-center justify-center text-primary min-[420px]:h-12 min-[420px]:w-12'
+              }
+            >
               {action.icon}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-primary">
+                <span className="text-base font-bold leading-tight text-primary min-[420px]:text-lg">
                   {action.title}
                 </span>
                 {'badge' in action && action.badge && (
@@ -170,7 +179,9 @@ export function MobileMenuActions({ onClose }: { onClose: () => void }) {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-secondary">{action.description}</p>
+              <p className="mt-1 text-sm leading-tight text-secondary min-[420px]:text-base">
+                {action.description}
+              </p>
             </div>
             <svg
               className="h-4 w-4 shrink-0 text-secondary/40"
@@ -188,7 +199,7 @@ export function MobileMenuActions({ onClose }: { onClose: () => void }) {
           </>
         );
         const className =
-          'flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-surface-elevated active:bg-surface-elevated';
+          'flex min-h-20 items-center gap-4 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-surface-elevated/60 active:bg-surface-elevated min-[420px]:min-h-24 min-[420px]:gap-5 min-[420px]:px-6';
         if ('to' in action && action.to) {
           return (
             <Link

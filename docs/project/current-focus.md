@@ -1,17 +1,16 @@
 # Current Focus
 
-Last synced: 2026-05-12
+Last synced: 2026-05-13
 
 ## Active Milestone
 
-`M5: SEO, Analytics, Performance, And QA`
+`M7: Design Polish And Navigation Corrections`
 
 ## Objective
 
-Harden the launch candidate with metadata, analytics, accessibility, responsive QA, and
-performance validation. `M4` Nuvemshop Commerce Bridge is verified and provides outbound
-click tracking. `M3` B2B Lead Capture is verified and provides the lead path. `M2` landing
-page is verified and provides the marketing surface.
+Address post-launch visual, navigation, footer, and public commerce-boundary corrections
+without reopening the completed MVP milestones. `M0` through `M6` remain verified and form
+the launch-ready baseline.
 
 ## M4 Completion Summary
 
@@ -19,7 +18,7 @@ All `M4` issues code-complete as of 2026-05-12:
 
 - `LUA-31` Commerce CTA wiring — all CTAs verified against
   [store-destination-map.md](./store-destination-map.md); Pastilhas → `/produtos/`,
-  Cubos/Aros/Rotores → `/contato/`, generic store CTAs → `/produtos/`
+  Cubos/Aros/Rotores → owned `/contato`, generic store CTAs → `/produtos/`
 - `LUA-32` Outbound commerce tracking — `src/lib/tracking.ts` event-delegation listener;
   fires `outbound_commerce_click` with `section` + `destination` to `window.dataLayer`
   and `window.gtag`; `data-section` attributes added to all key section wrappers
@@ -76,7 +75,18 @@ All `M6` research issues completed as of 2026-05-12:
 
 ## Project Status
 
-All milestones M0–M6 are **verified**. The GHENO landing page is launch-ready.
+Milestones `M0` through `M6` are **verified**. New post-launch milestones were added on
+2026-05-13:
+
+- `M7: Design Polish And Navigation Corrections` — verified backlog for glass, sticky header,
+  footer/social fixes, owned contact/about routes, public CTA semantics, and B2B teaser
+  one-CTA polish. `LUA-43` through `LUA-48` and `LUA-59` are complete locally.
+- `M8: Search And Command Experience` — planned backlog; `LUA-50` through `LUA-52` are
+  complete locally, while the working search implementation waits on the source/ranking
+  specification in `LUA-49`.
+- `M9: B2B Seller Access` — planned backlog for owned `/b2b`, registration handoff, and
+  registered-seller email SSO. `LUA-55` is complete locally with a presentational login
+  gate plus registration request path; the real auth/access model remains in `LUA-54`.
 
 ## Post-Launch Candidates (Not In Active Scope)
 

@@ -36,7 +36,7 @@ function FooterBrand() {
     <div className="flex flex-col gap-4">
       <img
         alt="GHENO"
-        className="h-8 w-auto rounded-sm"
+        className="h-8 w-[8rem] rounded-sm object-contain object-left"
         height={250}
         loading="lazy"
         src="/brand/logo-wide.png"
