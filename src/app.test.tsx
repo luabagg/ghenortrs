@@ -362,7 +362,7 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'A GHENO é uma marca brasileira de componentes para mountain bike, com foco em frenagem, controle e uso técnico.',
+        'A GHENO atua com componentes para mountain bike, com foco em frenagem, controle e uso técnico.',
       ),
     ).toBeInTheDocument();
     expect(

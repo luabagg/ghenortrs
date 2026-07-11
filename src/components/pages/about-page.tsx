@@ -14,7 +14,7 @@ export function AboutPage() {
   return (
     <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 py-16 sm:px-10 sm:py-20 lg:px-16">
       <PageIntro
-        description="A GHENO é uma marca brasileira de componentes para mountain bike, com foco em frenagem, controle e uso técnico."
+        description="A GHENO atua com componentes para mountain bike, com foco em frenagem, controle e uso técnico."
         eyebrow="SOBRE"
         title="Componentes GHENO para MTB."
       />

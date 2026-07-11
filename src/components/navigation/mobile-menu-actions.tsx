@@ -123,7 +123,7 @@ const QUICK_ACTIONS = [
       </svg>
     ),
     title: 'Sobre a GHENO',
-    description: 'Marca brasileira de componentes MTB',
+    description: 'Componentes MTB com foco técnico',
     to: '/sobre',
     badge: null as string | null,
   },
