@@ -14,6 +14,9 @@
 - Pastilhas may link to the live public catalog; Cubos, Aros, and Rotores remain consultation-led.
 - Preserve Portuguese-first hierarchy, existing route behavior, and the single B2B teaser CTA.
 - Do not change visual tokens or styling except to close spacing left by removed text.
+- Keep the technical-proof section focused on friction consistency, heat management, finish quality, and reliability without unsupported specifications.
+- Keep `/sobre` institutional; commerce-boundary copy belongs on product and contact surfaces.
+- Avoid dynamic catalog counts unless a current authoritative local source verifies them.
 
 ---
 

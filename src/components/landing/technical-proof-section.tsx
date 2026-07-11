@@ -5,22 +5,22 @@ import { Button } from '@/components/ui/button';
 import { MetaLabel } from '@/components/ui/meta-label';
 
 const TECH_FEATURES = [
-  'Modelos para Hayes, Hope, Magura, Shimano e SRAM',
-  'Linhas Elite e Ultra publicadas no catálogo',
-  'Compatibilidade indicada por pinça e grupo',
-  'Compra finalizada na loja GHENO',
+  'Controle de atrito para resposta consistente',
+  'Gestão de calor em frenagens repetidas',
+  'Acabamento orientado ao encaixe do componente',
+  'Confiabilidade para uso técnico em MTB',
 ] as const;
 
 const TECH_STATS = [
   {
-    value: '13',
-    label: 'Modelos',
-    description: 'Pastilhas publicadas no catálogo GHENO.',
+    value: 'ATRITO',
+    label: 'Consistência',
+    description: 'Resposta previsível ao longo da frenagem.',
   },
   {
-    value: '2',
-    label: 'Linhas',
-    description: 'Opções Elite e Ultra disponíveis para consulta.',
+    value: 'CALOR',
+    label: 'Gestão térmica',
+    description: 'Projeto voltado a ciclos repetidos de frenagem.',
   },
 ] as const;
 
@@ -39,7 +39,7 @@ export function TechnicalProofSection() {
               className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
               id="tecnica-heading"
             >
-              Escolha a pastilha pelo seu sistema de freio.
+              Atrito, calor e acabamento sob controle.
             </h2>
           </div>
           <TechnicalStatsGrid />

@@ -5,16 +5,16 @@ import { Button } from '@/components/ui/button';
 import { SectionBand } from '@/components/ui/section-band';
 
 const ABOUT_POINTS = [
-  'Componentes para MTB com foco em frenagem, controle e uso intenso.',
-  'Atendimento para riders, oficinas e revendas.',
-  'Catálogo público separado do atendimento comercial para revendas.',
+  'Linha de pastilhas, cubos, aros e rotores para mountain bike.',
+  'Conteúdo técnico para riders e profissionais de oficina.',
+  'Atendimento comercial para lojistas e revendas.',
 ] as const;
 
 export function AboutPage() {
   return (
     <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 py-16 sm:px-10 sm:py-20 lg:px-16">
       <PageIntro
-        description="A GHENO oferece pastilhas no catálogo online e atendimento comercial para cubos, aros e rotores."
+        description="A GHENO é uma marca brasileira de componentes para mountain bike, com foco em frenagem, controle e uso técnico."
         eyebrow="SOBRE"
         title="Componentes GHENO para MTB."
       />
@@ -24,7 +24,7 @@ export function AboutPage() {
             GHENO
           </p>
           <h2 className="font-heading text-3xl leading-none tracking-[-0.04em] text-on-primary sm:text-4xl">
-            Catálogo público e atendimento para revendas.
+            Componentes de MTB com foco técnico.
           </h2>
         </div>
         <div className="grid gap-5">

@@ -48,7 +48,7 @@ describe('App', () => {
     expect(
       screen.getAllByRole('link', { name: 'Ver componentes →' })[0],
     ).toHaveClass('border', 'border-strong', 'bg-background/35');
-    expect(screen.getByText('13 pastilhas no catálogo')).toBeInTheDocument();
+    expect(screen.getByText('Catálogo de pastilhas ativo')).toBeInTheDocument();
     expect(
       screen.getByText('Compatibilidade identificada'),
     ).toBeInTheDocument();
@@ -119,26 +119,26 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Escolha a pastilha pelo seu sistema de freio.',
+        name: 'Atrito, calor e acabamento sob controle.',
       }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText('13')).toBeInTheDocument();
-    expect(screen.getByText('Modelos')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('Linhas')).toBeInTheDocument();
+    expect(screen.getByText('ATRITO')).toBeInTheDocument();
+    expect(screen.getByText('Consistência')).toBeInTheDocument();
+    expect(screen.getByText('CALOR')).toBeInTheDocument();
+    expect(screen.getByText('Gestão térmica')).toBeInTheDocument();
 
     expect(
-      screen.getByText('Modelos para Hayes, Hope, Magura, Shimano e SRAM'),
+      screen.getByText('Controle de atrito para resposta consistente'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Linhas Elite e Ultra publicadas no catálogo'),
+      screen.getByText('Gestão de calor em frenagens repetidas'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Compatibilidade indicada por pinça e grupo'),
+      screen.getByText('Acabamento orientado ao encaixe do componente'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Compra finalizada na loja GHENO'),
+      screen.getByText('Confiabilidade para uso técnico em MTB'),
     ).toBeInTheDocument();
 
     expect(screen.getByLabelText('Imagens de tecnologia GHENO')).toHaveClass(
@@ -348,6 +348,26 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Pré-cadastro comercial' }),
     ).toHaveAttribute('href', '/b2b');
+  });
+
+  it('renders institutional context on the about route', () => {
+    render(
+      <MemoryRouter initialEntries={['/sobre']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Componentes GHENO para MTB.' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'A GHENO é uma marca brasileira de componentes para mountain bike, com foco em frenagem, controle e uso técnico.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Componentes de MTB com foco técnico.'),
+    ).toBeInTheDocument();
   });
 
   it('renders the B2B route with access login and lead form', () => {
