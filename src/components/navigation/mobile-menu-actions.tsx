@@ -31,27 +31,6 @@ const QUICK_ACTIONS = [
         viewBox="0 0 24 24"
       >
         <path
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-        />
-      </svg>
-    ),
-    title: 'Buscar compatibilidade',
-    description: 'Encontre a peça certa para sua bike',
-    to: '/componentes',
-    badge: null as string | null,
-  },
-  {
-    icon: (
-      <svg
-        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
           d="M13 10V3L4 14h7v7l9-11h-7z"
           strokeLinecap="round"
           strokeLinejoin="round"

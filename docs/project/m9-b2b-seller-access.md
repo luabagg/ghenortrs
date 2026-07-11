@@ -49,8 +49,8 @@ Create an owned B2B access path for registered sellers instead of sending B2B us
 2026-05-13:
 
 - `LUA-55` completed: the public B2B teaser now has a single CTA to owned `/b2b`, and it no longer routes B2B users to the Nuvemshop product catalog.
-- `/b2b` now opens with an access/login-style gate for approved sellers, followed by a `Não possui cadastro?` path into the existing registration request form.
-- The login gate is presentational until `LUA-54` defines the formal auth requirements and `LUA-57` implements email SSO.
+- `/b2b` now exposes only the existing registration request form. The inert access/login-style gate was removed on 2026-07-11 because it implied unavailable authentication.
+- Registered-seller entry remains intentionally absent until `LUA-54` defines formal auth requirements and `LUA-57` implements email SSO.
 
 ## Exit Criteria
 

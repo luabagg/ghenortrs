@@ -1,7 +1,6 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
 import { MobileMenuActions } from '@/components/navigation/mobile-menu-actions';
-import { GlassPanel } from '@/components/ui/glass-panel';
 
 export function MobileMenuOverlay({
   open,
@@ -38,9 +37,7 @@ export function MobileMenuOverlay({
       <MobileMenuHeader closeRef={closeRef} onClose={onClose} />
 
       <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-32 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
-        <MobileMenuSearchPrompt />
-
-        <div className="overflow-y-auto px-5 pb-5 min-[420px]:px-7">
+        <div className="overflow-y-auto px-5 pb-5 pt-3 min-[420px]:px-7">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-secondary">
             Ações rápidas
           </p>
@@ -88,34 +85,6 @@ function MobileMenuHeader({
           />
         </svg>
       </button>
-    </div>
-  );
-}
-
-function MobileMenuSearchPrompt() {
-  return (
-    <div className="px-5 pb-4 pt-3 min-[420px]:px-7">
-      <GlassPanel
-        className="flex min-h-14 items-center gap-3 rounded-lg px-4"
-        density="strong"
-      >
-        <svg
-          className="h-6 w-6 shrink-0 text-primary"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-          />
-        </svg>
-        <span className="min-w-0 flex-1 truncate text-sm text-secondary min-[420px]:text-base">
-          Buscar componentes, compatibilidade, páginas...
-        </span>
-      </GlassPanel>
     </div>
   );
 }

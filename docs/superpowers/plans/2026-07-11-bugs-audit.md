@@ -29,10 +29,10 @@
 - Consumes: existing `PageIntro` title string.
 - Produces: optional `headingLevel?: 1 | 2`, defaulting to `1`.
 
-- [ ] Add a B2B route test asserting one `h1` and an `h2` for “Não possui cadastro?”.
-- [ ] Run `pnpm test -- --run` and confirm the new assertion fails.
-- [ ] Render the `PageIntro` title through a typed `h1`/`h2` component and pass `headingLevel={2}` in `B2BLeadIntroSection`.
-- [ ] Run `pnpm test -- --run` and confirm all tests pass.
+- [x] Add a B2B route test asserting one `h1` and an `h2` for the registration subsection.
+- [x] Run `pnpm test -- --run` and confirm the new assertion fails.
+- [x] Render the `PageIntro` title through a typed `h1`/`h2` component and pass `headingLevel={2}` in `B2BLeadIntroSection`.
+- [x] Run `pnpm test -- --run` and confirm all tests pass.
 
 ### Task 2: Repair shortcuts-dialog keyboard behavior
 
@@ -46,10 +46,10 @@
 - Consumes: existing search trigger and `KeyboardShortcutsDialog` close callback.
 - Produces: Escape closes the active shortcuts dialog; opening focuses its close control; closing restores focus to the search trigger.
 
-- [ ] Add tests for Escape close and focus restoration.
-- [ ] Run `pnpm test -- --run` and confirm they fail.
-- [ ] Add trigger/dialog refs and dialog-scoped focus/Escape lifecycle without global mutable state.
-- [ ] Run `pnpm test -- --run` and confirm all tests pass.
+- [x] Add tests for Escape close and focus restoration.
+- [x] Run `pnpm test -- --run` and confirm they fail.
+- [x] Add trigger/dialog refs and dialog-scoped focus/Escape lifecycle without global mutable state.
+- [x] Run `pnpm test -- --run` and confirm all tests pass.
 
 ### Task 3: Document audit and verify production behavior
 
@@ -62,6 +62,35 @@
 - Consumes: source inspection, baseline checks, and Playwright route audit.
 - Produces: durable fixed/open issue register with evidence and blockers.
 
-- [ ] Document each reproduced defect, root cause, resolution, verification, and unsupported M8/M9 blocker.
-- [ ] Run `pnpm test -- --run`, `pnpm lint`, `pnpm build`, and Playwright route/overflow/console checks.
-- [ ] Commit the independently reviewable work.
+- [x] Document each reproduced defect, root cause, resolution, verification, and unsupported M8/M9 blocker.
+- [x] Run `pnpm test -- --run`, `pnpm lint`, `pnpm build`, and Playwright route/overflow/console checks.
+- [x] Commit the independently reviewable work.
+
+### Task 4: Remove misleading incomplete features and prerender route content
+
+**Files:**
+
+- Modify: `src/components/navigation/app-header.tsx`
+- Modify: `src/components/navigation/mobile-menu-overlay.tsx`
+- Modify: `src/components/landing/b2b-teaser-section.tsx`
+- Modify: `src/components/pages/b2b-page-sections.tsx`
+- Modify: `src/seo/seo-config.ts`
+- Modify: `build/route-pages.ts`
+- Modify: `src/app.test.tsx`
+- Modify: `build/route-pages.test.ts`
+- Modify: `public/llms.txt`
+- Modify: `docs/project/current-focus.md`
+- Modify: `docs/project/milestones.md`
+- Modify: `docs/project/timeline.md`
+- Modify: `docs/project/m9-b2b-seller-access.md`
+
+**Interfaces:**
+
+- Consumes: existing quick-navigation links, working B2B registration form, and typed `SEO_ROUTES` registry.
+- Produces: accurately labeled navigation, no inert login control, fact-bounded B2B copy, and meaningful static route content inside every generated root.
+
+- [x] Relabel desktop shortcut UI as quick navigation and remove the inert mobile search prompt.
+- [x] Remove the presentational B2B login, unsupported commercial promises, and unsupported response deadline while preserving the working registration request.
+- [x] Add typed static headings and links to `SEO_ROUTES`; inject escaped semantic content into every generated route and noindex 404 page.
+- [x] Synchronize `llms.txt` and all affected local M8/M9 planning files.
+- [x] Run unit, build, static-output, and desktop/mobile browser verification before commit.

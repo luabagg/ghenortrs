@@ -18,27 +18,31 @@ Scope: public routes at desktop `1440×900` and mobile `390×844`, navigation di
 - Resolution: dialog owns its Escape listener, focuses its visible close control on mount, and restores focus to the search trigger on close. `Ctrl/⌘+K` no longer opens a second command layer behind the dialog.
 - Regression evidence: `src/app.test.tsx` covers initial focus, Escape close, and focus restoration.
 
+### Misleading search affordances
+
+- Reproduction: desktop and mobile surfaces visually promised search but only exposed fixed links.
+- Root cause: M8 shortcut infrastructure was presented as a finished search control before content-source and ranking decisions existed.
+- Resolution: desktop control and shortcut copy now say “Navegação rápida”; the inert mobile search prompt and false compatibility-search action were removed. Real search remains planned under `M8/LUA-49` and `LUA-53`.
+
+### Presentational B2B login and unsupported promises
+
+- Reproduction: `/b2b` accepted an email through a “Continuar” button with no action and promised unverified prices, margins, policies, support, and response timing.
+- Root cause: planned M9 authentication and commercial details were represented before requirements or source evidence existed.
+- Resolution: removed the inert login gate and unsupported promises. `/b2b` now offers only the working registration-request form. Authentication remains planned under `M9/LUA-54` and `LUA-57`.
+
+### Generated route documents had empty bodies without JavaScript
+
+- Reproduction: production route HTML contained complete metadata but only an empty `<div id="root"></div>` body.
+- Root cause: route generation transformed the document head without publishing route content for non-JavaScript crawlers and agents.
+- Resolution: the typed SEO registry now supplies a factual route heading and primary links. Build generation escapes and inserts semantic `main`, `h1`, description, and navigation content for every canonical route plus the noindex 404 page.
+- Regression evidence: `build/route-pages.test.ts` checks every generated route for non-empty static content, and production artifact inspection verifies one static body and heading per document.
+
 ## Verified Healthy
 
 - `/`, `/componentes`, `/b2b`, `/sobre`, `/contato`, and the not-found view render without browser console or page errors.
 - No horizontal overflow was detected on audited desktop or mobile viewports.
 - Production TypeScript/Vite build, ESLint, and Vitest pass.
-
-## Open: Product Specification Required
-
-These are visible incomplete behaviors, but implementing them here would require fake or fragile behavior and would violate the project rules.
-
-### Search surfaces are navigation-only
-
-- Desktop and mobile surfaces visually promise search, but current implementation only exposes fixed navigation links.
-- Blocker: `M8/LUA-49` still lacks the approved content-source and ranking specification.
-- Required next decision: define indexed content, matching/ranking, empty state, and route behavior; then implement `LUA-53` as real search or relabel/remove the search affordances.
-
-### B2B access button is presentational
-
-- `/b2b` accepts an email and shows a “Continuar” button with no authentication action.
-- Blocker: `M9/LUA-54` still lacks the real access model, registration handoff, and seller SSO contract.
-- Required next decision: approve identity provider, account eligibility, session model, error states, and protected-route boundary before wiring the control.
+- Every generated route contains meaningful static content before JavaScript runs.
 
 ## Verification Commands
 

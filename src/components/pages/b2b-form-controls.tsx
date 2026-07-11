@@ -117,21 +117,15 @@ export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
       {status === 'no-config' ? (
         <p className="text-sm text-secondary">
           Formulário ainda não configurado.{' '}
-          <Link
-            className="font-semibold text-primary underline"
-            to="/contato"
-          >
+          <Link className="font-semibold text-primary underline" to="/contato">
             veja os canais de contato
           </Link>{' '}
-          para atendimento imediato.
+          para atendimento.
         </p>
       ) : (
         <p className="text-sm text-secondary">
           Erro ao enviar. Tente novamente ou{' '}
-          <Link
-            className="font-semibold text-primary underline"
-            to="/contato"
-          >
+          <Link className="font-semibold text-primary underline" to="/contato">
             use os canais de contato
           </Link>
           .

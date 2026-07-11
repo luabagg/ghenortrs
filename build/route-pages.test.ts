@@ -1,7 +1,11 @@
 import { readFile } from 'node:fs/promises';
 
 import { SEO_ROUTES } from '../src/seo/seo-config';
-import { getGeneratedRoutePaths, renderRouteHtml } from './route-pages';
+import {
+  getGeneratedRoutePaths,
+  renderNotFoundHtml,
+  renderRouteHtml,
+} from './route-pages';
 
 describe('route page generation', () => {
   it.each(SEO_ROUTES)(
@@ -21,6 +25,13 @@ describe('route page generation', () => {
       expect(output).toContain(JSON.stringify(route.jsonLd).slice(0, 40));
       expect(output.match(/rel="canonical"/g)).toHaveLength(1);
       expect(output.match(/id="route-seo-jsonld"/g)).toHaveLength(1);
+      expect(output).toContain('data-static-route-content');
+      expect(output).toContain(`<h1>${route.staticContent.heading}</h1>`);
+      expect(output).toContain(`<p>${route.description}</p>`);
+      for (const link of route.staticContent.links) {
+        expect(output).toContain(`<a href="${link.href}">${link.label}</a>`);
+      }
+      expect(output).not.toContain('<div id="root"></div>');
     },
   );
 
@@ -55,5 +66,15 @@ describe('route page generation', () => {
       expect(llms).toContain(canonical);
     }
     expect(sitemap).not.toContain('nao-existe');
+  });
+
+  it('renders a crawlable noindex not-found document', async () => {
+    const template = await readFile('index.html', 'utf8');
+    const output = renderNotFoundHtml(template);
+
+    expect(output).toContain('data-static-route-content');
+    expect(output).toContain('<h1>Página não encontrada</h1>');
+    expect(output).toContain('content="noindex, nofollow"');
+    expect(output).not.toContain('<div id="root"></div>');
   });
 });

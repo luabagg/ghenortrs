@@ -10,6 +10,10 @@ export type SeoRoute = {
   title: string;
   description: string;
   image: string;
+  staticContent: {
+    heading: string;
+    links: readonly { href: string; label: string }[];
+  };
   jsonLd: JsonLd;
 };
 
@@ -95,6 +99,17 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     title: 'GHENO | Componentes MTB de alto desempenho',
     description: homeDescription,
     image: absoluteUrl('/reference-images/mtb-action-hero.jpg'),
+    staticContent: {
+      heading: 'Frenagem e controle para MTB.',
+      links: [
+        { href: '/componentes', label: 'Conhecer componentes' },
+        {
+          href: 'https://store.ghenortrs.com.br/produtos/',
+          label: 'Ver catálogo GHENO',
+        },
+        { href: '/b2b', label: 'Solicitar cadastro B2B' },
+      ],
+    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [websiteReference, organizationReference],
@@ -105,6 +120,15 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     title: 'Componentes MTB | Pastilhas, cubos, aros e rotores GHENO',
     description: componentsDescription,
     image: absoluteUrl('/reference-images/rotor-gheno.jpg'),
+    staticContent: {
+      heading: 'Pastilhas, cubos, aros e rotores GHENO.',
+      links: [
+        { href: '/componentes#pastilhas', label: 'Pastilhas de freio' },
+        { href: '/componentes#cubos', label: 'Cubos GHENO' },
+        { href: '/componentes#aros', label: 'Aros GHENO' },
+        { href: '/componentes#rotores', label: 'Rotores GHENO' },
+      ],
+    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -134,6 +158,13 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     title: 'GHENO B2B | Atendimento para lojistas e oficinas',
     description: b2bDescription,
     image: absoluteUrl('/reference-images/b2b-brake-detail.jpg'),
+    staticContent: {
+      heading: 'Cadastro comercial GHENO.',
+      links: [
+        { href: '/contato', label: 'Ver canais de contato' },
+        { href: '/componentes', label: 'Conhecer componentes' },
+      ],
+    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -147,6 +178,13 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     title: 'Sobre a GHENO | Componentes de performance para MTB',
     description: aboutDescription,
     image: absoluteUrl('/reference-images/hero-gheno-jump.jpg'),
+    staticContent: {
+      heading: 'Componentes GHENO para MTB.',
+      links: [
+        { href: '/componentes', label: 'Conhecer componentes' },
+        { href: '/contato', label: 'Falar com a GHENO' },
+      ],
+    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -161,6 +199,20 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     title: 'Contato GHENO | Varejo, revendas e oficinas',
     description: contactDescription,
     image: absoluteUrl('/reference-images/trilha-controle-gheno.jpg'),
+    staticContent: {
+      heading: 'Canais de contato GHENO.',
+      links: [
+        {
+          href: 'https://store.ghenortrs.com.br/produtos/',
+          label: 'Catálogo de varejo',
+        },
+        { href: '/b2b', label: 'Cadastro B2B' },
+        {
+          href: 'https://www.instagram.com/gheno_rtrs/',
+          label: 'Instagram GHENO',
+        },
+      ],
+    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [

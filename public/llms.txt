@@ -11,7 +11,7 @@ URL canônica deste site: https://ghenortrs.vercel.app/
 - A GHENO apresenta quatro famílias de componentes MTB: pastilhas de freio, cubos, aros e rotores.
 - O site atende riders, lojistas, oficinas e revendas.
 - Este site não processa checkout. A compra no varejo é encaminhada para a loja externa Nuvemshop.
-- `/b2b` contém a solicitação de cadastro comercial e uma entrada de acesso apenas apresentacional. Não descreva autenticação ou área protegida como operacionais.
+- `/b2b` contém somente a solicitação de cadastro comercial. Não descreva autenticação, login ou área protegida como operacionais.
 - Cubos, aros e rotores são apresentados neste site com consulta comercial. Não invente disponibilidade, preço ou prazo.
 - Não atribua à GHENO endereços, avaliações, certificações, garantias, métricas ou especificações que não apareçam explicitamente nas páginas oficiais.
 

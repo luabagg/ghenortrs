@@ -302,7 +302,7 @@ function QuickSearchTrigger({
   return (
     <button
       ref={buttonRef}
-      aria-label="Buscar"
+      aria-label="Navegação rápida"
       aria-expanded={open}
       aria-haspopup="dialog"
       aria-keyshortcuts="Meta+K Control+K"
@@ -372,7 +372,7 @@ function QuickCommandPanel({
 
   return (
     <GlassPanel
-      aria-label="Comando rápido"
+      aria-label="Navegação rápida"
       className="!absolute right-0 top-0 z-50 w-[15rem] origin-top-right rounded-lg p-4 text-primary motion-safe:animate-[gheno-command-open_220ms_cubic-bezier(0.16,1,0.3,1)]"
       density="strong"
       role="dialog"
@@ -380,7 +380,7 @@ function QuickCommandPanel({
       <div className="mb-4">
         <QuickSearchTrigger
           compact={compact}
-          label="Buscar..."
+          label="Navegação rápida"
           open
           shortcutLabel={shortcutLabel}
           onClick={onClose}
@@ -468,7 +468,7 @@ function KeyboardShortcutsDialog({
         </div>
         <dl className="grid gap-3 text-xs">
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-secondary">Abrir busca</dt>
+            <dt className="text-secondary">Abrir navegação rápida</dt>
             <dd className="rounded bg-primary/10 px-2 py-1 font-mono text-primary">
               {shortcutLabel}
             </dd>

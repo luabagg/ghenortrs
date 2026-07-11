@@ -82,11 +82,12 @@ Milestones `M0` through `M6` are **verified**. New post-launch milestones were a
   footer/social fixes, owned contact/about routes, public CTA semantics, and B2B teaser
   one-CTA polish. `LUA-43` through `LUA-48` and `LUA-59` are complete locally.
 - `M8: Search And Command Experience` — planned backlog; `LUA-50` through `LUA-52` are
-  complete locally, while the working search implementation waits on the source/ranking
-  specification in `LUA-49`.
+  complete locally as navigation-shortcut infrastructure, while the public control is labeled
+  as quick navigation and working search waits on the source/ranking specification in `LUA-49`.
 - `M9: B2B Seller Access` — planned backlog for owned `/b2b`, registration handoff, and
-  registered-seller email SSO. `LUA-55` is complete locally with a presentational login
-  gate plus registration request path; the real auth/access model remains in `LUA-54`.
+  registered-seller email SSO. `LUA-55` keeps the owned registration-request path, while the
+  misleading presentational login gate was removed locally on 2026-07-11; the real auth/access
+  model remains in `LUA-54`.
 
 ## Post-Launch Candidates (Not In Active Scope)
 

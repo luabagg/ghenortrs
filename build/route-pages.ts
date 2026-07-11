@@ -41,6 +41,24 @@ function serializeJsonLd(value: Record<string, unknown>) {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
+function renderStaticContent(seo: SeoRoute) {
+  const links = seo.staticContent.links
+    .map(
+      ({ href, label }) =>
+        `<li><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`,
+    )
+    .join('');
+
+  return `<main data-static-route-content><h1>${escapeHtml(seo.staticContent.heading)}</h1><p>${escapeHtml(seo.description)}</p><nav aria-label="Links principais"><ul>${links}</ul></nav></main>`;
+}
+
+function injectRootContent(html: string, content: string) {
+  return html.replace(
+    /<div id="root">.*?<\/div>/s,
+    `<div id="root">${content}</div>`,
+  );
+}
+
 export function renderRouteHtml(html: string, seo: SeoRoute) {
   const canonical = new URL(seo.path, SITE_ORIGIN).toString();
   let output = html.replace(
@@ -73,6 +91,8 @@ export function renderRouteHtml(html: string, seo: SeoRoute) {
     `<script id="route-seo-jsonld" type="application/ld+json">${serializeJsonLd(seo.jsonLd)}</script>`,
   );
 
+  output = injectRootContent(output, renderStaticContent(seo));
+
   return output;
 }
 
@@ -98,6 +118,10 @@ export function renderNotFoundHtml(html: string) {
   output = output.replace(
     /\s*<script[^>]*id="route-seo-jsonld"[^>]*>.*?<\/script>/s,
     '',
+  );
+  output = injectRootContent(
+    output,
+    '<main data-static-route-content><h1>Página não encontrada</h1><p>O endereço informado não corresponde a uma página disponível.</p><nav aria-label="Recuperação de página"><ul><li><a href="/">Voltar ao início</a></li><li><a href="/componentes">Ver componentes MTB</a></li></ul></nav></main>',
   );
   return output;
 }

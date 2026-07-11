@@ -232,7 +232,7 @@ describe('App', () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Acessar produtos B2B →' }),
+      screen.getByRole('link', { name: 'Solicitar cadastro B2B →' }),
     ).toHaveAttribute('href', '/b2b');
     const b2bTeaser = screen
       .getByLabelText('Contexto visual para atendimento B2B GHENO')
@@ -381,7 +381,7 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders the B2B route with access login and lead form', () => {
+  it('renders the B2B route with an honest lead form and no fake login', () => {
     render(
       <MemoryRouter initialEntries={['/b2b']}>
         <App />
@@ -390,18 +390,14 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Área comercial para revendedores cadastrados.',
+        name: 'Cadastro comercial GHENO.',
       }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: 'Acessar produtos B2B' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Continuar' }),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Continuar' })).toBeNull();
+    expect(screen.queryByText('Acessar produtos B2B')).toBeNull();
     expect(
       screen.getByRole('heading', {
-        name: 'Solicite seu cadastro.',
+        name: 'Dados da empresa.',
       }),
     ).toHaveProperty('tagName', 'H2');
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
@@ -433,7 +429,9 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    const searchTrigger = screen.getByRole('button', { name: 'Buscar' });
+    const searchTrigger = screen.getByRole('button', {
+      name: 'Navegação rápida',
+    });
     fireEvent.click(searchTrigger);
     fireEvent.click(
       screen.getByRole('button', {
@@ -453,7 +451,26 @@ describe('App', () => {
     expect(
       screen.queryByRole('dialog', { name: 'Atalhos do teclado' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Buscar' })).toHaveFocus();
+    expect(
+      screen.getByRole('button', { name: 'Navegação rápida' }),
+    ).toHaveFocus();
+  });
+
+  it('does not advertise unavailable search in the mobile menu', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }));
+
+    expect(
+      screen.queryByText('Buscar componentes, compatibilidade, páginas...'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Buscar compatibilidade'),
+    ).not.toBeInTheDocument();
   });
 
   it('shows inline validation errors when B2B form is submitted empty', () => {
