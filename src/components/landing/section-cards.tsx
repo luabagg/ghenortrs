@@ -17,7 +17,7 @@ export function PageIntro({
   description: string;
 }) {
   return (
-    <Card className="bg-surface px-0 py-0 shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
+    <Card className="rounded-lg bg-surface px-0 py-0">
       <CardHeader className="px-6 py-8 sm:px-8 sm:py-10">
         <MetaLabel className="mb-1">{eyebrow}</MetaLabel>
         <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
@@ -101,7 +101,7 @@ export function TechnicalMediaCard({
   imageSrc: string;
 }) {
   return (
-    <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
+    <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-lg border border-border bg-surface sm:min-w-0">
       <img
         alt={imageAlt}
         className="absolute inset-0 h-full w-full object-cover opacity-75 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
@@ -130,7 +130,7 @@ export function B2BMediaCard({
   imageSrc: string;
 }) {
   return (
-    <figure className="relative min-h-60 min-w-[15rem] snap-start overflow-hidden rounded-panel border border-on-primary/14 bg-on-primary/8 sm:min-w-0">
+    <figure className="relative min-h-60 min-w-[15rem] snap-start overflow-hidden rounded-lg border border-on-primary/14 bg-on-primary/8 sm:min-w-0">
       <img
         alt={imageAlt}
         className="absolute inset-0 h-full w-full object-cover opacity-88 saturate-75"

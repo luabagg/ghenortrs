@@ -57,11 +57,11 @@ export function HomeHeroSection() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_42%,rgba(232,20,20,0.1),transparent_28%)]" />
 
         <div className="relative mx-auto flex min-h-[100dvh] max-w-[90rem] flex-col justify-center px-6 pb-64 pt-28 sm:px-10 sm:pb-60 lg:px-16">
-          <div className="max-w-[34rem] lg:max-w-[36rem]">
-            <h1 className="max-w-[36rem] font-heading text-[clamp(2.75rem,9vw,4.25rem)] leading-[0.94] tracking-[-0.05em] sm:text-[clamp(3.8rem,5.2vw,5.2rem)] lg:text-[clamp(4rem,5vw,5.7rem)]">
+          <div className="max-w-[38rem] lg:max-w-[42rem]">
+            <h1 className="max-w-[42rem] text-balance font-heading text-[clamp(3rem,10vw,4.5rem)] leading-[0.94] tracking-[-0.05em]">
               Frenagem e controle para <span className="text-accent">MTB.</span>
             </h1>
-            <p className="mt-6 max-w-md text-lg leading-8 text-primary/86 sm:text-xl">
+            <p className="mt-7 max-w-[31rem] text-lg leading-8 text-primary/82 sm:text-xl">
               Pastilhas GHENO disponíveis no catálogo. Cubos, aros e rotores sob
               consulta comercial.
             </p>

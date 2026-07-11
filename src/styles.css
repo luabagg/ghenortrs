@@ -47,9 +47,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: clip;
-  background:
-    radial-gradient(circle at top left, rgb(232 20 20 / 0.22), transparent 28%),
-    linear-gradient(180deg, #050505 0%, #09090a 48%, #050505 100%);
+  background: var(--color-background);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -125,16 +123,8 @@ select {
   z-index: -1;
   border-radius: inherit;
   background:
-    radial-gradient(
-      circle at 16% 0%,
-      rgb(255 255 255 / 0.1),
-      transparent 38%
-    ),
-    radial-gradient(
-      circle at 92% 6%,
-      rgb(232 20 20 / 0.06),
-      transparent 28%
-    );
+    radial-gradient(circle at 16% 0%, rgb(255 255 255 / 0.1), transparent 38%),
+    radial-gradient(circle at 92% 6%, rgb(232 20 20 / 0.06), transparent 28%);
   pointer-events: none;
 }
 
@@ -166,21 +156,13 @@ select {
 ) {
   .gheno-glass {
     background:
-      linear-gradient(
-        135deg,
-        rgb(255 255 255 / 0.06),
-        rgb(0 0 0 / 0.32) 100%
-      ),
+      linear-gradient(135deg, rgb(255 255 255 / 0.06), rgb(0 0 0 / 0.32) 100%),
       color-mix(in srgb, var(--color-surface-glass) 92%, transparent);
   }
 
   .gheno-glass-strong {
     background:
-      linear-gradient(
-        135deg,
-        rgb(255 255 255 / 0.07),
-        rgb(0 0 0 / 0.42) 100%
-      ),
+      linear-gradient(135deg, rgb(255 255 255 / 0.07), rgb(0 0 0 / 0.42) 100%),
       color-mix(in srgb, var(--color-surface-glass) 96%, transparent);
   }
 }

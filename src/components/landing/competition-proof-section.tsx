@@ -55,7 +55,7 @@ export function CompetitionProofSection() {
         {COMPETITION_SHOTS.map((shot) => (
           <figure
             key={shot.src}
-            className="group relative min-h-64 min-w-[70vw] flex-shrink-0 snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0"
+            className="group relative min-h-64 min-w-[70vw] flex-shrink-0 snap-start overflow-hidden rounded-lg border border-border bg-surface sm:min-w-0"
           >
             <img
               alt={shot.alt}

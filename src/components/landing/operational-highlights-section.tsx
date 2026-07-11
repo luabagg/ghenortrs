@@ -33,13 +33,13 @@ export function OperationalHighlightsSection() {
       className="absolute inset-x-0 bottom-8 z-10 mx-auto w-[calc(100%-3rem)] max-w-[84rem] sm:bottom-10 sm:w-[calc(100%-5rem)] lg:bottom-12"
       data-section="operational-highlights"
     >
-      <GlassPanel className="grid min-h-36 grid-cols-2 place-items-center gap-4 overflow-hidden rounded-lg px-4 py-5 sm:px-8 sm:py-7 lg:grid-cols-4 lg:divide-x lg:divide-white/10">
+      <GlassPanel className="grid min-h-36 grid-cols-2 overflow-hidden rounded-lg border-border-strong p-0 lg:grid-cols-4">
         {OPERATIONAL_HIGHLIGHTS.map((item) => (
           <div
             key={item.title}
-            className="flex min-w-0 flex-col items-center justify-center gap-3 text-center lg:min-h-24 lg:flex-row lg:px-8 lg:text-left first:lg:pl-0 last:lg:pr-0"
+            className="flex min-w-0 flex-col items-center justify-center gap-2 border-white/10 px-3 py-5 text-center odd:border-r [&:nth-child(-n+2)]:border-b lg:min-h-36 lg:flex-row lg:gap-3 lg:border-r lg:px-7 lg:py-6 lg:text-left lg:[&:nth-child(-n+2)]:border-b-0 lg:last:border-r-0"
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-transparent text-accent lg:text-primary">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-transparent text-accent lg:text-primary">
               <svg
                 aria-hidden="true"
                 className="h-7 w-7"

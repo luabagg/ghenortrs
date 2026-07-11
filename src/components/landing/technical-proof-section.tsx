@@ -58,10 +58,10 @@ export function TechnicalProofSection() {
 
 function TechnicalStatsGrid() {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-border-strong bg-surface">
       {TECH_STATS.map((stat) => (
         <div
-          className="flex flex-col gap-1.5 rounded-panel border border-border bg-surface px-4 py-4"
+          className="flex flex-col gap-1.5 border-r border-border px-4 py-5 last:border-r-0"
           key={stat.label}
         >
           <p className="font-heading text-3xl font-black leading-none tracking-[-0.04em] text-accent">
@@ -110,7 +110,7 @@ function TechnicalMediaGrid() {
       aria-label="Imagens de tecnologia GHENO"
       className="-mx-6 flex max-w-[100vw] snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:max-w-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
     >
-      <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
+      <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-lg border border-border bg-surface sm:min-w-0">
         <img
           alt="Rotor de freio a disco GHENO para MTB"
           className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
@@ -131,7 +131,7 @@ function TechnicalMediaGrid() {
         imageSrc="/reference-images/trilha-frenagem-gheno.jpg"
         title="Uso em downhill."
       />
-      <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:col-span-2 sm:min-h-56 sm:min-w-0">
+      <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-lg border border-border bg-surface sm:col-span-2 sm:min-h-56 sm:min-w-0">
         <img
           alt="Pinça de freio Hayes Dominion A4 — produto compatível com pastilhas GHENO"
           className="absolute inset-0 h-full w-full object-cover object-center opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"

@@ -12,7 +12,7 @@ function ClosingCTASection() {
   return (
     <section
       aria-labelledby="fechamento-heading"
-      className="rounded-panel border border-border bg-surface px-6 py-10 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:px-8 sm:py-14 lg:px-12"
+      className="rounded-lg border border-border-strong bg-surface px-6 py-10 sm:px-8 sm:py-14 lg:px-12"
       data-section="closing-cta"
     >
       <div className="flex flex-col gap-6">
