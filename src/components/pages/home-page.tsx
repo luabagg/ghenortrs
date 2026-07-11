@@ -16,12 +16,12 @@ function ClosingCTASection() {
       data-section="closing-cta"
     >
       <div className="flex flex-col gap-6">
-        <MetaLabel>PRONTO PARA RODAR</MetaLabel>
+        <MetaLabel>CATÁLOGO E CONSULTA</MetaLabel>
         <h2
           className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
           id="fechamento-heading"
         >
-          Pronto para elevar a performance das suas bikes?
+          Compre pastilhas online. Consulte as outras linhas.
         </h2>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button asChild>

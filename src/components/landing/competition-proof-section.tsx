@@ -37,16 +37,15 @@ export function CompetitionProofSection() {
   return (
     <section aria-labelledby="competicao-heading" className="grid gap-8">
       <div className="flex flex-col gap-3">
-        <MetaLabel>PROVA EM CAMPO</MetaLabel>
+        <MetaLabel>DOWNHILL</MetaLabel>
         <h2
           className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
           id="competicao-heading"
         >
-          Componentes desenvolvidos para aguentar o que a prova cobra.
+          Componentes GHENO em contexto de competição.
         </h2>
         <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-          Descidas técnicas, terrenos soltos, frenagens encadeadas. As condições
-          que definem se o componente funciona de verdade.
+          Registros de uso em descidas, trechos rochosos e terrenos soltos.
         </p>
       </div>
       <div

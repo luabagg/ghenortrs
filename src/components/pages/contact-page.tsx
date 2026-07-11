@@ -19,7 +19,7 @@ const CONTACT_PATHS = [
   },
   {
     label: 'Instagram',
-    description: 'Acompanhe novidades e contato social oficial.',
+    description: 'Acompanhe a GHENO e envie uma mensagem pelo perfil oficial.',
     action: 'Abrir Instagram',
     href: 'https://www.instagram.com/gheno_rtrs/',
   },
@@ -29,9 +29,9 @@ export function ContactPage() {
   return (
     <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 py-16 sm:px-10 sm:py-20 lg:px-16">
       <PageIntro
-        description="Escolha o caminho mais direto para compra, revenda ou contato social. O contato não depende mais da página da Nuvemshop."
+        description="Compre no catálogo online, solicite atendimento B2B ou fale com a GHENO pelo Instagram."
         eyebrow="CONTATO"
-        title="Canais oficiais GHENO."
+        title="Compra, revenda e atendimento."
       />
       <div className="grid gap-4 md:grid-cols-3">
         {CONTACT_PATHS.map((path) => (

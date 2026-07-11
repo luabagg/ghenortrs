@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import { OperationalHighlightsSection } from '@/components/landing/operational-highlights-section';
 import { Button } from '@/components/ui/button';
-import { MetaLabel } from '@/components/ui/meta-label';
 import { cn } from '@/lib/utils';
 
 const HERO_SLIDES = [
@@ -59,19 +58,17 @@ export function HomeHeroSection() {
 
         <div className="relative mx-auto flex min-h-[100dvh] max-w-[90rem] flex-col justify-center px-6 pb-64 pt-28 sm:px-10 sm:pb-60 lg:px-16">
           <div className="max-w-[34rem] lg:max-w-[36rem]">
-            <MetaLabel>GHENO COMPONENTES</MetaLabel>
-            <h1 className="mt-5 max-w-[36rem] font-heading text-[clamp(2.75rem,9vw,4.25rem)] leading-[0.94] tracking-[-0.05em] sm:text-[clamp(3.8rem,5.2vw,5.2rem)] lg:text-[clamp(4rem,5vw,5.7rem)]">
-              Componentes de performance para MTB{' '}
-              <span className="text-accent">de verdade.</span>
+            <h1 className="max-w-[36rem] font-heading text-[clamp(2.75rem,9vw,4.25rem)] leading-[0.94] tracking-[-0.05em] sm:text-[clamp(3.8rem,5.2vw,5.2rem)] lg:text-[clamp(4rem,5vw,5.7rem)]">
+              Frenagem e controle para <span className="text-accent">MTB.</span>
             </h1>
             <p className="mt-6 max-w-md text-lg leading-8 text-primary/86 sm:text-xl">
-              Pastilhas, cubos, aros e rotores desenvolvidos para controle,
-              resistência e confiança total em qualquer terreno.
+              Pastilhas GHENO disponíveis no catálogo. Cubos, aros e rotores sob
+              consulta comercial.
             </p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Button asChild className="h-13 min-w-44 justify-between">
                 <a href="https://store.ghenortrs.com.br/produtos/">
-                  Ver loja online →
+                  Ver catálogo GHENO →
                 </a>
               </Button>
               <Button

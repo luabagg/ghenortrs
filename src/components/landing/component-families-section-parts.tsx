@@ -3,13 +3,11 @@ import {
   COMPONENT_FAMILIES,
   type ComponentFamily,
 } from '@/components/landing/component-families-data';
-import { MetaLabel } from '@/components/ui/meta-label';
 
 export function ComponentFamiliesIntro() {
   return (
     <div className="flex flex-col gap-5 lg:pt-3">
-      <div className="flex items-center justify-between gap-4">
-        <MetaLabel>COMPONENTES</MetaLabel>
+      <div className="flex items-center justify-end gap-4">
         <a
           className="text-xs font-extrabold uppercase tracking-[0.14em] text-secondary transition-colors hover:text-primary lg:hidden"
           href="https://store.ghenortrs.com.br/produtos/"
@@ -21,12 +19,12 @@ export function ComponentFamiliesIntro() {
         className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
         id="familias-heading"
       >
-        Um sistema.{' '}
-        <span className="text-secondary">Quatro pilares de performance.</span>
+        Pastilhas no catálogo.{' '}
+        <span className="text-secondary">Outras linhas sob consulta.</span>
       </h2>
       <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Cada componente trabalha junto para entregar controle, precisão e
-        confiança total. Construído para quem vive o MTB de verdade.
+        Consulte disponibilidade, compatibilidade e atendimento para cada
+        família de componentes GHENO.
       </p>
       <a
         className="hidden border-t border-border pt-7 text-xs font-extrabold uppercase tracking-[0.14em] text-primary transition-colors hover:text-accent lg:block"

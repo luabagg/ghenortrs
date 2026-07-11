@@ -134,10 +134,10 @@ function MobileMenuBrandNote() {
         />
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-accent">
-            Desempenho que dá confiança
+            CATÁLOGO GHENO
           </p>
           <p className="mt-2 text-base font-bold leading-tight text-primary min-[420px]:text-xl">
-            Componentes desenvolvidos para uso intenso e real.
+            Pastilhas disponíveis para compra online.
           </p>
         </div>
       </div>

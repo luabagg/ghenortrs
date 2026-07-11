@@ -43,8 +43,8 @@ function FooterBrand() {
         width={500}
       />
       <p className="max-w-xs text-sm leading-6 text-secondary">
-        Componentes de alto desempenho para MTB. Pastilhas, cubos, aros e
-        rotores desenvolvidos para uso intenso e real.
+        Pastilhas para MTB no catálogo online. Cubos, aros e rotores sob
+        consulta comercial.
       </p>
       <FooterSocialLinks />
     </div>
@@ -116,9 +116,6 @@ function FooterLegal() {
     <div className="mt-10 flex flex-col gap-2 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-xs text-secondary/60">
         © 2025 GHENO. Todos os direitos reservados.
-      </p>
-      <p className="text-xs text-secondary/40">
-        Componentes de performance para MTB de verdade.
       </p>
     </div>
   );

@@ -5,22 +5,22 @@ import { Button } from '@/components/ui/button';
 import { MetaLabel } from '@/components/ui/meta-label';
 
 const TECH_FEATURES = [
-  'Liga de aço de alta resistência',
-  'Compatível com Shimano, SRAM e TRP',
-  'Validado em competição e uso intenso',
-  'Modulação sem fade em calor extremo',
+  'Modelos para Hayes, Hope, Magura, Shimano e SRAM',
+  'Linhas Elite e Ultra publicadas no catálogo',
+  'Compatibilidade indicada por pinça e grupo',
+  'Compra finalizada na loja GHENO',
 ] as const;
 
 const TECH_STATS = [
   {
-    value: '+300°C',
-    label: 'Resistência',
-    description: 'Operação estável em descidas longas e frenagens repetidas.',
+    value: '13',
+    label: 'Modelos',
+    description: 'Pastilhas publicadas no catálogo GHENO.',
   },
   {
-    value: '4×',
-    label: 'Compostos',
-    description: 'Opções para cada uso — DH, XC, enduro e trilha livre.',
+    value: '2',
+    label: 'Linhas',
+    description: 'Opções Elite e Ultra disponíveis para consulta.',
   },
 ] as const;
 
@@ -39,7 +39,7 @@ export function TechnicalProofSection() {
               className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
               id="tecnica-heading"
             >
-              Tecnologia que você sente na trilha.
+              Escolha a pastilha pelo seu sistema de freio.
             </h2>
           </div>
           <TechnicalStatsGrid />
@@ -112,7 +112,7 @@ function TechnicalMediaGrid() {
     >
       <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:min-w-0">
         <img
-          alt="Rotor de freio GHENO — disco de alta performance para MTB"
+          alt="Rotor de freio a disco GHENO para MTB"
           className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
           loading="lazy"
           src="/reference-images/rotor-gheno.jpg"
@@ -121,7 +121,7 @@ function TechnicalMediaGrid() {
         <figcaption className="absolute inset-x-0 bottom-0 p-5">
           <MetaLabel className="mb-2 w-fit">ROTOR GHENO</MetaLabel>
           <h3 className="font-heading text-2xl leading-tight tracking-[-0.03em] text-primary">
-            Dissipação precisa.
+            Rotores sob consulta.
           </h3>
         </figcaption>
       </figure>
@@ -129,7 +129,7 @@ function TechnicalMediaGrid() {
         caption="Validação em terreno solto, com frenagens repetidas e mudança rápida de apoio."
         imageAlt="Rider GHENO freando em trecho técnico de downhill"
         imageSrc="/reference-images/trilha-frenagem-gheno.jpg"
-        title="Testado onde importa."
+        title="Uso em downhill."
       />
       <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-panel border border-border bg-surface sm:col-span-2 sm:min-h-56 sm:min-w-0">
         <img

@@ -28,7 +28,7 @@ function DotMatrixLoader({
       <div className="flex items-center justify-between gap-6">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-accent">
-            Loading state
+            CARREGANDO
           </p>
           <p className="mt-3 max-w-xs text-sm leading-6 text-secondary">
             {caption}

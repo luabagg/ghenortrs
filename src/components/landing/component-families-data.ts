@@ -14,7 +14,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     ctaHref: 'https://store.ghenortrs.com.br/produtos/',
     ctaLabel: 'Ver catálogo GHENO',
     description:
-      'Composição calibrada para resposta direta e modulação previsível. Catálogo ativo ao vivo.',
+      'Modelos para diferentes sistemas de freio, disponíveis no catálogo online.',
     eyebrow: 'ATIVO NO CATÁLOGO',
     imageAlt: 'Pastilha de freio GHENO',
     imageSrc: '/reference-images/pastilhas-gheno.jpg',
@@ -25,7 +25,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     ctaHref: '/contato',
     ctaLabel: 'Consultar cubos',
     description:
-      'Rolamento de alta performance para trilha técnica e competição. Disponível via consulta comercial.',
+      'Disponibilidade, padrões e aplicações informados pelo atendimento comercial.',
     eyebrow: 'CONSULTA COMERCIAL',
     imageAlt: 'Cubo GHENO',
     imageSrc: '/reference-images/cubo-gheno.jpg',
@@ -36,7 +36,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     ctaHref: '/contato',
     ctaLabel: 'Consultar aros',
     description:
-      'Rigidez e leveza para rider exigente. Disponível via consulta comercial.',
+      'Materiais, medidas e disponibilidade informados pelo atendimento comercial.',
     eyebrow: 'CONSULTA COMERCIAL',
     imageAlt: 'Aro GHENO',
     imageSrc: '/reference-images/aro-gheno.jpg',
@@ -47,7 +47,7 @@ export const COMPONENT_FAMILIES: ComponentFamily[] = [
     ctaHref: '/contato',
     ctaLabel: 'Consultar rotores',
     description:
-      'Dissipação de calor e modulação em descidas longas. Disponível via consulta comercial.',
+      'Medidas, compatibilidade e disponibilidade informadas pelo atendimento comercial.',
     eyebrow: 'CONSULTA COMERCIAL',
     imageAlt: 'Rotor GHENO',
     imageSrc: '/reference-images/rotor-gheno.jpg',

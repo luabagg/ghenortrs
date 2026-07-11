@@ -38,11 +38,11 @@ export function B2BAccessHeroSection() {
           Acesso B2B
         </p>
         <h1 className="font-heading text-5xl leading-[0.95] tracking-[-0.05em] sm:text-6xl">
-          Produtos B2B GHENO para revendedores aprovados.
+          Área comercial para revendedores cadastrados.
         </h1>
         <p className="max-w-xl text-lg leading-8 text-secondary">
-          Entre com seu e-mail comercial para acessar a área de produtos,
-          condições e materiais do canal B2B.
+          Entre com seu e-mail comercial para acessar produtos, preços e
+          materiais do canal B2B.
         </p>
       </div>
 
@@ -123,9 +123,9 @@ export function B2BLeadIntroSection() {
   return (
     <div className="grid gap-6">
       <PageIntro
-        description="Preencha os dados da sua loja para solicitar aprovação. Após a análise, enviaremos o acesso por e-mail."
+        description="Envie os dados da empresa para análise comercial. A resposta será enviada por e-mail."
         eyebrow="B2B"
-        title="Não possui cadastro?"
+        title="Solicite seu cadastro."
       />
       <B2BBenefitsSection />
     </div>

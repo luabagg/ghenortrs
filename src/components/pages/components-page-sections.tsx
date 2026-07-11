@@ -10,14 +10,15 @@ import type { ComponentProductFamily } from './components-page-data';
 export function ComponentsPageIntro() {
   return (
     <div className="flex flex-col gap-3">
-      <MetaLabel>COMPONENTES</MetaLabel>
       <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
-        Um sistema.{' '}
-        <span className="text-secondary">Quatro pilares de performance.</span>
+        Pastilhas no catálogo.{' '}
+        <span className="text-secondary">
+          Cubos, aros e rotores sob consulta.
+        </span>
       </h1>
       <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Pastilhas, cubos, aros e rotores desenvolvidos para controle,
-        resistência e confiança em uso intenso.
+        Veja os modelos disponíveis online ou consulte a equipe GHENO sobre as
+        demais linhas.
       </p>
     </div>
   );
@@ -112,7 +113,7 @@ export function ComponentsB2BCTA() {
           B2B
         </p>
         <p className="max-w-xl font-heading text-2xl leading-tight tracking-[-0.03em] sm:text-3xl">
-          Lojistas e revendas com acesso direto ao time GHENO.
+          Condições comerciais para oficinas e revendas cadastradas.
         </p>
       </div>
       <div className="flex shrink-0 flex-col gap-3 sm:flex-row">

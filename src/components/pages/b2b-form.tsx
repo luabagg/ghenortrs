@@ -42,7 +42,7 @@ export function B2BForm({
       <CardHeader>
         <CardTitle>Pré-cadastro comercial</CardTitle>
         <CardDescription>
-          Preencha os dados da sua empresa para iniciar o atendimento.
+          Informe os dados da empresa e o mix de interesse.
         </CardDescription>
       </CardHeader>
       <form className="grid gap-4 px-6 pb-6" noValidate onSubmit={onSubmit}>
@@ -87,8 +87,8 @@ export function B2BForm({
         />
         <B2BTextareaField
           id="b2b-needs"
-          label="Necessidades comerciais"
-          placeholder="Conte o mix, volume e tipo de atendimento."
+          label="Interesse comercial"
+          placeholder="Informe produtos de interesse, volume e tipo de negócio."
           value={fields.mensagem}
           onFieldChange={onFieldChange}
         />

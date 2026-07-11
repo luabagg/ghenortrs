@@ -60,7 +60,7 @@ const QUICK_ACTIONS = [
       </svg>
     ),
     title: 'Tecnologia',
-    description: 'Engenharia aplicada à performance',
+    description: 'Compatibilidade e linhas disponíveis',
     href: '/#tecnologia',
     badge: null as string | null,
   },
@@ -83,7 +83,7 @@ const QUICK_ACTIONS = [
     title: 'Cadastro B2B',
     description: 'Solicite atendimento para revenda',
     to: '/b2b',
-    badge: 'Novo',
+    badge: null as string | null,
   },
   {
     icon: (
@@ -123,7 +123,7 @@ const QUICK_ACTIONS = [
       </svg>
     ),
     title: 'Sobre a GHENO',
-    description: 'Nossa história e propósito',
+    description: 'Catálogo e atendimento GHENO',
     to: '/sobre',
     badge: null as string | null,
   },
@@ -143,8 +143,8 @@ const QUICK_ACTIONS = [
         />
       </svg>
     ),
-    title: 'Política comercial',
-    description: 'Condições para revendas e parceiros',
+    title: 'Política de privacidade',
+    description: 'Tratamento de dados na loja online',
     href: 'https://store.ghenortrs.com.br/politica-de-privacidade/',
     badge: null as string | null,
   },

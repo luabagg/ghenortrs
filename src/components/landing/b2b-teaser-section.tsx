@@ -4,20 +4,20 @@ import { SectionBand } from '@/components/ui/section-band';
 
 const B2B_VALUE_PROPS = [
   {
-    label: 'Institucional e branding',
-    desc: 'Materiais, identidade e presença de marca',
+    label: 'Mix de produtos',
+    desc: 'Seleção conforme o perfil da loja',
   },
   {
     label: 'Preços e condições',
     desc: 'Tabelas, margens e volumes para revendas',
   },
   {
-    label: 'Logística e suporte',
-    desc: 'Entrega, estoque e suporte pós-venda',
+    label: 'Compatibilidade',
+    desc: 'Orientação técnica para cada aplicação',
   },
   {
     label: 'Garantia e troca',
-    desc: 'Políticas claras para o canal de revenda',
+    desc: 'Condições informadas no atendimento',
   },
 ] as const;
 
@@ -25,7 +25,7 @@ const B2B_MEDIA_ITEMS = [
   {
     imageAlt: 'Rider em prova de MTB diante do público',
     imageSrc: '/reference-images/b2b-race-context.jpg',
-    title: 'Prova real',
+    title: 'Downhill',
   },
   {
     imageAlt: 'Rider em curva de trilha com terreno solto',
@@ -58,11 +58,11 @@ function B2BTeaserIntro() {
         B2B
       </p>
       <h2 className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl">
-        Para lojistas, oficinas e revendas que buscam performance real.
+        Atendimento comercial para oficinas e revendas.
       </h2>
       <p className="mt-2 max-w-xl text-base leading-7 text-on-primary/80 sm:text-lg">
-        Conversa direta sobre mix, disponibilidade e contexto técnico. Sem
-        formulário automatizado, sem espera de sistema.
+        Consulte mix, disponibilidade, preços e condições para o canal de
+        revenda.
       </p>
     </div>
   );
@@ -86,7 +86,10 @@ function B2BValueGrid() {
 function B2BTeaserActions() {
   return (
     <div className="flex flex-col items-start gap-3">
-      <Button asChild className="w-fit min-w-0 px-6 shadow-[0_16px_34px_rgba(232,20,20,0.28)]">
+      <Button
+        asChild
+        className="w-fit min-w-0 px-6 shadow-[0_16px_34px_rgba(232,20,20,0.28)]"
+      >
         <a href="/b2b">Acessar produtos B2B →</a>
       </Button>
       <p className="max-w-md text-xs leading-5 text-on-primary/62">
@@ -112,10 +115,7 @@ function B2BMediaStrip() {
 
 export function B2BTeaserSection() {
   return (
-    <SectionBand
-      className="overflow-hidden px-0"
-      data-section="b2b-teaser"
-    >
+    <SectionBand className="overflow-hidden px-0" data-section="b2b-teaser">
       <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 sm:px-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:px-16">
         <div className="flex min-w-0 flex-col gap-6">
           <B2BTeaserIntro />

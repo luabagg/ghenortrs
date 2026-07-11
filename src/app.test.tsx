@@ -17,10 +17,7 @@ describe('App', () => {
       'text-primary',
       'font-body',
     );
-    expect(screen.getByText('GHENO COMPONENTES')).toHaveAttribute(
-      'data-slot',
-      'meta-label',
-    );
+    expect(screen.queryByText('GHENO COMPONENTES')).not.toBeInTheDocument();
     expect(screen.getAllByAltText('GHENO')[0]).toHaveAttribute(
       'src',
       '/brand/logo-wide.png',
@@ -29,11 +26,11 @@ describe('App', () => {
       screen.getByAltText('Rider GHENO em trilha com controle total'),
     ).toHaveAttribute('src', '/reference-images/mtb-action-hero.jpg');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Componentes de performance para MTB de verdade.',
+      'Frenagem e controle para MTB.',
     );
     expect(
       screen.getByText(
-        'Pastilhas, cubos, aros e rotores desenvolvidos para controle, resistência e confiança total em qualquer terreno.',
+        'Pastilhas GHENO disponíveis no catálogo. Cubos, aros e rotores sob consulta comercial.',
       ),
     ).toBeInTheDocument();
     expect(
@@ -43,20 +40,20 @@ describe('App', () => {
       screen.getByRole('navigation', { name: 'Principal' }).parentElement,
     ).not.toHaveAttribute('data-slot', 'glass-panel');
     expect(
-      screen.getByRole('link', { name: 'Ver loja online →' }),
+      screen.getAllByRole('link', { name: 'Ver catálogo GHENO →' })[0],
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getByRole('link', { name: 'Ver loja online →' }),
+      screen.getAllByRole('link', { name: 'Ver catálogo GHENO →' })[0],
     ).toHaveClass('bg-accent', 'text-on-accent');
     expect(
       screen.getAllByRole('link', { name: 'Ver componentes →' })[0],
     ).toHaveClass('border', 'border-strong', 'bg-background/35');
-    expect(screen.getByText('Controle extremo')).toBeInTheDocument();
-    expect(screen.getByText('Materiais premium')).toBeInTheDocument();
-    expect(screen.getByText('Testado em condições reais')).toBeInTheDocument();
+    expect(screen.getByText('13 pastilhas no catálogo')).toBeInTheDocument();
     expect(
-      screen.getByText('Performance que dá confiança'),
+      screen.getByText('Compatibilidade identificada'),
     ).toBeInTheDocument();
+    expect(screen.getByText('Outras linhas sob consulta')).toBeInTheDocument();
+    expect(screen.getByText('Atendimento B2B')).toBeInTheDocument();
   });
 
   it('renders the component families section with correct CTAs', () => {
@@ -68,7 +65,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Um sistema. Quatro pilares de performance.',
+        name: 'Pastilhas no catálogo. Outras linhas sob consulta.',
       }),
     ).toBeInTheDocument();
 
@@ -98,7 +95,7 @@ describe('App', () => {
     );
 
     const productLinks = [
-      screen.getByRole('link', { name: 'Ver catálogo GHENO →' }),
+      screen.getAllByRole('link', { name: 'Ver catálogo GHENO →' })[1],
       screen.getByRole('link', { name: 'Consultar cubos →' }),
       screen.getByRole('link', { name: 'Consultar aros →' }),
       screen.getByRole('link', { name: 'Consultar rotores →' }),
@@ -122,26 +119,26 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Tecnologia que você sente na trilha.',
+        name: 'Escolha a pastilha pelo seu sistema de freio.',
       }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText('+300°C')).toBeInTheDocument();
-    expect(screen.getByText('Resistência')).toBeInTheDocument();
-    expect(screen.getByText('4×')).toBeInTheDocument();
-    expect(screen.getByText('Compostos')).toBeInTheDocument();
+    expect(screen.getByText('13')).toBeInTheDocument();
+    expect(screen.getByText('Modelos')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('Linhas')).toBeInTheDocument();
 
     expect(
-      screen.getByText('Liga de aço de alta resistência'),
+      screen.getByText('Modelos para Hayes, Hope, Magura, Shimano e SRAM'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Compatível com Shimano, SRAM e TRP'),
+      screen.getByText('Linhas Elite e Ultra publicadas no catálogo'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Validado em competição e uso intenso'),
+      screen.getByText('Compatibilidade indicada por pinça e grupo'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Modulação sem fade em calor extremo'),
+      screen.getByText('Compra finalizada na loja GHENO'),
     ).toBeInTheDocument();
 
     expect(screen.getByLabelText('Imagens de tecnologia GHENO')).toHaveClass(
@@ -149,18 +146,16 @@ describe('App', () => {
       'overflow-x-auto',
     );
     expect(
-      screen.getByAltText(
-        'Rotor de freio GHENO — disco de alta performance para MTB',
-      ),
+      screen.getByAltText('Rotor de freio a disco GHENO para MTB'),
     ).toHaveAttribute('src', '/reference-images/rotor-gheno.jpg');
     expect(
       screen.getByAltText('Rider GHENO freando em trecho técnico de downhill'),
     ).toHaveAttribute('src', '/reference-images/trilha-frenagem-gheno.jpg');
     expect(
-      screen.getByRole('heading', { name: 'Dissipação precisa.' }),
+      screen.getByRole('heading', { name: 'Rotores sob consulta.' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Testado onde importa.' }),
+      screen.getByRole('heading', { name: 'Uso em downhill.' }),
     ).toBeInTheDocument();
     expect(
       screen.getByAltText(
@@ -185,7 +180,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Componentes desenvolvidos para aguentar o que a prova cobra.',
+        name: 'Componentes GHENO em contexto de competição.',
       }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText('Imagens de competição MTB')).toHaveClass(
@@ -233,7 +228,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Para lojistas, oficinas e revendas que buscam performance real.',
+        name: 'Atendimento comercial para oficinas e revendas.',
       }),
     ).toBeInTheDocument();
     expect(
@@ -269,7 +264,7 @@ describe('App', () => {
         'Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista traseira',
       ),
     ).toHaveAttribute('src', '/reference-images/rotor-installed-rear.jpg');
-    expect(screen.getByText('Prova real')).toBeInTheDocument();
+    expect(screen.getByText('Downhill')).toBeInTheDocument();
     expect(screen.getByText('Demanda técnica')).toBeInTheDocument();
     expect(screen.getByText('Mix consultivo')).toBeInTheDocument();
     expect(screen.getByText('Rotor instalado')).toBeInTheDocument();
@@ -285,7 +280,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Pronto para elevar a performance das suas bikes?',
+        name: 'Compre pastilhas online. Consulte as outras linhas.',
       }),
     ).toBeInTheDocument();
     expect(
@@ -339,13 +334,13 @@ describe('App', () => {
       screen.getByRole('heading', { name: 'Pastilhas de freio' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Cubos de alta rolagem' }),
+      screen.getByRole('heading', { name: 'Cubos GHENO' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Aros de carbono e alumínio' }),
+      screen.getByRole('heading', { name: 'Aros GHENO' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Rotores de dissipação' }),
+      screen.getByRole('heading', { name: 'Rotores GHENO' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Ver catálogo de pastilhas' }),
@@ -364,7 +359,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Produtos B2B GHENO para revendedores aprovados.',
+        name: 'Área comercial para revendedores cadastrados.',
       }),
     ).toBeInTheDocument();
     expect(
@@ -375,7 +370,7 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', {
-        name: 'Não possui cadastro?',
+        name: 'Solicite seu cadastro.',
       }),
     ).toBeInTheDocument();
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
@@ -385,13 +380,13 @@ describe('App', () => {
       'b2b-phone',
     );
     expect(screen.getByText('E-mail')).toHaveAttribute('for', 'b2b-email');
-    expect(screen.getByText('Necessidades comerciais')).toHaveAttribute(
+    expect(screen.getByText('Interesse comercial')).toHaveAttribute(
       'for',
       'b2b-needs',
     );
-    expect(screen.getByLabelText('Necessidades comerciais')).toHaveAttribute(
+    expect(screen.getByLabelText('Interesse comercial')).toHaveAttribute(
       'placeholder',
-      'Conte o mix, volume e tipo de atendimento.',
+      'Informe produtos de interesse, volume e tipo de negócio.',
     );
     expect(
       screen.getByRole('button', { name: 'Enviar pré-cadastro' }),

@@ -11,7 +11,7 @@ import { HomePage } from '@/components/pages/home-page';
 function NotFoundPage() {
   return (
     <PageIntro
-      description="Use a navegação principal para voltar às rotas existentes enquanto a arquitetura do MVP continua sendo construída."
+      description="Acesse o catálogo, conheça os componentes ou fale com a GHENO pelos links de navegação."
       eyebrow="404"
       title="Página não encontrada"
     />
