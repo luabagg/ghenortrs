@@ -392,7 +392,8 @@ describe('App', () => {
       screen.getByRole('heading', {
         name: 'Solicite seu cadastro.',
       }),
-    ).toBeInTheDocument();
+    ).toHaveProperty('tagName', 'H2');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
     expect(screen.getByText('CNPJ')).toHaveAttribute('for', 'b2b-cnpj');
     expect(screen.getByText('Telefone / WhatsApp')).toHaveAttribute(
@@ -412,6 +413,36 @@ describe('App', () => {
       screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Pré-cadastro comercial')).toBeInTheDocument();
+  });
+
+  it('closes keyboard shortcuts with Escape and restores trigger focus', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    const searchTrigger = screen.getByRole('button', { name: 'Buscar' });
+    fireEvent.click(searchTrigger);
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Ver todos atalhos do teclado',
+      }),
+    );
+
+    expect(
+      screen.getByRole('dialog', { name: 'Atalhos do teclado' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Fechar atalhos' }),
+    ).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Atalhos do teclado' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Buscar' })).toHaveFocus();
   });
 
   it('shows inline validation errors when B2B form is submitted empty', () => {

@@ -125,6 +125,7 @@ export function B2BLeadIntroSection() {
       <PageIntro
         description="Envie os dados da empresa para análise comercial. A resposta será enviada por e-mail."
         eyebrow="B2B"
+        headingLevel={2}
         title="Solicite seu cadastro."
       />
       <B2BBenefitsSection />

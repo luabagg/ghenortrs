@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { type Ref, useEffect, useRef, useState } from 'react';
 
 import { Link, NavLink } from 'react-router-dom';
 
@@ -204,6 +204,8 @@ function DesktopUtilityCluster({
   onOpenChange: (open: boolean) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchTriggerRef = useRef<HTMLButtonElement>(null);
+  const shortcutsWereOpen = useRef(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [shortcutLabel] = useState(() => getShortcutLabel());
 
@@ -215,7 +217,11 @@ function DesktopUtilityCluster({
     }
 
     function onKeyDown(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if (
+        !shortcutsOpen &&
+        (event.metaKey || event.ctrlKey) &&
+        event.key.toLowerCase() === 'k'
+      ) {
         event.preventDefault();
         onOpenChange(true);
       }
@@ -228,7 +234,19 @@ function DesktopUtilityCluster({
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [onOpenChange]);
+  }, [onOpenChange, shortcutsOpen]);
+
+  useEffect(() => {
+    if (shortcutsOpen) {
+      shortcutsWereOpen.current = true;
+      return;
+    }
+
+    if (shortcutsWereOpen.current) {
+      shortcutsWereOpen.current = false;
+      searchTriggerRef.current?.focus();
+    }
+  }, [shortcutsOpen]);
 
   return (
     <div
@@ -247,6 +265,7 @@ function DesktopUtilityCluster({
         />
       ) : (
         <QuickSearchTrigger
+          buttonRef={searchTriggerRef}
           compact={compact}
           open={open}
           shortcutLabel={shortcutLabel}
@@ -264,12 +283,14 @@ function DesktopUtilityCluster({
 }
 
 function QuickSearchTrigger({
+  buttonRef,
   compact,
   label,
   open,
   shortcutLabel,
   onClick,
 }: {
+  buttonRef?: Ref<HTMLButtonElement>;
   compact: boolean;
   label?: string;
   open: boolean;
@@ -280,6 +301,7 @@ function QuickSearchTrigger({
 
   return (
     <button
+      ref={buttonRef}
       aria-label="Buscar"
       aria-expanded={open}
       aria-haspopup="dialog"
@@ -401,6 +423,19 @@ function KeyboardShortcutsDialog({
   shortcutLabel: string;
   onClose: () => void;
 }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeRef.current?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') onClose();
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
   return (
     <div
       aria-label="Atalhos do teclado"
@@ -409,8 +444,9 @@ function KeyboardShortcutsDialog({
       role="dialog"
     >
       <button
-        aria-label="Fechar atalhos"
+        aria-hidden="true"
         className="absolute inset-0"
+        tabIndex={-1}
         type="button"
         onClick={onClose}
       />
@@ -421,6 +457,7 @@ function KeyboardShortcutsDialog({
         <div className="flex items-center justify-between gap-4">
           <p className="text-sm font-bold">Atalhos do teclado</p>
           <button
+            ref={closeRef}
             aria-label="Fechar atalhos"
             className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-secondary transition-colors hover:text-primary"
             type="button"

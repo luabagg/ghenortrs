@@ -11,18 +11,22 @@ export function PageIntro({
   eyebrow,
   title,
   description,
+  headingLevel = 1,
 }: {
   eyebrow: string;
   title: string;
   description: string;
+  headingLevel?: 1 | 2;
 }) {
+  const Heading = headingLevel === 1 ? 'h1' : 'h2';
+
   return (
     <Card className="rounded-lg bg-surface px-0 py-0">
       <CardHeader className="px-6 py-8 sm:px-8 sm:py-10">
         <MetaLabel className="mb-1">{eyebrow}</MetaLabel>
-        <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
+        <Heading className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
           {title}
-        </h1>
+        </Heading>
         <CardDescription className="max-w-2xl text-base leading-7 sm:text-lg">
           {description}
         </CardDescription>
