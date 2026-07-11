@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GHENO | Componentes MTB de Alto Desempenho</title>
+    <title data-seo="title">GHENO | Componentes MTB de alto desempenho</title>
     <!-- Font preconnect: eliminates render-blocking @import in CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,40 +21,89 @@
     <meta
       name="description"
       content="Pastilhas de freio GHENO para MTB no catálogo online. Consulte cubos, aros e rotores com a equipe comercial."
+      data-seo="description"
     />
     <meta
-      name="keywords"
-      content="pastilhas de freio MTB, cubos MTB, aros MTB, rotores freio a disco, componentes mountain bike, GHENO, freio hidráulico MTB"
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      data-seo="robots"
     />
-    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#050505" />
+    <link
+      rel="canonical"
+      href="https://ghenortrs.vercel.app/"
+      data-seo="canonical"
+    />
     <link rel="icon" href="/brand/logo-square.jpg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="/brand/logo-square.jpg" />
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="website" data-seo="og:type" />
+    <meta property="og:site_name" content="GHENO" />
     <meta
       property="og:title"
-      content="GHENO | Componentes MTB de Alto Desempenho"
+      content="GHENO | Componentes MTB de alto desempenho"
+      data-seo="og:title"
     />
     <meta
       property="og:description"
-      content="Pastilhas de freio GHENO no catálogo online. Cubos, aros e rotores sob consulta comercial."
+      content="Pastilhas de freio GHENO para MTB no catálogo online. Consulte cubos, aros e rotores com a equipe comercial."
+      data-seo="og:description"
     />
-    <meta property="og:image" content="/reference-images/mtb-action-hero.jpg" />
+    <meta
+      property="og:url"
+      content="https://ghenortrs.vercel.app/"
+      data-seo="og:url"
+    />
+    <meta
+      property="og:image"
+      content="https://ghenortrs.vercel.app/reference-images/mtb-action-hero.jpg"
+      data-seo="og:image"
+    />
+    <meta property="og:image:alt" content="GHENO — componentes para MTB" />
     <meta property="og:locale" content="pt_BR" />
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="GHENO | Componentes MTB de Alto Desempenho"
+      content="GHENO | Componentes MTB de alto desempenho"
+      data-seo="twitter:title"
     />
     <meta
       name="twitter:description"
-      content="Pastilhas de freio GHENO no catálogo online. Cubos, aros e rotores sob consulta comercial."
+      content="Pastilhas de freio GHENO para MTB no catálogo online. Consulte cubos, aros e rotores com a equipe comercial."
+      data-seo="twitter:description"
     />
     <meta
       name="twitter:image"
-      content="/reference-images/mtb-action-hero.jpg"
+      content="https://ghenortrs.vercel.app/reference-images/mtb-action-hero.jpg"
+      data-seo="twitter:image"
     />
+    <script id="route-seo-jsonld" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://ghenortrs.vercel.app/#website",
+            "url": "https://ghenortrs.vercel.app/",
+            "name": "GHENO",
+            "inLanguage": "pt-BR"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://ghenortrs.vercel.app/#organization",
+            "name": "GHENO",
+            "url": "https://ghenortrs.vercel.app/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://ghenortrs.vercel.app/brand/logo-square.jpg"
+            },
+            "sameAs": [
+              "https://store.ghenortrs.com.br/",
+              "https://www.instagram.com/gheno_rtrs/"
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

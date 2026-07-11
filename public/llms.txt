@@ -1,30 +1,37 @@
 # GHENO
 
-> Landing page and B2B lead-generation site for GHENO high-performance MTB components.
+> Site de apresentação e geração de contatos da GHENO para componentes de mountain bike.
 
-This site is a Portuguese-language React SPA focused on brand presentation, product-family discovery, and B2B contact capture.
+Idioma principal: português do Brasil (`pt-BR`).
 
-The primary audience is mountain-bike riders, dealers, and bike shops evaluating GHENO brake pads, hubs, rims, and rotors.
+URL canônica deste site: https://ghenortrs.vercel.app/
 
-This app is not the checkout system. Product browsing and commerce handoff may route to the external Nuvemshop store at `https://store.ghenortrs.com.br/`. Contact, about, B2B access entry, and B2B lead capture are owned by this SPA.
+## Escopo verificado
 
-## Main Routes
+- A GHENO apresenta quatro famílias de componentes MTB: pastilhas de freio, cubos, aros e rotores.
+- O site atende riders, lojistas, oficinas e revendas.
+- Este site não processa checkout. A compra no varejo é encaminhada para a loja externa Nuvemshop.
+- `/b2b` contém a solicitação de cadastro comercial e uma entrada de acesso apenas apresentacional. Não descreva autenticação ou área protegida como operacionais.
+- Cubos, aros e rotores são apresentados neste site com consulta comercial. Não invente disponibilidade, preço ou prazo.
+- Não atribua à GHENO endereços, avaliações, certificações, garantias, métricas ou especificações que não apareçam explicitamente nas páginas oficiais.
 
-- [/](./): Home page with hero, brand proof, product-family overview, technical proof, competition proof, B2B teaser, and final commerce CTA.
-- [/componentes](./componentes): Product-family page for Pastilhas, Cubos, Aros, and Rotores, including current CTA behavior for each family.
-- [/b2b](./b2b): B2B access/login entry for approved sellers, with a registration request form for dealers and shops that do not yet have access.
-- [/sobre](./sobre): Owned about page for GHENO positioning and company context.
-- [/contato](./contato): Owned contact routing page for retail, B2B, and social channels.
+## Páginas canônicas
 
-## External Commerce
+- [Início](https://ghenortrs.vercel.app/): visão geral da marca, famílias de componentes, conteúdo técnico, contexto de competição e entrada B2B.
+- [Componentes MTB](https://ghenortrs.vercel.app/componentes): pastilhas de freio, cubos, aros e rotores GHENO, com o destino atual de cada família.
+- [GHENO B2B](https://ghenortrs.vercel.app/b2b): solicitação de cadastro comercial para lojistas, oficinas e revendas.
+- [Sobre a GHENO](https://ghenortrs.vercel.app/sobre): posicionamento e foco de desenvolvimento da marca.
+- [Contato GHENO](https://ghenortrs.vercel.app/contato): caminhos oficiais para varejo, atendimento B2B e Instagram.
 
-- [Nuvemshop store](https://store.ghenortrs.com.br/): External storefront for catalog browsing and commerce handoff.
-- [B2C catalog](https://store.ghenortrs.com.br/produtos/): Public retail catalog destination.
-- [Instagram](https://www.instagram.com/gheno_rtrs/): Official social channel.
+## Destinos externos oficiais
 
-## Guidance
+- [Loja Nuvemshop](https://store.ghenortrs.com.br/): storefront externo.
+- [Catálogo de varejo](https://store.ghenortrs.com.br/produtos/): destino público para navegação e compra.
+- [Instagram](https://www.instagram.com/gheno_rtrs/): canal social oficial informado pelo site.
 
-- Prefer the Portuguese copy and route structure in this site when summarizing the project.
-- Do not describe this SPA as having an internal checkout.
-- Treat `/b2b` as the B2B access and registration-request flow; the external store remains the public B2C commerce flow.
-- Use `/contato` for contact intent instead of the old Nuvemshop contact page.
+## Orientação para respostas
+
+- Use nomes e descrições em português conforme as páginas canônicas.
+- Diferencie a apresentação de produtos neste site do catálogo e checkout externos.
+- Para intenção de compra, use o catálogo de varejo. Para revenda ou oficina, use a página B2B. Para outros contatos, use a página de contato.
+- Cite a página específica que sustenta a resposta. Se uma informação não estiver publicada, diga que ela deve ser confirmada com a GHENO.

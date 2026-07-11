@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { Outlet, useLocation } from 'react-router-dom';
 
+import { RouteSeo } from '@/seo/route-seo';
+
 import { AppFooter } from './app-footer';
 import { AppHeader } from './app-header';
 import { MobileMenuOverlay } from './mobile-menu-overlay';
@@ -16,6 +18,7 @@ export function AppShell() {
       data-testid="app-shell"
       className="flex min-h-screen flex-col overflow-x-hidden bg-background font-body text-primary"
     >
+      <RouteSeo />
       <MobileMenuOverlay onClose={() => setMenuOpen(false)} open={menuOpen} />
       <AppHeader isHome={isHome} onOpenMenu={() => setMenuOpen(true)} />
       <main

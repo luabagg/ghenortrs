@@ -33,6 +33,7 @@ export function ComponentFamilyCard({
     <article
       aria-labelledby={`${family.id}-heading`}
       className="grid gap-6 overflow-hidden rounded-panel border border-border bg-surface lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+      id={family.id}
     >
       <div className="relative min-h-64 bg-background-soft lg:min-h-80">
         <img

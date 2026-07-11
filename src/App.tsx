@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 
 import { PageIntro } from '@/components/landing/section-cards';
 import { AppShell } from '@/components/navigation/app-shell';
@@ -10,11 +10,21 @@ import { HomePage } from '@/components/pages/home-page';
 
 function NotFoundPage() {
   return (
-    <PageIntro
-      description="Acesse o catálogo, conheça os componentes ou fale com a GHENO pelos links de navegação."
-      eyebrow="404"
-      title="Página não encontrada"
-    />
+    <div className="grid gap-6">
+      <PageIntro
+        description="O endereço informado não corresponde a uma página disponível."
+        eyebrow="404"
+        title="Página não encontrada"
+      />
+      <nav aria-label="Recuperação de página" className="flex flex-wrap gap-4">
+        <Link className="font-bold text-primary underline" to="/">
+          Voltar ao início
+        </Link>
+        <Link className="font-bold text-primary underline" to="/componentes">
+          Ver componentes MTB
+        </Link>
+      </nav>
+    </div>
   );
 }
 

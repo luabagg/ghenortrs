@@ -54,7 +54,7 @@ export const footerLinkGroups: FooterLinkGroupData[] = [
     ariaLabel: 'Links institucionais',
     links: [
       { label: 'Sobre a GHENO', to: '/sobre' },
-      { label: 'Tecnologia', to: '/' },
+      { label: 'Tecnologia', to: '/#tecnologia' },
       { label: 'Contato', to: '/contato' },
       {
         href: 'https://store.ghenortrs.com.br/politica-de-privacidade/',

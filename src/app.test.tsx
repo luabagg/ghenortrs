@@ -321,6 +321,9 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Instagram GHENO' }),
     ).toHaveAttribute('href', 'https://www.instagram.com/gheno_rtrs/');
+    expect(
+      within(footer).getByRole('link', { name: 'Tecnologia' }),
+    ).toHaveAttribute('href', '/#tecnologia');
   });
 
   it('renders the components route with product families', () => {
@@ -348,6 +351,14 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Pré-cadastro comercial' }),
     ).toHaveAttribute('href', '/b2b');
+    expect(
+      screen
+        .getByRole('heading', { name: 'Pastilhas de freio' })
+        .closest('article'),
+    ).toHaveAttribute('id', 'pastilhas');
+    expect(
+      screen.getByRole('heading', { name: 'Rotores GHENO' }).closest('article'),
+    ).toHaveAttribute('id', 'rotores');
   });
 
   it('renders institutional context on the about route', () => {
@@ -493,5 +504,11 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Página não encontrada' }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Voltar ao início' }),
+    ).toHaveAttribute('href', '/');
+    expect(
+      screen.getByRole('link', { name: 'Ver componentes MTB' }),
+    ).toHaveAttribute('href', '/componentes');
   });
 });
