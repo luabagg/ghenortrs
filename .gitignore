@@ -98,6 +98,7 @@ http-client.private.env.json
 # Node / Vite
 node_modules/
 dist/
+.worktrees/
 *.tsbuildinfo
 .env
 .env.*
