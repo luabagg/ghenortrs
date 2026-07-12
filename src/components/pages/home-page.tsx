@@ -16,12 +16,13 @@ function ClosingCTASection() {
       data-section="closing-cta"
     >
       <div className="flex flex-col gap-6">
-        <MetaLabel>CATÁLOGO E CONSULTA</MetaLabel>
+        <MetaLabel>LOJA GHENO</MetaLabel>
         <h2
           className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
           id="fechamento-heading"
         >
-          Compre pastilhas online. Consulte as outras linhas.
+          Compre pastilhas, cubos e aros online.{' '}
+          <span className="text-secondary">Para rotores, fale conosco.</span>
         </h2>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button asChild>

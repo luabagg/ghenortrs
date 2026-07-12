@@ -49,7 +49,7 @@ function renderStaticContent(seo: SeoRoute) {
     )
     .join('');
 
-  return `<main data-static-route-content><h1>${escapeHtml(seo.staticContent.heading)}</h1><p>${escapeHtml(seo.description)}</p><nav aria-label="Links principais"><ul>${links}</ul></nav></main>`;
+  return `<main id="main-content" data-static-route-content><h1>${escapeHtml(seo.staticContent.heading)}</h1><p>${escapeHtml(seo.description)}</p><nav aria-label="Links principais"><ul>${links}</ul></nav></main>`;
 }
 
 function injectRootContent(html: string, content: string) {
@@ -73,9 +73,11 @@ export function renderRouteHtml(html: string, seo: SeoRoute) {
     'og:description': seo.description,
     'og:url': canonical,
     'og:image': seo.image,
+    'og:image:alt': seo.imageAlt,
     'twitter:title': seo.title,
     'twitter:description': seo.description,
     'twitter:image': seo.image,
+    'twitter:image:alt': seo.imageAlt,
   };
 
   for (const [marker, value] of Object.entries(metadata)) {
@@ -108,9 +110,11 @@ export function renderNotFoundHtml(html: string) {
     'og:description',
     'og:url',
     'og:image',
+    'og:image:alt',
     'twitter:title',
     'twitter:description',
     'twitter:image',
+    'twitter:image:alt',
   ]) {
     output = removeMeta(output, marker);
   }
@@ -121,7 +125,7 @@ export function renderNotFoundHtml(html: string) {
   );
   output = injectRootContent(
     output,
-    '<main data-static-route-content><h1>Página não encontrada</h1><p>O endereço informado não corresponde a uma página disponível.</p><nav aria-label="Recuperação de página"><ul><li><a href="/">Voltar ao início</a></li><li><a href="/componentes">Ver componentes MTB</a></li></ul></nav></main>',
+    '<main id="main-content" data-static-route-content><h1>Página não encontrada</h1><p>O endereço informado não corresponde a uma página disponível.</p><nav aria-label="Recuperação de página"><ul><li><a href="/">Voltar ao início</a></li><li><a href="/componentes">Ver componentes MTB</a></li></ul></nav></main>',
   );
   return output;
 }

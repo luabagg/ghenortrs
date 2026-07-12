@@ -17,6 +17,10 @@ describe('App', () => {
       'text-primary',
       'font-body',
     );
+    expect(
+      screen.getByRole('link', { name: 'Pular para o conteúdo' }),
+    ).toHaveAttribute('href', '#main-content');
+    expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.queryByText('GHENO COMPONENTES')).not.toBeInTheDocument();
     expect(screen.getAllByAltText('GHENO')[0]).toHaveAttribute(
       'src',
@@ -54,6 +58,45 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Outras linhas sob consulta')).toBeInTheDocument();
     expect(screen.getByText('Atendimento B2B')).toBeInTheDocument();
+  });
+
+  it('keeps stable desktop header columns and omits Tecnologia navigation', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('desktop-header-layout')).toHaveClass(
+      'sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
+    );
+    expect(screen.queryByRole('link', { name: 'Tecnologia' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Início GHENO' })).toHaveAttribute(
+      'href',
+      '/',
+    );
+  });
+
+  it('shows current online inventory without legacy status badges', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getAllByText(/Pastilhas, cubos e aros.*compra online/i),
+    ).not.toHaveLength(0);
+    expect(screen.queryByText('ATIVO NO CATÁLOGO')).toBeNull();
+    expect(screen.queryByText('CONSULTA COMERCIAL')).toBeNull();
+    expect(screen.getByRole('link', { name: /Ver cubos/ })).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/cubos/',
+    );
+    expect(screen.getByRole('link', { name: /Ver aros/ })).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/aros/',
+    );
   });
 
   it('renders the component families section with correct CTAs', () => {
@@ -430,12 +473,12 @@ describe('App', () => {
     );
 
     const searchTrigger = screen.getByRole('button', {
-      name: 'Navegação rápida',
+      name: 'Buscar na GHENO',
     });
     fireEvent.click(searchTrigger);
     fireEvent.click(
       screen.getByRole('button', {
-        name: 'Ver todos atalhos do teclado',
+        name: 'Ver atalhos do teclado',
       }),
     );
 
@@ -452,11 +495,33 @@ describe('App', () => {
       screen.queryByRole('dialog', { name: 'Atalhos do teclado' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Navegação rápida' }),
+      screen.getByRole('button', { name: 'Buscar na GHENO' }),
     ).toHaveFocus();
   });
 
-  it('does not advertise unavailable search in the mobile menu', () => {
+  it('searches the Nuvemshop catalog from the desktop command panel', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar na GHENO' }));
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+      target: { value: 'cubo boost xd' },
+    });
+
+    expect(
+      screen.getByRole('link', {
+        name: /Cubo Traseiro GHENO GO 12x148 Boost XD/i,
+      }),
+    ).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/produtos/cubo-traseiro-gheno-go-12x148-boost-xd/',
+    );
+  });
+
+  it('provides working catalog search in the mobile menu', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -464,13 +529,16 @@ describe('App', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }));
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+      target: { value: 'aro 29' },
+    });
 
     expect(
-      screen.queryByText('Buscar componentes, compatibilidade, páginas...'),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('Buscar compatibilidade'),
-    ).not.toBeInTheDocument();
+      screen.getByRole('link', { name: /Aro GHENO HEAVYDUTY 29/i }),
+    ).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/produtos/aro-gheno-heavyduty-29/',
+    );
   });
 
   it('shows inline validation errors when B2B form is submitted empty', () => {

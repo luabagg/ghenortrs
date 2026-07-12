@@ -2,6 +2,7 @@ import { type Ref, useEffect, useRef, useState } from 'react';
 
 import { Link, NavLink } from 'react-router-dom';
 
+import { StoreSearch } from '@/components/search/store-search';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { cn } from '@/lib/utils';
@@ -73,14 +74,15 @@ export function AppHeader({
       )}
     >
       <div
+        data-testid="desktop-header-layout"
         className={cn(
-          'mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-6 transition-[padding] duration-200 sm:px-10 lg:px-16',
+          'mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-6 transition-[padding] duration-200 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:justify-normal sm:px-10 lg:px-16',
           compact ? 'py-3 sm:py-4' : 'py-6',
         )}
       >
         <HeaderBrand compact={compact} />
         <MobileMenuButton compact={compact} onOpenMenu={onOpenMenu} />
-        <div className="hidden sm:block">
+        <div className="hidden justify-self-center sm:block">
           <HeaderNavigation />
         </div>
         <DesktopUtilityCluster
@@ -95,7 +97,11 @@ export function AppHeader({
 
 function HeaderBrand({ compact }: { compact: boolean }) {
   return (
-    <Link aria-label="Início GHENO" className="shrink-0" to="/">
+    <Link
+      aria-label="Início GHENO"
+      className="shrink-0 justify-self-start"
+      to="/"
+    >
       <img
         alt="GHENO"
         className={cn(
@@ -250,7 +256,7 @@ function DesktopUtilityCluster({
 
   return (
     <div
-      className="relative hidden min-h-11 shrink-0 items-center justify-end sm:flex"
+      className="relative hidden min-h-11 shrink-0 items-center justify-end justify-self-end sm:flex"
       ref={containerRef}
     >
       {open ? (
@@ -268,7 +274,6 @@ function DesktopUtilityCluster({
           buttonRef={searchTriggerRef}
           compact={compact}
           open={open}
-          shortcutLabel={shortcutLabel}
           onClick={() => onOpenChange(true)}
         />
       )}
@@ -285,38 +290,25 @@ function DesktopUtilityCluster({
 function QuickSearchTrigger({
   buttonRef,
   compact,
-  label,
   open,
-  shortcutLabel,
   onClick,
 }: {
   buttonRef?: Ref<HTMLButtonElement>;
   compact: boolean;
-  label?: string;
   open: boolean;
-  shortcutLabel: string;
   onClick: () => void;
 }) {
-  const showShortcutChip = Boolean(label);
-
   return (
     <button
       ref={buttonRef}
-      aria-label="Navegação rápida"
+      aria-label="Buscar na GHENO"
       aria-expanded={open}
       aria-haspopup="dialog"
       aria-keyshortcuts="Meta+K Control+K"
       className={cn(
         'flex items-center rounded-lg border border-border-strong bg-background/35 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[height,width,background-color,border-color,box-shadow] duration-200 hover:border-primary/35 hover:bg-surface-elevated active:translate-y-px',
-        showShortcutChip
-          ? cn(
-              'w-full justify-between gap-3 bg-background/72 px-4',
-              compact ? 'h-10' : 'h-11',
-            )
-          : cn(
-              'justify-center bg-background/45',
-              compact ? 'h-10 w-10' : 'h-11 w-11',
-            ),
+        'justify-center bg-background/45',
+        compact ? 'h-10 w-10' : 'h-11 w-11',
       )}
       type="button"
       onClick={onClick}
@@ -334,16 +326,6 @@ function QuickSearchTrigger({
           strokeWidth={1.5}
         />
       </svg>
-      {label ? (
-        <span className="min-w-0 flex-1 truncate text-left text-xs text-secondary">
-          {label}
-        </span>
-      ) : null}
-      {showShortcutChip ? (
-        <kbd className="shrink-0 whitespace-nowrap rounded-md border border-border bg-surface px-2 py-1 font-mono text-xs text-primary">
-          {shortcutLabel}
-        </kbd>
-      ) : null}
     </button>
   );
 }
@@ -359,47 +341,51 @@ function QuickCommandPanel({
   onOpenShortcuts: () => void;
   onClose: () => void;
 }) {
-  const links = [
-    { href: '/componentes', label: 'Ver todos os componentes' },
-    { href: 'https://store.ghenortrs.com.br/produtos/', label: 'Pastilhas' },
-    { href: '/contato', label: 'Cubos' },
-    { href: '/contato', label: 'Aros' },
-    { href: '/contato', label: 'Rotores' },
-    { href: '/#tecnologia', label: 'Tecnologia' },
-    { href: '/sobre', label: 'Sobre a Gheno' },
-    { href: '/contato', label: 'Contato' },
-  ];
-
   return (
     <GlassPanel
-      aria-label="Navegação rápida"
-      className="!absolute right-0 top-0 z-50 w-[15rem] origin-top-right rounded-lg p-4 text-primary motion-safe:animate-[gheno-command-open_220ms_cubic-bezier(0.16,1,0.3,1)]"
+      aria-label="Busca GHENO"
+      className="!absolute right-0 top-0 z-50 w-[min(32rem,calc(100vw-5rem))] origin-top-right rounded-lg p-4 text-primary motion-safe:animate-[gheno-command-open_220ms_cubic-bezier(0.16,1,0.3,1)]"
       density="strong"
       role="dialog"
     >
-      <div className="mb-4">
-        <QuickSearchTrigger
-          compact={compact}
-          label="Navegação rápida"
-          open
-          shortcutLabel={shortcutLabel}
-          onClick={onClose}
-        />
-      </div>
-      <p className="mb-3 text-[9px] font-extrabold uppercase tracking-[0.18em] text-secondary/70">
-        Navegar
-      </p>
-      <nav className="flex flex-col gap-2">
-        {links.map((link) => (
-          <a
-            className="-mx-2 rounded-sm px-2 py-1 text-xs font-semibold text-primary/82 transition-colors hover:bg-primary/10 hover:text-primary focus-visible:bg-primary/10 focus-visible:text-primary"
-            href={link.href}
-            key={link.label}
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-bold text-primary">Busca GHENO</p>
+          <p className="mt-1 text-xs text-secondary">
+            Produtos, compatibilidade e páginas
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <kbd className="rounded-md border border-border bg-surface px-2 py-1 font-mono text-xs text-secondary">
+            {shortcutLabel}
+          </kbd>
+          <button
+            aria-label="Fechar busca"
+            className={cn(
+              'flex items-center justify-center rounded-md border border-border bg-surface text-secondary transition-colors hover:text-primary',
+              compact ? 'h-9 w-9' : 'h-10 w-10',
+            )}
+            type="button"
+            onClick={onClose}
           >
-            {link.label}
-          </a>
-        ))}
-      </nav>
+            <svg
+              aria-hidden="true"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M6 18L18 6M6 6l12 12"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <StoreSearch autoFocus mode="desktop" onNavigate={onClose} />
       <div className="mt-5 border-t border-border pt-4">
         <p className="mb-2 text-xs text-secondary">Atalhos</p>
         <button
@@ -408,7 +394,7 @@ function QuickCommandPanel({
           onClick={onOpenShortcuts}
         >
           <span className="min-w-0 truncate text-xs font-semibold">
-            Ver todos atalhos do teclado
+            Ver atalhos do teclado
           </span>
         </button>
       </div>
@@ -468,7 +454,7 @@ function KeyboardShortcutsDialog({
         </div>
         <dl className="grid gap-3 text-xs">
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-secondary">Abrir navegação rápida</dt>
+            <dt className="text-secondary">Abrir busca GHENO</dt>
             <dd className="rounded bg-primary/10 px-2 py-1 font-mono text-primary">
               {shortcutLabel}
             </dd>

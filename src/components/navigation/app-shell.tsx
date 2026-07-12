@@ -19,9 +19,16 @@ export function AppShell() {
       className="flex min-h-screen flex-col overflow-x-hidden bg-background font-body text-primary"
     >
       <RouteSeo />
+      <a
+        className="sr-only z-50 rounded-button bg-primary px-4 py-3 text-on-primary focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        href="#main-content"
+      >
+        Pular para o conteúdo
+      </a>
       <MobileMenuOverlay onClose={() => setMenuOpen(false)} open={menuOpen} />
       <AppHeader isHome={isHome} onOpenMenu={() => setMenuOpen(true)} />
       <main
+        id="main-content"
         className={
           isHome
             ? 'flex w-full flex-1'

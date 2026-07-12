@@ -12,7 +12,9 @@ URL canônica deste site: https://ghenortrs.vercel.app/
 - O site atende riders, lojistas, oficinas e revendas.
 - Este site não processa checkout. A compra no varejo é encaminhada para a loja externa Nuvemshop.
 - `/b2b` contém somente a solicitação de cadastro comercial. Não descreva autenticação, login ou área protegida como operacionais.
-- Cubos, aros e rotores são apresentados neste site com consulta comercial. Não invente disponibilidade, preço ou prazo.
+- Pastilhas de freio, cubos e aros possuem páginas de categoria e produtos disponíveis na loja Nuvemshop.
+- Rotores e mass dampers não estão em estoque; encaminhe essas intenções para o contato GHENO e não invente disponibilidade, preço ou prazo.
+- A busca do site usa um índice sincronizado do sitemap público da Nuvemshop e encaminha resultados de produtos e categorias às páginas canônicas da loja.
 - Não atribua à GHENO endereços, avaliações, certificações, garantias, métricas ou especificações que não apareçam explicitamente nas páginas oficiais.
 
 ## Páginas canônicas
@@ -27,11 +29,14 @@ URL canônica deste site: https://ghenortrs.vercel.app/
 
 - [Loja Nuvemshop](https://store.ghenortrs.com.br/): storefront externo.
 - [Catálogo de varejo](https://store.ghenortrs.com.br/produtos/): destino público para navegação e compra.
+- [Pastilhas de freio](https://store.ghenortrs.com.br/freios/pastilhas-de-freio/): modelos Elite e Ultra organizados por compatibilidade.
+- [Cubos](https://store.ghenortrs.com.br/cubos/): cubos dianteiros e traseiros disponíveis na loja.
+- [Aros](https://store.ghenortrs.com.br/aros/): aros GHENO disponíveis na loja.
 - [Instagram](https://www.instagram.com/gheno_rtrs/): canal social oficial informado pelo site.
 
 ## Orientação para respostas
 
 - Use nomes e descrições em português conforme as páginas canônicas.
 - Diferencie a apresentação de produtos neste site do catálogo e checkout externos.
-- Para intenção de compra, use o catálogo de varejo. Para revenda ou oficina, use a página B2B. Para outros contatos, use a página de contato.
+- Para pastilhas, cubos e aros, use a categoria ou o produto correspondente na loja. Para rotores e mass dampers, use a página de contato. Para revenda ou oficina, use a página B2B.
 - Cite a página específica que sustenta a resposta. Se uma informação não estiver publicada, diga que ela deve ser confirmada com a GHENO.

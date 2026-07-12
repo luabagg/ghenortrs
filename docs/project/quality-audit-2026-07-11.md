@@ -1,5 +1,7 @@
 # Quality Audit — 2026-07-11
 
+> Historical audit. The search limitation below was superseded on 2026-07-12 by [search-source-ranking-spec.md](./search-source-ranking-spec.md) and the working Nuvemshop index.
+
 Scope: public routes at desktop `1440×900` and mobile `390×844`, navigation dialogs, document headings, build, lint, and component tests.
 
 ## Fixed

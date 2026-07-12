@@ -45,6 +45,18 @@ describe('route page generation', () => {
     ]);
   });
 
+  it('renders crawlable commerce destinations on the components route', async () => {
+    const template = await readFile('index.html', 'utf8');
+    const route = SEO_ROUTES.find(({ path }) => path === '/componentes');
+    if (!route) throw new Error('Components SEO route is missing');
+    const output = renderRouteHtml(template, route);
+
+    expect(output).toContain('https://store.ghenortrs.com.br/cubos/');
+    expect(output).toContain('https://store.ghenortrs.com.br/aros/');
+    expect(output).toContain('href="/contato"');
+    expect(output).toContain('name="twitter:image:alt"');
+  });
+
   it('keeps discovery files aligned with every canonical route', async () => {
     const [robots, sitemap, llms] = await Promise.all([
       readFile('public/robots.txt', 'utf8'),

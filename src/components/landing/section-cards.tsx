@@ -4,8 +4,8 @@ import {
   CardDescription,
   CardHeader,
 } from '@/components/ui/card';
+import { ScrollImage } from '@/components/motion/scroll-image';
 import { MetaLabel } from '@/components/ui/meta-label';
-import { cn } from '@/lib/utils';
 
 export function PageIntro({
   eyebrow,
@@ -36,44 +36,35 @@ export function PageIntro({
 }
 
 export function ProductFamilyCard({
-  eyebrow,
+  commerce,
   title,
   description,
   ctaLabel,
   ctaHref,
-  isLive,
   imageAlt,
   imageSrc,
 }: {
-  eyebrow: string;
+  commerce: 'store' | 'contact';
   title: string;
   description: string;
   ctaLabel: string;
   ctaHref: string;
-  isLive: boolean;
   imageAlt: string;
   imageSrc: string;
 }) {
   return (
     <Card className="group flex flex-col justify-between gap-0 overflow-hidden rounded-lg border-border-strong bg-surface/72">
       <div className="relative h-36 overflow-hidden bg-background-soft sm:h-48 lg:h-44">
-        <img
+        <ScrollImage
           alt={imageAlt}
-          className="h-full w-full object-cover opacity-88 saturate-75 transition-transform duration-700 group-hover:scale-105"
+          className="h-full w-full object-cover opacity-88 saturate-75 will-change-transform"
+          effect="zoom"
           loading="lazy"
           src={imageSrc}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/10 to-transparent" />
       </div>
       <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
-        <MetaLabel
-          className={cn(
-            'border-0 bg-transparent p-0 text-accent',
-            !isLive && 'border-0 bg-transparent text-accent',
-          )}
-        >
-          {eyebrow}
-        </MetaLabel>
         <h3 className="font-heading text-lg leading-tight tracking-[-0.04em] text-primary sm:text-2xl">
           {title}
         </h3>
@@ -86,7 +77,7 @@ export function ProductFamilyCard({
           className="flex items-center justify-between text-xs font-extrabold uppercase tracking-[0.12em] text-primary transition-colors hover:text-accent"
           href={ctaHref}
         >
-          {ctaLabel} <span className="text-lg text-accent">→</span>
+          {ctaLabel} <span className="text-lg text-accent">{commerce === 'store' ? '↗' : '→'}</span>
         </a>
       </CardContent>
     </Card>
@@ -106,9 +97,10 @@ export function TechnicalMediaCard({
 }) {
   return (
     <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-lg border border-border bg-surface sm:min-w-0">
-      <img
+      <ScrollImage
         alt={imageAlt}
-        className="absolute inset-0 h-full w-full object-cover opacity-75 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+        className="absolute inset-0 h-full w-full object-cover opacity-75 saturate-75 will-change-transform"
+        effect="zoom"
         loading="lazy"
         src={imageSrc}
       />
@@ -135,9 +127,10 @@ export function B2BMediaCard({
 }) {
   return (
     <figure className="relative min-h-60 min-w-[15rem] snap-start overflow-hidden rounded-lg border border-on-primary/14 bg-on-primary/8 sm:min-w-0">
-      <img
+      <ScrollImage
         alt={imageAlt}
-        className="absolute inset-0 h-full w-full object-cover opacity-88 saturate-75"
+        className="absolute inset-0 h-full w-full object-cover opacity-88 saturate-75 will-change-transform"
+        effect="parallax"
         loading="lazy"
         src={imageSrc}
       />

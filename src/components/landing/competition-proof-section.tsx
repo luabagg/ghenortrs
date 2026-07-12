@@ -1,4 +1,5 @@
 import { MetaLabel } from '@/components/ui/meta-label';
+import { ScrollImage } from '@/components/motion/scroll-image';
 
 const COMPETITION_SHOTS = [
   {
@@ -57,9 +58,10 @@ export function CompetitionProofSection() {
             key={shot.src}
             className="group relative min-h-64 min-w-[70vw] flex-shrink-0 snap-start overflow-hidden rounded-lg border border-border bg-surface sm:min-w-0"
           >
-            <img
+            <ScrollImage
               alt={shot.alt}
-              className="absolute inset-0 h-full w-full object-cover opacity-80 saturate-75 transition-transform duration-500 group-hover:scale-[1.04]"
+              className="absolute inset-0 h-full w-full object-cover opacity-80 saturate-75 will-change-transform"
+              effect="parallax"
               loading="lazy"
               src={shot.src}
             />

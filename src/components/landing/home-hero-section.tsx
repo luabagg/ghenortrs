@@ -62,8 +62,8 @@ export function HomeHeroSection() {
               Frenagem e controle para <span className="text-accent">MTB.</span>
             </h1>
             <p className="mt-7 max-w-[31rem] text-lg leading-8 text-primary/82 sm:text-xl">
-              Pastilhas GHENO disponíveis no catálogo. Cubos, aros e rotores sob
-              consulta comercial.
+              Pastilhas, cubos e aros disponíveis para compra online. Para
+              rotores, fale diretamente com a equipe GHENO.
             </p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Button asChild className="h-13 min-w-44 justify-between">

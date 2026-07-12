@@ -43,8 +43,8 @@ function FooterBrand() {
         width={500}
       />
       <p className="max-w-xs text-sm leading-6 text-secondary">
-        Pastilhas para MTB no catálogo online. Cubos, aros e rotores sob
-        consulta comercial.
+        Pastilhas, cubos e aros para compra online. Rotores com atendimento
+        direto da equipe GHENO.
       </p>
       <FooterSocialLinks />
     </div>

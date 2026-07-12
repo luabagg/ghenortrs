@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { TechnicalMediaCard } from '@/components/landing/section-cards';
+import { ScrollImage } from '@/components/motion/scroll-image';
 import { Button } from '@/components/ui/button';
 import { MetaLabel } from '@/components/ui/meta-label';
 
@@ -111,9 +112,10 @@ function TechnicalMediaGrid() {
       className="-mx-6 flex max-w-[100vw] snap-x gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:max-w-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0"
     >
       <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-lg border border-border bg-surface sm:min-w-0">
-        <img
+        <ScrollImage
           alt="Rotor de freio a disco GHENO para MTB"
-          className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+          className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-75 will-change-transform"
+          effect="zoom"
           loading="lazy"
           src="/reference-images/rotor-gheno.jpg"
         />
@@ -132,9 +134,10 @@ function TechnicalMediaGrid() {
         title="Uso em downhill."
       />
       <figure className="group relative min-h-72 min-w-[17rem] snap-start overflow-hidden rounded-lg border border-border bg-surface sm:col-span-2 sm:min-h-56 sm:min-w-0">
-        <img
+        <ScrollImage
           alt="Pinça de freio Hayes Dominion A4 — produto compatível com pastilhas GHENO"
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-90 saturate-75 transition-transform duration-500 group-hover:scale-[1.03]"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-90 saturate-75 will-change-transform"
+          effect="zoom"
           loading="lazy"
           src="/reference-images/hayes-a4-caliper.jpg"
         />

@@ -19,12 +19,11 @@ export function ComponentFamiliesIntro() {
         className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
         id="familias-heading"
       >
-        Pastilhas no catálogo.{' '}
-        <span className="text-secondary">Outras linhas sob consulta.</span>
+        Encontre o componente certo para sua bike.
       </h2>
       <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Consulte disponibilidade, compatibilidade e atendimento para cada
-        família de componentes GHENO.
+        Pastilhas, cubos e aros estão disponíveis na loja GHENO. Para rotores,
+        nossa equipe confirma compatibilidade e disponibilidade.
       </p>
       <a
         className="hidden border-t border-border pt-7 text-xs font-extrabold uppercase tracking-[0.14em] text-primary transition-colors hover:text-accent lg:block"

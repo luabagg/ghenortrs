@@ -1,6 +1,6 @@
 # Landing Page Content Architecture
 
-Last defined: 2026-05-11
+Last defined: 2026-07-12
 Scope owner: `LUA-17`
 Depends on: [DESIGN.md](../../DESIGN.md), [storefront-audit.md](./storefront-audit.md), [store-destination-map.md](./store-destination-map.md)
 
@@ -12,8 +12,8 @@ Define the Portuguese narrative, section order, and CTA hierarchy for the MVP la
 
 - Write in Brazilian Portuguese with direct, technical, performance-first language.
 - Speak like a premium MTB component brand, not like a generic marketplace.
-- Keep the promise honest: only `Pastilhas` can point at a live commerce catalog today.
-- Use `Cubos`, `Aros`, and `Rotores` as proof-of-range and commercial-intent sections, not fake live-catalog promises.
+- Keep the promise honest: `Pastilhas`, `Cubos`, and `Aros` can point at verified Nuvemshop categories.
+- Use `Rotores` as proof-of-range with owned contact; do not imply stock.
 - Let the copy sell control, braking confidence, durability, and race-readiness; avoid vague lifestyle claims.
 
 ## Page Narrative
@@ -21,8 +21,8 @@ Define the Portuguese narrative, section order, and CTA hierarchy for the MVP la
 The landing page should move in a simple sequence:
 
 1. Establish GHENO as a high-performance MTB components brand.
-2. Prove that the current live catalog is real and immediately shopable for brake pads.
-3. Show the broader component families without pretending all of them are already purchasable online.
+2. Route brake-pad, hub, and rim demand to verified store categories and products.
+3. Show rotors without implying inventory.
 4. Reinforce technical credibility.
 5. Split consumer and commercial intent clearly.
 6. End with one unambiguous store CTA plus a secondary commercial path.
@@ -33,7 +33,7 @@ The landing page should move in a simple sequence:
 | ----- | ------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------- |
 | `1`   | `Hero`                    | State brand position and route the two main intents immediately.                           | Eyebrow: `COMPONENTES MTB DE ALTO DESEMPENHO`. Headline direction: `Pastilhas e componentes GHENO para quem exige frenagem, controle e consistência na trilha.` Support copy should frame GHENO as a technical, race-ready brand built for riders, oficinas, and lojistas who value performance over generic catalog volume. | `Ver catálogo GHENO` -> `https://store.ghenortrs.com.br/produtos/` | `Falar com GHENO B2B` -> `/b2b`                                      |
 | `2`   | `Proof bar`               | Give fast credibility without turning the page into fake telemetry.                        | Three short proof lines only: `Catálogo ativo no ar`, `Checkout delegado à Nuvemshop`, `Atendimento comercial para linhas sem catálogo publicado`.                                                                                                                                                                           | None                                                               | None                                                                 |
-| `3`   | `Famílias de componentes` | Present the four product families and split CTA behavior honestly by availability.         | Intro direction: `Uma linha pensada para frenagem, rolagem e montagem com critério técnico.` Each family card gets a short statement: `Pastilhas` = live commerce today; `Cubos`, `Aros`, and `Rotores` = consultation/commercial availability.                                                                              | Family CTA per routing contract                                    | None                                                                 |
+| `3`   | `Famílias de componentes` | Present the four product families and split CTA behavior honestly by availability.         | `Pastilhas`, `Cubos`, and `Aros` route to verified online categories. `Rotores` explains the family and routes to contact without a stock claim.                                                                              | Family CTA per routing contract                                    | None                                                                 |
 | `4`   | `Prova técnica`           | Explain why the products feel engineered, not generic.                                     | Section should cover friction consistency, heat management, finish quality, and component reliability in concise, mechanical language. Avoid invented specs or unsupported numbers.                                                                                                                                          | `Explorar componentes` -> `/componentes`                           | None                                                                 |
 | `5`   | `B2B teaser`              | Invite shops, workshops, and distributors into the commercial path.                        | Headline direction: `Atendimento comercial para oficinas, revendas e distribuidores.` Copy should route approved sellers toward access and let non-registered sellers request approval from the login screen.                                                                                                                | `Acessar produtos B2B` -> `/b2b`                                   | None                                                                 |
 | `6`   | `Closing CTA band`        | Finish with a single strongest consumer CTA and one honest fallback for non-catalog lines. | Headline direction: `Compre o que já está pronto para rodar. Consulte o que ainda depende de atendimento.` Keep the contrast section short and decisive.                                                                                                                                                                     | `Ver loja online` -> `https://store.ghenortrs.com.br/produtos/`    | `Ver componentes` -> `/componentes`                                  |
@@ -53,10 +53,10 @@ The landing page should move in a simple sequence:
 | Context             | Label                 | Destination                                | Rule                                                                                                         |
 | ------------------- | --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | Hero + closing band | `Ver catálogo GHENO`  | `https://store.ghenortrs.com.br/produtos/` | This is the default high-priority commerce CTA for the MVP.                                                  |
-| Hero + B2B teaser   | `Acessar produtos B2B` | `/b2b`                                    | Internal route for approved seller login plus registration request for users without access.                  |
-| `Pastilhas` card    | `Ver catálogo GHENO`  | `https://store.ghenortrs.com.br/produtos/` | Do not use the broken `/freios/pastilhas-de-freio/` path.                                                    |
-| `Cubos` card        | `Consultar cubos`     | `/contato`                                 | Stay consultation-led until a verified category or product destination exists.                               |
-| `Aros` card         | `Consultar aros`      | `/contato`                                 | Same rule as `Cubos`.                                                                                        |
+| Hero + B2B teaser   | `Solicitar cadastro B2B` | `/b2b`                                 | Internal route to the working commercial registration request.                                               |
+| `Pastilhas` card    | `Ver pastilhas`       | `https://store.ghenortrs.com.br/freios/pastilhas-de-freio/` | Verified online category.                                                         |
+| `Cubos` card        | `Ver cubos`           | `https://store.ghenortrs.com.br/cubos/`    | Verified online category.                                                                                     |
+| `Aros` card         | `Ver aros`            | `https://store.ghenortrs.com.br/aros/`     | Verified online category.                                                                                     |
 | `Rotores` card      | `Consultar rotores`   | `/contato`                                 | Same rule as `Cubos`.                                                                                        |
 | Generic fallback    | `Contato comercial`   | `/contato`                                 | Use when the user intent is real but the store cannot fulfill it directly yet.                               |
 
@@ -72,5 +72,5 @@ The landing page should move in a simple sequence:
 
 - Preserve the section order above unless user research or new store reality forces a change.
 - Reuse the existing `/componentes` and `/b2b` shell routes as internal extensions of the homepage narrative.
-- The homepage should visually prioritize `Pastilhas` as the only live commerce family without visually demoting the other families into dead ends.
+- The homepage treats `Pastilhas`, `Cubos`, and `Aros` as live commerce families and keeps `Rotores` as a clear contact path.
 - If store taxonomy changes before `M4`, update this document and [store-destination-map.md](./store-destination-map.md) in the same session.

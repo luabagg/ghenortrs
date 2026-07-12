@@ -48,6 +48,24 @@ body {
   min-height: 100vh;
   overflow-x: clip;
   background: var(--color-background);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 650;
+  text-wrap: balance;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 @media (prefers-reduced-motion: reduce) {

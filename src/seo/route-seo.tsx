@@ -86,9 +86,11 @@ export function RouteSeo() {
       removeMeta({ property: 'og:title' });
       removeMeta({ property: 'og:description' });
       removeMeta({ property: 'og:image' });
+      removeMeta({ property: 'og:image:alt' });
       removeMeta({ name: 'twitter:title' });
       removeMeta({ name: 'twitter:description' });
       removeMeta({ name: 'twitter:image' });
+      removeMeta({ name: 'twitter:image:alt' });
       setCanonical();
       setJsonLd();
       return;
@@ -105,11 +107,12 @@ export function RouteSeo() {
     setMeta({ property: 'og:description' }, seo.description);
     setMeta({ property: 'og:url' }, canonical);
     setMeta({ property: 'og:image' }, seo.image);
-    setMeta({ property: 'og:image:alt' }, 'GHENO — componentes para MTB');
+    setMeta({ property: 'og:image:alt' }, seo.imageAlt);
     setMeta({ name: 'twitter:card' }, 'summary_large_image');
     setMeta({ name: 'twitter:title' }, seo.title);
     setMeta({ name: 'twitter:description' }, seo.description);
     setMeta({ name: 'twitter:image' }, seo.image);
+    setMeta({ name: 'twitter:image:alt' }, seo.imageAlt);
     setCanonical(canonical);
     setJsonLd(seo.jsonLd);
   }, [pathname]);

@@ -18,29 +18,8 @@ const QUICK_ACTIONS = [
       </svg>
     ),
     title: 'Ver componentes',
-    description: 'Pastilhas, cubos, aros e rotores',
+    description: 'Três linhas online; rotores via atendimento',
     to: '/componentes',
-    badge: null as string | null,
-  },
-  {
-    icon: (
-      <svg
-        className="h-6 w-6 min-[420px]:h-7 min-[420px]:w-7"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M13 10V3L4 14h7v7l9-11h-7z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-        />
-      </svg>
-    ),
-    title: 'Tecnologia',
-    description: 'Compatibilidade e linhas disponíveis',
-    href: '/#tecnologia',
     badge: null as string | null,
   },
   {

@@ -29,15 +29,15 @@ export const componentMenuLinks: HeaderMenuLink[] = [
   },
   {
     label: 'Pastilhas',
-    href: 'https://store.ghenortrs.com.br/produtos/',
+    href: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
   },
   {
     label: 'Cubos',
-    to: '/contato',
+    href: 'https://store.ghenortrs.com.br/cubos/',
   },
   {
     label: 'Aros',
-    to: '/contato',
+    href: 'https://store.ghenortrs.com.br/aros/',
   },
   {
     label: 'Rotores',
@@ -46,10 +46,6 @@ export const componentMenuLinks: HeaderMenuLink[] = [
 ];
 
 export const primaryNavLinks: HeaderNavLink[] = [
-  {
-    label: 'Tecnologia',
-    to: '/#tecnologia',
-  },
   {
     label: 'B2B',
     to: '/b2b',

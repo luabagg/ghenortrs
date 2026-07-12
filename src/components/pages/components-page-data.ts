@@ -1,20 +1,19 @@
 export type ComponentProductFamily = {
+  commerce: 'store' | 'contact';
   id: string;
-  eyebrow: string;
   title: string;
   description: string;
   highlights: string[];
   ctaLabel: string;
   ctaHref: string;
-  isLive: boolean;
   imageAlt: string;
   imageSrc: string;
 };
 
 export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
   {
+    commerce: 'store',
     id: 'pastilhas',
-    eyebrow: 'ATIVO NO CATÁLOGO',
     title: 'Pastilhas de freio',
     description:
       'Pastilhas Elite e Ultra para diferentes sistemas de freio, disponíveis no catálogo online.',
@@ -25,50 +24,47 @@ export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
       'Compra e checkout na loja GHENO',
     ],
     ctaLabel: 'Ver catálogo de pastilhas',
-    ctaHref: 'https://store.ghenortrs.com.br/produtos/',
-    isLive: true,
+    ctaHref: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
     imageAlt: 'Pastilha de freio GHENO — compostos para MTB',
     imageSrc: '/reference-images/pastilhas-gheno.jpg',
   },
   {
+    commerce: 'store',
     id: 'cubos',
-    eyebrow: 'CONSULTA COMERCIAL',
     title: 'Cubos GHENO',
     description:
-      'Consulte padrões, aplicações e disponibilidade diretamente com a equipe GHENO.',
+      'Modelos dianteiros e traseiros GHENO GO disponíveis na loja online.',
     highlights: [
-      'Padrões informados no atendimento',
-      'Aplicação conforme o projeto da bike',
-      'Disponibilidade confirmada pela equipe GHENO',
-      'Disponível via consulta para lojistas e revendas',
+      'Modelo dianteiro GHENO GO',
+      'Modelos traseiros 12x148 e 12x157 Boost',
+      'Opções para cassetes HG e XD',
+      'Compra e checkout na loja GHENO',
     ],
-    ctaLabel: 'Consultar cubos',
-    ctaHref: '/contato',
-    isLive: false,
+    ctaLabel: 'Ver cubos na loja',
+    ctaHref: 'https://store.ghenortrs.com.br/cubos/',
     imageAlt: 'Cubo GHENO para MTB',
     imageSrc: '/reference-images/cubo-gheno.jpg',
   },
   {
+    commerce: 'store',
     id: 'aros',
-    eyebrow: 'CONSULTA COMERCIAL',
     title: 'Aros GHENO',
     description:
-      'Consulte materiais, medidas, aplicações e disponibilidade com a equipe GHENO.',
+      'Aros GHENO HEAVYDUTY disponíveis nos diâmetros 27.5 e 29.',
     highlights: [
-      'Materiais informados no atendimento',
-      'Medidas conforme a aplicação',
-      'Disponibilidade confirmada pela equipe GHENO',
-      'Disponível via consulta para lojistas e revendas',
+      'Alumínio 6061-T6',
+      '30 mm interno e 35 mm externo',
+      '32 furos e compatibilidade tubeless',
+      'Compra e checkout na loja GHENO',
     ],
-    ctaLabel: 'Consultar aros',
-    ctaHref: '/contato',
-    isLive: false,
+    ctaLabel: 'Ver aros na loja',
+    ctaHref: 'https://store.ghenortrs.com.br/aros/',
     imageAlt: 'Aro GHENO — rigidez e leveza para MTB',
     imageSrc: '/reference-images/aro-gheno.jpg',
   },
   {
+    commerce: 'contact',
     id: 'rotores',
-    eyebrow: 'CONSULTA COMERCIAL',
     title: 'Rotores GHENO',
     description:
       'Consulte medidas, compatibilidade e disponibilidade diretamente com a equipe GHENO.',
@@ -76,11 +72,10 @@ export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
       'Medidas informadas no atendimento',
       'Compatibilidade conforme cubo e pinça',
       'Compatível com pinças Hayes Dominion A4',
-      'Disponibilidade confirmada pela equipe GHENO',
+      'Disponibilidade confirmada no atendimento',
     ],
     ctaLabel: 'Consultar rotores',
     ctaHref: '/contato',
-    isLive: false,
     imageAlt: 'Rotor de freio a disco GHENO para MTB',
     imageSrc: '/reference-images/rotor-gheno.jpg',
   },

@@ -1,0 +1,68 @@
+{
+  "storeOrigin": "https://store.ghenortrs.com.br",
+  "sitemapUrl": "https://store.ghenortrs.com.br/sitemap.xml",
+  "searchUrl": "https://store.ghenortrs.com.br/search/",
+  "families": [
+    {
+      "id": "pastilhas",
+      "label": "Pastilhas de freio",
+      "commerce": "store",
+      "href": "https://store.ghenortrs.com.br/freios/pastilhas-de-freio/",
+      "categoryPaths": ["/freios/pastilhas-de-freio/"],
+      "productPathPatterns": ["disk-brake-pads-", "pastilha-de-freio-"],
+      "terms": [
+        "pastilha",
+        "pastilhas",
+        "freio",
+        "brake pads",
+        "elite",
+        "ultra",
+        "hayes",
+        "hope",
+        "magura",
+        "shimano",
+        "sram"
+      ]
+    },
+    {
+      "id": "cubos",
+      "label": "Cubos",
+      "commerce": "store",
+      "href": "https://store.ghenortrs.com.br/cubos/",
+      "categoryPaths": [
+        "/cubos/",
+        "/cubos/cubo-dianteiro/",
+        "/cubos/cubo-traseiro/"
+      ],
+      "productPathPatterns": ["cubo-"],
+      "terms": ["cubo", "cubos", "hub", "boost", "dianteiro", "traseiro"]
+    },
+    {
+      "id": "aros",
+      "label": "Aros",
+      "commerce": "store",
+      "href": "https://store.ghenortrs.com.br/aros/",
+      "categoryPaths": ["/aros/"],
+      "productPathPatterns": ["aro-"],
+      "terms": ["aro", "aros", "rim", "heavyduty", "27.5", "29"]
+    },
+    {
+      "id": "rotores",
+      "label": "Rotores",
+      "commerce": "contact",
+      "href": "/contato",
+      "categoryPaths": ["/freios/discos-de-freio/"],
+      "productPathPatterns": ["disco-", "rotor-"],
+      "terms": ["rotor", "rotores", "disco", "discos", "223mm"]
+    },
+    {
+      "id": "mass-dampers",
+      "label": "Mass dampers",
+      "commerce": "contact",
+      "href": "/contato",
+      "categoryPaths": ["/mass-dampers/"],
+      "productPathPatterns": ["mass-damper-"],
+      "terms": ["mass damper", "mass dampers", "amortecimento"]
+    }
+  ]
+}

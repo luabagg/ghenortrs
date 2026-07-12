@@ -50,6 +50,45 @@ describe('RouteSeo', () => {
     expect(() => JSON.parse(jsonLd?.textContent ?? '')).not.toThrow();
   });
 
+  it('publishes current inventory facts and factual category destinations', () => {
+    render(
+      <MemoryRouter initialEntries={['/componentes']}>
+        <RouteSeo />
+      </MemoryRouter>,
+    );
+
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      'content',
+      expect.stringMatching(/pastilhas, cubos e aros.*loja online/i),
+    );
+    expect(
+      document.querySelector('meta[name="twitter:image:alt"]'),
+    ).toHaveAttribute('content', expect.stringMatching(/componentes/i));
+
+    const jsonLd = JSON.parse(
+      document.querySelector('#route-seo-jsonld')?.textContent ?? '{}',
+    );
+    const itemList = jsonLd['@graph'].find(
+      (entry: Record<string, unknown>) => entry['@type'] === 'ItemList',
+    );
+    expect(itemList.itemListElement).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          url: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
+        }),
+        expect.objectContaining({
+          url: 'https://store.ghenortrs.com.br/cubos/',
+        }),
+        expect.objectContaining({
+          url: 'https://store.ghenortrs.com.br/aros/',
+        }),
+        expect.objectContaining({
+          url: 'https://ghenortrs.vercel.app/contato',
+        }),
+      ]),
+    );
+  });
+
   it('marks unknown routes as noindex and removes structured data', () => {
     render(
       <MemoryRouter initialEntries={['/nao-existe']}>

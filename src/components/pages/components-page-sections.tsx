@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { MetaLabel } from '@/components/ui/meta-label';
 import { SectionBand } from '@/components/ui/section-band';
-import { cn } from '@/lib/utils';
 
 import type { ComponentProductFamily } from './components-page-data';
 
@@ -11,14 +9,11 @@ export function ComponentsPageIntro() {
   return (
     <div className="flex flex-col gap-3">
       <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
-        Pastilhas no catálogo.{' '}
-        <span className="text-secondary">
-          Cubos, aros e rotores sob consulta.
-        </span>
+        Componentes GHENO para frenagem e controle.
       </h1>
       <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Veja os modelos disponíveis online ou consulte a equipe GHENO sobre as
-        demais linhas.
+        Compre pastilhas, cubos e aros na loja online. Para rotores, fale com a
+        equipe GHENO sobre disponibilidade e compatibilidade.
       </p>
     </div>
   );
@@ -46,14 +41,6 @@ export function ComponentFamilyCard({
       </div>
       <div className="flex flex-col gap-5 px-6 py-6 lg:px-8 lg:py-8">
         <div className="flex flex-col gap-2">
-          <MetaLabel
-            className={cn(
-              !family.isLive &&
-                'border border-border bg-surface-elevated text-secondary',
-            )}
-          >
-            {family.eyebrow}
-          </MetaLabel>
           <h2
             className="font-heading text-3xl leading-none tracking-[-0.04em] sm:text-4xl"
             id={`${family.id}-heading`}
@@ -66,7 +53,10 @@ export function ComponentFamilyCard({
         </div>
         <ComponentHighlights highlights={family.highlights} />
         <div>
-          <Button asChild variant={family.isLive ? 'primary' : 'secondary'}>
+          <Button
+            asChild
+            variant={family.commerce === 'store' ? 'primary' : 'secondary'}
+          >
             {family.ctaHref.startsWith('/') ? (
               <Link to={family.ctaHref}>{family.ctaLabel}</Link>
             ) : (

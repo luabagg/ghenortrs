@@ -41,12 +41,18 @@ export const footerLinkGroups: FooterLinkGroupData[] = [
     ariaLabel: 'Links de categorias',
     links: [
       {
-        href: 'https://store.ghenortrs.com.br/produtos/',
+        href: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
         label: 'Pastilhas',
       },
-      { label: 'Cubos', to: '/contato' },
+      {
+        href: 'https://store.ghenortrs.com.br/cubos/',
+        label: 'Cubos',
+      },
       { label: 'Rotores', to: '/contato' },
-      { label: 'Aros', to: '/contato' },
+      {
+        href: 'https://store.ghenortrs.com.br/aros/',
+        label: 'Aros',
+      },
     ],
     title: 'Categorias',
   },
@@ -54,7 +60,6 @@ export const footerLinkGroups: FooterLinkGroupData[] = [
     ariaLabel: 'Links institucionais',
     links: [
       { label: 'Sobre a GHENO', to: '/sobre' },
-      { label: 'Tecnologia', to: '/#tecnologia' },
       { label: 'Contato', to: '/contato' },
       {
         href: 'https://store.ghenortrs.com.br/politica-de-privacidade/',

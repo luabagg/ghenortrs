@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
 import { MobileMenuActions } from '@/components/navigation/mobile-menu-actions';
+import { StoreSearch } from '@/components/search/store-search';
 
 export function MobileMenuOverlay({
   open,
@@ -39,6 +40,10 @@ export function MobileMenuOverlay({
       <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-32 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
         <div className="overflow-y-auto px-5 pb-5 pt-3 min-[420px]:px-7">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-secondary">
+            Buscar
+          </p>
+          <StoreSearch mode="mobile" onNavigate={onClose} />
+          <p className="mb-3 mt-8 text-xs font-extrabold uppercase tracking-[0.14em] text-secondary">
             Ações rápidas
           </p>
           <MobileMenuActions onClose={onClose} />
@@ -106,7 +111,7 @@ function MobileMenuBrandNote() {
             CATÁLOGO GHENO
           </p>
           <p className="mt-2 text-base font-bold leading-tight text-primary min-[420px]:text-xl">
-            Pastilhas disponíveis para compra online.
+            Pastilhas, cubos e aros disponíveis online.
           </p>
         </div>
       </div>
