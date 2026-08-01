@@ -9,7 +9,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export function B2BAccessHeroSection() {
+export function B2BAccessHeroSection({
+  title = 'Cadastro comercial GHENO.',
+  description = 'Lojistas, oficinas e revendas podem solicitar cadastro, entrar com e-mail aprovado e acessar o catálogo B2B.',
+}: {
+  title?: string;
+  description?: string;
+} = {}) {
   return (
     <section className="grid min-h-[52dvh] items-center border-b border-border py-12 sm:py-16">
       <div className="grid max-w-2xl gap-5">
@@ -17,12 +23,9 @@ export function B2BAccessHeroSection() {
           B2B
         </p>
         <h1 className="font-heading text-5xl leading-[0.95] tracking-[-0.05em] sm:text-6xl">
-          Cadastro comercial GHENO.
+          {title}
         </h1>
-        <p className="max-w-xl text-lg leading-8 text-secondary">
-          Lojistas, oficinas e revendas podem enviar os dados da empresa para
-          solicitar atendimento comercial.
-        </p>
+        <p className="max-w-xl text-lg leading-8 text-secondary">{description}</p>
       </div>
     </section>
   );

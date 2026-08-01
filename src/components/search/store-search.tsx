@@ -38,10 +38,6 @@ export function StoreSearch({
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
 
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [query]);
-
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (results.length === 0) return;
     if (event.key === 'ArrowDown') {
@@ -99,7 +95,10 @@ export function StoreSearch({
           role="searchbox"
           type="search"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setActiveIndex(0);
+          }}
           onKeyDown={handleKeyDown}
         />
       </div>

@@ -6,6 +6,8 @@ import {
   useState,
 } from 'react';
 
+import { registerSeller } from '@/b2b/api';
+import { isB2BAuthConfigured } from '@/b2b/config';
 import {
   type B2BFieldChangeHandler,
   type B2BFields,
@@ -29,22 +31,10 @@ function validateB2BFields(f: B2BFields): Partial<B2BFields> {
   return e;
 }
 
-async function submitB2BLead(
+async function submitLegacyLead(
   fields: B2BFields,
-  setErrors: Dispatch<SetStateAction<Partial<B2BFields>>>,
   setStatus: Dispatch<SetStateAction<SubmitStatus>>,
 ) {
-  trackFormEvent('b2b_form_submit_attempt', { form: 'b2b_lead' });
-  const errs = validateB2BFields(fields);
-  if (Object.keys(errs).length > 0) {
-    setErrors(errs);
-    trackFormEvent('b2b_form_validation_error', {
-      form: 'b2b_lead',
-      error_count: Object.keys(errs).length,
-    });
-    return;
-  }
-  setErrors({});
   const submitUrl = import.meta.env.VITE_B2B_SUBMIT_URL as string | undefined;
   if (!submitUrl) {
     setStatus('no-config');
@@ -66,7 +56,40 @@ async function submitB2BLead(
   }
 }
 
-export function useB2BLeadForm() {
+async function submitSellerRegistration(
+  fields: B2BFields,
+  honeypot: string,
+  setStatus: Dispatch<SetStateAction<SubmitStatus>>,
+  onRegistered?: () => void,
+) {
+  setStatus('loading');
+  try {
+    const result = await registerSeller({
+      empresa: fields.empresa,
+      cnpj: fields.cnpj,
+      telefone: fields.telefone,
+      email: fields.email,
+      mensagem: fields.mensagem,
+      website: honeypot,
+    });
+    if (result.error && result.error !== 'already_approved') {
+      if (result.error === 'server_not_configured') {
+        // Fall back to legacy Resend-only endpoint when Supabase is not live yet.
+        await submitLegacyLead(fields, setStatus);
+        return;
+      }
+      throw new Error(result.error);
+    }
+    setStatus('success');
+    trackFormEvent('b2b_form_submit_success', { form: 'b2b_seller_register' });
+    onRegistered?.();
+  } catch {
+    setStatus('error');
+    trackFormEvent('b2b_form_submit_error', { form: 'b2b_seller_register' });
+  }
+}
+
+export function useB2BLeadForm(options?: { onRegistered?: () => void }) {
   const [fields, setFields] = useState<B2BFields>({
     empresa: '',
     cnpj: '',
@@ -91,7 +114,29 @@ export function useB2BLeadForm() {
       setStatus('success');
       return;
     }
-    await submitB2BLead(fields, setErrors, setStatus);
+    trackFormEvent('b2b_form_submit_attempt', { form: 'b2b_lead' });
+    const errs = validateB2BFields(fields);
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      trackFormEvent('b2b_form_validation_error', {
+        form: 'b2b_lead',
+        error_count: Object.keys(errs).length,
+      });
+      return;
+    }
+    setErrors({});
+
+    if (isB2BAuthConfigured()) {
+      await submitSellerRegistration(
+        fields,
+        honeypot,
+        setStatus,
+        options?.onRegistered,
+      );
+      return;
+    }
+
+    await submitLegacyLead(fields, setStatus);
   }
 
   return {

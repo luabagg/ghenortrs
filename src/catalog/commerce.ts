@@ -40,7 +40,7 @@ export const COMMERCE_FAMILIES: readonly CommerceFamily[] =
       throw new Error(`Invalid commerce family configuration: ${family.id}`);
     }
 
-    return family;
+    return family as CommerceFamily;
   });
 
 export const STORE_ORIGIN = commerceMap.storeOrigin;

@@ -28,3 +28,14 @@ lock the deployment contract for later milestones.
 The app is a static SPA bundle. Host rewrites must send client routes to
 `index.html` for direct navigation. Planning and milestone status live in
 Linear project `Gheno rotors`.
+
+## B2B auth + Bling catalog
+
+Seller-gated B2B catalog scaffolding is in place. Plug credentials only:
+
+1. Apply `supabase/migrations/20260801000000_b2b_sellers_bling.sql`
+2. Fill `.env.example` → Vercel + `.env.local` (see `docs/integrations/b2b-auth-bling.md`)
+3. Connect Bling OAuth once via `/api/bling-oauth-start?secret=…`
+4. Sync products: `pnpm catalog:sync` or `POST /api/bling-sync`
+
+Public marketing search remains Nuvemshop-based (`pnpm search:sync`).

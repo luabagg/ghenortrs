@@ -12,7 +12,7 @@ type FormEventName =
   | 'b2b_form_submit_error';
 
 interface FormEventPayload {
-  form: 'b2b_lead';
+  form: 'b2b_lead' | 'b2b_seller_register';
   error_count?: number;
 }
 
