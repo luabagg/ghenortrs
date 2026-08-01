@@ -34,7 +34,7 @@ describe('App', () => {
     );
     expect(
       screen.getByText(
-        'Pastilhas GHENO disponíveis no catálogo. Cubos, aros e rotores sob consulta comercial.',
+        /Pastilhas, cubos e aros disponíveis para compra online\. Para rotores, fale diretamente com a equipe GHENO\./,
       ),
     ).toBeInTheDocument();
     expect(
@@ -52,12 +52,10 @@ describe('App', () => {
     expect(
       screen.getAllByRole('link', { name: 'Ver componentes →' })[0],
     ).toHaveClass('border', 'border-strong', 'bg-background/35');
-    expect(screen.getByText('Catálogo de pastilhas ativo')).toBeInTheDocument();
-    expect(
-      screen.getByText('Compatibilidade identificada'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Outras linhas sob consulta')).toBeInTheDocument();
-    expect(screen.getByText('Atendimento B2B')).toBeInTheDocument();
+    expect(screen.getByText('Compre online')).toBeInTheDocument();
+    expect(screen.getByText('Encontre o modelo')).toBeInTheDocument();
+    expect(screen.getByText('Consulte a equipe')).toBeInTheDocument();
+    expect(screen.getByText('Venda profissional')).toBeInTheDocument();
   });
 
   it('keeps stable desktop header columns and omits Tecnologia navigation', () => {
@@ -108,7 +106,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Pastilhas no catálogo. Outras linhas sob consulta.',
+        name: 'Encontre o componente certo para sua bike.',
       }),
     ).toBeInTheDocument();
 
@@ -137,20 +135,21 @@ describe('App', () => {
       '/reference-images/rotor-gheno.jpg',
     );
 
-    const productLinks = [
-      screen.getAllByRole('link', { name: 'Ver catálogo GHENO →' })[1],
-      screen.getByRole('link', { name: 'Consultar cubos →' }),
-      screen.getByRole('link', { name: 'Consultar aros →' }),
-      screen.getByRole('link', { name: 'Consultar rotores →' }),
-    ];
-    expect(productLinks[0]).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Ver pastilhas/ })).toHaveAttribute(
       'href',
-      'https://store.ghenortrs.com.br/produtos/',
+      'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
     );
-
-    expect(productLinks[1]).toHaveAttribute('href', '/contato');
-    expect(productLinks[2]).toHaveAttribute('href', '/contato');
-    expect(productLinks[3]).toHaveAttribute('href', '/contato');
+    expect(screen.getByRole('link', { name: /Ver cubos/ })).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/cubos/',
+    );
+    expect(screen.getByRole('link', { name: /Ver aros/ })).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/aros/',
+    );
+    expect(
+      screen.getByRole('link', { name: /Consultar rotores/ }),
+    ).toHaveAttribute('href', '/contato');
   });
 
   it('renders the technical proof section with stats, features, and media', () => {
@@ -323,7 +322,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Compre pastilhas online. Consulte as outras linhas.',
+        name: /Compre pastilhas, cubos e aros online\.\s*Para rotores, fale conosco\./,
       }),
     ).toBeInTheDocument();
     expect(
@@ -352,8 +351,11 @@ describe('App', () => {
       within(footer).getByRole('link', { name: 'Ver loja online' }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getAllByRole('link', { name: 'Pastilhas' })[0],
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+      within(footer).getByRole('link', { name: 'Pastilhas' }),
+    ).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
+    );
     expect(
       screen.getByRole('navigation', { name: 'Links institucionais' }),
     ).toBeInTheDocument();
@@ -365,8 +367,13 @@ describe('App', () => {
       screen.getByRole('link', { name: 'Instagram GHENO' }),
     ).toHaveAttribute('href', 'https://www.instagram.com/gheno_rtrs/');
     expect(
-      within(footer).getByRole('link', { name: 'Tecnologia' }),
-    ).toHaveAttribute('href', '/#tecnologia');
+      within(footer).getByRole('link', { name: 'Sobre a GHENO' }),
+    ).toHaveAttribute('href', '/sobre');
+    expect(
+      within(
+        within(footer).getByRole('navigation', { name: 'Links institucionais' }),
+      ).getByRole('link', { name: 'Contato' }),
+    ).toHaveAttribute('href', '/contato');
   });
 
   it('renders the components route with product families', () => {
@@ -390,7 +397,10 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Ver catálogo de pastilhas' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    ).toHaveAttribute(
+      'href',
+      'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
+    );
     expect(
       screen.getByRole('link', { name: 'Pré-cadastro comercial' }),
     ).toHaveAttribute('href', '/b2b');

@@ -1,6 +1,5 @@
 Before making UI changes, read `DESIGN.md` and follow its tokens and rationale. Do not invent colors, spacing, typography, or component variants unless the design file is missing the needed token.
-Before planning or implementing project work, read `docs/project/current-focus.md` and `docs/project/milestones.md`. Treat those files as the local source of truth for milestone order, scope, and current priorities. Do not query external systems unless the local project docs are missing or explicitly stale.
-If you update Linear project structure, milestones, issue scope, or priorities, or if you detect that the local project docs are outdated, sync `docs/project/current-focus.md`, `docs/project/milestones.md`, `docs/project/timeline.md`, and any affected milestone files in the same work session so the local planning layer stays authoritative.
+Planning source of truth is Linear project `Gheno rotors`. Use Linear milestones and issues for order, scope, and priorities. Do not maintain a parallel local planning layer under `docs/project/`.
 If you change the site's routes, product positioning, B2B flow, commerce boundary, or other externally visible project facts, update `public/llms.txt` in the same work session so LLM-facing project guidance stays accurate.
 After completing work tied to Linear issues or milestones, update the relevant Linear tickets with current progress, verification evidence, and any remaining blockers before reporting completion.
 

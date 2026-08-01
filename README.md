@@ -25,7 +25,6 @@ lock the deployment contract for later milestones.
 
 ## Deployment Baseline
 
-The `M1` deployment assumptions live in
-[docs/project/deployment-baseline.md](docs/project/deployment-baseline.md). The
-app is currently a static SPA bundle and will require host rewrites to
-`index.html` for direct navigation to client routes.
+The app is a static SPA bundle. Host rewrites must send client routes to
+`index.html` for direct navigation. Planning and milestone status live in
+Linear project `Gheno rotors`.
