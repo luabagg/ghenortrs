@@ -434,7 +434,7 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders the B2B route with an honest lead form and no fake login', () => {
+  it('renders the B2B route with registration form when auth is not configured', () => {
     render(
       <MemoryRouter initialEntries={['/b2b']}>
         <App />
@@ -446,7 +446,8 @@ describe('App', () => {
         name: 'Cadastro comercial GHENO.',
       }),
     ).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Continuar' })).toBeNull();
+    // Without VITE_SUPABASE_* the login gate stays off and registration remains.
+    expect(screen.queryByRole('button', { name: 'Já tenho cadastro' })).toBeNull();
     expect(screen.queryByText('Acessar produtos B2B')).toBeNull();
     expect(
       screen.getByRole('heading', {
@@ -473,6 +474,19 @@ describe('App', () => {
       screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Pré-cadastro comercial')).toBeInTheDocument();
+    expect(screen.getByText(/B2B em configuração/i)).toBeInTheDocument();
+  });
+
+  it('renders the gated B2B catalog route without crashing when logged out', () => {
+    render(
+      <MemoryRouter initialEntries={['/b2b/catalogo']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Catálogo comercial' }),
+    ).toBeInTheDocument();
   });
 
   it('closes keyboard shortcuts with Escape and restores trigger focus', () => {

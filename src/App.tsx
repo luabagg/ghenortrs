@@ -2,6 +2,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 
 import { PageIntro } from '@/components/landing/section-cards';
 import { AppShell } from '@/components/navigation/app-shell';
+import { B2BCatalogPage } from '@/components/b2b/b2b-catalog-page';
 import { AboutPage } from '@/components/pages/about-page';
 import { B2BPage } from '@/components/pages/b2b-page';
 import { ComponentsPage } from '@/components/pages/components-page';
@@ -35,6 +36,7 @@ export function App() {
         <Route index element={<HomePage />} />
         <Route path="componentes" element={<ComponentsPage />} />
         <Route path="b2b" element={<B2BPage />} />
+        <Route path="b2b/catalogo" element={<B2BCatalogPage />} />
         <Route path="sobre" element={<AboutPage />} />
         <Route path="contato" element={<ContactPage />} />
         <Route path="*" element={<NotFoundPage />} />
