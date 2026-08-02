@@ -121,7 +121,7 @@ describe('App', () => {
       'src',
       '/reference-images/pastilhas-gheno.jpg',
     );
-    expect(screen.getAllByAltText('Cubo GHENO rotors')[0]).toHaveAttribute(
+    expect(screen.getByAltText('Cubo GHENO rotors')).toHaveAttribute(
       'src',
       '/reference-images/cubo-gheno.jpg',
     );
@@ -194,9 +194,9 @@ describe('App', () => {
     expect(
       screen.getByAltText('Rider em prova de MTB diante do público'),
     ).toHaveAttribute('src', '/reference-images/b2b-race-context.jpg');
-    expect(screen.getAllByAltText('Cubo GHENO rotors')[0]).toHaveAttribute(
+    expect(screen.getByAltText('Cubo GHENO rotors em uso na bike')).toHaveAttribute(
       'src',
-      '/reference-images/cubo-gheno.jpg',
+      '/reference-images/cubo-gheno-proof.jpg',
     );
     expect(
       screen.getByAltText('Rider em curva de trilha com terreno solto'),

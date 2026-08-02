@@ -12,8 +12,8 @@ const PROOF_IMAGES = [
     alt: 'Rider em prova de MTB diante do público',
   },
   {
-    src: '/reference-images/cubo-gheno.jpg',
-    alt: 'Cubo GHENO rotors',
+    src: '/reference-images/cubo-gheno-proof.jpg',
+    alt: 'Cubo GHENO rotors em uso na bike',
   },
   {
     src: '/reference-images/b2b-trail-validation.jpg',
