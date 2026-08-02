@@ -6,7 +6,16 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'coverage', '*.tsbuildinfo', 'api/**'],
+    ignores: [
+      'build',
+      'dist',
+      'coverage',
+      'node_modules',
+      '.cache',
+      '*.tsbuildinfo',
+      'public/**',
+      'scripts/**',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -15,6 +24,7 @@ export default tseslint.config(
       ecmaVersion: 2022,
       globals: {
         ...globals.browser,
+        ...globals.node,
       },
     },
     plugins: {
@@ -23,14 +33,11 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': 'off',
     },
   },
   {
-    files: ['src/**/*.test.{ts,tsx}', 'src/test/**/*.{ts,tsx}'],
+    files: ['app/**/*.test.{ts,tsx}', 'app/test/**/*.{ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.browser,

@@ -1,0 +1,100 @@
+import {
+  B2BFormStatusAlert,
+  B2BHoneypotField,
+  B2BInputField,
+  B2BSubmitButton,
+  B2BTextareaField,
+} from '~/components/pages/b2b-form-controls';
+import {
+  type B2BFieldChangeHandler,
+  type B2BFields,
+  type B2BSubmitHandler,
+  type SubmitStatus,
+} from '~/components/pages/b2b-form-types';
+
+type B2BFormProps = {
+  errors: Partial<B2BFields>;
+  fields: B2BFields;
+  honeypot: string;
+  status: SubmitStatus;
+  onFieldChange: B2BFieldChangeHandler;
+  onHoneypotChange: (value: string) => void;
+  onSubmit: B2BSubmitHandler;
+};
+
+export function B2BForm({
+  errors,
+  fields,
+  honeypot,
+  status,
+  onFieldChange,
+  onHoneypotChange,
+  onSubmit,
+}: B2BFormProps) {
+  return (
+    <form
+      aria-label="Cadastro comercial"
+      className="grid gap-5 border border-border bg-surface p-5 sm:gap-6 sm:p-7"
+      method="post"
+      noValidate
+      onSubmit={onSubmit}
+    >
+      <input name="intent" type="hidden" value="register" />
+      <B2BHoneypotField value={honeypot} onChange={onHoneypotChange} />
+      <div className="grid gap-5 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-5">
+        <B2BInputField
+          error={errors.empresa}
+          field="empresa"
+          id="b2b-company"
+          label="Empresa"
+          name="empresa"
+          placeholder="Nome da empresa"
+          value={fields.empresa}
+          onFieldChange={onFieldChange}
+        />
+        <B2BInputField
+          error={errors.cnpj}
+          field="cnpj"
+          id="b2b-cnpj"
+          label="CNPJ"
+          name="cnpj"
+          placeholder="00.000.000/0000-00"
+          value={fields.cnpj}
+          onFieldChange={onFieldChange}
+        />
+        <B2BInputField
+          error={errors.telefone}
+          field="telefone"
+          id="b2b-phone"
+          label="Telefone / WhatsApp"
+          name="telefone"
+          placeholder="(11) 99999-9999"
+          type="tel"
+          value={fields.telefone}
+          onFieldChange={onFieldChange}
+        />
+        <B2BInputField
+          error={errors.email}
+          field="email"
+          id="b2b-email"
+          label="E-mail"
+          name="email"
+          placeholder="contato@empresa.com.br"
+          type="email"
+          value={fields.email}
+          onFieldChange={onFieldChange}
+        />
+      </div>
+      <B2BTextareaField
+        id="b2b-needs"
+        label="Interesse comercial"
+        name="mensagem"
+        placeholder="Informe produtos de interesse, volume e tipo de negócio."
+        value={fields.mensagem}
+        onFieldChange={onFieldChange}
+      />
+      <B2BFormStatusAlert status={status} />
+      <B2BSubmitButton status={status} />
+    </form>
+  );
+}

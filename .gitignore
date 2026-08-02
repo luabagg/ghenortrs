@@ -101,3 +101,8 @@ dist/
 .env
 .env.*
 !.env.example
+
+build/
+
+.vercel/
+

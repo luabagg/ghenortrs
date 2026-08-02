@@ -1,41 +1,41 @@
 # ghenortrs
 
-GHENO's frontend foundation is a Vite + React + TypeScript app for the first implementation milestone.
+GHENO rotors marketing + B2B site on **Remix (Vite)** + React + TypeScript.
+
+Styling tokens live in `DESIGN.md` / `app/styles.css`. Planning lives in Linear project `Gheno rotors`.
 
 ## Commands
 
-- `corepack enable` ensures the pinned pnpm version is available.
-- `pnpm install` installs dependencies from `pnpm-lock.yaml`.
-- `pnpm dev` starts the local app.
-- `pnpm test` runs Vitest.
-- `pnpm lint` runs ESLint.
-- `pnpm typecheck` runs the TypeScript build graph without emitting app assets.
-- `pnpm build` creates the production bundle in `dist/`.
-- `pnpm preview` serves the built bundle locally.
+```bash
+npm install --legacy-peer-deps
+npm run dev          # remix vite:dev
+npm test             # vitest
+npm run typecheck    # tsc
+npm run lint         # eslint
+npm run build        # search:sync + remix vite:build
+npm start            # remix-serve production server
+npm run search:sync  # refresh Nuvemshop search index
+npm run catalog:sync # pull Bling catalog cache
+```
 
-pnpm is pinned in `package.json`. New dependency resolution is guarded by
-`minimumReleaseAge: 10080` in `pnpm-workspace.yaml`, which requires package
-versions to be at least seven days old before pnpm selects them.
+> `pnpm install` currently fails on a registry metadata bug for `@remix-run/dev` transitive `execa`. Use npm with `--legacy-peer-deps` until that clears. `@vercel/remix@2.16.7` peers `@remix-run/dev@2.16.7` while the app pins Remix `2.17.2` (same as thermalaquec).
+
+## App layout
+
+- `app/routes/*` — Remix file routes (pages + `/api/*` resource routes)
+- `app/components/*` — UI (GHENO design system)
+- `app/server/*` — server handlers (B2B, Bling, Resend, Supabase)
+- `public/` — static assets + `llms.txt`
 
 ## Environment
 
-Copy [.env.example](.env.example) to `.env.local` when you need local
-overrides. The current app does not consume env vars yet; the file exists to
-lock the deployment contract for later milestones.
-
-## Deployment Baseline
-
-The app is a static SPA bundle. Host rewrites must send client routes to
-`index.html` for direct navigation. Planning and milestone status live in
-Linear project `Gheno rotors`.
+Copy `.env.example` → `.env` / Vercel project env. Public browser vars still use the `VITE_*` prefix.
 
 ## B2B auth + Bling catalog
 
-Seller-gated B2B catalog scaffolding is in place. Plug credentials only:
-
 1. Apply `supabase/migrations/20260801000000_b2b_sellers_bling.sql`
-2. Fill `.env.example` → Vercel + `.env.local` (see `docs/integrations/b2b-auth-bling.md`)
+2. Fill credentials (see `docs/integrations/b2b-auth-bling.md`)
 3. Connect Bling OAuth once via `/api/bling-oauth-start?secret=…`
-4. Sync products: `pnpm catalog:sync` or `POST /api/bling-sync`
+4. Sync products: `npm run catalog:sync` or `POST /api/bling-sync`
 
-Public marketing search remains Nuvemshop-based (`pnpm search:sync`).
+Public marketing search remains Nuvemshop-based (`npm run search:sync`).
