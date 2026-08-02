@@ -6,12 +6,11 @@ import { B2BLoginCard } from '@/components/b2b/b2b-login-card';
 import {
   B2BPendingPanel,
   B2BRejectedPanel,
-  B2BUnconfiguredPanel,
 } from '@/components/b2b/b2b-status-panels';
 import { B2BForm } from '@/components/pages/b2b-form';
 import {
   B2BAccessHeroSection,
-  B2BLeadIntroSection,
+  B2BRegisterAside,
   B2BSuccessSection,
 } from '@/components/pages/b2b-page-sections';
 import { useB2BLeadForm } from '@/components/pages/use-b2b-lead-form';
@@ -60,7 +59,7 @@ export function B2BPage() {
           title="Catálogo B2B liberado."
         />
         <div className="flex flex-wrap gap-3">
-          <Button asChild>
+          <Button asChild variant="outline">
             <Link to="/b2b/catalogo">Abrir catálogo B2B</Link>
           </Button>
           <Button type="button" variant="secondary" onClick={() => void signOut()}>
@@ -99,35 +98,18 @@ export function B2BPage() {
   }
 
   return (
-    <div className="grid gap-12">
+    <div className="grid gap-10 sm:gap-12">
       <B2BAccessHeroSection />
 
       <section
-        className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]"
+        className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-14"
         id="cadastro"
       >
-        <div className="grid gap-6 content-start">
-          <B2BLeadIntroSection />
-          {!configured ? <B2BUnconfiguredPanel /> : null}
-          {configured ? (
-            <div className="flex flex-wrap gap-3">
-              <Button
-                type="button"
-                variant={mode === 'register' ? 'primary' : 'secondary'}
-                onClick={() => setMode('register')}
-              >
-                Solicitar cadastro
-              </Button>
-              <Button
-                type="button"
-                variant={mode === 'login' ? 'primary' : 'secondary'}
-                onClick={() => setMode('login')}
-              >
-                Já tenho cadastro
-              </Button>
-            </div>
-          ) : null}
-        </div>
+        <B2BRegisterAside
+          configured={configured}
+          mode={mode}
+          onModeChange={setMode}
+        />
 
         {mode === 'login' && configured ? (
           <B2BLoginCard

@@ -16,12 +16,12 @@ export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
     id: 'pastilhas',
     title: 'Pastilhas de freio',
     description:
-      'Pastilhas Elite e Ultra para diferentes sistemas de freio, disponíveis no catálogo online.',
+      'Pastilhas Elite e Ultra para diferentes sistemas de freio, com resposta estável em uso técnico de MTB.',
     highlights: [
       'Linhas Elite e Ultra',
       'Modelos para Hayes, Hope, Magura, Shimano e SRAM',
       'Compatibilidade indicada por sistema de freio',
-      'Compra e checkout na loja GHENO rotors',
+      'Compostos pensados para controle em descidas longas',
     ],
     ctaLabel: 'Ver catálogo de pastilhas',
     ctaHref: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
@@ -33,12 +33,12 @@ export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
     id: 'cubos',
     title: 'Cubos GHENO rotors',
     description:
-      'Modelos dianteiros e traseiros GHENO rotors GO disponíveis na loja online.',
+      'Modelos dianteiros e traseiros GHENO rotors GO para montagens Boost e cassetes HG/XD.',
     highlights: [
       'Modelo dianteiro GHENO rotors GO',
       'Modelos traseiros 12x148 e 12x157 Boost',
       'Opções para cassetes HG e XD',
-      'Compra e checkout na loja GHENO rotors',
+      'Construção orientada a rigidez e encaixe real',
     ],
     ctaLabel: 'Ver cubos na loja',
     ctaHref: 'https://store.ghenortrs.com.br/cubos/',
@@ -50,12 +50,12 @@ export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
     id: 'aros',
     title: 'Aros GHENO rotors',
     description:
-      'Aros GHENO rotors HEAVYDUTY disponíveis nos diâmetros 27.5 e 29.',
+      'Aros GHENO rotors HEAVYDUTY disponíveis nos diâmetros 27.5 e 29 para uso agressivo.',
     highlights: [
       'Alumínio 6061-T6',
       '30 mm interno e 35 mm externo',
       '32 furos e compatibilidade tubeless',
-      'Compra e checkout na loja GHENO rotors',
+      'Perfil pensado para trilha e carga de impacto',
     ],
     ctaLabel: 'Ver aros na loja',
     ctaHref: 'https://store.ghenortrs.com.br/aros/',
@@ -67,12 +67,12 @@ export const PRODUCT_FAMILIES: ComponentProductFamily[] = [
     id: 'discos',
     title: 'Discos GHENO rotors',
     description:
-      'Discos de freio para MTB. Confira medidas, compatibilidade e disponibilidade no catálogo.',
+      'Discos 203 e 223 mm para potência, controle térmico e uso extremo em MTB.',
     highlights: [
-      'Medidas e modelos no catálogo',
-      'Compatibilidade conforme cubo e pinça',
-      'Compatível com pinças Hayes Dominion A4',
-      'Disponibilidade conforme estoque atual',
+      'Maior potência de frenagem',
+      'Excelente dissipação térmica',
+      'Alta resistência a deformações',
+      'Padrão 6 furos em aço inoxidável',
     ],
     ctaLabel: 'Consultar discos',
     ctaHref: '/contato',

@@ -34,12 +34,12 @@ export function ProductProofSection() {
             Em uso real
           </p>
           <h2
-            className="max-w-2xl text-balance font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
+            className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
             id="prova-heading"
           >
             Tecnologia que aguenta prova e trilha.
           </h2>
-          <p className="max-w-xl text-justify text-base leading-7 text-secondary sm:text-lg">
+          <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-secondary">
             Projetamos as peças para manter o controle sob uso severo, em prova
             e na trilha.
           </p>
@@ -48,7 +48,7 @@ export function ProductProofSection() {
           {PROOF_POINTS.map((point) => (
             <li
               key={point}
-              className="flex items-start gap-3 text-justify text-sm leading-6 text-primary/88"
+              className="flex items-start gap-3 text-justify font-body text-[14px] leading-5 text-primary/88"
             >
               <span
                 aria-hidden="true"

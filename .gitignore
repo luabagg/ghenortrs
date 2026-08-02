@@ -96,6 +96,7 @@ http-client.private.env.json
 node_modules/
 dist/
 .worktrees/
+.pi-subagents/
 *.tsbuildinfo
 .env
 .env.*

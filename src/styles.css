@@ -19,6 +19,9 @@
 
   --font-heading: 'Sora', sans-serif;
   --font-body: 'Manrope', sans-serif;
+  --text-title: 50px;
+  --text-desc: 14px;
+  --text-subtitle: 12px;
 
   --radius-panel: 0.5rem;
   --radius-button: 0.375rem;

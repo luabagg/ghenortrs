@@ -97,7 +97,6 @@ export function B2BCatalogPage() {
       <div className="grid gap-6">
         <PageIntro
           description="Conecte Supabase e Bling para liberar o catálogo B2B."
-          eyebrow="B2B"
           title="Catálogo comercial"
         />
       </div>
@@ -113,10 +112,9 @@ export function B2BCatalogPage() {
       <div className="grid gap-6">
         <PageIntro
           description="O catálogo B2B é exclusivo para lojistas e oficinas aprovados."
-          eyebrow="B2B"
           title="Acesso restrito"
         />
-        <Button asChild>
+        <Button asChild variant="outline">
           <Link to="/b2b">Ir para login / cadastro</Link>
         </Button>
       </div>
@@ -128,7 +126,6 @@ export function B2BCatalogPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageIntro
           description={`${session.seller?.companyName ?? 'Sua empresa'} · catálogo Bling · pedido mínimo por item (padrão ${defaultMin}). Sem checkout online.`}
-          eyebrow="CATÁLOGO B2B"
           title="Selecione itens e solicite orçamento."
         />
         <Button type="button" variant="secondary" onClick={() => void signOut()}>
@@ -161,7 +158,7 @@ export function B2BCatalogPage() {
         {products.map((product) => {
           const qty = selection[product.id] ?? 0;
           return (
-            <Card key={product.id} className="bg-surface px-0 py-0">
+            <Card key={product.id} className="rounded-md border-border bg-surface px-0 py-0">
               <CardHeader>
                 <CardTitle className="text-lg">{product.name}</CardTitle>
                 <CardDescription>
@@ -173,7 +170,7 @@ export function B2BCatalogPage() {
               </CardHeader>
               <div className="grid gap-3 px-6 pb-6">
                 {product.description ? (
-                  <p className="text-sm leading-6 text-secondary">
+                  <p className="font-body text-[12px] leading-5 text-secondary">
                     {product.description}
                   </p>
                 ) : null}
@@ -218,7 +215,7 @@ export function B2BCatalogPage() {
         })}
       </div>
 
-      <Card className="bg-surface px-0 py-0">
+      <Card className="rounded-md border-border bg-surface px-0 py-0">
         <CardHeader>
           <CardTitle>Solicitação de orçamento</CardTitle>
           <CardDescription>

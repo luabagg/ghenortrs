@@ -1,10 +1,4 @@
 import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
   B2BFormStatusAlert,
   B2BHoneypotField,
   B2BInputField,
@@ -38,15 +32,14 @@ export function B2BForm({
   onSubmit,
 }: B2BFormProps) {
   return (
-    <Card className="bg-surface px-0 py-0">
-      <CardHeader>
-        <CardTitle>Pré-cadastro comercial</CardTitle>
-        <CardDescription>
-          Informe os dados da empresa e o mix de interesse.
-        </CardDescription>
-      </CardHeader>
-      <form className="grid gap-4 px-6 pb-6" noValidate onSubmit={onSubmit}>
-        <B2BHoneypotField value={honeypot} onChange={onHoneypotChange} />
+    <form
+      aria-label="Cadastro comercial"
+      className="grid gap-5 border border-border bg-surface p-5 sm:gap-6 sm:p-7"
+      noValidate
+      onSubmit={onSubmit}
+    >
+      <B2BHoneypotField value={honeypot} onChange={onHoneypotChange} />
+      <div className="grid gap-5 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-5">
         <B2BInputField
           error={errors.empresa}
           field="empresa"
@@ -85,16 +78,16 @@ export function B2BForm({
           value={fields.email}
           onFieldChange={onFieldChange}
         />
-        <B2BTextareaField
-          id="b2b-needs"
-          label="Interesse comercial"
-          placeholder="Informe produtos de interesse, volume e tipo de negócio."
-          value={fields.mensagem}
-          onFieldChange={onFieldChange}
-        />
-        <B2BFormStatusAlert status={status} />
-        <B2BSubmitButton status={status} />
-      </form>
-    </Card>
+      </div>
+      <B2BTextareaField
+        id="b2b-needs"
+        label="Interesse comercial"
+        placeholder="Informe produtos de interesse, volume e tipo de negócio."
+        value={fields.mensagem}
+        onFieldChange={onFieldChange}
+      />
+      <B2BFormStatusAlert status={status} />
+      <B2BSubmitButton status={status} />
+    </form>
   );
 }

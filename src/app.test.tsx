@@ -325,6 +325,13 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
+    expect(screen.queryByText('COMPONENTES')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Compra e checkout na loja/i)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: 'Componentes GHENO rotors para frenagem e controle.',
+      }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Pastilhas de freio' }),
     ).toBeInTheDocument();
@@ -338,13 +345,27 @@ describe('App', () => {
       screen.getByRole('heading', { name: 'Discos GHENO rotors' }),
     ).toBeInTheDocument();
     expect(
+      screen.getByText(
+        /Discos 203 e 223 mm para potência, controle térmico e uso extremo em MTB\./i,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Maior potência de frenagem/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Padrão 6 furos em aço inoxidável/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Visual 2D/i),
+    ).not.toBeInTheDocument();
+    expect(
       screen.getByRole('link', { name: 'Ver catálogo de pastilhas' }),
     ).toHaveAttribute(
       'href',
       'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
     );
     expect(
-      screen.getByRole('link', { name: 'Pré-cadastro comercial' }),
+      screen.getByRole('link', { name: 'Solicitar cadastro B2B' }),
     ).toHaveAttribute('href', '/b2b');
     expect(
       screen
@@ -354,6 +375,9 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Discos GHENO rotors' }).closest('article'),
     ).toHaveAttribute('id', 'discos');
+    expect(
+      document.querySelector('[data-threejs-slot="discos"]'),
+    ).toBeTruthy();
   });
 
   it('renders institutional context on the about route', () => {
@@ -372,7 +396,12 @@ describe('App', () => {
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Componentes de MTB com foco técnico.'),
+      screen.getByRole('heading', { name: 'O que entregamos' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Linha de pastilhas, cubos, aros e discos para mountain bike.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -391,11 +420,7 @@ describe('App', () => {
     // Without VITE_SUPABASE_* the login gate stays off and registration remains.
     expect(screen.queryByRole('button', { name: 'Já tenho cadastro' })).toBeNull();
     expect(screen.queryByText('Acessar produtos B2B')).toBeNull();
-    expect(
-      screen.getByRole('heading', {
-        name: 'Dados da empresa.',
-      }),
-    ).toHaveProperty('tagName', 'H2');
+    expect(screen.queryByRole('heading', { name: 'Solicitar cadastro.' })).toBeNull();
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
     expect(screen.getByText('CNPJ')).toHaveAttribute('for', 'b2b-cnpj');
@@ -413,10 +438,14 @@ describe('App', () => {
       'Informe produtos de interesse, volume e tipo de negócio.',
     );
     expect(
-      screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
+      screen.getByRole('button', { name: 'Enviar cadastro' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Pré-cadastro comercial')).toBeInTheDocument();
-    expect(screen.getByText(/B2B em configuração/i)).toBeInTheDocument();
+    expect(screen.getByRole('form', { name: 'Cadastro comercial' })).toBeInTheDocument();
+    expect(screen.queryByText(/B2B em configuração/i)).toBeNull();
+    expect(screen.queryByText(/docs\/integrations/i)).toBeNull();
+    expect(
+      screen.getByRole('link', { name: 'contato@ghenortrs.com.br' }),
+    ).toHaveAttribute('href', 'mailto:contato@ghenortrs.com.br');
   });
 
   it('renders the gated B2B catalog route without crashing when logged out', () => {
@@ -515,7 +544,7 @@ describe('App', () => {
     );
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
+      screen.getByRole('button', { name: 'Enviar cadastro' }),
     );
 
     expect(
@@ -539,7 +568,7 @@ describe('App', () => {
       target: { value: '12.345.678/0001-9' },
     });
     fireEvent.click(
-      screen.getByRole('button', { name: 'Enviar pré-cadastro' }),
+      screen.getByRole('button', { name: 'Enviar cadastro' }),
     );
 
     expect(screen.getByText('CNPJ deve ter 14 dígitos.')).toBeInTheDocument();

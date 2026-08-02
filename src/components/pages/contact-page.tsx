@@ -2,7 +2,12 @@ import { Link } from 'react-router-dom';
 
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
-import { SectionBand } from '@/components/ui/section-band';
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 const CONTACT_PATHS = [
   {
@@ -10,48 +15,57 @@ const CONTACT_PATHS = [
     description: 'Acesse o catálogo público de produtos disponíveis.',
     action: 'Ver loja online',
     href: 'https://store.ghenortrs.com.br/produtos/',
+    variant: 'outline' as const,
   },
   {
     label: 'Revenda e oficina',
     description: 'Preencha o cadastro B2B para atendimento comercial.',
     action: 'Solicitar cadastro B2B',
     to: '/b2b',
+    variant: 'outline' as const,
   },
   {
     label: 'Instagram',
-    description: 'Acompanhe a GHENO rotors e envie uma mensagem pelo perfil oficial.',
+    description:
+      'Acompanhe a GHENO rotors e envie uma mensagem pelo perfil oficial.',
     action: 'Abrir Instagram',
     href: 'https://www.instagram.com/gheno_rtrs/',
+    variant: 'secondary' as const,
   },
 ] as const;
 
 export function ContactPage() {
   return (
-    <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 py-16 sm:px-10 sm:py-20 lg:px-16">
+    <div className="grid gap-12" data-section="contact-page">
       <PageIntro
         description="Compre no catálogo online, solicite atendimento B2B ou fale com a GHENO rotors pelo Instagram."
-        eyebrow="CONTATO"
         title="Compra, revenda e atendimento."
       />
-      <div className="grid gap-4 md:grid-cols-3">
+
+      <div className="grid gap-5 md:grid-cols-3">
         {CONTACT_PATHS.map((path) => (
-          <SectionBand className="flex flex-col gap-5" key={path.label}>
-            <div className="grid gap-2">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-on-primary/70">
-                {path.label}
-              </p>
-              <p className="text-sm leading-6 text-on-primary/72">
-                {path.description}
-              </p>
-            </div>
-            <Button asChild variant={'to' in path ? 'primary' : 'secondary'}>
-              {'to' in path ? (
-                <Link to={path.to}>{path.action}</Link>
-              ) : (
-                <a href={path.href}>{path.action}</a>
-              )}
-            </Button>
-          </SectionBand>
+          <Card
+            className="flex h-full flex-col rounded-md border-border bg-surface px-0 py-0"
+            key={path.label}
+          >
+            <CardHeader className="flex flex-1 flex-col gap-4 px-5 py-6 sm:px-6 sm:py-7">
+              <div className="grid gap-2">
+                <CardTitle className="text-lg sm:text-xl">{path.label}</CardTitle>
+                <CardDescription>
+                  {path.description}
+                </CardDescription>
+              </div>
+              <div className="mt-auto pt-2">
+                <Button asChild className="w-fit" variant={path.variant}>
+                  {'to' in path ? (
+                    <Link to={path.to}>{path.action}</Link>
+                  ) : (
+                    <a href={path.href}>{path.action}</a>
+                  )}
+                </Button>
+              </div>
+            </CardHeader>
+          </Card>
         ))}
       </div>
     </div>

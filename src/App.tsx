@@ -8,22 +8,22 @@ import { B2BPage } from '@/components/pages/b2b-page';
 import { ComponentsPage } from '@/components/pages/components-page';
 import { ContactPage } from '@/components/pages/contact-page';
 import { HomePage } from '@/components/pages/home-page';
+import { Button } from '@/components/ui/button';
 
 function NotFoundPage() {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-8" data-section="not-found-page">
       <PageIntro
         description="O endereço informado não corresponde a uma página disponível."
-        eyebrow="404"
         title="Página não encontrada"
       />
-      <nav aria-label="Recuperação de página" className="flex flex-wrap gap-4">
-        <Link className="font-bold text-primary underline" to="/">
-          Voltar ao início
-        </Link>
-        <Link className="font-bold text-primary underline" to="/componentes">
-          Ver componentes MTB
-        </Link>
+      <nav aria-label="Recuperação de página" className="flex flex-wrap gap-3">
+        <Button asChild variant="outline">
+          <Link to="/">Voltar ao início</Link>
+        </Button>
+        <Button asChild variant="secondary">
+          <Link to="/componentes">Ver componentes MTB</Link>
+        </Button>
       </nav>
     </div>
   );

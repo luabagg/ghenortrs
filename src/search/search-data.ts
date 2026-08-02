@@ -113,5 +113,3 @@ export const SEARCH_ENTRIES: readonly SearchEntry[] = [
   ...storeIndexJson.entries.map(parseStoreEntry),
   ...LOCAL_ENTRIES,
 ];
-
-export const STORE_INDEX_GENERATED_AT = storeIndexJson.generatedAt;

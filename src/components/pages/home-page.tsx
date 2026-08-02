@@ -14,12 +14,12 @@ function ClosingCTASection() {
     >
       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
         <h2
-          className="shrink-0 text-balance font-heading text-2xl leading-tight tracking-[-0.03em] sm:text-3xl"
+          className="shrink-0 text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
           id="fechamento-heading"
         >
           Acesse nossa loja online.
         </h2>
-        <p className="max-w-md text-justify text-sm leading-6 text-secondary sm:max-w-xs">
+        <p className="max-w-md text-justify font-body text-[12px] leading-5 text-secondary sm:max-w-xs">
           Confira pastilhas, cubos, aros e discos no nosso catálogo.
         </p>
       </div>

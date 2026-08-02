@@ -2,12 +2,6 @@ import { type FormEvent, useState } from 'react';
 
 import { requestMagicLink } from '@/b2b/supabase-browser';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -35,7 +29,7 @@ export function B2BLoginCard({
       setStatus('error');
       setMessage(
         result.error === 'auth_unconfigured'
-          ? 'Login B2B ainda não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.'
+          ? 'Login B2B indisponível no momento. Use o cadastro ou fale com a GHENO rotors.'
           : 'Não foi possível enviar o link. Tente novamente.',
       );
       return;
@@ -47,51 +41,47 @@ export function B2BLoginCard({
   }
 
   return (
-    <Card className="bg-surface px-0 py-0">
-      <CardHeader>
-        <CardTitle>Já tenho cadastro</CardTitle>
-        <CardDescription>
-          Entre com o e-mail aprovado pela GHENO rotors. Sem senha — enviamos um link
-          mágico.
-        </CardDescription>
-      </CardHeader>
-      <form className="grid gap-4 px-6 pb-6" noValidate onSubmit={onSubmit}>
-        <div className="grid gap-2">
-          <Label htmlFor="b2b-login-email">E-mail comercial</Label>
-          <Input
-            autoComplete="email"
-            id="b2b-login-email"
-            placeholder="contato@empresa.com.br"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </div>
-        {message ? (
-          <p
-            className={
-              status === 'error'
-                ? 'text-sm text-accent'
-                : 'text-sm text-secondary'
-            }
-            role="status"
-          >
-            {message}
-          </p>
-        ) : null}
-        <Button disabled={status === 'loading'} type="submit">
-          {status === 'loading' ? 'Enviando…' : 'Receber link de acesso'}
-        </Button>
-        {onSwitchToRegister ? (
-          <button
-            className="text-left text-sm font-bold text-primary underline"
-            type="button"
-            onClick={onSwitchToRegister}
-          >
-            Ainda não tenho cadastro
-          </button>
-        ) : null}
-      </form>
-    </Card>
+    <form
+      aria-label="Login comercial"
+      className="grid gap-5 border border-border bg-surface p-5 sm:gap-6 sm:p-7"
+      noValidate
+      onSubmit={onSubmit}
+    >
+      <div className="grid gap-2">
+        <Label htmlFor="b2b-login-email">E-mail comercial</Label>
+        <Input
+          autoComplete="email"
+          id="b2b-login-email"
+          placeholder="contato@empresa.com.br"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+      </div>
+      {message ? (
+        <p
+          className={
+            status === 'error'
+              ? 'text-sm text-accent'
+              : 'text-sm text-secondary'
+          }
+          role="status"
+        >
+          {message}
+        </p>
+      ) : null}
+      <Button className="w-full sm:w-auto" disabled={status === 'loading'} type="submit">
+        {status === 'loading' ? 'Enviando…' : 'Receber link de acesso'}
+      </Button>
+      {onSwitchToRegister ? (
+        <button
+          className="text-left text-sm font-bold text-primary underline"
+          type="button"
+          onClick={onSwitchToRegister}
+        >
+          Ainda não tenho cadastro
+        </button>
+      ) : null}
+    </form>
   );
 }

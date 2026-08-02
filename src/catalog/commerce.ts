@@ -43,11 +43,4 @@ export const COMMERCE_FAMILIES: readonly CommerceFamily[] =
     return family as CommerceFamily;
   });
 
-export const STORE_ORIGIN = commerceMap.storeOrigin;
 export const STORE_SEARCH_URL = commerceMap.searchUrl;
-
-export function getCommerceFamily(id: CommerceFamilyId): CommerceFamily {
-  const family = COMMERCE_FAMILIES.find((candidate) => candidate.id === id);
-  if (!family) throw new Error(`Unknown commerce family: ${id}`);
-  return family;
-}

@@ -9,20 +9,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export function B2BUnconfiguredPanel() {
-  return (
-    <Card className="bg-surface px-0 py-0">
-      <CardHeader>
-        <CardTitle>B2B em configuração</CardTitle>
-        <CardDescription>
-          O pré-cadastro continua disponível. Login e catálogo liberam após
-          conectar Supabase, Resend e Bling (veja docs/integrations).
-        </CardDescription>
-      </CardHeader>
-    </Card>
-  );
-}
-
 export function B2BPendingPanel({
   seller,
   onSignOut,
@@ -31,13 +17,13 @@ export function B2BPendingPanel({
   onSignOut: () => void;
 }) {
   return (
-    <Card className="bg-surface px-0 py-0">
+    <Card className="rounded-md border-border bg-surface px-0 py-0">
       <CardHeader>
         <CardTitle>Cadastro em análise</CardTitle>
         <CardDescription>
           {seller
-            ? `Recebemos o pré-cadastro de ${seller.companyName}. A equipe GHENO rotors libera o catálogo após aprovação.`
-            : 'Recebemos seu pré-cadastro. A equipe GHENO rotors libera o catálogo após aprovação.'}
+            ? `Recebemos o cadastro de ${seller.companyName}. A equipe GHENO rotors libera o catálogo após aprovação.`
+            : 'Recebemos seu cadastro. A equipe GHENO rotors libera o catálogo após aprovação.'}
         </CardDescription>
       </CardHeader>
       <div className="flex flex-wrap gap-3 px-6 pb-6">
@@ -60,7 +46,7 @@ export function B2BRejectedPanel({
   onSignOut: () => void;
 }) {
   return (
-    <Card className="bg-surface px-0 py-0">
+    <Card className="rounded-md border-border bg-surface px-0 py-0">
       <CardHeader>
         <CardTitle>Cadastro não liberado</CardTitle>
         <CardDescription>
@@ -70,7 +56,7 @@ export function B2BRejectedPanel({
         </CardDescription>
       </CardHeader>
       <div className="flex flex-wrap gap-3 px-6 pb-6">
-        <Button asChild>
+        <Button asChild variant="outline">
           <Link to="/contato">Falar com a GHENO rotors</Link>
         </Button>
         <Button type="button" variant="secondary" onClick={onSignOut}>

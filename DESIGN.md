@@ -22,13 +22,13 @@ colors:
 typography:
   h1:
     fontFamily: 'Sora'
-    fontSize: 72px
+    fontSize: 50px
     fontWeight: 700
     lineHeight: 0.94
     letterSpacing: -0.05em
   h2:
     fontFamily: 'Sora'
-    fontSize: 48px
+    fontSize: 50px
     fontWeight: 650
     lineHeight: 1
     letterSpacing: -0.04em
@@ -40,17 +40,17 @@ typography:
     letterSpacing: -0.03em
   body-lg:
     fontFamily: 'Manrope'
-    fontSize: 20px
+    fontSize: 14px
     fontWeight: 500
     lineHeight: 1.55
   body-md:
     fontFamily: 'Manrope'
-    fontSize: 16px
+    fontSize: 14px
     fontWeight: 500
     lineHeight: 1.65
   body-sm:
     fontFamily: 'Manrope'
-    fontSize: 14px
+    fontSize: 12px
     fontWeight: 500
     lineHeight: 1.5
   label:

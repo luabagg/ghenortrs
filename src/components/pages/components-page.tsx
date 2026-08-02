@@ -7,12 +7,16 @@ import {
 
 export function ComponentsPage() {
   return (
-    <div className="flex flex-col gap-12" data-section="componentes-page">
+    <div className="flex flex-col gap-14 sm:gap-16" data-section="componentes-page">
       <ComponentsPageIntro />
 
-      <div className="flex flex-col gap-10">
-        {PRODUCT_FAMILIES.map((family) => (
-          <ComponentFamilyCard family={family} key={family.id} />
+      <div className="flex flex-col">
+        {PRODUCT_FAMILIES.map((family, index) => (
+          <ComponentFamilyCard
+            family={family}
+            key={family.id}
+            reverse={index % 2 === 1}
+          />
         ))}
       </div>
 

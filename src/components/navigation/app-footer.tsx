@@ -8,7 +8,7 @@ import {
 } from './app-footer-data';
 
 const footerLinkClassName =
-  'text-sm text-secondary transition-colors hover:text-primary';
+  'font-body text-[12px] leading-5 text-secondary transition-colors hover:text-primary';
 
 const socialLinkClassName =
   'flex h-8 w-8 items-center justify-center rounded-md border border-border text-secondary transition-colors hover:border-primary/40 hover:text-primary';
@@ -42,7 +42,7 @@ function FooterBrand() {
         src="/brand/logo-wide.png"
         width={500}
       />
-      <p className="max-w-xs text-sm leading-6 text-secondary">
+      <p className="max-w-xs font-body text-[12px] leading-5 text-secondary">
         Confira pastilhas, cubos, aros e discos no catálogo e na loja online
         GHENO rotors.
       </p>
@@ -130,7 +130,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
 function FooterLegal() {
   return (
     <div className="mt-10 flex flex-col gap-2 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs text-secondary/60">
+      <p className="font-body text-[12px] leading-5 text-secondary/60">
         © 2025 GHENO rotors. Todos os direitos reservados.
       </p>
     </div>

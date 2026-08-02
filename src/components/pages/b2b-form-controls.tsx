@@ -137,8 +137,8 @@ export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
 
 export function B2BSubmitButton({ status }: { status: SubmitStatus }) {
   return (
-    <Button disabled={status === 'loading'} type="submit">
-      {status === 'loading' ? 'Enviando...' : 'Enviar pré-cadastro'}
+    <Button className="w-full sm:w-auto" disabled={status === 'loading'} type="submit">
+      {status === 'loading' ? 'Enviando...' : 'Enviar cadastro'}
     </Button>
   );
 }

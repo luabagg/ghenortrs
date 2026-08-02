@@ -7,31 +7,52 @@ import {
 } from '@/components/ui/card';
 import { ScrollImage } from '@/components/motion/scroll-image';
 import { MetaLabel } from '@/components/ui/meta-label';
+import { cn } from '@/lib/utils';
 
 export function PageIntro({
   eyebrow,
   title,
   description,
   headingLevel = 1,
+  framed = false,
+  className,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   headingLevel?: 1 | 2;
+  /** Keep the surface card frame (B2B form intros). */
+  framed?: boolean;
+  className?: string;
 }) {
   const Heading = headingLevel === 1 ? 'h1' : 'h2';
 
+  const body = (
+    <>
+      {eyebrow ? <MetaLabel className="mb-1">{eyebrow}</MetaLabel> : null}
+      <Heading className="max-w-4xl text-balance font-heading text-[50px] leading-none tracking-[-0.05em]">
+        {title}
+      </Heading>
+      <p className="max-w-2xl text-justify font-body text-[14px] leading-5 text-secondary">
+        {description}
+      </p>
+    </>
+  );
+
+  if (!framed) {
+    return (
+      <header className={cn('grid gap-4', className)} data-slot="page-intro">
+        {body}
+      </header>
+    );
+  }
+
   return (
-    <Card className="rounded-md bg-surface px-0 py-0">
-      <CardHeader className="px-6 py-8 sm:px-8 sm:py-10">
-        <MetaLabel className="mb-1">{eyebrow}</MetaLabel>
-        <Heading className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
-          {title}
-        </Heading>
-        <CardDescription className="max-w-2xl text-base leading-7 sm:text-lg">
-          {description}
-        </CardDescription>
-      </CardHeader>
+    <Card
+      className={cn('rounded-md border-border bg-surface px-0 py-0', className)}
+      data-slot="page-intro"
+    >
+      <CardHeader className="gap-4 px-6 py-8 sm:px-8 sm:py-10">{body}</CardHeader>
     </Card>
   );
 }

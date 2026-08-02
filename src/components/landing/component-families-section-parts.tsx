@@ -11,12 +11,12 @@ export function ComponentFamiliesIntro() {
   return (
     <div className="flex flex-col gap-5 lg:pt-3">
       <h2
-        className="max-w-2xl text-balance font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
+        className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
         id="familias-heading"
       >
         Peças para a sua bike.
       </h2>
-      <p className="max-w-xl text-justify text-base leading-7 text-secondary sm:text-lg">
+      <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-secondary">
         Pastilhas, cubos, aros e discos GHENO rotors. Você escolhe pelo que a
         bike precisa, não pelo hype.
       </p>
