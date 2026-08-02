@@ -22,11 +22,11 @@ describe('StoreSearch', () => {
 
     expect(
       screen.getByRole('link', {
-        name: /Disk Brake Pads Ultra Hayes Dominion A4/i,
+        name: /Hayes Dominion A4 Pastilha de Freio GHENO Ultra/i,
       }),
     ).toHaveAttribute(
       'href',
-      'https://store.ghenortrs.com.br/produtos/disk-brake-pads-ultra-hayes-dominion-a4/',
+      'https://store.ghenortrs.com.br/produtos/hayes-dominion-a4-pastilha-de-freio-gheno-ultra/',
     );
   });
 

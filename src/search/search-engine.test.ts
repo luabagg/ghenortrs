@@ -5,10 +5,10 @@ import type { SearchEntry } from './search-types';
 
 const entries: SearchEntry[] = [
   {
-    id: 'product:disk-brake-pads-ultra-hayes-dominion-a4',
+    id: 'product:hayes-dominion-a4-pastilha-de-freio-gheno-ultra',
     kind: 'product',
-    title: 'Disk Brake Pads Ultra Hayes Dominion A4',
-    href: 'https://store.ghenortrs.com.br/produtos/disk-brake-pads-ultra-hayes-dominion-a4/',
+    title: 'Hayes Dominion A4 Pastilha de Freio GHENO Ultra',
+    href: 'https://store.ghenortrs.com.br/produtos/hayes-dominion-a4-pastilha-de-freio-gheno-ultra/',
     image: 'https://cdn.example.com/hayes.webp',
     family: 'pastilhas',
     commerce: 'store',
@@ -72,7 +72,7 @@ describe('normalizeSearchText', () => {
 describe('searchCatalog', () => {
   it('matches compatibility models and English storefront names', () => {
     expect(searchCatalog('pastilha ultra hayes a4', entries)[0]?.id).toBe(
-      'product:disk-brake-pads-ultra-hayes-dominion-a4',
+      'product:hayes-dominion-a4-pastilha-de-freio-gheno-ultra',
     );
     expect(searchCatalog('cubo boost xd', entries)[0]?.family).toBe('cubos');
     expect(searchCatalog('aro 29', entries)[0]?.family).toBe('aros');
