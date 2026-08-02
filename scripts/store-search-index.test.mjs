@@ -98,6 +98,43 @@ describe('parseStoreSitemap', () => {
     ).toHaveLength(1);
   });
 
+  it('maps brand-first pastilha slugs by substring pattern', () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://store.ghenortrs.com.br/produtos/hayes-dominion-a4-pastilha-de-freio-gheno-ultra/</loc>
+    <lastmod>2026-08-02T12:00:00Z</lastmod>
+  </url>
+</urlset>`;
+    const map = {
+      ...COMMERCE_MAP,
+      families: [
+        {
+          id: 'pastilhas',
+          label: 'Pastilhas de freio',
+          commerce: 'store',
+          href: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
+          categoryPaths: ['/freios/pastilhas-de-freio/'],
+          productPathPatterns: ['disk-brake-pads-', 'pastilha-de-freio-'],
+          terms: ['pastilha', 'hayes'],
+        },
+        ...COMMERCE_MAP.families,
+      ],
+    };
+
+    const entries = parseStoreSitemap(xml, map);
+
+    expect(entries).toEqual([
+      expect.objectContaining({
+        id: 'product:hayes-dominion-a4-pastilha-de-freio-gheno-ultra',
+        family: 'pastilhas',
+        commerce: 'store',
+        title: 'Hayes Dominion A4 Pastilha de Freio GHENO Ultra',
+        href: 'https://store.ghenortrs.com.br/produtos/hayes-dominion-a4-pastilha-de-freio-gheno-ultra/',
+      }),
+    ]);
+  });
+
   it('rejects malformed XML with source location', () => {
     expect(() => parseStoreSitemap('<urlset><url></urlset>', COMMERCE_MAP)).toThrow(
       /Invalid Nuvemshop sitemap at \d+:\d+:/,

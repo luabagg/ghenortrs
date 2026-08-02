@@ -94,6 +94,7 @@ http-client.private.env.json
 
 # Node / Vite
 node_modules/
+.pnpm-store/
 dist/
 .worktrees/
 .pi-subagents/

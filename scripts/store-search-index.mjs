@@ -83,9 +83,7 @@ function humanizeProductSlug(slug) {
 
 function findFamilyForProduct(slug, families) {
   return families.find((family) =>
-    family.productPathPatterns.some(
-      (pattern) => slug.startsWith(pattern) || slug.includes(`-${pattern}`),
-    ),
+    family.productPathPatterns.some((pattern) => slug.includes(pattern)),
   );
 }
 
