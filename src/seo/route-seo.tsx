@@ -101,7 +101,7 @@ export function RouteSeo() {
     setMeta({ name: 'description' }, seo.description);
     setMeta({ name: 'robots' }, INDEX_ROBOTS);
     setMeta({ property: 'og:type' }, 'website');
-    setMeta({ property: 'og:site_name' }, 'GHENO');
+    setMeta({ property: 'og:site_name' }, 'GHENO rotors');
     setMeta({ property: 'og:locale' }, 'pt_BR');
     setMeta({ property: 'og:title' }, seo.title);
     setMeta({ property: 'og:description' }, seo.description);

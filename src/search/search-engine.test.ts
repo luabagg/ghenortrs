@@ -43,7 +43,7 @@ const entries: SearchEntry[] = [
     title: 'Disco Elite 3 223mm',
     href: '/contato',
     image: null,
-    family: 'rotores',
+    family: 'discos',
     commerce: 'contact',
     terms: ['rotor', 'disco', '223mm'],
     featured: false,
@@ -80,7 +80,7 @@ describe('searchCatalog', () => {
 
   it('returns contact destinations for unavailable families', () => {
     expect(searchCatalog('rotor 223', entries)[0]).toMatchObject({
-      family: 'rotores',
+      family: 'discos',
       commerce: 'contact',
       href: '/contato',
     });

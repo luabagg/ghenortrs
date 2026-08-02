@@ -60,7 +60,7 @@ export function StoreSearch({
   return (
     <div className="grid gap-3" data-search-mode={mode}>
       <label className="sr-only" htmlFor={`${resultListId}-input`}>
-        Buscar na GHENO
+        Buscar na GHENO rotors
       </label>
       <div className="relative">
         <svg
@@ -84,7 +84,7 @@ export function StoreSearch({
           }
           aria-controls={resultListId}
           aria-expanded={results.length > 0}
-          aria-label="Buscar na GHENO"
+          aria-label="Buscar na GHENO rotors"
           autoComplete="off"
           className={cn(
             'w-full rounded-lg border border-border-strong bg-background/72 py-3 pl-10 pr-4 text-sm text-primary outline-none transition-[border-color,background-color,box-shadow] placeholder:text-secondary/72 focus:border-primary/45 focus:bg-background focus:shadow-[0_0_0_3px_rgba(245,245,245,0.08)]',
@@ -240,7 +240,7 @@ function NoResults({ query }: { query: string }) {
         className="mt-3 inline-flex text-xs font-bold text-primary underline decoration-border-strong underline-offset-4 transition-colors hover:text-accent"
         href={storeHref}
       >
-        Buscar “{query}” na loja GHENO
+        Buscar “{query}” na loja GHENO rotors
       </a>
     </div>
   );

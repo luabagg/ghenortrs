@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 
 export function B2BAccessHeroSection({
-  title = 'Cadastro comercial GHENO.',
+  title = 'Cadastro comercial GHENO rotors.',
   description = 'Lojistas, oficinas e revendas podem solicitar cadastro, entrar com e-mail aprovado e acessar o catálogo B2B.',
 }: {
   title?: string;
@@ -69,7 +69,7 @@ export function B2BSuccessCard() {
         </div>
         <CardTitle>Pré-cadastro recebido.</CardTitle>
         <CardDescription>
-          Recebemos seus dados. Aguarde o retorno da equipe GHENO pelo e-mail
+          Recebemos seus dados. Aguarde o retorno da equipe GHENO rotors pelo e-mail
           informado.
         </CardDescription>
       </CardHeader>
@@ -89,7 +89,7 @@ export function B2BSuccessSection() {
       className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]"
     >
       <PageIntro
-        description="Os dados da empresa foram enviados para a equipe GHENO."
+        description="Os dados da empresa foram enviados para a equipe GHENO rotors."
         eyebrow="B2B"
         title="Atendimento para lojistas e oficinas"
       />

@@ -18,7 +18,7 @@ const QUICK_ACTIONS = [
       </svg>
     ),
     title: 'Ver componentes',
-    description: 'Três linhas online; rotores via atendimento',
+    description: 'Pastilhas, cubos, aros e discos no catálogo',
     to: '/componentes',
     badge: null as string | null,
   },
@@ -59,7 +59,7 @@ const QUICK_ACTIONS = [
         />
       </svg>
     ),
-    title: 'Falar com a GHENO',
+    title: 'Falar com a GHENO rotors',
     description: 'Canais oficiais de atendimento',
     to: '/contato',
     badge: null as string | null,
@@ -80,7 +80,7 @@ const QUICK_ACTIONS = [
         />
       </svg>
     ),
-    title: 'Sobre a GHENO',
+    title: 'Sobre a GHENO rotors',
     description: 'Componentes MTB com foco técnico',
     to: '/sobre',
     badge: null as string | null,
@@ -119,7 +119,7 @@ export function MobileMenuActions({ onClose }: { onClose: () => void }) {
           <>
             <div
               className={
-                action.title === 'Falar com a GHENO'
+                action.title === 'Falar com a GHENO rotors'
                   ? 'flex h-10 w-10 shrink-0 items-center justify-center text-[#67d82f] min-[420px]:h-12 min-[420px]:w-12'
                   : 'flex h-10 w-10 shrink-0 items-center justify-center text-primary min-[420px]:h-12 min-[420px]:w-12'
               }

@@ -9,11 +9,11 @@ export function ComponentsPageIntro() {
   return (
     <div className="flex flex-col gap-3">
       <h1 className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.05em] sm:text-5xl">
-        Componentes GHENO para frenagem e controle.
+        Componentes GHENO rotors para frenagem e controle.
       </h1>
       <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Compre pastilhas, cubos e aros na loja online. Para rotores, fale com a
-        equipe GHENO sobre disponibilidade e compatibilidade.
+        Confira pastilhas, cubos, aros e discos no catálogo GHENO rotors.
+        Compra online para as linhas disponíveis na loja.
       </p>
     </div>
   );

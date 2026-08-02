@@ -89,9 +89,6 @@ http-client.private.env.json
 ############### CODEBASE IGNORE
 /tmp
 
-# Added by code-review-graph
-.code-review-graph/
-
 # macOS Finder metadata
 .DS_Store
 

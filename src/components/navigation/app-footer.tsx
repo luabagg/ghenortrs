@@ -35,7 +35,7 @@ function FooterBrand() {
   return (
     <div className="flex flex-col gap-4">
       <img
-        alt="GHENO"
+        alt="GHENO rotors"
         className="h-8 w-[8rem] rounded-sm object-contain object-left"
         height={250}
         loading="lazy"
@@ -43,8 +43,8 @@ function FooterBrand() {
         width={500}
       />
       <p className="max-w-xs text-sm leading-6 text-secondary">
-        Pastilhas, cubos e aros para compra online. Rotores com atendimento
-        direto da equipe GHENO.
+        Confira pastilhas, cubos, aros e discos no catálogo e na loja online
+        GHENO rotors.
       </p>
       <FooterSocialLinks />
     </div>
@@ -61,9 +61,25 @@ function FooterSocialLinks() {
           href={link.href}
           key={link.ariaLabel}
         >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d={link.path} />
-          </svg>
+          {link.variant === 'stroke' ? (
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d={link.path}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+              />
+            </svg>
+          ) : (
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d={link.path} />
+            </svg>
+          )}
         </a>
       ))}
     </div>
@@ -115,7 +131,7 @@ function FooterLegal() {
   return (
     <div className="mt-10 flex flex-col gap-2 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-xs text-secondary/60">
-        © 2025 GHENO. Todos os direitos reservados.
+        © 2025 GHENO rotors. Todos os direitos reservados.
       </p>
     </div>
   );

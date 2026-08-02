@@ -4,11 +4,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { RouteSeo } from './route-seo';
 
 const publicRoutes = [
-  ['/', 'GHENO | Componentes MTB de alto desempenho'],
-  ['/componentes', 'Componentes MTB | Pastilhas, cubos, aros e rotores GHENO'],
-  ['/b2b', 'GHENO B2B | Atendimento para lojistas e oficinas'],
-  ['/sobre', 'Sobre a GHENO | Componentes de performance para MTB'],
-  ['/contato', 'Contato GHENO | Varejo, revendas e oficinas'],
+  ['/', 'GHENO rotors | Componentes MTB de alto desempenho'],
+  ['/componentes', 'Componentes MTB | Pastilhas, cubos, aros e discos GHENO rotors'],
+  ['/b2b', 'GHENO rotors B2B | Atendimento para lojistas e oficinas'],
+  ['/sobre', 'Sobre a GHENO rotors | Componentes de performance para MTB'],
+  ['/contato', 'Contato GHENO rotors | Varejo, revendas e oficinas'],
 ] as const;
 
 describe('RouteSeo', () => {
@@ -22,7 +22,7 @@ describe('RouteSeo', () => {
     expect(document.title).toBe(title);
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
-      expect.stringMatching(/GHENO|MTB|lojistas|revendas/i),
+      expect.stringMatching(/GHENO rotors|MTB|lojistas|revendas/i),
     );
     expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
       'content',
@@ -59,7 +59,7 @@ describe('RouteSeo', () => {
 
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
-      expect.stringMatching(/pastilhas, cubos e aros.*loja online/i),
+      expect.stringMatching(/pastilhas, cubos, aros e discos.*loja/i),
     );
     expect(
       document.querySelector('meta[name="twitter:image:alt"]'),
@@ -96,7 +96,7 @@ describe('RouteSeo', () => {
       </MemoryRouter>,
     );
 
-    expect(document.title).toBe('Página não encontrada | GHENO');
+    expect(document.title).toBe('Página não encontrada | GHENO rotors');
     expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
       'content',
       'noindex, nofollow',

@@ -36,8 +36,8 @@ export function B2BPendingPanel({
         <CardTitle>Cadastro em análise</CardTitle>
         <CardDescription>
           {seller
-            ? `Recebemos o pré-cadastro de ${seller.companyName}. A equipe GHENO libera o catálogo após aprovação.`
-            : 'Recebemos seu pré-cadastro. A equipe GHENO libera o catálogo após aprovação.'}
+            ? `Recebemos o pré-cadastro de ${seller.companyName}. A equipe GHENO rotors libera o catálogo após aprovação.`
+            : 'Recebemos seu pré-cadastro. A equipe GHENO rotors libera o catálogo após aprovação.'}
         </CardDescription>
       </CardHeader>
       <div className="flex flex-wrap gap-3 px-6 pb-6">
@@ -65,13 +65,13 @@ export function B2BRejectedPanel({
         <CardTitle>Cadastro não liberado</CardTitle>
         <CardDescription>
           {seller
-            ? `O e-mail ${seller.email} não está autorizado no momento. Fale com a GHENO se precisar reavaliar.`
+            ? `O e-mail ${seller.email} não está autorizado no momento. Fale com a GHENO rotors se precisar reavaliar.`
             : 'Este e-mail não está autorizado no momento.'}
         </CardDescription>
       </CardHeader>
       <div className="flex flex-wrap gap-3 px-6 pb-6">
         <Button asChild>
-          <Link to="/contato">Falar com a GHENO</Link>
+          <Link to="/contato">Falar com a GHENO rotors</Link>
         </Button>
         <Button type="button" variant="secondary" onClick={onSignOut}>
           Sair

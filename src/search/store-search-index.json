@@ -85,20 +85,20 @@
       "featured": true
     },
     {
-      "id": "category:rotores",
+      "id": "category:discos",
       "kind": "category",
-      "title": "Rotores",
+      "title": "Discos",
       "href": "/contato",
       "image": null,
-      "family": "rotores",
+      "family": "discos",
       "commerce": "contact",
       "modifiedAt": "2026-05-21T15:21:18Z",
       "terms": [
-        "Rotores",
-        "rotor",
-        "rotores",
+        "Discos",
         "disco",
         "discos",
+        "rotor",
+        "rotores",
         "223mm"
       ],
       "featured": true
@@ -241,17 +241,17 @@
       "title": "Disco Elite 3 223mm",
       "href": "/contato",
       "image": "https://dcdn-us.mitiendanube.com/stores/006/848/306/products/c754c69d80fb4243b554a9ebe4660a57-ecaae95a5aeacf31d617793778273323-1024-1024.webp",
-      "family": "rotores",
+      "family": "discos",
       "commerce": "contact",
       "modifiedAt": "2026-05-21T15:37:28Z",
       "terms": [
         "Disco Elite 3 223mm",
         "disco-elite-3-223mm",
-        "Rotores",
-        "rotor",
-        "rotores",
+        "Discos",
         "disco",
         "discos",
+        "rotor",
+        "rotores",
         "223mm"
       ],
       "featured": false

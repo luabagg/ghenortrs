@@ -2,36 +2,68 @@ import { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { OperationalHighlightsSection } from '@/components/landing/operational-highlights-section';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
-const HERO_SLIDES = [
-  {
-    src: '/reference-images/mtb-action-hero.jpg',
-    alt: 'Rider GHENO em trilha com controle total',
-  },
-  {
-    src: '/reference-images/hero-gheno-jump.jpg',
-    alt: 'Rider com componentes GHENO em salto de competição',
-  },
-  {
-    src: '/reference-images/hero-red-trail.jpg',
-    alt: 'Rider em trilha de terra vermelha com velocidade',
-  },
-] as const;
+const HERO_IMAGE = {
+  src: '/reference-images/mtb-action-hero.jpg',
+  alt: 'Rider GHENO rotors em trilha com controle total',
+} as const;
 
-export function HomeHeroSection() {
-  const [heroIdx, setHeroIdx] = useState(0);
+const DISCIPLINES = ['Downhill', 'Enduro', 'E-bike'] as const;
+
+function prefersReducedMotion() {
+  return Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+}
+
+function useDisciplineTypewriter(words: readonly string[]) {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [charCount, setCharCount] = useState(words[0].length);
+  const [phase, setPhase] = useState<'typing' | 'holding' | 'deleting'>('holding');
 
   useEffect(() => {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const t = setInterval(
-      () => setHeroIdx((i) => (i + 1) % HERO_SLIDES.length),
-      6000,
-    );
-    return () => clearInterval(t);
-  }, []);
+    if (prefersReducedMotion()) {
+      const t = setInterval(() => {
+        setWordIndex((i) => {
+          const next = (i + 1) % words.length;
+          setCharCount(words[next].length);
+          return next;
+        });
+      }, 2800);
+      return () => clearInterval(t);
+    }
+
+    const word = words[wordIndex];
+
+    if (phase === 'holding') {
+      const t = setTimeout(() => setPhase('deleting'), 1600);
+      return () => clearTimeout(t);
+    }
+
+    if (phase === 'deleting') {
+      if (charCount === 0) {
+        const t = setTimeout(() => {
+          setWordIndex((i) => (i + 1) % words.length);
+          setPhase('typing');
+        }, 180);
+        return () => clearTimeout(t);
+      }
+      const t = setTimeout(() => setCharCount((c) => c - 1), 36);
+      return () => clearTimeout(t);
+    }
+
+    if (charCount >= word.length) {
+      const t = setTimeout(() => setPhase('holding'), 80);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setCharCount((c) => c + 1), 70);
+    return () => clearTimeout(t);
+  }, [charCount, phase, wordIndex, words]);
+
+  return words[wordIndex].slice(0, charCount);
+}
+
+export function HomeHeroSection() {
+  const discipline = useDisciplineTypewriter(DISCIPLINES);
 
   return (
     <section
@@ -39,49 +71,49 @@ export function HomeHeroSection() {
       data-section="hero"
     >
       <div className="relative min-h-[100dvh] overflow-hidden bg-surface">
-        {HERO_SLIDES.map((slide, i) => (
-          <img
-            key={slide.src}
-            alt={slide.alt}
-            className={cn(
-              'absolute inset-0 h-full w-full object-cover object-[58%_center] transition-opacity duration-1000 sm:object-center',
-              i === heroIdx ? 'opacity-72' : 'opacity-0',
-            )}
-            fetchPriority={i === 0 ? 'high' : undefined}
-            loading={i === 0 ? undefined : 'lazy'}
-            src={slide.src}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/88 via-background/56 to-background/8" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/86 via-background/8 to-background/40" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_42%,rgba(232,20,20,0.1),transparent_28%)]" />
+        <img
+          alt={HERO_IMAGE.alt}
+          className="absolute inset-0 h-full w-full object-cover object-[58%_center] opacity-80 sm:object-center"
+          fetchPriority="high"
+          src={HERO_IMAGE.src}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/78 via-background/45 to-background/10 sm:from-background sm:via-background/70 sm:to-background/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/25" />
 
-        <div className="relative mx-auto flex min-h-[100dvh] max-w-[90rem] flex-col justify-center px-6 pb-64 pt-28 sm:px-10 sm:pb-60 lg:px-16">
-          <div className="max-w-[38rem] lg:max-w-[42rem]">
-            <h1 className="max-w-[42rem] text-balance font-heading text-[clamp(3rem,10vw,4.5rem)] leading-[0.94] tracking-[-0.05em]">
-              Frenagem e controle para <span className="text-accent">MTB.</span>
+        <div className="relative mx-auto flex min-h-[100dvh] max-w-[90rem] flex-col justify-end px-6 pb-14 pt-28 sm:px-10 sm:pb-20 lg:px-16 lg:pb-24">
+          <div className="max-w-[18rem] sm:max-w-[36rem] lg:max-w-[42rem]">
+            <h1 className="font-heading text-[clamp(2.05rem,7.2vw,4.75rem)] leading-[0.92] tracking-[-0.05em] sm:text-[clamp(2.75rem,8.5vw,4.75rem)]">
+              <span className="block text-balance">
+                Frenagem e controle para
+              </span>
+              <span
+                aria-live="polite"
+                className="mt-1 block min-h-[0.92em] text-accent"
+              >
+                <span className="inline-block min-w-[8ch] whitespace-nowrap">
+                  {discipline}
+                  <span className="ml-0.5 inline-block w-[0.08em] animate-pulse bg-accent align-baseline motion-reduce:hidden">
+                    &nbsp;
+                  </span>
+                </span>
+              </span>
             </h1>
-            <p className="mt-7 max-w-[31rem] text-lg leading-8 text-primary/82 sm:text-xl">
-              Pastilhas, cubos e aros disponíveis para compra online. Para
-              rotores, fale diretamente com a equipe GHENO.
+            <p className="mt-5 max-w-[18rem] text-justify text-sm leading-6 text-primary/78 sm:mt-6 sm:max-w-[30rem] sm:text-lg sm:leading-8">
+              Não prometemos o impossível. Entregamos força de sobra, resposta
+              limpa e honestidade no uso real.
             </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <Button asChild className="h-13 min-w-44 justify-between">
+            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
+              <Button asChild className="min-w-44" variant="outline">
                 <a href="https://store.ghenortrs.com.br/produtos/">
-                  Ver catálogo GHENO →
+                  Confira a loja online
                 </a>
               </Button>
-              <Button
-                asChild
-                className="h-13 min-w-44 justify-between bg-background/35"
-                variant="secondary"
-              >
-                <Link to="/componentes">Ver componentes →</Link>
+              <Button asChild className="min-w-44" variant="secondary">
+                <Link to="/componentes">Ver componentes</Link>
               </Button>
             </div>
           </div>
         </div>
-        <OperationalHighlightsSection />
       </div>
     </section>
   );

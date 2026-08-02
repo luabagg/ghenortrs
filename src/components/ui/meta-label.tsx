@@ -13,7 +13,7 @@ function MetaLabel({ asChild = false, className, ...props }: MetaLabelProps) {
   return (
     <Comp
       className={cn(
-        'inline-flex w-fit rounded-pill bg-accent-dark px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em] text-on-accent',
+        'inline-flex w-fit text-xs font-bold uppercase tracking-[0.14em] text-secondary',
         className,
       )}
       data-slot="meta-label"

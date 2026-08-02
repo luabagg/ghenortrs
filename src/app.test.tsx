@@ -21,41 +21,48 @@ describe('App', () => {
       screen.getByRole('link', { name: 'Pular para o conteúdo' }),
     ).toHaveAttribute('href', '#main-content');
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
-    expect(screen.queryByText('GHENO COMPONENTES')).not.toBeInTheDocument();
-    expect(screen.getAllByAltText('GHENO')[0]).toHaveAttribute(
+    expect(screen.queryByText('GHENO rotors COMPONENTES')).not.toBeInTheDocument();
+    expect(screen.getAllByAltText('GHENO rotors')[0]).toHaveAttribute(
       'src',
       '/brand/logo-wide.png',
     );
     expect(
-      screen.getByAltText('Rider GHENO em trilha com controle total'),
+      screen.getByAltText('Rider GHENO rotors em trilha com controle total'),
     ).toHaveAttribute('src', '/reference-images/mtb-action-hero.jpg');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Frenagem e controle para MTB.',
+      /Frenagem e controle para/,
+    );
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      /Downhill|Enduro|E-bike/,
     );
     expect(
       screen.getByText(
-        /Pastilhas, cubos e aros disponíveis para compra online\. Para rotores, fale diretamente com a equipe GHENO\./,
+        /Não prometemos o impossível\. Entregamos força de sobra/,
       ),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Componentes' }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute('href', '/componentes');
     expect(
       screen.getByRole('navigation', { name: 'Principal' }).parentElement,
     ).not.toHaveAttribute('data-slot', 'glass-panel');
     expect(
-      screen.getAllByRole('link', { name: 'Ver catálogo GHENO →' })[0],
+      screen.getAllByRole('link', { name: 'Confira a loja online' })[0],
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen.getAllByRole('link', { name: 'Ver catálogo GHENO →' })[0],
-    ).toHaveClass('bg-accent', 'text-on-accent');
+      screen.getAllByRole('link', { name: 'Confira a loja online' })[0],
+    ).toHaveClass('border-accent', 'bg-transparent');
     expect(
-      screen.getAllByRole('link', { name: 'Ver componentes →' })[0],
-    ).toHaveClass('border', 'border-strong', 'bg-background/35');
+      screen.getAllByRole('link', { name: 'Ver componentes' })[0],
+    ).toHaveClass('border-primary/55', 'bg-transparent');
     expect(screen.getByText('Compre online')).toBeInTheDocument();
+    expect(screen.getByText('Compra segura e totalmente online')).toBeInTheDocument();
     expect(screen.getByText('Encontre o modelo')).toBeInTheDocument();
     expect(screen.getByText('Consulte a equipe')).toBeInTheDocument();
-    expect(screen.getByText('Venda profissional')).toBeInTheDocument();
+    expect(screen.getByText('Revenda B2B')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Destaques operacionais'),
+    ).not.toHaveAttribute('data-slot', 'glass-panel');
   });
 
   it('keeps stable desktop header columns and omits Tecnologia navigation', () => {
@@ -69,7 +76,7 @@ describe('App', () => {
       'sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
     );
     expect(screen.queryByRole('link', { name: 'Tecnologia' })).toBeNull();
-    expect(screen.getByRole('link', { name: 'Início GHENO' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Início GHENO rotors' })).toHaveAttribute(
       'href',
       '/',
     );
@@ -82,22 +89,14 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(
-      screen.getAllByText(/Pastilhas, cubos e aros.*compra online/i),
-    ).not.toHaveLength(0);
     expect(screen.queryByText('ATIVO NO CATÁLOGO')).toBeNull();
     expect(screen.queryByText('CONSULTA COMERCIAL')).toBeNull();
-    expect(screen.getByRole('link', { name: /Ver cubos/ })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/cubos/',
-    );
-    expect(screen.getByRole('link', { name: /Ver aros/ })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/aros/',
-    );
+    expect(screen.getByRole('heading', { name: 'Pastilhas' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Cubos' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Aros' })).toBeInTheDocument();
   });
 
-  it('renders the component families section with correct CTAs', () => {
+  it('renders the component families section linking cards to componentes', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -106,7 +105,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Encontre o componente certo para sua bike.',
+        name: 'Peças para a sua bike.',
       }),
     ).toBeInTheDocument();
 
@@ -116,43 +115,38 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Cubos' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Aros' })).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Rotores' }),
+      screen.getByRole('heading', { name: 'Discos' }),
     ).toBeInTheDocument();
-    expect(screen.getByAltText('Pastilha de freio GHENO')).toHaveAttribute(
+    expect(screen.getByAltText('Pastilha de freio GHENO rotors')).toHaveAttribute(
       'src',
       '/reference-images/pastilhas-gheno.jpg',
     );
-    expect(screen.getByAltText('Cubo GHENO')).toHaveAttribute(
+    expect(screen.getAllByAltText('Cubo GHENO rotors')[0]).toHaveAttribute(
       'src',
       '/reference-images/cubo-gheno.jpg',
     );
-    expect(screen.getByAltText('Aro GHENO')).toHaveAttribute(
+    expect(screen.getByAltText('Aro GHENO rotors')).toHaveAttribute(
       'src',
       '/reference-images/aro-gheno.jpg',
     );
-    expect(screen.getByAltText('Rotor GHENO')).toHaveAttribute(
+    expect(screen.getByAltText('Disco GHENO rotors')).toHaveAttribute(
       'src',
-      '/reference-images/rotor-gheno.jpg',
+      '/reference-images/disco-gheno.jpg',
     );
 
-    expect(screen.getByRole('link', { name: /Ver pastilhas/ })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
-    );
-    expect(screen.getByRole('link', { name: /Ver cubos/ })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/cubos/',
-    );
-    expect(screen.getByRole('link', { name: /Ver aros/ })).toHaveAttribute(
-      'href',
-      'https://store.ghenortrs.com.br/aros/',
+    const familySection = screen
+      .getByRole('heading', { name: 'Peças para a sua bike.' })
+      .closest('section');
+    expect(familySection).toBeTruthy();
+    const familyLinks = within(familySection as HTMLElement).getAllByRole(
+      'link',
     );
     expect(
-      screen.getByRole('link', { name: /Consultar rotores/ }),
-    ).toHaveAttribute('href', '/contato');
+      familyLinks.every((link) => link.getAttribute('href') === '/componentes'),
+    ).toBe(true);
   });
 
-  it('renders the technical proof section with stats, features, and media', () => {
+  it('renders the product proof section with copy, bullets, and images', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -161,104 +155,56 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Atrito, calor e acabamento sob controle.',
+        name: 'Tecnologia que aguenta prova e trilha.',
       }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText('ATRITO')).toBeInTheDocument();
-    expect(screen.getByText('Consistência')).toBeInTheDocument();
-    expect(screen.getByText('CALOR')).toBeInTheDocument();
-    expect(screen.getByText('Gestão térmica')).toBeInTheDocument();
-
     expect(
-      screen.getByText('Controle de atrito para resposta consistente'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Gestão de calor em frenagens repetidas'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Acabamento orientado ao encaixe do componente'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Confiabilidade para uso técnico em MTB'),
+      screen.getByText(
+        'Projetamos as peças para manter o controle sob uso severo, em prova e na trilha.',
+      ),
     ).toBeInTheDocument();
 
-    expect(screen.getByLabelText('Imagens de tecnologia GHENO')).toHaveClass(
+    expect(
+      screen.getByText(
+        'Encaixe e acabamento feitos para o conjunto real da bike',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Resposta consistente em descidas longas e terreno irregular',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Testados em competição e no uso técnico de MTB'),
+    ).toBeInTheDocument();
+
+    expect(screen.queryByText('ATRITO')).toBeNull();
+    expect(screen.queryByText('CALOR')).toBeNull();
+    expect(
+      screen.queryByRole('heading', {
+        name: 'Componentes GHENO rotors em contexto de competição.',
+      }),
+    ).toBeNull();
+
+    expect(screen.getByLabelText('Imagens de produto e uso GHENO rotors')).toHaveClass(
       'snap-x',
       'overflow-x-auto',
     );
     expect(
-      screen.getByAltText('Rotor de freio a disco GHENO para MTB'),
-    ).toHaveAttribute('src', '/reference-images/rotor-gheno.jpg');
-    expect(
-      screen.getByAltText('Rider GHENO freando em trecho técnico de downhill'),
-    ).toHaveAttribute('src', '/reference-images/trilha-frenagem-gheno.jpg');
-    expect(
-      screen.getByRole('heading', { name: 'Rotores sob consulta.' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: 'Uso em downhill.' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByAltText(
-        'Pinça de freio Hayes Dominion A4 — produto compatível com pastilhas GHENO',
-      ),
-    ).toHaveAttribute('src', '/reference-images/hayes-a4-caliper.jpg');
-    expect(
-      screen.getByRole('heading', { name: 'Hayes Dominion A4.' }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('link', { name: 'Explorar componentes' }),
-    ).toHaveAttribute('href', '/componentes');
-  });
-
-  it('renders the competition proof section with six race images', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    expect(
-      screen.getByRole('heading', {
-        name: 'Componentes GHENO em contexto de competição.',
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText('Imagens de competição MTB')).toHaveClass(
-      'snap-x',
-      'overflow-x-auto',
+      screen.getByAltText('Rider em prova de MTB diante do público'),
+    ).toHaveAttribute('src', '/reference-images/b2b-race-context.jpg');
+    expect(screen.getAllByAltText('Cubo GHENO rotors')[0]).toHaveAttribute(
+      'src',
+      '/reference-images/cubo-gheno.jpg',
     );
     expect(
-      screen.getByAltText(
-        'Rider em alta velocidade durante prova de DH com público ao fundo',
-      ),
-    ).toHaveAttribute('src', '/reference-images/comp-panned-action.jpg');
+      screen.getByAltText('Rider em curva de trilha com terreno solto'),
+    ).toHaveAttribute('src', '/reference-images/b2b-trail-validation.jpg');
+
     expect(
-      screen.getByAltText('Rider descendo trecho rochoso em prova de downhill'),
-    ).toHaveAttribute('src', '/reference-images/comp-dh-rocky.jpg');
-    expect(
-      screen.getByAltText('Rider em prova de DH com espectadores acompanhando'),
-    ).toHaveAttribute('src', '/reference-images/comp-dh-crowd.jpg');
-    expect(
-      screen.getByAltText('Rider em trilha florestal de competição'),
-    ).toHaveAttribute('src', '/reference-images/comp-dh-forest.jpg');
-    expect(
-      screen.getByAltText(
-        'Rider em trecho técnico de downhill durante competição',
-      ),
-    ).toHaveAttribute('src', '/reference-images/comp-dh-technical.jpg');
-    expect(
-      screen.getByAltText(
-        'Rider em alta velocidade em descida de competição de MTB',
-      ),
-    ).toHaveAttribute('src', '/reference-images/comp-dh-speed.jpg');
-    expect(screen.getByText('Velocidade máxima')).toBeInTheDocument();
-    expect(screen.getByText('Terreno rochoso')).toBeInTheDocument();
-    expect(screen.getByText('Pressão de prova')).toBeInTheDocument();
-    expect(screen.getByText('Controle em floresta')).toBeInTheDocument();
-    expect(screen.getByText('Trecho técnico')).toBeInTheDocument();
-    expect(screen.getByText('Descida em DH')).toBeInTheDocument();
+      screen.queryByRole('link', { name: 'Explorar componentes' }),
+    ).toBeNull();
   });
 
   it('renders the B2B teaser section with correct CTAs', () => {
@@ -268,49 +214,34 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
+    const b2bTeaser = document.querySelector('[data-section="b2b-teaser"]');
+    expect(b2bTeaser).toBeTruthy();
     expect(
-      screen.getByRole('heading', {
+      within(b2bTeaser as HTMLElement).getByRole('heading', {
         name: 'Atendimento comercial para oficinas e revendas.',
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Solicitar cadastro B2B →' }),
-    ).toHaveAttribute('href', '/b2b');
-    const b2bTeaser = screen
-      .getByLabelText('Contexto visual para atendimento B2B GHENO')
-      .closest('[data-section="b2b-teaser"]');
-    expect(
-      within(b2bTeaser as HTMLElement).queryByRole('link', {
-        name: 'Falar com a GHENO',
+      within(b2bTeaser as HTMLElement).getByRole('link', {
+        name: 'Solicitar cadastro B2B',
       }),
+    ).toHaveAttribute('href', '/b2b');
+    expect(
+      within(b2bTeaser as HTMLElement).getByRole('link', {
+        name: 'Solicitar cadastro B2B',
+      }),
+    ).toHaveClass('border-accent', 'bg-transparent');
+    expect(
+      within(b2bTeaser as HTMLElement).getByText(
+        /Peças que o rider pede de novo\. Cadastre sua loja e compre direto com a GHENO rotors\./,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(b2bTeaser as HTMLElement).queryByRole('img'),
     ).toBeNull();
     expect(
-      screen.getByLabelText('Contexto visual para atendimento B2B GHENO'),
-    ).toHaveClass('snap-x', 'overflow-x-auto');
-    expect(
-      screen.getByAltText('Rider em prova de MTB diante do público'),
-    ).toHaveAttribute('src', '/reference-images/b2b-race-context.jpg');
-    expect(
-      screen.getByAltText('Rider em curva de trilha com terreno solto'),
-    ).toHaveAttribute('src', '/reference-images/b2b-trail-validation.jpg');
-    expect(
-      screen.getByAltText('Detalhe de freio e rotor em bicicleta de MTB'),
-    ).toHaveAttribute('src', '/reference-images/b2b-brake-detail.jpg');
-    expect(
-      screen.getByAltText(
-        'Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista frontal',
-      ),
-    ).toHaveAttribute('src', '/reference-images/rotor-installed-front.jpg');
-    expect(
-      screen.getByAltText(
-        'Rotor GHENO instalado em bike de DH com freio Hayes Dominion, vista traseira',
-      ),
-    ).toHaveAttribute('src', '/reference-images/rotor-installed-rear.jpg');
-    expect(screen.getByText('Downhill')).toBeInTheDocument();
-    expect(screen.getByText('Demanda técnica')).toBeInTheDocument();
-    expect(screen.getByText('Mix consultivo')).toBeInTheDocument();
-    expect(screen.getByText('Rotor instalado')).toBeInTheDocument();
-    expect(screen.getByText('Em campo')).toBeInTheDocument();
+      screen.queryByLabelText('Contexto visual para atendimento B2B GHENO rotors'),
+    ).toBeNull();
   });
 
   it('renders the closing CTA section with correct destinations', () => {
@@ -320,21 +251,28 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
+    const closing = document.querySelector('[data-section="closing-cta"]');
+    expect(closing).toBeTruthy();
     expect(
-      screen.getByRole('heading', {
-        name: /Compre pastilhas, cubos e aros online\.\s*Para rotores, fale conosco\./,
+      within(closing as HTMLElement).getByRole('heading', {
+        name: 'Acesse nossa loja online.',
       }),
     ).toBeInTheDocument();
     expect(
-      screen
-        .getAllByRole('link', { name: 'Ver loja online' })
-        .find((el) => el.closest('[aria-labelledby="fechamento-heading"]')),
+      within(closing as HTMLElement).getByText(
+        /Confira pastilhas, cubos, aros e discos no nosso catálogo\./,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(closing as HTMLElement).getByRole('link', {
+        name: 'Ver loja online',
+      }),
     ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
     expect(
-      screen
-        .getAllByRole('link', { name: 'Ver componentes' })
-        .find((el) => el.closest('[aria-labelledby="fechamento-heading"]')),
-    ).toHaveAttribute('href', '/componentes');
+      within(closing as HTMLElement).queryByRole('link', {
+        name: 'Ver componentes',
+      }),
+    ).toBeNull();
   });
 
   it('renders the footer with verified store links', () => {
@@ -364,10 +302,14 @@ describe('App', () => {
       'https://store.ghenortrs.com.br/politica-de-privacidade/',
     );
     expect(
-      screen.getByRole('link', { name: 'Instagram GHENO' }),
+      screen.getByRole('link', { name: 'Instagram GHENO rotors' }),
     ).toHaveAttribute('href', 'https://www.instagram.com/gheno_rtrs/');
+    expect(screen.getByRole('link', { name: 'E-mail GHENO rotors' })).toHaveAttribute(
+      'href',
+      'mailto:contato@ghenortrs.com.br',
+    );
     expect(
-      within(footer).getByRole('link', { name: 'Sobre a GHENO' }),
+      within(footer).getByRole('link', { name: 'Sobre a GHENO rotors' }),
     ).toHaveAttribute('href', '/sobre');
     expect(
       within(
@@ -387,13 +329,13 @@ describe('App', () => {
       screen.getByRole('heading', { name: 'Pastilhas de freio' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Cubos GHENO' }),
+      screen.getByRole('heading', { name: 'Cubos GHENO rotors' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Aros GHENO' }),
+      screen.getByRole('heading', { name: 'Aros GHENO rotors' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Rotores GHENO' }),
+      screen.getByRole('heading', { name: 'Discos GHENO rotors' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Ver catálogo de pastilhas' }),
@@ -410,8 +352,8 @@ describe('App', () => {
         .closest('article'),
     ).toHaveAttribute('id', 'pastilhas');
     expect(
-      screen.getByRole('heading', { name: 'Rotores GHENO' }).closest('article'),
-    ).toHaveAttribute('id', 'rotores');
+      screen.getByRole('heading', { name: 'Discos GHENO rotors' }).closest('article'),
+    ).toHaveAttribute('id', 'discos');
   });
 
   it('renders institutional context on the about route', () => {
@@ -422,11 +364,11 @@ describe('App', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Componentes GHENO para MTB.' }),
+      screen.getByRole('heading', { name: 'Componentes GHENO rotors para MTB.' }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'A GHENO atua com componentes para mountain bike, com foco em frenagem, controle e uso técnico.',
+        'A GHENO rotors atua com componentes para mountain bike, com foco em frenagem, controle e uso técnico.',
       ),
     ).toBeInTheDocument();
     expect(
@@ -443,7 +385,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Cadastro comercial GHENO.',
+        name: 'Cadastro comercial GHENO rotors.',
       }),
     ).toBeInTheDocument();
     // Without VITE_SUPABASE_* the login gate stays off and registration remains.
@@ -497,7 +439,7 @@ describe('App', () => {
     );
 
     const searchTrigger = screen.getByRole('button', {
-      name: 'Buscar na GHENO',
+      name: 'Buscar na GHENO rotors',
     });
     fireEvent.click(searchTrigger);
     fireEvent.click(
@@ -519,7 +461,7 @@ describe('App', () => {
       screen.queryByRole('dialog', { name: 'Atalhos do teclado' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Buscar na GHENO' }),
+      screen.getByRole('button', { name: 'Buscar na GHENO rotors' }),
     ).toHaveFocus();
   });
 
@@ -530,8 +472,8 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Buscar na GHENO' }));
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar na GHENO rotors' }));
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' }), {
       target: { value: 'cubo boost xd' },
     });
 
@@ -553,7 +495,7 @@ describe('App', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }));
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' }), {
       target: { value: 'aro 29' },
     });
 

@@ -7,21 +7,13 @@ import { buttonVariants } from '@/components/ui/button-variants';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { cn } from '@/lib/utils';
 
-import {
-  componentMenuLinks,
-  primaryNavLinks,
-  type HeaderMenuLink,
-  type HeaderNavLink,
-} from './app-header-data';
+import { primaryNavLinks, type HeaderNavLink } from './app-header-data';
 
 const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
   buttonVariants({
     size: 'nav',
     variant: isActive ? 'nav-active' : 'nav',
   });
-
-const componentMenuLinkClassName =
-  'flex w-full rounded-sm px-3 py-2 text-sm text-secondary transition-colors hover:bg-surface hover:text-primary';
 
 /** Single-line shortcut hint for chips and the shortcuts dialog. */
 function getShortcutLabel(): string {
@@ -98,12 +90,15 @@ export function AppHeader({
 function HeaderBrand({ compact }: { compact: boolean }) {
   return (
     <Link
-      aria-label="Início GHENO"
+      aria-label="Início GHENO rotors"
       className="shrink-0 justify-self-start"
       to="/"
+      onClick={() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }}
     >
       <img
-        alt="GHENO"
+        alt="GHENO rotors"
         className={cn(
           'w-auto rounded-sm transition-[height] duration-200',
           compact ? 'h-8 sm:h-9' : 'h-9 sm:h-10',
@@ -155,48 +150,10 @@ function HeaderNavigation() {
       aria-label="Principal"
       className="flex items-center gap-9 text-[11px] font-extrabold uppercase tracking-[0.1em]"
     >
-      <ComponentsMenu />
       {primaryNavLinks.map((link) => (
         <HeaderNavItem key={link.label} link={link} />
       ))}
     </nav>
-  );
-}
-
-function ComponentsMenu() {
-  return (
-    <div className="group relative">
-      <NavLink
-        className={({ isActive }) =>
-          cn(navigationLinkClassName({ isActive }), 'flex items-center gap-1')
-        }
-        to="/componentes"
-      >
-        Componentes
-        <svg
-          className="h-3 w-3 transition-transform duration-150 group-hover:rotate-180"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M19 9l-7 7-7-7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-          />
-        </svg>
-      </NavLink>
-      <div className="invisible absolute left-0 top-full z-50 mt-4 min-w-[12rem] rounded-lg border border-border bg-surface-elevated p-2 opacity-0 shadow-2xl transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-        {componentMenuLinks.map((link, index) => (
-          <ComponentMenuItem
-            includeDivider={index === 1}
-            key={link.label}
-            link={link}
-          />
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -301,7 +258,7 @@ function QuickSearchTrigger({
   return (
     <button
       ref={buttonRef}
-      aria-label="Buscar na GHENO"
+      aria-label="Buscar na GHENO rotors"
       aria-expanded={open}
       aria-haspopup="dialog"
       aria-keyshortcuts="Meta+K Control+K"
@@ -343,14 +300,14 @@ function QuickCommandPanel({
 }) {
   return (
     <GlassPanel
-      aria-label="Busca GHENO"
+      aria-label="Busca GHENO rotors"
       className="!absolute right-0 top-0 z-50 w-[min(32rem,calc(100vw-5rem))] origin-top-right rounded-lg p-4 text-primary motion-safe:animate-[gheno-command-open_220ms_cubic-bezier(0.16,1,0.3,1)]"
       density="strong"
       role="dialog"
     >
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-bold text-primary">Busca GHENO</p>
+          <p className="text-sm font-bold text-primary">Busca GHENO rotors</p>
           <p className="mt-1 text-xs text-secondary">
             Produtos, compatibilidade e páginas
           </p>
@@ -454,7 +411,7 @@ function KeyboardShortcutsDialog({
         </div>
         <dl className="grid gap-3 text-xs">
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-secondary">Abrir busca GHENO</dt>
+            <dt className="text-secondary">Abrir busca GHENO rotors</dt>
             <dd className="rounded bg-primary/10 px-2 py-1 font-mono text-primary">
               {shortcutLabel}
             </dd>
@@ -468,29 +425,6 @@ function KeyboardShortcutsDialog({
         </dl>
       </GlassPanel>
     </div>
-  );
-}
-
-function ComponentMenuItem({
-  includeDivider,
-  link,
-}: {
-  includeDivider: boolean;
-  link: HeaderMenuLink;
-}) {
-  return (
-    <>
-      {includeDivider ? <div className="my-1 border-t border-border" /> : null}
-      {link.to ? (
-        <Link className={componentMenuLinkClassName} to={link.to}>
-          {link.label}
-        </Link>
-      ) : (
-        <a className={componentMenuLinkClassName} href={link.href}>
-          {link.label}
-        </a>
-      )}
-    </>
   );
 }
 

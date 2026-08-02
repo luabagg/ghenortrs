@@ -1,36 +1,28 @@
+import { Link } from 'react-router-dom';
+
 import { ProductFamilyCard } from '@/components/landing/section-cards';
 import {
   COMPONENT_FAMILIES,
   type ComponentFamily,
 } from '@/components/landing/component-families-data';
+import { Button } from '@/components/ui/button';
 
 export function ComponentFamiliesIntro() {
   return (
     <div className="flex flex-col gap-5 lg:pt-3">
-      <div className="flex items-center justify-end gap-4">
-        <a
-          className="text-xs font-extrabold uppercase tracking-[0.14em] text-secondary transition-colors hover:text-primary lg:hidden"
-          href="https://store.ghenortrs.com.br/produtos/"
-        >
-          Ver todos os componentes →
-        </a>
-      </div>
       <h2
-        className="max-w-2xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
+        className="max-w-2xl text-balance font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
         id="familias-heading"
       >
-        Encontre o componente certo para sua bike.
+        Peças para a sua bike.
       </h2>
-      <p className="max-w-2xl text-base leading-7 text-secondary sm:text-lg">
-        Pastilhas, cubos e aros estão disponíveis na loja GHENO. Para rotores,
-        nossa equipe confirma compatibilidade e disponibilidade.
+      <p className="max-w-xl text-justify text-base leading-7 text-secondary sm:text-lg">
+        Pastilhas, cubos, aros e discos GHENO rotors. Você escolhe pelo que a
+        bike precisa, não pelo hype.
       </p>
-      <a
-        className="hidden border-t border-border pt-7 text-xs font-extrabold uppercase tracking-[0.14em] text-primary transition-colors hover:text-accent lg:block"
-        href="https://store.ghenortrs.com.br/produtos/"
-      >
-        Ver todos os componentes →
-      </a>
+      <Button asChild className="w-fit self-start" variant="ghost">
+        <Link to="/componentes">Ver todos os componentes</Link>
+      </Button>
     </div>
   );
 }
@@ -46,5 +38,5 @@ export function ComponentFamiliesGrid() {
 }
 
 function ComponentFamilyItem({ family }: { family: ComponentFamily }) {
-  return <ProductFamilyCard {...family} />;
+  return <ProductFamilyCard {...family} href="/componentes" />;
 }

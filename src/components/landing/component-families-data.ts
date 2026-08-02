@@ -1,7 +1,4 @@
 export type ComponentFamily = {
-  commerce: 'store' | 'contact';
-  ctaHref: string;
-  ctaLabel: string;
   description: string;
   imageAlt: string;
   imageSrc: string;
@@ -10,43 +7,27 @@ export type ComponentFamily = {
 
 export const COMPONENT_FAMILIES: ComponentFamily[] = [
   {
-    commerce: 'store',
-    ctaHref: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
-    ctaLabel: 'Ver pastilhas',
-    description:
-      'Modelos para diferentes sistemas de freio, disponíveis no catálogo online.',
-    imageAlt: 'Pastilha de freio GHENO',
+    description: 'Para o seu sistema de freio, dimensões para o uso real.',
+    imageAlt: 'Pastilha de freio GHENO rotors',
     imageSrc: '/reference-images/pastilhas-gheno.jpg',
     title: 'Pastilhas',
   },
   {
-    commerce: 'store',
-    ctaHref: 'https://store.ghenortrs.com.br/cubos/',
-    ctaLabel: 'Ver cubos',
-    description:
-      'Modelos dianteiros e traseiros, com opções Boost, HG e XD na loja online.',
-    imageAlt: 'Cubo GHENO',
+    description: 'Dianteiros e traseiros com opções para o seu setup.',
+    imageAlt: 'Cubo GHENO rotors',
     imageSrc: '/reference-images/cubo-gheno.jpg',
     title: 'Cubos',
   },
   {
-    commerce: 'store',
-    ctaHref: 'https://store.ghenortrs.com.br/aros/',
-    ctaLabel: 'Ver aros',
-    description:
-      'Linha HEAVYDUTY nos aros 27.5 e 29, disponível para compra online.',
-    imageAlt: 'Aro GHENO',
+    description: 'Fortes o bastante para a trilha, sem promessa impossível.',
+    imageAlt: 'Aro GHENO rotors',
     imageSrc: '/reference-images/aro-gheno.jpg',
     title: 'Aros',
   },
   {
-    commerce: 'contact',
-    ctaHref: '/contato',
-    ctaLabel: 'Consultar rotores',
-    description:
-      'Medidas, compatibilidade e disponibilidade informadas pelo atendimento comercial.',
-    imageAlt: 'Rotor GHENO',
-    imageSrc: '/reference-images/rotor-gheno.jpg',
-    title: 'Rotores',
+    description: 'Medida e compatibilidade para o seu sistema de freio.',
+    imageAlt: 'Disco GHENO rotors',
+    imageSrc: '/reference-images/disco-gheno.jpg',
+    title: 'Discos',
   },
 ];

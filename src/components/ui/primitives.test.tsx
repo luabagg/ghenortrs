@@ -17,18 +17,30 @@ import { SectionBand } from './section-band';
 import { Textarea } from './textarea';
 
 describe('ui primitives', () => {
-  it('renders the GHENO button variants and supports asChild composition', () => {
+  it('renders the GHENO rotors button variants and supports asChild composition', () => {
     const { rerender } = render(<Button>Explorar componentes</Button>);
 
     expect(
       screen.getByRole('button', { name: 'Explorar componentes' }),
     ).toHaveClass('bg-accent', 'text-on-accent', 'rounded-button');
 
-    rerender(<Button variant="secondary">Falar com GHENO B2B</Button>);
+    rerender(<Button variant="secondary">Falar com GHENO rotors B2B</Button>);
 
     expect(
-      screen.getByRole('button', { name: 'Falar com GHENO B2B' }),
-    ).toHaveClass('border-strong', 'bg-background-soft', 'text-primary');
+      screen.getByRole('button', { name: 'Falar com GHENO rotors B2B' }),
+    ).toHaveClass('border-primary/55', 'bg-transparent', 'text-primary');
+
+    rerender(<Button variant="outline">Loja</Button>);
+    expect(screen.getByRole('button', { name: 'Loja' })).toHaveClass(
+      'border-accent',
+      'bg-transparent',
+    );
+
+    rerender(<Button variant="ghost">Ver todos</Button>);
+    expect(screen.getByRole('button', { name: 'Ver todos' })).toHaveClass(
+      'border-transparent',
+      'bg-transparent',
+    );
 
     rerender(
       <Button asChild>
@@ -42,7 +54,7 @@ describe('ui primitives', () => {
     );
   });
 
-  it('renders GHENO card, label, input, and textarea primitives with branded surface styling', () => {
+  it('renders GHENO rotors card, label, input, and textarea primitives with branded surface styling', () => {
     render(
       <div>
         <Card>
@@ -86,7 +98,7 @@ describe('ui primitives', () => {
     );
   });
 
-  it('renders a reusable GHENO meta label primitive for eyebrow copy and pill tags', () => {
+  it('renders a reusable GHENO rotors meta label primitive for quiet eyebrow copy', () => {
     render(
       <div>
         <MetaLabel>Componentes</MetaLabel>
@@ -101,12 +113,14 @@ describe('ui primitives', () => {
       'meta-label',
     );
     expect(screen.getByText('Componentes')).toHaveClass(
+      'text-xs',
+      'font-bold',
+      'tracking-[0.14em]',
+      'text-secondary',
+    );
+    expect(screen.getByText('Componentes')).not.toHaveClass(
       'rounded-pill',
       'bg-accent-dark',
-      'text-xs',
-      'font-extrabold',
-      'tracking-[0.18em]',
-      'text-on-accent',
     );
     expect(screen.getByRole('link', { name: 'B2B' })).toHaveAttribute(
       'data-slot',
@@ -145,15 +159,15 @@ describe('ui primitives', () => {
     );
   });
 
-  it('renders an accessible GHENO dot matrix loader with the expected grid rhythm', () => {
+  it('renders an accessible GHENO rotors dot matrix loader with the expected grid rhythm', () => {
     render(
       <DotMatrixLoader
-        aria-label="Carregando vitrine GHENO"
+        aria-label="Carregando vitrine GHENO rotors"
         caption="Sincronizando famílias de componentes."
       />,
     );
 
-    expect(screen.getByLabelText('Carregando vitrine GHENO')).toHaveClass(
+    expect(screen.getByLabelText('Carregando vitrine GHENO rotors')).toHaveClass(
       'rounded-panel',
       'border-border',
       'bg-surface',
@@ -165,7 +179,7 @@ describe('ui primitives', () => {
   });
 
   it('keeps the dot matrix loader motion-safe for reduced-motion users', () => {
-    render(<DotMatrixLoader aria-label="Carregando catálogo GHENO" />);
+    render(<DotMatrixLoader aria-label="Carregando catálogo GHENO rotors" />);
 
     const [firstCell] = screen.getAllByTestId('dot-matrix-cell');
 

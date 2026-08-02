@@ -1,40 +1,31 @@
-import { Link } from 'react-router-dom';
-
 import { B2BTeaserSection } from '@/components/landing/b2b-teaser-section';
 import { ComponentFamiliesSection } from '@/components/landing/component-families-section';
-import { CompetitionProofSection } from '@/components/landing/competition-proof-section';
 import { HomeHeroSection } from '@/components/landing/home-hero-section';
-import { TechnicalProofSection } from '@/components/landing/technical-proof-section';
+import { OperationalHighlightsSection } from '@/components/landing/operational-highlights-section';
+import { ProductProofSection } from '@/components/landing/product-proof-section';
 import { Button } from '@/components/ui/button';
-import { MetaLabel } from '@/components/ui/meta-label';
 
 function ClosingCTASection() {
   return (
     <section
       aria-labelledby="fechamento-heading"
-      className="rounded-lg border border-border-strong bg-surface px-6 py-10 sm:px-8 sm:py-14 lg:px-12"
+      className="flex flex-col gap-5 border-t border-border py-10 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:py-12"
       data-section="closing-cta"
     >
-      <div className="flex flex-col gap-6">
-        <MetaLabel>LOJA GHENO</MetaLabel>
+      <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
         <h2
-          className="max-w-3xl font-heading text-4xl leading-none tracking-[-0.04em] sm:text-5xl"
+          className="shrink-0 text-balance font-heading text-2xl leading-tight tracking-[-0.03em] sm:text-3xl"
           id="fechamento-heading"
         >
-          Compre pastilhas, cubos e aros online.{' '}
-          <span className="text-secondary">Para rotores, fale conosco.</span>
+          Acesse nossa loja online.
         </h2>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button asChild>
-            <a href="https://store.ghenortrs.com.br/produtos/">
-              Ver loja online
-            </a>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link to="/componentes">Ver componentes</Link>
-          </Button>
-        </div>
+        <p className="max-w-md text-justify text-sm leading-6 text-secondary sm:max-w-xs">
+          Confira pastilhas, cubos, aros e discos no nosso catálogo.
+        </p>
       </div>
+      <Button asChild className="w-fit shrink-0" variant="outline">
+        <a href="https://store.ghenortrs.com.br/produtos/">Ver loja online</a>
+      </Button>
     </section>
   );
 }
@@ -43,6 +34,7 @@ export function HomePage() {
   return (
     <div className="flex flex-col bg-background">
       <HomeHeroSection />
+      <OperationalHighlightsSection />
 
       <div className="mx-auto w-full max-w-[90rem] px-6 py-18 sm:px-10 sm:py-24 lg:px-16">
         <ComponentFamiliesSection />
@@ -50,17 +42,13 @@ export function HomePage() {
 
       <div className="border-t border-border bg-background-soft">
         <div className="mx-auto w-full max-w-[90rem] px-6 py-18 sm:px-10 sm:py-24 lg:px-16">
-          <TechnicalProofSection />
+          <ProductProofSection />
         </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-[90rem] px-6 py-18 sm:px-10 sm:py-24 lg:px-16">
-        <CompetitionProofSection />
       </div>
 
       <B2BTeaserSection />
 
-      <div className="mx-auto w-full max-w-[90rem] px-6 py-14 sm:px-10 lg:px-16">
+      <div className="mx-auto w-full max-w-[90rem] px-6 pb-10 sm:px-10 lg:px-16">
         <ClosingCTASection />
       </div>
     </div>

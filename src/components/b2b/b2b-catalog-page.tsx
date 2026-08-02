@@ -222,7 +222,7 @@ export function B2BCatalogPage() {
         <CardHeader>
           <CardTitle>Solicitação de orçamento</CardTitle>
           <CardDescription>
-            Sem checkout. A GHENO retorna com condições e disponibilidade.
+            Sem checkout. A GHENO rotors retorna com condições e disponibilidade.
           </CardDescription>
         </CardHeader>
         <div className="grid gap-4 px-6 pb-6">
@@ -251,7 +251,7 @@ export function B2BCatalogPage() {
           >
             {submitState === 'loading'
               ? 'Enviando…'
-              : 'Enviar solicitação à GHENO'}
+              : 'Enviar solicitação à GHENO rotors'}
           </Button>
         </div>
       </Card>

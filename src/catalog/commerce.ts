@@ -5,7 +5,7 @@ export type CommerceFamilyId =
   | 'pastilhas'
   | 'cubos'
   | 'aros'
-  | 'rotores'
+  | 'discos'
   | 'mass-dampers';
 
 export type CommerceFamily = {
@@ -22,7 +22,7 @@ const FAMILY_IDS: readonly CommerceFamilyId[] = [
   'pastilhas',
   'cubos',
   'aros',
-  'rotores',
+  'discos',
   'mass-dampers',
 ];
 

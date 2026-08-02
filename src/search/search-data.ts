@@ -10,7 +10,7 @@ const FAMILY_IDS = new Set<CommerceFamilyId>([
   'pastilhas',
   'cubos',
   'aros',
-  'rotores',
+  'discos',
   'mass-dampers',
 ]);
 
@@ -58,12 +58,12 @@ const LOCAL_ENTRIES: readonly SearchEntry[] = [
   {
     id: 'page:componentes',
     kind: 'page',
-    title: 'Componentes GHENO',
+    title: 'Componentes GHENO rotors',
     href: '/componentes',
     image: null,
     family: null,
     commerce: 'site',
-    terms: ['pastilhas', 'cubos', 'aros', 'rotores', 'catálogo'],
+    terms: ['pastilhas', 'cubos', 'aros', 'discos', 'rotores', 'catálogo'],
     featured: false,
     description: 'Visão geral das famílias de componentes',
   },
@@ -82,7 +82,7 @@ const LOCAL_ENTRIES: readonly SearchEntry[] = [
   {
     id: 'page:sobre',
     kind: 'page',
-    title: 'Sobre a GHENO',
+    title: 'Sobre a GHENO rotors',
     href: '/sobre',
     image: null,
     family: null,

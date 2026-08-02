@@ -16,7 +16,7 @@ describe('StoreSearch', () => {
   it('filters compatibility terms and links to the exact Nuvemshop product', () => {
     renderSearch();
 
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' }), {
       target: { value: 'hayes a4' },
     });
 
@@ -33,7 +33,7 @@ describe('StoreSearch', () => {
   it('routes unavailable rotor results to owned contact', () => {
     renderSearch();
 
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' }), {
       target: { value: 'rotor 223' },
     });
 
@@ -45,13 +45,13 @@ describe('StoreSearch', () => {
   it('offers the official encoded store search when the index has no match', () => {
     renderSearch();
 
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' }), {
       target: { value: 'produto inexistente' },
     });
 
     expect(
       screen.getByRole('link', {
-        name: 'Buscar “produto inexistente” na loja GHENO',
+        name: 'Buscar “produto inexistente” na loja GHENO rotors',
       }),
     ).toHaveAttribute(
       'href',
@@ -61,7 +61,7 @@ describe('StoreSearch', () => {
 
   it('moves the active result with arrow keys', () => {
     renderSearch();
-    const input = screen.getByRole('searchbox', { name: 'Buscar na GHENO' });
+    const input = screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' });
     const firstActiveId = input.getAttribute('aria-activedescendant');
 
     fireEvent.keyDown(input, { key: 'ArrowDown' });
@@ -73,7 +73,7 @@ describe('StoreSearch', () => {
     const onNavigate = vi.fn();
     renderSearch({ mode: 'mobile', onNavigate });
 
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO' }), {
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' }), {
       target: { value: 'contato' },
     });
     fireEvent.click(screen.getByRole('link', { name: /Contato/i }));

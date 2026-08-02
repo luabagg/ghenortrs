@@ -51,7 +51,7 @@ export function B2BLoginCard({
       <CardHeader>
         <CardTitle>Já tenho cadastro</CardTitle>
         <CardDescription>
-          Entre com o e-mail aprovado pela GHENO. Sem senha — enviamos um link
+          Entre com o e-mail aprovado pela GHENO rotors. Sem senha — enviamos um link
           mágico.
         </CardDescription>
       </CardHeader>

@@ -64,7 +64,7 @@ function MobileMenuHeader({
   return (
     <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-10 pt-16">
       <img
-        alt="GHENO"
+        alt="GHENO rotors"
         className="h-12 w-auto"
         height={250}
         src="/brand/logo-wide.png"
@@ -99,7 +99,7 @@ function MobileMenuBrandNote() {
     <div className="mt-8 flex items-center justify-between gap-4 rounded-xl border border-border-strong bg-background/32 p-4">
       <div className="flex items-center gap-3">
         <img
-          alt="GHENO"
+          alt="GHENO rotors"
           className="h-16 w-24 rounded-lg object-cover min-[420px]:h-20 min-[420px]:w-32"
           height={250}
           loading="lazy"
@@ -108,7 +108,7 @@ function MobileMenuBrandNote() {
         />
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-accent">
-            CATÁLOGO GHENO
+            CATÁLOGO GHENO rotors
           </p>
           <p className="mt-2 text-base font-bold leading-tight text-primary min-[420px]:text-xl">
             Pastilhas, cubos e aros disponíveis online.

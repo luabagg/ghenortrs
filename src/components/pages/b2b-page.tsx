@@ -41,7 +41,7 @@ export function B2BPage() {
       <div className="grid gap-8">
         <B2BAccessHeroSection
           description="Verificando sessão comercial…"
-          title="B2B GHENO."
+          title="B2B GHENO rotors."
         />
         <p className="text-secondary">Carregando…</p>
       </div>
@@ -75,7 +75,7 @@ export function B2BPage() {
     return (
       <div className="grid gap-8">
         <B2BAccessHeroSection
-          description="Recebemos seus dados. O catálogo libera após aprovação manual da GHENO."
+          description="Recebemos seus dados. O catálogo libera após aprovação manual da GHENO rotors."
           title="Cadastro em análise."
         />
         <B2BPendingPanel seller={session.seller} onSignOut={() => void signOut()} />

@@ -47,13 +47,13 @@
       "terms": ["aro", "aros", "rim", "heavyduty", "27.5", "29"]
     },
     {
-      "id": "rotores",
-      "label": "Rotores",
+      "id": "discos",
+      "label": "Discos",
       "commerce": "contact",
       "href": "/contato",
       "categoryPaths": ["/freios/discos-de-freio/"],
       "productPathPatterns": ["disco-", "rotor-"],
-      "terms": ["rotor", "rotores", "disco", "discos", "223mm"]
+      "terms": ["disco", "discos", "rotor", "rotores", "223mm"]
     },
     {
       "id": "mass-dampers",

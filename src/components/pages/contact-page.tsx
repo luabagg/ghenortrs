@@ -19,7 +19,7 @@ const CONTACT_PATHS = [
   },
   {
     label: 'Instagram',
-    description: 'Acompanhe a GHENO e envie uma mensagem pelo perfil oficial.',
+    description: 'Acompanhe a GHENO rotors e envie uma mensagem pelo perfil oficial.',
     action: 'Abrir Instagram',
     href: 'https://www.instagram.com/gheno_rtrs/',
   },
@@ -29,7 +29,7 @@ export function ContactPage() {
   return (
     <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-6 py-16 sm:px-10 sm:py-20 lg:px-16">
       <PageIntro
-        description="Compre no catálogo online, solicite atendimento B2B ou fale com a GHENO pelo Instagram."
+        description="Compre no catálogo online, solicite atendimento B2B ou fale com a GHENO rotors pelo Instagram."
         eyebrow="CONTATO"
         title="Compra, revenda e atendimento."
       />

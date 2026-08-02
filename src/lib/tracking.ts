@@ -30,7 +30,7 @@ function fireEvent(eventName: string, payload: Record<string, unknown>) {
   }
 
   if (import.meta.env.DEV) {
-    console.info(`[GHENO tracking] ${eventName}`, payload);
+    console.info(`[GHENO rotors tracking] ${eventName}`, payload);
   }
 }
 
