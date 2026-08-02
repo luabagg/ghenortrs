@@ -17,13 +17,16 @@ const require = createRequire(import.meta.url);
 const appPath = fileURLToPath(new URL('./app', import.meta.url));
 const isVitest = Boolean(process.env.VITEST);
 
-// Only for unit tests: force a single react-router instance so Remix Link
-// hooks share context with createMemoryRouter from react-router-dom.
+// Vitest only: force Remix and the test harness onto one react-router copy.
+// Resolve through @remix-run/react so pnpm nested deps stay consistent.
 const testRouterAliases = isVitest
   ? (() => {
-      const reactRouterDomPath = require.resolve('react-router-dom');
+      const remixReactEntry = require.resolve('@remix-run/react');
+      const reactRouterDomPath = require.resolve('react-router-dom', {
+        paths: [remixReactEntry],
+      });
       const reactRouterPath = require.resolve('react-router', {
-        paths: [reactRouterDomPath],
+        paths: [reactRouterDomPath, remixReactEntry],
       });
       return {
         'react-router': reactRouterPath,

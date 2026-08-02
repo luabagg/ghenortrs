@@ -1,2 +1,8 @@
 minimumReleaseAge: 10080
 resolutionMode: highest
+onlyBuiltDependencies:
+  - esbuild
+  - '@parcel/watcher'
+  - sharp
+allowBuilds:
+  esbuild: set this to true or false
