@@ -79,7 +79,7 @@ export function ProductFamilyCard({
         <div className="relative h-36 shrink-0 overflow-hidden bg-background-soft sm:h-48 lg:h-44">
           <ScrollImage
             alt={imageAlt}
-            className="h-full w-full object-cover opacity-90 saturate-[0.8] will-change-transform"
+            className="h-full w-full opacity-90 saturate-[0.8]"
             effect="zoom"
             loading="lazy"
             src={imageSrc}

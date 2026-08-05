@@ -74,7 +74,7 @@ export function HomeHeroSection() {
       <div className="relative min-h-[100dvh] overflow-hidden bg-surface">
         <ScrollImage
           alt={HERO_IMAGE.alt}
-          className="absolute inset-0 h-full w-full object-cover object-[69%_center] opacity-80 sm:object-center"
+          className="absolute inset-0 h-full w-full opacity-80 [&_img]:object-[69%_center] sm:[&_img]:object-center"
           effect="parallax"
           fetchPriority="high"
           src={HERO_IMAGE.src}

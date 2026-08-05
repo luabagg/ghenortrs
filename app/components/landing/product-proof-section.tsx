@@ -70,7 +70,7 @@ export function ProductProofSection() {
           >
             <ScrollImage
               alt={image.alt}
-              className="absolute inset-0 h-full w-full object-cover opacity-88 saturate-[0.8] will-change-transform"
+              className="absolute inset-0 h-full w-full opacity-88 saturate-[0.8]"
               effect="zoom"
               loading="lazy"
               src={image.src}

@@ -41,7 +41,7 @@ export function ComponentFamilyCard({
         {/* Image stage today; mount Three.js into [data-threejs-slot] later. */}
         <ScrollImage
           alt={family.imageAlt}
-          className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-[0.82] will-change-transform"
+          className="absolute inset-0 h-full w-full opacity-90 saturate-[0.82]"
           effect="zoom"
           loading="lazy"
           src={family.imageSrc}
