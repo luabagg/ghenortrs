@@ -62,7 +62,7 @@ export function ComponentFamilyCard({
           >
             {family.title}
           </h2>
-          <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-secondary">
+          <p className="max-w-xl font-body text-[14px] leading-5 text-secondary">
             {family.description}
           </p>
         </div>
@@ -91,7 +91,7 @@ function ComponentHighlights({ highlights }: { highlights: string[] }) {
     <ul className="flex flex-col gap-3">
       {highlights.map((highlight) => (
         <li
-          className="flex items-start gap-3 text-justify font-body text-[14px] leading-5 text-primary/90"
+          className="flex items-start gap-3 font-body text-[14px] leading-5 text-primary/90"
           key={highlight}
         >
           <span
@@ -119,7 +119,7 @@ export function ComponentsB2BCTA() {
           <h2 className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]">
             Atendimento comercial para oficinas e revendas.
           </h2>
-          <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-on-primary/72">
+          <p className="max-w-xl font-body text-[14px] leading-5 text-on-primary/72">
             Peças que o rider pede de novo. Cadastre sua loja e compre direto com
             a GHENO rotors.
           </p>

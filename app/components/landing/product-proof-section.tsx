@@ -39,7 +39,7 @@ export function ProductProofSection() {
           >
             Tecnologia que aguenta prova e trilha.
           </h2>
-          <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-secondary">
+          <p className="max-w-xl font-body text-[14px] leading-5 text-secondary">
             Projetamos as peças para manter o controle sob uso severo, em prova
             e na trilha.
           </p>
@@ -48,7 +48,7 @@ export function ProductProofSection() {
           {PROOF_POINTS.map((point) => (
             <li
               key={point}
-              className="flex items-start gap-3 text-justify font-body text-[14px] leading-5 text-primary/88"
+              className="flex items-start gap-3 font-body text-[14px] leading-5 text-primary/88"
             >
               <span
                 aria-hidden="true"

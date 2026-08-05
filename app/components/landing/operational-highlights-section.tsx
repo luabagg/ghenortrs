@@ -45,7 +45,7 @@ export function OperationalHighlightsSection() {
             <p className="text-sm font-bold leading-tight text-primary">
               {item.title}
             </p>
-      <p className="mt-2 max-w-[16rem] text-justify font-body text-[12px] leading-5 text-secondary">
+            <p className="mt-2 max-w-[16rem] font-body text-[12px] leading-5 text-secondary">
               {item.description}
             </p>
           </motion.div>

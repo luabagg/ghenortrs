@@ -100,7 +100,7 @@ export function HomeHeroSection() {
                 </span>
               </span>
             </h1>
-            <p className="mt-5 max-w-[18rem] text-justify font-body text-[14px] leading-5 text-primary/78 sm:mt-6 sm:max-w-[30rem]">
+            <p className="mt-5 max-w-[18rem] font-body text-[14px] leading-5 text-primary/78 sm:mt-6 sm:max-w-[30rem]">
               Não prometemos o impossível. Entregamos força de sobra, resposta
               limpa e honestidade no uso real.
             </p>

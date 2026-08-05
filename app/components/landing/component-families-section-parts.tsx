@@ -16,7 +16,7 @@ export function ComponentFamiliesIntro() {
       >
         Peças para a sua bike.
       </h2>
-      <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-secondary">
+      <p className="max-w-xl font-body text-[14px] leading-5 text-secondary">
         Pastilhas, cubos, aros e discos GHENO rotors. Você escolhe pelo que a
         bike precisa, não pelo hype.
       </p>

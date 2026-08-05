@@ -19,7 +19,7 @@ function ClosingCTASection() {
         >
           Acesse nossa loja online.
         </h2>
-        <p className="max-w-md text-justify font-body text-[12px] leading-5 text-secondary sm:max-w-xs">
+        <p className="max-w-md font-body text-[12px] leading-5 text-secondary sm:max-w-xs">
           Confira pastilhas, cubos, aros e discos no nosso catálogo.
         </p>
       </div>

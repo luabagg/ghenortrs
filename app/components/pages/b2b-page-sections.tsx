@@ -28,7 +28,7 @@ export function B2BAccessHeroSection({
         <h1 className="text-balance font-heading text-[50px] leading-[0.95] tracking-[-0.05em]">
           {title}
         </h1>
-        <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-secondary">
+        <p className="max-w-xl font-body text-[14px] leading-5 text-secondary">
           {description}
         </p>
       </div>

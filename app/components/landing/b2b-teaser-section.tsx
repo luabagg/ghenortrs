@@ -10,7 +10,7 @@ function B2BTeaserIntro() {
       <h2 className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]">
         Atendimento comercial para oficinas e revendas.
       </h2>
-      <p className="max-w-xl text-justify font-body text-[14px] leading-5 text-on-primary/72">
+      <p className="max-w-xl font-body text-[14px] leading-5 text-on-primary/72">
         Peças que o rider pede de novo. Cadastre sua loja e compre direto com a
         GHENO rotors.
       </p>

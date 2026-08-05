@@ -33,7 +33,7 @@ export function PageIntro({
       <Heading className="max-w-4xl text-balance font-heading text-[50px] leading-none tracking-[-0.05em]">
         {title}
       </Heading>
-      <p className="max-w-2xl text-justify font-body text-[14px] leading-5 text-secondary">
+      <p className="max-w-2xl font-body text-[14px] leading-5 text-secondary">
         {description}
       </p>
     </>
@@ -90,7 +90,7 @@ export function ProductFamilyCard({
           <h3 className="font-heading text-lg leading-tight tracking-[-0.04em] text-primary sm:text-xl">
             {title}
           </h3>
-          <CardDescription className="hidden text-justify sm:block">
+          <CardDescription className="hidden sm:block">
             {description}
           </CardDescription>
         </CardHeader>
