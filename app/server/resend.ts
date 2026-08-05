@@ -1,4 +1,3 @@
-import { getServerEnv } from './env';
 import { escHtml } from './http';
 
 type SendEmailInput = {
@@ -8,11 +7,71 @@ type SendEmailInput = {
   replyTo?: string;
 };
 
+/** Resend-only config — does not require Supabase (legacy submit path). */
+export function getResendMailConfig(): {
+  apiKey: string | null;
+  toEmail: string | null;
+  from: string;
+} {
+  const apiKey = process.env.RESEND_API_KEY?.trim() || null;
+  const toEmail = process.env.RESEND_TO_EMAIL?.trim() || null;
+  const from =
+    process.env.RESEND_FROM?.trim() ||
+    'GHENO B2B <noreply@ghenortrs.com.br>';
+  return { apiKey, toEmail, from };
+}
+
+type EmailShellInput = {
+  title: string;
+  maxWidth?: string;
+  content: string;
+  footer?: string;
+};
+
+function buildEmailShell(input: EmailShellInput): string {
+  const maxWidth = input.maxWidth ?? '600px';
+  const footer = input.footer
+    ? `<p style="color:#888;font-size:12px;margin-top:24px">${input.footer}</p>`
+    : '';
+
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>${escHtml(input.title)}</title></head>
+<body style="font-family:sans-serif;max-width:${maxWidth};margin:0 auto;padding:24px;color:#111">
+  ${input.content}
+  ${footer}
+</body>
+</html>`;
+}
+
+function buildLabelValueTable(
+  rows: Array<{
+    label: string;
+    value: string;
+    labelStyle?: string;
+    valueStyle?: string;
+  }>,
+): string {
+  const trs = rows
+    .map(
+      (row) =>
+        `<tr><td style="padding:8px 12px;background:#f5f5f5;font-weight:bold;width:160px;${row.labelStyle ?? ''}">${escHtml(row.label)}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;${row.valueStyle ?? ''}">${row.value}</td></tr>`,
+    )
+    .join('');
+
+  return `<table style="width:100%;border-collapse:collapse;margin-top:16px">${trs}</table>`;
+}
+
+function buildPrimaryButton(href: string, label: string): string {
+  return `<p style="margin-top:20px"><a href="${escHtml(href)}" style="background:#E81414;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px;font-weight:bold">${escHtml(label)}</a></p>`;
+}
+
 export async function sendResendEmail(
   input: SendEmailInput,
 ): Promise<{ ok: true } | { ok: false; reason: string }> {
-  const env = getServerEnv();
-  if (!env.resendApiKey) {
+  const mail = getResendMailConfig();
+  if (!mail.apiKey) {
     return { ok: false, reason: 'RESEND_API_KEY not configured' };
   }
 
@@ -20,11 +79,11 @@ export async function sendResendEmail(
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${env.resendApiKey}`,
+      Authorization: `Bearer ${mail.apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.resendFrom,
+      from: mail.from,
       to,
       reply_to: input.replyTo,
       subject: input.subject,
@@ -49,45 +108,48 @@ export function buildSellerRegistrationHtml(input: {
   approveUrl?: string;
 }): string {
   const approveBlock = input.approveUrl
-    ? `<p style="margin-top:20px"><a href="${escHtml(input.approveUrl)}" style="background:#E81414;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px;font-weight:bold">Aprovar cadastro</a></p>`
+    ? buildPrimaryButton(input.approveUrl, 'Aprovar cadastro')
     : '';
 
-  return `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Cadastro B2B GHENO</title></head>
-<body style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#111">
+  const content = `
   <h2 style="color:#E81414;margin-bottom:4px">Novo cadastro B2B</h2>
   <p style="color:#666;margin-top:0">Aguardando aprovação manual.</p>
-  <table style="width:100%;border-collapse:collapse;margin-top:16px">
-    <tr><td style="padding:8px 12px;background:#f5f5f5;font-weight:bold;width:160px">Empresa</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(input.companyName)}</td></tr>
-    <tr><td style="padding:8px 12px;background:#f5f5f5;font-weight:bold">CNPJ</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(input.cnpj)}</td></tr>
-    <tr><td style="padding:8px 12px;background:#f5f5f5;font-weight:bold">Telefone / WhatsApp</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(input.phone)}</td></tr>
-    <tr><td style="padding:8px 12px;background:#f5f5f5;font-weight:bold">E-mail</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(input.email)}</td></tr>
-    <tr><td style="padding:8px 12px;background:#f5f5f5;font-weight:bold;vertical-align:top">Necessidades</td><td style="padding:8px 12px;white-space:pre-wrap">${escHtml(input.message)}</td></tr>
-  </table>
-  ${approveBlock}
-  <p style="color:#888;font-size:12px;margin-top:24px">Submetido via /b2b em ghenortrs.com.br</p>
-</body>
-</html>`;
+  ${buildLabelValueTable([
+    { label: 'Empresa', value: escHtml(input.companyName) },
+    { label: 'CNPJ', value: escHtml(input.cnpj) },
+    { label: 'Telefone / WhatsApp', value: escHtml(input.phone) },
+    { label: 'E-mail', value: escHtml(input.email) },
+    {
+      label: 'Necessidades',
+      value: escHtml(input.message),
+      labelStyle: 'vertical-align:top',
+      valueStyle: 'white-space:pre-wrap',
+    },
+  ])}
+  ${approveBlock}`;
+
+  return buildEmailShell({
+    title: 'Cadastro B2B GHENO',
+    content,
+    footer: 'Submetido via /b2b em ghenortrs.com.br',
+  });
 }
 
 export function buildSellerApprovedHtml(input: {
   companyName: string;
   loginUrl: string;
 }): string {
-  return `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Acesso B2B liberado</title></head>
-<body style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#111">
+  const content = `
   <h2 style="color:#E81414">Acesso B2B liberado</h2>
   <p>Olá, ${escHtml(input.companyName)}.</p>
   <p>Seu cadastro comercial GHENO foi aprovado. Use o mesmo e-mail para entrar no catálogo B2B:</p>
   <p><a href="${escHtml(input.loginUrl)}" style="background:#E81414;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px;font-weight:bold">Acessar catálogo B2B</a></p>
-  <p style="color:#666;font-size:14px">Não há checkout online. Após selecionar os itens, envie a solicitação de orçamento pela área B2B.</p>
-</body>
-</html>`;
+  <p style="color:#666;font-size:14px">Não há checkout online. Após selecionar os itens, envie a solicitação de orçamento pela área B2B.</p>`;
+
+  return buildEmailShell({
+    title: 'Acesso B2B liberado',
+    content,
+  });
 }
 
 export function buildQuoteRequestHtml(input: {
@@ -114,11 +176,7 @@ export function buildQuoteRequestHtml(input: {
     )
     .join('');
 
-  return `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Solicitação B2B</title></head>
-<body style="font-family:sans-serif;max-width:720px;margin:0 auto;padding:24px;color:#111">
+  const content = `
   <h2 style="color:#E81414">Solicitação de orçamento B2B</h2>
   <p><strong>${escHtml(input.companyName)}</strong> · ${escHtml(input.email)} · ${escHtml(input.phone)}</p>
   <table style="width:100%;border-collapse:collapse;margin-top:16px">
@@ -132,7 +190,11 @@ export function buildQuoteRequestHtml(input: {
     </thead>
     <tbody>${rows}</tbody>
   </table>
-  <p style="margin-top:16px;white-space:pre-wrap">${escHtml(input.notes || 'Sem observações.')}</p>
-</body>
-</html>`;
+  <p style="margin-top:16px;white-space:pre-wrap">${escHtml(input.notes || 'Sem observações.')}</p>`;
+
+  return buildEmailShell({
+    title: 'Solicitação B2B',
+    maxWidth: '720px',
+    content,
+  });
 }

@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { fetchB2BSession } from '@/b2b/api';
 import { isB2BAuthConfigured } from '@/b2b/config';
+import { b2bKeys, useB2BSessionQuery } from '@/b2b/queries';
 import {
   getSupabaseBrowserClient,
   signOutBrowser,
@@ -16,79 +17,48 @@ const emptySession: B2BSessionResponse = {
 
 export function useB2BSession() {
   const configured = isB2BAuthConfigured();
-  const [session, setSession] = useState<B2BSessionResponse>(emptySession);
-  const [gate, setGate] = useState<SellerGate>(
-    configured ? 'loading' : 'unconfigured',
-  );
-  const [error, setError] = useState<string | null>(null);
-
-  const applySession = useCallback((next: B2BSessionResponse) => {
-    setSession(next);
-    setGate(next.gate);
-    setError(null);
-  }, []);
-
-  const refresh = useCallback(async () => {
-    if (!configured) {
-      setGate('unconfigured');
-      setSession(emptySession);
-      return;
-    }
-    try {
-      const next = await fetchB2BSession();
-      applySession(next);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'session_failed');
-      setGate('anonymous');
-      setSession(emptySession);
-    }
-  }, [applySession, configured]);
+  const queryClient = useQueryClient();
+  const { data, isPending, isError, error, refetch } = useB2BSessionQuery();
 
   useEffect(() => {
     if (!configured) return;
-
-    let cancelled = false;
     const supabase = getSupabaseBrowserClient();
-
-    const load = () => {
-      void fetchB2BSession()
-        .then((next) => {
-          if (cancelled) return;
-          applySession(next);
-        })
-        .catch((err: unknown) => {
-          if (cancelled) return;
-          setError(err instanceof Error ? err.message : 'session_failed');
-          setGate('anonymous');
-          setSession(emptySession);
-        });
-    };
-
-    // Defer so the effect body does not set state synchronously.
-    const timer = window.setTimeout(load, 0);
-
     const subscription = supabase?.auth.onAuthStateChange(() => {
-      window.setTimeout(load, 0);
+      void queryClient.invalidateQueries({ queryKey: b2bKeys.session });
     }).data.subscription;
 
     return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
       subscription?.unsubscribe();
     };
-  }, [applySession, configured]);
+  }, [configured, queryClient]);
+
+  const refresh = useCallback(async () => {
+    if (!configured) return;
+    await refetch();
+  }, [configured, refetch]);
 
   const signOut = useCallback(async () => {
     await signOutBrowser();
-    setSession(emptySession);
-    setGate(configured ? 'anonymous' : 'unconfigured');
-  }, [configured]);
+    queryClient.setQueryData(b2bKeys.session, emptySession);
+    void queryClient.invalidateQueries({ queryKey: b2bKeys.session });
+  }, [queryClient]);
+
+  const session = isError ? emptySession : data ?? emptySession;
+  const gate: SellerGate = !configured
+    ? 'unconfigured'
+    : isPending
+      ? 'loading'
+      : session.gate;
 
   return {
     configured,
     session,
     gate,
-    error,
+    error: isError
+      ? error instanceof Error
+        ? error.message
+        : 'session_failed'
+      : null,
     refresh,
     signOut,
   };

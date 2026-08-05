@@ -117,13 +117,7 @@ export function MobileMenuActions({ onClose }: { onClose: () => void }) {
       {QUICK_ACTIONS.map((action) => {
         const content = (
           <>
-            <div
-              className={
-                action.title === 'Falar com a GHENO rotors'
-                  ? 'flex h-10 w-10 shrink-0 items-center justify-center text-[#67d82f] min-[420px]:h-12 min-[420px]:w-12'
-                  : 'flex h-10 w-10 shrink-0 items-center justify-center text-primary min-[420px]:h-12 min-[420px]:w-12'
-              }
-            >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center text-primary min-[420px]:h-12 min-[420px]:w-12">
               {action.icon}
             </div>
             <div className="min-w-0 flex-1">

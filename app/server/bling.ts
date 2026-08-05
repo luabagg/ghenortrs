@@ -1,17 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import type { Database, Json, Tables } from './database.types';
 import { getServerEnv } from './env';
 
-export type BlingTokenRow = {
-  id: number;
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-  expires_at: string;
-  scope: string | null;
-  raw: unknown;
-  updated_at: string;
-};
+export type BlingTokenRow = Tables<'bling_oauth_tokens'>;
 
 export type BlingProduct = {
   id: number;
@@ -107,7 +99,7 @@ export async function refreshAccessToken(
 }
 
 export async function saveBlingTokens(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
   tokens: TokenResponse,
 ): Promise<void> {
   const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
@@ -128,7 +120,7 @@ export async function saveBlingTokens(
 }
 
 async function readStoredTokens(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
 ): Promise<BlingTokenRow | null> {
   const { data, error } = await service
     .from('bling_oauth_tokens')
@@ -136,11 +128,11 @@ async function readStoredTokens(
     .eq('id', 1)
     .maybeSingle();
   if (error) throw error;
-  return (data as BlingTokenRow | null) ?? null;
+  return data;
 }
 
 export async function getValidAccessToken(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
 ): Promise<string> {
   const stored = await readStoredTokens(service);
   if (!stored) {
@@ -161,7 +153,7 @@ export async function getValidAccessToken(
 }
 
 export async function blingFetch<T>(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
   path: string,
   init?: RequestInit,
 ): Promise<T> {
@@ -200,7 +192,7 @@ export type NormalizedBlingProduct = {
   active: boolean;
   category: string | null;
   search_terms: string;
-  raw: unknown;
+  raw: Json;
 };
 
 export function normalizeBlingProduct(
@@ -247,7 +239,7 @@ export function normalizeBlingProduct(
 }
 
 export async function listAllBlingProducts(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
 ): Promise<BlingProduct[]> {
   const products: BlingProduct[] = [];
   let page = 1;
@@ -268,7 +260,7 @@ export async function listAllBlingProducts(
 }
 
 export async function syncBlingProductsToCache(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
   defaultMinQuantity: number,
 ): Promise<{ upserted: number }> {
   const products = await listAllBlingProducts(service);

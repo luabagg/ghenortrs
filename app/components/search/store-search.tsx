@@ -10,11 +10,17 @@ import {
 
 import { Link } from '@remix-run/react';
 
-import { STORE_SEARCH_URL } from '@/catalog/commerce';
+import { STORE_SEARCH_URL, type CommerceFamilyId } from '@/catalog/commerce';
+import { PRODUCT_FAMILIES } from '@/components/pages/components-page-data';
 import { cn } from '@/lib/utils';
 import { SEARCH_ENTRIES } from '@/search/search-data';
 import { searchCatalog } from '@/search/search-engine';
 import type { SearchResult } from '@/search/search-types';
+
+const FAMILY_THUMBNAILS: Partial<Record<CommerceFamilyId, string>> =
+  Object.fromEntries(
+    PRODUCT_FAMILIES.map((family) => [family.id, family.imageSrc]),
+  );
 
 type StoreSearchProps = {
   autoFocus?: boolean;
@@ -194,14 +200,17 @@ function SearchResultContent({ result }: { result: SearchResult }): ReactNode {
         ? 'Falar com a equipe'
         : 'Neste site';
 
+  const thumbnailSrc =
+    result.image ?? (result.family ? FAMILY_THUMBNAILS[result.family] : undefined);
+
   return (
     <>
-      {result.image ? (
+      {thumbnailSrc ? (
         <img
           alt=""
           className="h-11 w-11 shrink-0 rounded-md border border-border object-cover"
           loading="lazy"
-          src={result.image}
+          src={thumbnailSrc}
         />
       ) : (
         <span
@@ -216,12 +225,6 @@ function SearchResultContent({ result }: { result: SearchResult }): ReactNode {
           {result.title}
         </span>
         <span className="mt-1 block text-xs text-secondary">{destination}</span>
-      </span>
-      <span
-        aria-hidden="true"
-        className="text-base text-secondary transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
-      >
-        {result.commerce === 'store' ? '↗' : '→'}
       </span>
     </>
   );

@@ -2,10 +2,12 @@ import {
   type ChangeEvent,
   type FormEvent,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { useSubmit } from '@remix-run/react';
 
+import { validateB2BFields } from '~/b2b/schemas';
 import {
   type B2BActionData,
   type B2BFieldChangeHandler,
@@ -22,22 +24,6 @@ const emptyFields: B2BFields = {
   mensagem: '',
 };
 
-export function validateB2BFields(f: B2BFields): Partial<B2BFields> {
-  const e: Partial<B2BFields> = {};
-  if (!f.empresa.trim()) e.empresa = 'Nome da empresa é obrigatório.';
-  const cnpjDig = f.cnpj.replace(/\D/g, '');
-  if (!cnpjDig) e.cnpj = 'CNPJ é obrigatório.';
-  else if (cnpjDig.length !== 14) e.cnpj = 'CNPJ deve ter 14 dígitos.';
-  const telDig = f.telefone.replace(/\D/g, '');
-  if (!telDig) e.telefone = 'Telefone/WhatsApp é obrigatório.';
-  else if (telDig.length < 10 || telDig.length > 11)
-    e.telefone = 'Informe um número com DDD (10 ou 11 dígitos).';
-  if (!f.email.trim()) e.email = 'E-mail é obrigatório.';
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))
-    e.email = 'Informe um e-mail válido.';
-  return e;
-}
-
 /**
  * Client state for the B2B lead form.
  * Client validates first; Remix route action handles server submit.
@@ -49,62 +35,66 @@ export function useB2BLeadForm(options?: {
 }) {
   const submit = useSubmit();
   const [fields, setFields] = useState<B2BFields>(emptyFields);
-  const [errors, setErrors] = useState<Partial<B2BFields>>({});
-  const [status, setStatus] = useState<SubmitStatus>('idle');
+  const [clientErrors, setClientErrors] = useState<Partial<B2BFields>>({});
+  const [clientStatus, setClientStatus] = useState<SubmitStatus>('idle');
   const [honeypot, setHoneypot] = useState('');
+  const trackedActionRef = useRef<B2BActionData | undefined>(undefined);
+
+  const actionData = options?.actionData;
+  const isSubmitting = options?.isSubmitting ?? false;
+  const onRegistered = options?.onRegistered;
+
+  const errors = actionData?.errors ?? clientErrors;
+  const status: SubmitStatus = isSubmitting
+    ? 'loading'
+    : actionData?.errors
+      ? 'idle'
+      : (actionData?.status ?? clientStatus);
 
   useEffect(() => {
-    if (options?.isSubmitting) {
-      setStatus('loading');
-      return;
-    }
+    if (!actionData || isSubmitting) return;
+    if (trackedActionRef.current === actionData) return;
+    trackedActionRef.current = actionData;
 
-    if (!options?.actionData) return;
-
-    if (options.actionData.errors) {
-      setErrors(options.actionData.errors);
-      setStatus('idle');
+    if (actionData.errors) {
       trackFormEvent('b2b_form_validation_error', {
         form: 'b2b_lead',
-        error_count: Object.keys(options.actionData.errors).length,
+        error_count: Object.keys(actionData.errors).length,
       });
       return;
     }
 
-    setErrors({});
-    setStatus(options.actionData.status);
-
-    if (options.actionData.status === 'success') {
+    if (actionData.status === 'success') {
       trackFormEvent('b2b_form_submit_success', {
         form: 'b2b_seller_register',
       });
-      options.onRegistered?.();
-    } else if (options.actionData.status === 'error') {
+      onRegistered?.();
+    } else if (actionData.status === 'error') {
       trackFormEvent('b2b_form_submit_error', { form: 'b2b_seller_register' });
-    } else if (options.actionData.status === 'no-config') {
-      setStatus('no-config');
     }
-  }, [options?.actionData, options?.isSubmitting, options?.onRegistered]);
+  }, [actionData, isSubmitting, onRegistered]);
 
   const handleFieldChange: B2BFieldChangeHandler =
     (key: keyof B2BFields) =>
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setFields((prev) => ({ ...prev, [key]: e.target.value }));
-      if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
+      if (clientErrors[key]) {
+        setClientErrors((prev) => ({ ...prev, [key]: undefined }));
+      }
     };
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (honeypot.trim()) {
-      setStatus('success');
+      setClientStatus('success');
       return;
     }
 
     trackFormEvent('b2b_form_submit_attempt', { form: 'b2b_lead' });
     const nextErrors = validateB2BFields(fields);
     if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
+      setClientErrors(nextErrors);
       trackFormEvent('b2b_form_validation_error', {
         form: 'b2b_lead',
         error_count: Object.keys(nextErrors).length,
@@ -112,7 +102,7 @@ export function useB2BLeadForm(options?: {
       return;
     }
 
-    setErrors({});
+    setClientErrors({});
     const formData = new FormData(event.currentTarget);
     formData.set('intent', 'register');
     submit(formData, { method: 'post' });

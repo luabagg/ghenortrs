@@ -110,6 +110,8 @@ if (!Array.isArray(storeIndexJson.entries)) {
 }
 
 export const SEARCH_ENTRIES: readonly SearchEntry[] = [
-  ...storeIndexJson.entries.map(parseStoreEntry),
+  ...storeIndexJson.entries
+    .map(parseStoreEntry)
+    .filter((entry) => entry.family !== 'mass-dampers'),
   ...LOCAL_ENTRIES,
 ];

@@ -1,44 +1,16 @@
 import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js';
 
+import type { Database, Enums, Tables } from './database.types';
 import { getServerEnv } from './env';
 import { getBearerToken, json } from './http';
 
-export type SellerStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
+export type SellerStatus = Enums<'seller_status'>;
+export type SellerRow = Tables<'sellers'>;
+export type BlingProductRow = Tables<'bling_products'>;
 
-export type SellerRow = {
-  id: string;
-  email: string;
-  company_name: string;
-  cnpj: string;
-  phone: string;
-  message: string;
-  status: SellerStatus;
-  approved_at: string | null;
-  approved_by: string | null;
-  rejected_reason: string | null;
-  created_at: string;
-  updated_at: string;
-};
-
-export type BlingProductRow = {
-  id: number;
-  sku: string | null;
-  name: string;
-  description: string;
-  image_url: string | null;
-  price_cents: number | null;
-  stock: number | null;
-  unit: string | null;
-  min_quantity: number;
-  active: boolean;
-  category: string | null;
-  search_terms: string;
-  synced_at: string;
-};
-
-export function createServiceClient(): SupabaseClient {
+export function createServiceClient(): SupabaseClient<Database> {
   const env = getServerEnv();
-  return createClient(env.supabaseUrl, env.supabaseServiceRoleKey, {
+  return createClient<Database>(env.supabaseUrl, env.supabaseServiceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -46,9 +18,9 @@ export function createServiceClient(): SupabaseClient {
   });
 }
 
-export function createUserClient(accessToken: string): SupabaseClient {
+export function createUserClient(accessToken: string): SupabaseClient<Database> {
   const env = getServerEnv();
-  return createClient(env.supabaseUrl, env.supabaseAnonKey, {
+  return createClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
     global: {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -74,7 +46,7 @@ export async function requireUser(
 }
 
 export async function getSellerById(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
   id: string,
 ): Promise<SellerRow | null> {
   const { data, error } = await service
@@ -83,11 +55,11 @@ export async function getSellerById(
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
-  return (data as SellerRow | null) ?? null;
+  return data;
 }
 
 export async function getSellerByEmail(
-  service: SupabaseClient,
+  service: SupabaseClient<Database>,
   email: string,
 ): Promise<SellerRow | null> {
   const { data, error } = await service
@@ -96,7 +68,7 @@ export async function getSellerByEmail(
     .eq('email', email.toLowerCase())
     .maybeSingle();
   if (error) throw error;
-  return (data as SellerRow | null) ?? null;
+  return data;
 }
 
 export async function requireApprovedSeller(

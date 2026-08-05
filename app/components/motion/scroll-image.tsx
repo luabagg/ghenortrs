@@ -21,7 +21,7 @@ export function ScrollImage({ effect, ...imageProps }: ScrollImageProps) {
     target,
     offset: ['start end', 'end start'],
   });
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.08, 1, 1.04]);
+  const scale = useTransform(scrollYProgress, [0, 0.45, 1], [1.14, 1, 1.06]);
   const y = useTransform(scrollYProgress, [0, 1], ['-3%', '3%']);
   const style = reduceMotion
     ? undefined

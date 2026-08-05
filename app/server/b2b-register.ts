@@ -2,6 +2,7 @@
 // Creates/links a seller profile as pending and notifies GHENO via Resend.
 // Auth optional: if Bearer present, binds to that user; otherwise creates auth user.
 
+import { parseB2BRegistration } from '../b2b/schemas';
 import { getServerEnv } from './env';
 import {
   handleOptions,
@@ -13,13 +14,7 @@ import {
   buildSellerRegistrationHtml,
   sendResendEmail,
 } from './resend';
-import {
-  createServiceClient,
-  getSellerByEmail,
-  requireUser,
-  type SellerRow,
-} from './supabase';
-
+import { createServiceClient, getSellerByEmail, requireUser } from './supabase';
 
 type RegisterBody = {
   empresa?: string;
@@ -30,34 +25,6 @@ type RegisterBody = {
   website?: string; // honeypot
 };
 
-function digitsOnly(value: string): string {
-  return value.replace(/\D/g, '');
-}
-
-function validate(body: RegisterBody):
-  | { ok: true; data: Required<Omit<RegisterBody, 'website'>> }
-  | { ok: false; error: string } {
-  const empresa = (body.empresa ?? '').trim();
-  const email = (body.email ?? '').trim().toLowerCase();
-  const cnpj = digitsOnly(body.cnpj ?? '');
-  const telefone = digitsOnly(body.telefone ?? '');
-  const mensagem = (body.mensagem ?? '').trim();
-
-  if (!empresa) return { ok: false, error: 'empresa_required' };
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { ok: false, error: 'email_invalid' };
-  }
-  if (cnpj.length !== 14) return { ok: false, error: 'cnpj_invalid' };
-  if (telefone.length < 10 || telefone.length > 11) {
-    return { ok: false, error: 'telefone_invalid' };
-  }
-
-  return {
-    ok: true,
-    data: { empresa, email, cnpj, telefone, mensagem },
-  };
-}
-
 export default async function handler(req: Request): Promise<Response> {
   const opt = handleOptions(req);
   if (opt) return opt;
@@ -66,13 +33,14 @@ export default async function handler(req: Request): Promise<Response> {
   const raw = await readJson<RegisterBody>(req);
   if (!raw) return json({ error: 'invalid_body' }, 400);
 
-  // Honeypot
+  // Honeypot: bypass validation entirely and pretend success.
   if ((raw.website ?? '').trim()) {
     return json({ success: true, status: 'pending' });
   }
 
-  const parsed = validate(raw);
+  const parsed = parseB2BRegistration(raw);
   if (!parsed.ok) return json({ error: parsed.error }, 400);
+  const data = parsed.data;
 
   let env;
   try {
@@ -82,7 +50,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const service = createServiceClient();
-  const existing = await getSellerByEmail(service, parsed.data.email);
+  const existing = await getSellerByEmail(service, data.email);
 
   if (existing?.status === 'approved') {
     return json(
@@ -105,12 +73,12 @@ export default async function handler(req: Request): Promise<Response> {
   const maybeAuth = await requireUser(req);
   let userId: string | null =
     maybeAuth instanceof Response ? null : maybeAuth.user.id;
-  let userEmail: string | null =
+  const userEmail: string | null =
     maybeAuth instanceof Response
       ? null
       : (maybeAuth.user.email?.toLowerCase() ?? null);
 
-  if (userEmail && userEmail !== parsed.data.email) {
+  if (userEmail && userEmail !== data.email) {
     return json(
       {
         error: 'email_mismatch',
@@ -123,10 +91,10 @@ export default async function handler(req: Request): Promise<Response> {
   if (!userId) {
     // Create auth user without password (magic-link only).
     const created = await service.auth.admin.createUser({
-      email: parsed.data.email,
+      email: data.email,
       email_confirm: true,
       user_metadata: {
-        company_name: parsed.data.empresa,
+        company_name: data.empresa,
         source: 'b2b_register',
       },
     });
@@ -135,7 +103,7 @@ export default async function handler(req: Request): Promise<Response> {
       // User may already exist in auth without seller row.
       const listed = await service.auth.admin.listUsers({ page: 1, perPage: 200 });
       const found = listed.data.users.find(
-        (user) => user.email?.toLowerCase() === parsed.data.email,
+        (user) => user.email?.toLowerCase() === data.email,
       );
       if (!found) {
         console.error('createUser failed', created.error);
@@ -149,11 +117,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   const sellerPayload = {
     id: userId,
-    email: parsed.data.email,
-    company_name: parsed.data.empresa,
-    cnpj: parsed.data.cnpj,
-    phone: parsed.data.telefone,
-    message: parsed.data.mensagem,
+    email: data.email,
+    company_name: data.empresa,
+    cnpj: data.cnpj,
+    phone: data.telefone,
+    message: data.mensagem,
     status: 'pending' as const,
     approved_at: null,
     approved_by: null,
@@ -173,20 +141,20 @@ export default async function handler(req: Request): Promise<Response> {
 
   const approveUrl =
     env.adminApproveSecret && env.siteUrl
-      ? `${env.siteUrl.replace(/\/$/, '')}/api/admin-approve-seller?email=${encodeURIComponent(parsed.data.email)}&secret=${encodeURIComponent(env.adminApproveSecret)}`
+      ? `${env.siteUrl.replace(/\/$/, '')}/api/admin-approve-seller?email=${encodeURIComponent(data.email)}&secret=${encodeURIComponent(env.adminApproveSecret)}`
       : undefined;
 
   if (env.resendApiKey && env.resendToEmail) {
     await sendResendEmail({
       to: env.resendToEmail,
-      subject: `[B2B cadastro] ${parsed.data.empresa}`,
-      replyTo: parsed.data.email,
+      subject: `[B2B cadastro] ${data.empresa}`,
+      replyTo: data.email,
       html: buildSellerRegistrationHtml({
-        companyName: parsed.data.empresa,
-        cnpj: parsed.data.cnpj,
-        phone: parsed.data.telefone,
-        email: parsed.data.email,
-        message: parsed.data.mensagem,
+        companyName: data.empresa,
+        cnpj: data.cnpj,
+        phone: data.telefone,
+        email: data.email,
+        message: data.mensagem,
         approveUrl,
       }),
     });
@@ -194,7 +162,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   return json({
     success: true,
-    status: (seller as SellerRow).status,
+    status: seller.status,
     message:
       'Pré-cadastro recebido. Você poderá entrar com este e-mail após a aprovação.',
   });

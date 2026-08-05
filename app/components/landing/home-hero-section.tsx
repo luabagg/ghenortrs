@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Link } from '@remix-run/react';
 
+import { ScrollImage } from '@/components/motion/scroll-image';
 import { Button } from '@/components/ui/button';
 
 const HERO_IMAGE = {
@@ -71,9 +72,10 @@ export function HomeHeroSection() {
       data-section="hero"
     >
       <div className="relative min-h-[100dvh] overflow-hidden bg-surface">
-        <img
+        <ScrollImage
           alt={HERO_IMAGE.alt}
-          className="absolute inset-0 h-full w-full object-cover object-[58%_center] opacity-80 sm:object-center"
+          className="absolute inset-0 h-full w-full object-cover object-[69%_center] opacity-80 sm:object-center"
+          effect="parallax"
           fetchPriority="high"
           src={HERO_IMAGE.src}
         />

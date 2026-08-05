@@ -87,11 +87,26 @@ curl -X POST "https://ghenortrs.vercel.app/api/admin-approve-seller" \
 
 Statuses: `approved` | `rejected` | `suspended` | `pending`.
 
-## 5. Vercel env checklist
+## 5. Analytics (GTM)
+
+When `VITE_GTM_ID` is set, `app/root.tsx` loads the GTM bootstrap script. B2B and commerce events are emitted client-side via `app/lib/tracking.ts` into `dataLayer` (and `gtag` when present):
+
+| Event | When | Payload |
+|---|---|---|
+| `b2b_form_submit_attempt` | User submits B2B registration | `form`: `b2b_lead` |
+| `b2b_form_validation_error` | Client or server validation fails | `form`: `b2b_lead` or `b2b_seller_register`, `error_count` |
+| `b2b_form_submit_success` | Registration succeeds | `form`: `b2b_seller_register` |
+| `b2b_form_submit_error` | Registration server error | `form`: `b2b_seller_register` |
+| `outbound_commerce_click` | Click on link to `store.ghenortrs.com.br` | `section`, `destination` |
+
+Leave `VITE_GTM_ID` empty locally to skip the script.
+
+## 6. Vercel env checklist
 
 Public:
 
 - `VITE_SITE_URL`
+- `VITE_GTM_ID` (optional; production container ID)
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_B2B_DEFAULT_MIN_QUANTITY` (optional)
@@ -111,13 +126,13 @@ Server:
 - `BLING_CLIENT_SECRET`
 - `BLING_REDIRECT_URI`
 
-## 6. Local dev notes
+## 7. Local dev notes
 
 - Vite does not run `/api/*`. Point `VITE_SITE_URL` at a deployed preview **or** use `vercel dev`.
 - Without Supabase public env, `/b2b` stays registration-only (legacy Resend path).
 - Magic link must redirect back to `/b2b` on the same origin you opened.
 
-## 7. API map
+## 8. API map
 
 | Method | Path | Auth |
 |---|---|---|
@@ -131,7 +146,7 @@ Server:
 | GET/POST | `/api/bling-sync` | admin secret |
 | POST | `/api/b2b-submit` | legacy lead email |
 
-## 8. Security notes
+## 9. Security notes
 
 - Never put `SUPABASE_SERVICE_ROLE_KEY` or Bling secrets in `VITE_*`.
 - Seller rows: users can **select own** only; writes are service-role.

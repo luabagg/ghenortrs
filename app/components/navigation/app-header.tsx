@@ -122,7 +122,7 @@ function MobileMenuButton({
     <button
       aria-label="Abrir menu"
       className={cn(
-        'flex items-center justify-center rounded-lg border border-border-strong bg-surface-elevated text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[height,width] duration-200 sm:hidden',
+        'flex items-center justify-center rounded-sm text-primary transition-[height,width] duration-200 sm:hidden',
         compact ? 'h-12 w-12' : 'h-14 w-14',
       )}
       onClick={onOpenMenu}
@@ -301,7 +301,7 @@ function QuickCommandPanel({
   return (
     <GlassPanel
       aria-label="Busca GHENO rotors"
-      className="!absolute right-0 top-0 z-50 w-[min(32rem,calc(100vw-5rem))] origin-top-right rounded-lg p-4 text-primary motion-safe:animate-[gheno-command-open_220ms_cubic-bezier(0.16,1,0.3,1)]"
+      className="!absolute right-0 top-0 z-50 w-[min(24rem,calc(100vw-5rem))] origin-top-right rounded-lg p-4 text-primary motion-safe:animate-[gheno-command-open_220ms_cubic-bezier(0.16,1,0.3,1)]"
       density="strong"
       role="dialog"
     >
@@ -312,10 +312,7 @@ function QuickCommandPanel({
             Produtos, compatibilidade e páginas
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <kbd className="rounded-md border border-border bg-surface px-2 py-1 font-mono text-xs text-secondary">
-            {shortcutLabel}
-          </kbd>
+        <div className="flex items-center gap-3">
           <button
             aria-label="Fechar busca"
             className={cn(
@@ -340,6 +337,9 @@ function QuickCommandPanel({
               />
             </svg>
           </button>
+          <kbd className="font-mono text-xs text-secondary">
+            {shortcutLabel}
+          </kbd>
         </div>
       </div>
       <StoreSearch autoFocus mode="desktop" onNavigate={onClose} />

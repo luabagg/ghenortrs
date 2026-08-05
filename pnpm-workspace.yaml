@@ -1,4 +1,12 @@
 minimumReleaseAge: 10080
+# Rollup's per-platform optional native binaries (@rollup/rollup-*) are
+# published in lockstep with the `rollup` package itself on every release.
+# pnpm resolves metadata for all of them (even platforms this project never
+# ships/downloads) during dependency resolution, so leaving them under the
+# age gate blocks every `pnpm add`/`pnpm update` the moment rollup cuts a new
+# release. `rollup` itself stays covered by minimumReleaseAge.
+minimumReleaseAgeExclude:
+  - '@rollup/rollup-*'
 resolutionMode: highest
 onlyBuiltDependencies:
   - esbuild

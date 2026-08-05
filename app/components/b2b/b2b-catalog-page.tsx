@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from '@remix-run/react';
 
-import { fetchB2BCatalog, submitB2BQuote } from '@/b2b/api';
 import { B2B_DEFAULT_MIN_QUANTITY } from '@/b2b/config';
-import type { B2BCatalogProduct, QuoteSelectionItem } from '@/b2b/types';
+import { useB2BCatalogQuery, useSubmitB2BQuoteMutation } from '@/b2b/queries';
+import type { QuoteSelectionItem } from '@/b2b/types';
 import { useB2BSession } from '@/b2b/use-b2b-session';
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
@@ -27,41 +27,26 @@ function formatBRL(cents: number | null): string {
 export function B2BCatalogPage() {
   const { gate, session, signOut, configured } = useB2BSession();
   const [query, setQuery] = useState('');
-  const [products, setProducts] = useState<B2BCatalogProduct[]>([]);
-  const [defaultMin, setDefaultMin] = useState(B2B_DEFAULT_MIN_QUANTITY);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [selection, setSelection] = useState<Record<number, number>>({});
   const [notes, setNotes] = useState('');
-  const [submitState, setSubmitState] = useState<
-    'idle' | 'loading' | 'success' | 'error'
-  >('idle');
-  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (gate !== 'approved') return;
-    let cancelled = false;
-    const timer = window.setTimeout(() => {
-      setLoading(true);
-      void fetchB2BCatalog(query)
-        .then((result) => {
-          if (cancelled) return;
-          setProducts(result.products);
-          setDefaultMin(result.defaultMinQuantity);
-          setError(null);
-          setLoading(false);
-        })
-        .catch((err: unknown) => {
-          if (cancelled) return;
-          setError(err instanceof Error ? err.message : 'catalog_failed');
-          setLoading(false);
-        });
-    }, 0);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [gate, query]);
+  const {
+    data: catalog,
+    isLoading: loading,
+    error: catalogError,
+  } = useB2BCatalogQuery(query, gate === 'approved');
+  const products = useMemo(
+    () => catalog?.products ?? [],
+    [catalog?.products],
+  );
+  const defaultMin = catalog?.defaultMinQuantity ?? B2B_DEFAULT_MIN_QUANTITY;
+  const error = catalogError
+    ? catalogError instanceof Error
+      ? catalogError.message
+      : 'catalog_failed'
+    : null;
+
+  const submitQuote = useSubmitB2BQuoteMutation();
 
   const selectedItems: QuoteSelectionItem[] = useMemo(() => {
     return products
@@ -73,24 +58,29 @@ export function B2BCatalogPage() {
   }, [products, selection]);
 
   async function onSubmitQuote() {
-    setSubmitState('loading');
-    setSubmitMessage(null);
-    const result = await submitB2BQuote({ items: selectedItems, notes });
-    if (!result.success) {
-      setSubmitState('error');
-      setSubmitMessage(
-        result.message ??
-          (result.error === 'min_quantity_not_met'
-            ? 'Ajuste as quantidades mínimas antes de enviar.'
-            : 'Não foi possível enviar a solicitação.'),
-      );
-      return;
+    try {
+      const result = await submitQuote.mutateAsync({
+        items: selectedItems,
+        notes,
+      });
+      if (!result.success) return;
+      setSelection({});
+      setNotes('');
+    } catch {
+      // Surfaced via submitQuote.status below.
     }
-    setSubmitState('success');
-    setSubmitMessage(result.message ?? 'Solicitação enviada.');
-    setSelection({});
-    setNotes('');
   }
+
+  const submitFailed =
+    submitQuote.status === 'error' || submitQuote.data?.success === false;
+  const submitMessage = submitFailed
+    ? (submitQuote.data?.message ??
+      (submitQuote.data?.error === 'min_quantity_not_met'
+        ? 'Ajuste as quantidades mínimas antes de enviar.'
+        : 'Não foi possível enviar a solicitação.'))
+    : submitQuote.data?.success
+      ? submitQuote.data.message ?? 'Solicitação enviada.'
+      : null;
 
   if (!configured) {
     return (
@@ -234,7 +224,7 @@ export function B2BCatalogPage() {
           {submitMessage ? (
             <p
               className={
-                submitState === 'error' ? 'text-sm text-accent' : 'text-sm text-secondary'
+                submitFailed ? 'text-sm text-accent' : 'text-sm text-secondary'
               }
               role="status"
             >
@@ -242,11 +232,11 @@ export function B2BCatalogPage() {
             </p>
           ) : null}
           <Button
-            disabled={selectedItems.length === 0 || submitState === 'loading'}
+            disabled={selectedItems.length === 0 || submitQuote.isPending}
             type="button"
             onClick={() => void onSubmitQuote()}
           >
-            {submitState === 'loading'
+            {submitQuote.isPending
               ? 'Enviando…'
               : 'Enviar solicitação à GHENO rotors'}
           </Button>

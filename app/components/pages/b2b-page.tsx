@@ -1,6 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Link } from '@remix-run/react';
 
+import {
+  clearAuthRedirectError,
+  describeAuthRedirectError,
+  getAuthRedirectErrorServerSnapshot,
+  getAuthRedirectErrorSnapshot,
+  subscribeAuthRedirectError,
+} from '~/b2b/auth-redirect-error';
 import { useB2BSession } from '~/b2b/use-b2b-session';
 import { B2BLoginCard } from '~/components/b2b/b2b-login-card';
 import {
@@ -29,6 +36,19 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
   const [mode, setMode] = useState<GateMode>(
     actionData?.gateHint === 'login' ? 'login' : 'register',
   );
+  // SSR always sees `null` (see auth-redirect-error.ts); React reconciles
+  // to the real client value right after hydration, no manual effect needed.
+  const capturedLinkError = useSyncExternalStore(
+    subscribeAuthRedirectError,
+    getAuthRedirectErrorSnapshot,
+    getAuthRedirectErrorServerSnapshot,
+  );
+  useEffect(() => {
+    if (capturedLinkError) clearAuthRedirectError();
+  }, [capturedLinkError]);
+  const linkError = capturedLinkError
+    ? describeAuthRedirectError(capturedLinkError)
+    : null;
   const {
     errors,
     fields,
@@ -110,6 +130,24 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
   return (
     <div className="grid gap-10 sm:gap-12">
       <B2BAccessHeroSection />
+
+      {linkError ? (
+        <div
+          className="rounded-panel border border-border bg-surface-elevated px-4 py-3"
+          role="alert"
+        >
+          <p className="text-sm text-accent">{linkError}</p>
+          {mode !== 'login' && configured ? (
+            <button
+              className="mt-2 text-sm font-semibold text-primary underline"
+              type="button"
+              onClick={() => setMode('login')}
+            >
+              Solicitar novo link de acesso
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       <section
         className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-14"

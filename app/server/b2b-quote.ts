@@ -1,6 +1,7 @@
 // POST /api/b2b-quote
 // Approved sellers submit a quote request (no checkout). Enforces min quantities.
 
+import { parseB2BQuoteRequest } from '../b2b/schemas';
 import { getServerEnv } from './env';
 import {
   handleOptions,
@@ -9,22 +10,7 @@ import {
   readJson,
 } from './http';
 import { buildQuoteRequestHtml, sendResendEmail } from './resend';
-import {
-  createServiceClient,
-  requireApprovedSeller,
-  type BlingProductRow,
-} from './supabase';
-
-
-type QuoteItemInput = {
-  productId?: number;
-  quantity?: number;
-};
-
-type QuoteBody = {
-  items?: QuoteItemInput[];
-  notes?: string;
-};
+import { createServiceClient, requireApprovedSeller } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
   const opt = handleOptions(req);
@@ -34,28 +20,11 @@ export default async function handler(req: Request): Promise<Response> {
   const auth = await requireApprovedSeller(req);
   if (auth instanceof Response) return auth;
 
-  const body = await readJson<QuoteBody>(req);
-  if (!body || !Array.isArray(body.items) || body.items.length === 0) {
-    return json({ error: 'items_required' }, 400);
-  }
+  const body = await readJson<unknown>(req);
+  const parsed = parseB2BQuoteRequest(body);
+  if (!parsed.ok) return json({ error: parsed.error }, 400);
 
-  const notes = (body.notes ?? '').trim();
-  const requested = body.items
-    .map((item) => ({
-      productId: Number(item.productId),
-      quantity: Number(item.quantity),
-    }))
-    .filter(
-      (item) =>
-        Number.isFinite(item.productId) &&
-        item.productId > 0 &&
-        Number.isFinite(item.quantity) &&
-        item.quantity > 0,
-    );
-
-  if (requested.length === 0) {
-    return json({ error: 'items_invalid' }, 400);
-  }
+  const { items: requested, notes } = parsed;
 
   try {
     const env = getServerEnv();
@@ -71,7 +40,7 @@ export default async function handler(req: Request): Promise<Response> {
       .eq('active', true);
 
     if (error) throw error;
-    const products = (data ?? []) as BlingProductRow[];
+    const products = data ?? [];
     const byId = new Map(products.map((product) => [product.id, product]));
 
     const lineItems: Array<{

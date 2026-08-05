@@ -9,8 +9,24 @@ import {
   type BlingProductRow,
 } from './supabase';
 
+const CATALOG_SELECT =
+  'id, sku, name, description, image_url, price_cents, stock, unit, min_quantity, active, category, search_terms, synced_at' as const;
 
-function toPublicProduct(row: BlingProductRow) {
+type CatalogProductRow = Pick<
+  BlingProductRow,
+  | 'id'
+  | 'sku'
+  | 'name'
+  | 'description'
+  | 'image_url'
+  | 'price_cents'
+  | 'stock'
+  | 'unit'
+  | 'min_quantity'
+  | 'category'
+>;
+
+function toPublicProduct(row: CatalogProductRow) {
   return {
     id: row.id,
     sku: row.sku,
@@ -46,9 +62,7 @@ export default async function handler(req: Request): Promise<Response> {
     const service = createServiceClient();
     let query = service
       .from('bling_products')
-      .select(
-        'id, sku, name, description, image_url, price_cents, stock, unit, min_quantity, active, category, search_terms, synced_at',
-      )
+      .select(CATALOG_SELECT)
       .eq('active', true)
       .order('name', { ascending: true })
       .limit(limit);
@@ -65,7 +79,7 @@ export default async function handler(req: Request): Promise<Response> {
     const { data, error } = await query;
     if (error) throw error;
 
-    const products = ((data ?? []) as BlingProductRow[]).map(toPublicProduct);
+    const products = (data ?? []).map(toPublicProduct);
 
     return json({
       source: 'bling_cache',

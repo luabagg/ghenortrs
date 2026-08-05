@@ -2,6 +2,7 @@ import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useActionData, useNavigation } from '@remix-run/react';
 
+import { validateB2BFields } from '~/b2b/schemas';
 import { B2BPage } from '~/components/pages/b2b-page';
 import type {
   B2BActionData,
@@ -14,22 +15,6 @@ import submitHandler from '~/server/b2b-submit';
 export const meta: MetaFunction = () => buildSeoMetaForPath('/b2b');
 
 export type { B2BActionData };
-
-function validateB2BFields(f: B2BFields): Partial<B2BFields> {
-  const e: Partial<B2BFields> = {};
-  if (!f.empresa.trim()) e.empresa = 'Nome da empresa é obrigatório.';
-  const cnpjDig = f.cnpj.replace(/\D/g, '');
-  if (!cnpjDig) e.cnpj = 'CNPJ é obrigatório.';
-  else if (cnpjDig.length !== 14) e.cnpj = 'CNPJ deve ter 14 dígitos.';
-  const telDig = f.telefone.replace(/\D/g, '');
-  if (!telDig) e.telefone = 'Telefone/WhatsApp é obrigatório.';
-  else if (telDig.length < 10 || telDig.length > 11)
-    e.telefone = 'Informe um número com DDD (10 ou 11 dígitos).';
-  if (!f.email.trim()) e.email = 'E-mail é obrigatório.';
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))
-    e.email = 'Informe um e-mail válido.';
-  return e;
-}
 
 function fieldsFromFormData(formData: FormData): B2BFields {
   return {

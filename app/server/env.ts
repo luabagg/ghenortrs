@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type ServerEnv = {
   siteUrl: string;
   supabaseUrl: string;
@@ -15,71 +17,63 @@ export type ServerEnv = {
   defaultMinQuantity: number;
 };
 
-function read(name: string): string | null {
-  const value = process.env[name];
-  if (!value || !value.trim()) return null;
-  return value.trim();
+function normalizeEnvValue(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed === '' ? undefined : trimmed;
 }
 
-function requireEnv(name: string): string {
-  const value = read(name);
-  if (!value) {
-    throw new Error(`Missing required env: ${name}`);
-  }
-  return value;
+function optionalEnv() {
+  return z.preprocess(normalizeEnvValue, z.string().optional());
 }
 
-export function getServerEnv(): ServerEnv {
-  const defaultMin = Number(process.env.B2B_DEFAULT_MIN_QUANTITY ?? '6');
-  return {
-    siteUrl: read('SITE_URL') ?? read('VITE_SITE_URL') ?? 'http://localhost:5173',
-    supabaseUrl: requireEnv('SUPABASE_URL'),
-    supabaseAnonKey: requireEnv('SUPABASE_ANON_KEY'),
-    supabaseServiceRoleKey: requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
-    resendApiKey: read('RESEND_API_KEY'),
-    resendToEmail: read('RESEND_TO_EMAIL'),
-    resendFrom:
-      read('RESEND_FROM') ?? 'GHENO B2B <noreply@ghenortrs.com.br>',
-    blingClientId: read('BLING_CLIENT_ID'),
-    blingClientSecret: read('BLING_CLIENT_SECRET'),
-    blingRedirectUri: read('BLING_REDIRECT_URI'),
-    blingApiBase: read('BLING_API_BASE') ?? 'https://api.bling.com.br/Api/v3',
-    blingAuthBase: read('BLING_AUTH_BASE') ?? 'https://www.bling.com.br/Api/v3/oauth',
-    adminApproveSecret: read('B2B_ADMIN_APPROVE_SECRET'),
-    defaultMinQuantity:
-      Number.isFinite(defaultMin) && defaultMin > 0 ? defaultMin : 6,
-  };
+function requiredEnv(name: string) {
+  return z.preprocess(
+    normalizeEnvValue,
+    z.string({ error: `Missing required env: ${name}` }),
+  );
 }
 
-export function getOptionalServerEnv(): Partial<ServerEnv> & {
-  siteUrl: string;
-  resendFrom: string;
-  blingApiBase: string;
-  blingAuthBase: string;
-  defaultMinQuantity: number;
-} {
-  try {
-    return getServerEnv();
-  } catch {
-    const defaultMin = Number(process.env.B2B_DEFAULT_MIN_QUANTITY ?? '6');
+const serverEnvSchema = z
+  .object({
+    SITE_URL: optionalEnv(),
+    VITE_SITE_URL: optionalEnv(),
+    SUPABASE_URL: requiredEnv('SUPABASE_URL'),
+    SUPABASE_ANON_KEY: requiredEnv('SUPABASE_ANON_KEY'),
+    SUPABASE_SERVICE_ROLE_KEY: requiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    RESEND_API_KEY: optionalEnv(),
+    RESEND_TO_EMAIL: optionalEnv(),
+    RESEND_FROM: optionalEnv(),
+    BLING_CLIENT_ID: optionalEnv(),
+    BLING_CLIENT_SECRET: optionalEnv(),
+    BLING_REDIRECT_URI: optionalEnv(),
+    BLING_API_BASE: optionalEnv(),
+    BLING_AUTH_BASE: optionalEnv(),
+    B2B_ADMIN_APPROVE_SECRET: optionalEnv(),
+    B2B_DEFAULT_MIN_QUANTITY: optionalEnv(),
+  })
+  .transform((env): ServerEnv => {
+    const defaultMin = Number(env.B2B_DEFAULT_MIN_QUANTITY ?? '6');
     return {
-      siteUrl: read('SITE_URL') ?? read('VITE_SITE_URL') ?? 'http://localhost:5173',
-      supabaseUrl: read('SUPABASE_URL') ?? undefined,
-      supabaseAnonKey: read('SUPABASE_ANON_KEY') ?? undefined,
-      supabaseServiceRoleKey: read('SUPABASE_SERVICE_ROLE_KEY') ?? undefined,
-      resendApiKey: read('RESEND_API_KEY'),
-      resendToEmail: read('RESEND_TO_EMAIL'),
-      resendFrom:
-        read('RESEND_FROM') ?? 'GHENO B2B <noreply@ghenortrs.com.br>',
-      blingClientId: read('BLING_CLIENT_ID'),
-      blingClientSecret: read('BLING_CLIENT_SECRET'),
-      blingRedirectUri: read('BLING_REDIRECT_URI'),
-      blingApiBase: read('BLING_API_BASE') ?? 'https://api.bling.com.br/Api/v3',
+      siteUrl: env.SITE_URL ?? env.VITE_SITE_URL ?? 'http://localhost:5173',
+      supabaseUrl: env.SUPABASE_URL,
+      supabaseAnonKey: env.SUPABASE_ANON_KEY,
+      supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      resendApiKey: env.RESEND_API_KEY ?? null,
+      resendToEmail: env.RESEND_TO_EMAIL ?? null,
+      resendFrom: env.RESEND_FROM ?? 'GHENO B2B <noreply@ghenortrs.com.br>',
+      blingClientId: env.BLING_CLIENT_ID ?? null,
+      blingClientSecret: env.BLING_CLIENT_SECRET ?? null,
+      blingRedirectUri: env.BLING_REDIRECT_URI ?? null,
+      blingApiBase: env.BLING_API_BASE ?? 'https://api.bling.com.br/Api/v3',
       blingAuthBase:
-        read('BLING_AUTH_BASE') ?? 'https://www.bling.com.br/Api/v3/oauth',
-      adminApproveSecret: read('B2B_ADMIN_APPROVE_SECRET'),
+        env.BLING_AUTH_BASE ?? 'https://www.bling.com.br/Api/v3/oauth',
+      adminApproveSecret: env.B2B_ADMIN_APPROVE_SECRET ?? null,
       defaultMinQuantity:
         Number.isFinite(defaultMin) && defaultMin > 0 ? defaultMin : 6,
     };
-  }
+  });
+
+export function getServerEnv(): ServerEnv {
+  return serverEnvSchema.parse(process.env);
 }

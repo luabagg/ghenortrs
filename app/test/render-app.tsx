@@ -6,6 +6,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
+import { B2BQueryProvider } from '~/b2b/query-provider';
 import { B2BCatalogPage } from '~/components/b2b/b2b-catalog-page';
 import { PageIntro } from '~/components/landing/section-cards';
 import { AppShell } from '~/components/navigation/app-shell';
@@ -37,9 +38,11 @@ function NotFoundPage() {
 
 function ShellLayout() {
   return (
-    <AppShell>
-      <Outlet />
-    </AppShell>
+    <B2BQueryProvider>
+      <AppShell>
+        <Outlet />
+      </AppShell>
+    </B2BQueryProvider>
   );
 }
 

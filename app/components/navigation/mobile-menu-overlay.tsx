@@ -37,7 +37,7 @@ export function MobileMenuOverlay({
       <div className="absolute inset-0 bg-gradient-to-b from-background/35 via-background/72 to-background" />
       <MobileMenuHeader closeRef={closeRef} onClose={onClose} />
 
-      <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-32 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
+      <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-20 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
         <div className="overflow-y-auto px-5 pb-5 pt-3 min-[420px]:px-7">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-secondary">
             Buscar
@@ -47,7 +47,6 @@ export function MobileMenuOverlay({
             Ações rápidas
           </p>
           <MobileMenuActions onClose={onClose} />
-          <MobileMenuBrandNote />
         </div>
       </div>
     </div>
@@ -62,18 +61,11 @@ function MobileMenuHeader({
   onClose: () => void;
 }) {
   return (
-    <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-10 pt-16">
-      <img
-        alt="GHENO rotors"
-        className="h-12 w-auto"
-        height={250}
-        src="/brand/logo-wide.png"
-        width={500}
-      />
+    <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-end px-5 pt-6 min-[420px]:px-7">
       <button
         ref={closeRef}
         aria-label="Fechar menu"
-        className="flex h-16 w-16 items-center justify-center rounded-lg border border-border-strong bg-surface-elevated text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-surface"
+        className="flex h-10 w-10 items-center justify-center rounded-sm text-primary transition-colors hover:text-secondary"
         onClick={onClose}
       >
         <svg
@@ -90,44 +82,6 @@ function MobileMenuHeader({
           />
         </svg>
       </button>
-    </div>
-  );
-}
-
-function MobileMenuBrandNote() {
-  return (
-    <div className="mt-8 flex items-center justify-between gap-4 rounded-xl border border-border-strong bg-background/32 p-4">
-      <div className="flex items-center gap-3">
-        <img
-          alt="GHENO rotors"
-          className="h-16 w-24 rounded-lg object-cover min-[420px]:h-20 min-[420px]:w-32"
-          height={250}
-          loading="lazy"
-          src="/reference-images/pastilhas-gheno.jpg"
-          width={500}
-        />
-        <div>
-          <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-accent">
-            CATÁLOGO GHENO rotors
-          </p>
-          <p className="mt-2 text-base font-bold leading-tight text-primary min-[420px]:text-xl">
-            Pastilhas, cubos e aros disponíveis online.
-          </p>
-        </div>
-      </div>
-      <svg
-        className="h-4 w-4 shrink-0 text-accent"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M9 5l7 7-7 7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-        />
-      </svg>
     </div>
   );
 }
