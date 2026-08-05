@@ -5,8 +5,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const DEFAULT_MAP_PATH = resolve(ROOT, 'src/catalog/commerce-map.json');
-const DEFAULT_OUTPUT_PATH = resolve(ROOT, 'src/search/store-search-index.json');
+const DEFAULT_MAP_PATH = resolve(ROOT, 'app/catalog/commerce-map.json');
+const DEFAULT_OUTPUT_PATH = resolve(ROOT, 'app/search/store-search-index.json');
 
 const WORD_OVERRIDES = new Map([
   ['gheno', 'GHENO'],

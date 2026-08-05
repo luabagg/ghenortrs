@@ -5,14 +5,14 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/styles.css",
+    "css": "app/styles.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
   "aliases": {
-    "components": "@/components",
-    "lib": "@/lib",
-    "ui": "@/components/ui"
+    "components": "~/components",
+    "lib": "~/lib",
+    "ui": "~/components/ui"
   }
 }
