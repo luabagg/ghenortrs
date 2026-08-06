@@ -91,7 +91,7 @@ describe('ui primitives', () => {
       'text-primary',
     );
     expect(screen.getByLabelText('Necessidades comerciais')).toHaveClass(
-      'min-h-32',
+      'min-h-28',
       'border-strong',
       'bg-background-soft',
       'text-primary',

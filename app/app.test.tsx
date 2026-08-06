@@ -43,7 +43,7 @@ describe('App', () => {
     ).not.toHaveAttribute('data-slot', 'glass-panel');
     expect(
       screen.getAllByRole('link', { name: 'Confira a loja online' })[0],
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/');
     expect(
       screen.getAllByRole('link', { name: 'Confira a loja online' })[0],
     ).toHaveClass('border-accent', 'bg-transparent');
@@ -121,12 +121,27 @@ describe('App', () => {
       .getByRole('heading', { name: 'Peças para a sua bike.' })
       .closest('section');
     expect(familySection).toBeTruthy();
-    const familyLinks = within(familySection as HTMLElement).getAllByRole(
-      'link',
-    );
+    const section = within(familySection as HTMLElement);
+
     expect(
-      familyLinks.every((link) => link.getAttribute('href') === '/componentes'),
-    ).toBe(true);
+      section.getByRole('link', { name: 'Ver todos os componentes' }),
+    ).toHaveAttribute('href', '/componentes');
+    expect(section.getByRole('link', { name: /Pastilhas/ })).toHaveAttribute(
+      'href',
+      '/componentes#pastilhas',
+    );
+    expect(section.getByRole('link', { name: /Cubos/ })).toHaveAttribute(
+      'href',
+      '/componentes#cubos',
+    );
+    expect(section.getByRole('link', { name: /Aros/ })).toHaveAttribute(
+      'href',
+      '/componentes#aros',
+    );
+    expect(section.getByRole('link', { name: /Discos/ })).toHaveAttribute(
+      'href',
+      '/componentes#discos',
+    );
   });
 
   it('renders the product proof section with copy, bullets, and images', () => {
@@ -238,7 +253,7 @@ describe('App', () => {
       within(closing as HTMLElement).getByRole('link', {
         name: 'Ver loja online',
       }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/');
     expect(
       within(closing as HTMLElement).queryByRole('link', {
         name: 'Ver componentes',
@@ -254,7 +269,7 @@ describe('App', () => {
 
     expect(
       within(footer).getByRole('link', { name: 'Ver loja online' }),
-    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/produtos/');
+    ).toHaveAttribute('href', 'https://store.ghenortrs.com.br/');
     expect(
       within(footer).getByRole('link', { name: 'Pastilhas' }),
     ).toHaveAttribute(

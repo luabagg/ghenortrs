@@ -68,10 +68,10 @@ export function HomeHeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden bg-background"
+      className="relative z-0 bg-background"
       data-section="hero"
     >
-      <div className="relative min-h-[100dvh] overflow-hidden bg-surface">
+      <div className="relative isolate min-h-[100dvh] overflow-hidden bg-background">
         <ScrollImage
           alt={HERO_IMAGE.alt}
           className="absolute inset-0 h-full w-full opacity-80 [&_img]:object-[69%_center] sm:[&_img]:object-center"
@@ -80,7 +80,7 @@ export function HomeHeroSection() {
           src={HERO_IMAGE.src}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/78 via-background/45 to-background/10 sm:from-background sm:via-background/70 sm:to-background/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/25" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--color-background)_0%,var(--color-background)_18%,transparent_52%)]" />
 
         <div className="relative mx-auto flex min-h-[100dvh] max-w-[90rem] flex-col justify-end px-6 pb-14 pt-28 sm:px-10 sm:pb-20 lg:px-16 lg:pb-24">
           <div className="max-w-[18rem] sm:max-w-[36rem] lg:max-w-[42rem]">
@@ -106,7 +106,7 @@ export function HomeHeroSection() {
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
               <Button asChild className="min-w-44" variant="outline">
-                <a href="https://store.ghenortrs.com.br/produtos/">
+                <a href="https://store.ghenortrs.com.br/">
                   Confira a loja online
                 </a>
               </Button>
@@ -117,6 +117,10 @@ export function HomeHeroSection() {
           </div>
         </div>
       </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-3 translate-y-1/2 bg-background"
+      />
     </section>
   );
 }

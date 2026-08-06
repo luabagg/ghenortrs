@@ -14,7 +14,7 @@ const CONTACT_PATHS = [
     label: 'Compra no varejo',
     description: 'Acesse o catálogo público de produtos disponíveis.',
     action: 'Ver loja online',
-    href: 'https://store.ghenortrs.com.br/produtos/',
+    href: 'https://store.ghenortrs.com.br/',
     variant: 'outline' as const,
   },
   {

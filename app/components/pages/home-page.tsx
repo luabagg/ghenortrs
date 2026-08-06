@@ -24,7 +24,7 @@ function ClosingCTASection() {
         </p>
       </div>
       <Button asChild className="w-fit shrink-0" variant="outline">
-        <a href="https://store.ghenortrs.com.br/produtos/">Ver loja online</a>
+        <a href="https://store.ghenortrs.com.br/">Ver loja online</a>
       </Button>
     </section>
   );

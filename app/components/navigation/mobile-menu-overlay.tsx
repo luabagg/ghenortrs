@@ -2,6 +2,7 @@ import { type RefObject, useEffect, useRef } from 'react';
 
 import { MobileMenuActions } from '@/components/navigation/mobile-menu-actions';
 import { StoreSearch } from '@/components/search/store-search';
+import { useBodyScrollLock } from '@/lib/use-body-scroll-lock';
 
 export function MobileMenuOverlay({
   open,
@@ -12,6 +13,8 @@ export function MobileMenuOverlay({
 }) {
   const closeRef = useRef<HTMLButtonElement>(null!);
 
+  useBodyScrollLock(open);
+
   useEffect(() => {
     if (open) closeRef.current?.focus();
   }, [open]);
@@ -20,7 +23,7 @@ export function MobileMenuOverlay({
   return (
     <div
       aria-modal="true"
-      className="fixed inset-0 z-50 flex overflow-hidden bg-background sm:hidden"
+      className="fixed inset-0 z-50 flex overflow-hidden overscroll-none bg-background sm:hidden"
       role="dialog"
     >
       <button
@@ -37,8 +40,11 @@ export function MobileMenuOverlay({
       <div className="absolute inset-0 bg-gradient-to-b from-background/35 via-background/72 to-background" />
       <MobileMenuHeader closeRef={closeRef} onClose={onClose} />
 
-      <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-20 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
-        <div className="overflow-y-auto px-5 pb-5 pt-3 min-[420px]:px-7">
+      <div className="absolute inset-0 flex flex-col overflow-hidden border border-border-strong bg-surface/94 pt-16 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
+        <div
+          className="overflow-y-auto overscroll-contain px-5 pb-5 pt-1 min-[420px]:px-7"
+          data-scroll-lock-scrollable
+        >
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-secondary">
             Buscar
           </p>

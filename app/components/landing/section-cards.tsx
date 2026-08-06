@@ -5,7 +5,6 @@ import {
   CardDescription,
   CardHeader,
 } from '@/components/ui/card';
-import { ScrollImage } from '@/components/motion/scroll-image';
 import { MetaLabel } from '@/components/ui/meta-label';
 import { cn } from '@/lib/utils';
 
@@ -77,10 +76,9 @@ export function ProductFamilyCard({
     >
       <Card className="flex h-full flex-col gap-0 overflow-hidden rounded-md border-border bg-surface transition-colors group-hover:border-primary/35">
         <div className="relative h-36 shrink-0 overflow-hidden bg-background-soft sm:h-48 lg:h-44">
-          <ScrollImage
+          <img
             alt={imageAlt}
-            className="h-full w-full opacity-90 saturate-[0.8]"
-            effect="zoom"
+            className="h-full w-full object-cover opacity-90 saturate-[0.8]"
             loading="lazy"
             src={imageSrc}
           />

@@ -1,7 +1,6 @@
 import { Link } from '@remix-run/react';
 
 import { PageIntro } from '@/components/landing/section-cards';
-import { ScrollImage } from '@/components/motion/scroll-image';
 import { Button } from '@/components/ui/button';
 import { SectionBand } from '@/components/ui/section-band';
 import { cn } from '@/lib/utils';
@@ -27,7 +26,7 @@ export function ComponentFamilyCard({
   return (
     <article
       aria-labelledby={`${family.id}-heading`}
-      className="grid gap-8 border-t border-border pt-12 first:border-t-0 first:pt-0 lg:grid-cols-12 lg:gap-12 lg:pt-16"
+      className="grid scroll-mt-24 gap-8 border-t border-border pt-12 first:border-t-0 first:pt-0 lg:grid-cols-12 lg:gap-12 lg:pt-16"
       data-product-stage={family.id}
       id={family.id}
     >
@@ -39,10 +38,9 @@ export function ComponentFamilyCard({
         data-threejs-slot={family.id}
       >
         {/* Image stage today; mount Three.js into [data-threejs-slot] later. */}
-        <ScrollImage
+        <img
           alt={family.imageAlt}
-          className="absolute inset-0 h-full w-full opacity-90 saturate-[0.82]"
-          effect="zoom"
+          className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-[0.82]"
           loading="lazy"
           src={family.imageSrc}
         />

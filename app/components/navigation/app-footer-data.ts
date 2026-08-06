@@ -30,7 +30,7 @@ export const footerLinkGroups: FooterLinkGroupData[] = [
     ariaLabel: 'Links da loja online',
     links: [
       {
-        href: 'https://store.ghenortrs.com.br/produtos/',
+        href: 'https://store.ghenortrs.com.br/',
         label: 'Ver loja online',
       },
       {

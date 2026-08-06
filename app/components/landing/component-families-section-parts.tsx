@@ -38,5 +38,7 @@ export function ComponentFamiliesGrid() {
 }
 
 function ComponentFamilyItem({ family }: { family: ComponentFamily }) {
-  return <ProductFamilyCard {...family} href="/componentes" />;
+  return (
+    <ProductFamilyCard {...family} href={`/componentes#${family.id}`} />
+  );
 }

@@ -99,8 +99,7 @@ export function StoreSearch({
           aria-label="Buscar na GHENO rotors"
           autoComplete="off"
           className={cn(
-            'w-full rounded-lg border border-border-strong bg-background/72 py-3 pl-10 pr-4 text-sm text-primary outline-none transition-[border-color,background-color,box-shadow] placeholder:text-secondary/72 focus:border-primary/45 focus:bg-background focus:shadow-[0_0_0_3px_rgba(245,245,245,0.08)]',
-            mode === 'mobile' ? 'h-13' : 'h-11',
+            'h-11 w-full rounded-lg border border-border-strong bg-background/72 py-2 pl-10 pr-4 text-sm text-primary outline-none transition-[border-color,background-color,box-shadow] placeholder:text-secondary/72 focus:border-primary/45 focus:bg-background focus:shadow-[0_0_0_3px_rgba(245,245,245,0.08)]',
           )}
           id={`${resultListId}-input`}
           placeholder="Produto, medida ou compatibilidade"
@@ -132,8 +131,11 @@ export function StoreSearch({
         <div
           className={cn(
             'grid gap-1 overflow-y-auto pr-1',
-            mode === 'mobile' ? 'max-h-[42dvh]' : 'max-h-[21rem]',
+            mode === 'mobile'
+              ? 'max-h-[42dvh] overscroll-contain'
+              : 'max-h-[21rem] overscroll-contain',
           )}
+          data-scroll-lock-scrollable={mode === 'mobile' ? true : undefined}
           id={resultListId}
           role="list"
         >

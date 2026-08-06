@@ -23,11 +23,13 @@ type ScrollImageProps = Omit<
 };
 
 /**
- * Resting scale while scroll progress is mid-range (typical in-view / hero-at-top).
- * Must leave enough overflow headroom for the paired translate ranges below.
+ * Resting / bleed scale. Parallax keeps this constant so scroll never
+ * reflows size (mobile overscroll used to grow the image via a mid valley).
+ * Headroom must cover the max |y| for that effect.
  */
 const ZOOM_REST_SCALE = 1.06;
-const PARALLAX_REST_SCALE = 1.18;
+/** Bleed scale — must exceed max parallax |y| on each side from center. */
+const PARALLAX_SCALE = 1.28;
 
 // useLayoutEffect warns under SSR; fall back to useEffect on the server.
 const useIsomorphicLayoutEffect =
@@ -44,13 +46,18 @@ export function ScrollImage({
   const reduceMotion = useReducedMotion();
   const [motionReady, setMotionReady] = useState(false);
 
+  // Parallax tracks exit only (hero sits at progress 0 at page top).
+  // Zoom tracks full enter→leave for Ken Burns on mid-page cards.
   const { scrollYProgress } = useScroll({
     target: frameRef,
-    offset: ['start end', 'end start'],
+    offset:
+      effect === 'parallax'
+        ? ['start start', 'end start']
+        : ['start end', 'end start'],
   });
 
   // useScroll's MotionValue starts at 0, then jumps to the real progress after
-  // layout. Gate transforms until after that pass so reload does not pop y/scale.
+  // layout. Gate transforms until after that pass so reload does not pop y.
   useIsomorphicLayoutEffect(() => {
     setMotionReady(true);
   }, []);
@@ -62,29 +69,20 @@ export function ScrollImage({
     [1.16, ZOOM_REST_SCALE, 1.12],
   );
 
-  // Parallax: grow + drift. Mid keyframes match the pre-motion baseline so
-  // enabling motion after layout does not shift the image on reload.
-  // Translate stays inside scale headroom (~9% per side at 1.18).
-  const parallaxY = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    ['-8%', '0%', '8%'],
-  );
-  const parallaxScale = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [1.26, PARALLAX_REST_SCALE, 1.28],
-  );
+  // Parallax: fixed scale + one-way drift. Monotonic y means overscroll /
+  // URL-bar resize cannot "grow" the image when scrolling back up.
+  // 14% stays inside 1.28 scale headroom (~14% per side from center).
+  const parallaxY = useTransform(scrollYProgress, [0, 1], ['0%', '14%']);
 
   const allowMotion = motionReady && reduceMotion !== true;
 
   const style = !allowMotion
     ? effect === 'zoom'
       ? { scale: ZOOM_REST_SCALE }
-      : { scale: PARALLAX_REST_SCALE, y: 0 }
+      : { scale: PARALLAX_SCALE, y: 0 }
     : effect === 'zoom'
       ? { scale: zoomScale }
-      : { scale: parallaxScale, y: parallaxY };
+      : { scale: PARALLAX_SCALE, y: parallaxY };
 
   return (
     <div ref={frameRef} className={cn('overflow-hidden', className)}>

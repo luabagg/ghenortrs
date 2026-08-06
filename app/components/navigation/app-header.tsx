@@ -5,6 +5,7 @@ import { Link, NavLink } from '@remix-run/react';
 import { StoreSearch } from '@/components/search/store-search';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { GlassPanel } from '@/components/ui/glass-panel';
+import { useBodyScrollLock } from '@/lib/use-body-scroll-lock';
 import { cn } from '@/lib/utils';
 
 import { primaryNavLinks, type HeaderNavLink } from './app-header-data';
@@ -171,6 +172,8 @@ function DesktopUtilityCluster({
   const shortcutsWereOpen = useRef(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [shortcutLabel] = useState(() => getShortcutLabel());
+
+  useBodyScrollLock(open || shortcutsOpen);
 
   useEffect(() => {
     function onPointerDown(event: PointerEvent) {

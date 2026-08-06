@@ -27,8 +27,7 @@ URL canônica deste site: https://ghenortrs.vercel.app/
 
 ## Destinos externos oficiais
 
-- [Loja Nuvemshop](https://store.ghenortrs.com.br/): storefront externo.
-- [Catálogo de varejo](https://store.ghenortrs.com.br/produtos/): destino público para navegação e compra.
+- [Loja Nuvemshop](https://store.ghenortrs.com.br/): storefront externo e destino padrão dos CTAs de compra no varejo.
 - [Pastilhas de freio](https://store.ghenortrs.com.br/freios/pastilhas-de-freio/): modelos Elite e Ultra organizados por compatibilidade.
 - [Cubos](https://store.ghenortrs.com.br/cubos/): cubos dianteiros e traseiros disponíveis na loja.
 - [Aros](https://store.ghenortrs.com.br/aros/): aros GHENO rotors disponíveis na loja.

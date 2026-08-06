@@ -37,6 +37,7 @@
   color-scheme: dark;
   font-family: var(--font-body);
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 html,

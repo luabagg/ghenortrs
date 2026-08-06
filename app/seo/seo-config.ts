@@ -107,7 +107,7 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
       links: [
         { href: '/componentes', label: 'Conhecer componentes' },
         {
-          href: 'https://store.ghenortrs.com.br/produtos/',
+          href: 'https://store.ghenortrs.com.br/',
           label: 'Ver catálogo GHENO rotors',
         },
         { href: '/b2b', label: 'Solicitar cadastro B2B' },
@@ -227,7 +227,7 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
       heading: 'Canais de contato GHENO rotors.',
       links: [
         {
-          href: 'https://store.ghenortrs.com.br/produtos/',
+          href: 'https://store.ghenortrs.com.br/',
           label: 'Catálogo de varejo',
         },
         { href: '/b2b', label: 'Cadastro B2B' },
