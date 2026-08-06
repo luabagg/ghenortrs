@@ -34,7 +34,7 @@ export function StoreSearch({
   onNavigate,
 }: StoreSearchProps) {
   const [query, setQuery] = useState('');
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const resultListId = `store-search-results-${useId().replace(/:/g, '')}`;
@@ -48,20 +48,26 @@ export function StoreSearch({
     if (results.length === 0) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      setActiveIndex((current) => (current + 1) % results.length);
+      setActiveIndex((current) =>
+        current === null ? 0 : (current + 1) % results.length,
+      );
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      setActiveIndex(
-        (current) => (current - 1 + results.length) % results.length,
+      setActiveIndex((current) =>
+        current === null
+          ? results.length - 1
+          : (current - 1 + results.length) % results.length,
       );
     } else if (event.key === 'Enter') {
+      if (activeIndex === null) return;
       event.preventDefault();
       resultRefs.current[activeIndex]?.click();
     }
   }
 
   const normalizedQuery = query.trim();
-  const activeResult = results[activeIndex];
+  const activeResult =
+    activeIndex === null ? undefined : results[activeIndex];
 
   return (
     <div className="grid gap-3" data-search-mode={mode}>
@@ -102,8 +108,10 @@ export function StoreSearch({
           type="search"
           value={query}
           onChange={(event) => {
-            setQuery(event.target.value);
-            setActiveIndex(0);
+            const nextQuery = event.target.value;
+            setQuery(nextQuery);
+            // Keep Enter-to-open useful while typing; leave suggestions unselected.
+            setActiveIndex(nextQuery.trim() ? 0 : null);
           }}
           onKeyDown={handleKeyDown}
         />

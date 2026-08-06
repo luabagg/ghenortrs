@@ -1,4 +1,10 @@
-import { type ComponentProps, useLayoutEffect, useRef, useState } from 'react';
+import {
+  type ComponentProps,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   motion,
@@ -23,6 +29,10 @@ type ScrollImageProps = Omit<
 const ZOOM_REST_SCALE = 1.06;
 const PARALLAX_REST_SCALE = 1.18;
 
+// useLayoutEffect warns under SSR; fall back to useEffect on the server.
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export function ScrollImage({
   effect,
   className,
@@ -41,7 +51,7 @@ export function ScrollImage({
 
   // useScroll's MotionValue starts at 0, then jumps to the real progress after
   // layout. Gate transforms until after that pass so reload does not pop y/scale.
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setMotionReady(true);
   }, []);
 

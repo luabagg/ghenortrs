@@ -13,6 +13,18 @@ function renderSearch(props: Partial<React.ComponentProps<typeof StoreSearch>> =
 }
 
 describe('StoreSearch', () => {
+  it('does not preselect a featured suggestion until keyboard navigation', () => {
+    renderSearch({ mode: 'mobile' });
+    const input = screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' });
+
+    expect(screen.getByRole('link', { name: /Aros/i })).toBeInTheDocument();
+    expect(input.getAttribute('aria-activedescendant')).toBeNull();
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    expect(input.getAttribute('aria-activedescendant')).toMatch(/category:aros$/);
+  });
+
   it('filters compatibility terms and links to the exact Nuvemshop product', () => {
     renderSearch();
 
@@ -62,8 +74,9 @@ describe('StoreSearch', () => {
   it('moves the active result with arrow keys', () => {
     renderSearch();
     const input = screen.getByRole('searchbox', { name: 'Buscar na GHENO rotors' });
-    const firstActiveId = input.getAttribute('aria-activedescendant');
 
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    const firstActiveId = input.getAttribute('aria-activedescendant');
     fireEvent.keyDown(input, { key: 'ArrowDown' });
 
     expect(input.getAttribute('aria-activedescendant')).not.toBe(firstActiveId);
