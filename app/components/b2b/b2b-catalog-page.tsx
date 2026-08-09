@@ -3,7 +3,7 @@ import { Link } from '@remix-run/react';
 
 import { B2B_DEFAULT_MIN_QUANTITY } from '@/b2b/config';
 import { useB2BCatalogQuery, useSubmitB2BQuoteMutation } from '@/b2b/queries';
-import type { QuoteSelectionItem } from '@/b2b/types';
+import type { B2BCatalogProduct, QuoteSelectionItem } from '@/b2b/types';
 import { useB2BSession } from '@/b2b/use-b2b-session';
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
@@ -24,11 +24,20 @@ function formatBRL(cents: number | null): string {
   });
 }
 
+function newQuoteRequestKey(): string {
+  return crypto.randomUUID();
+}
+
 export function B2BCatalogPage() {
-  const { gate, session, signOut, configured } = useB2BSession();
+  const { gate, session, signOut, configured, error: sessionError } =
+    useB2BSession();
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState<Record<number, number>>({});
+  const [selectedProducts, setSelectedProducts] = useState<
+    Record<number, B2BCatalogProduct>
+  >({});
   const [notes, setNotes] = useState('');
+  const [requestKey, setRequestKey] = useState(newQuoteRequestKey);
 
   const {
     data: catalog,
@@ -48,38 +57,67 @@ export function B2BCatalogPage() {
 
   const submitQuote = useSubmitB2BQuoteMutation();
 
+  function rememberProduct(product: B2BCatalogProduct) {
+    setSelectedProducts((prev) =>
+      prev[product.id] === product
+        ? prev
+        : { ...prev, [product.id]: product },
+    );
+  }
+
+  function setProductQuantity(product: B2BCatalogProduct, quantity: number) {
+    rememberProduct(product);
+    setSelection((prev) => {
+      if (quantity <= 0) {
+        if (!(product.id in prev)) return prev;
+        const next = { ...prev };
+        delete next[product.id];
+        return next;
+      }
+      return { ...prev, [product.id]: quantity };
+    });
+  }
+
   const selectedItems: QuoteSelectionItem[] = useMemo(() => {
-    return products
-      .filter((product) => (selection[product.id] ?? 0) > 0)
-      .map((product) => ({
-        product,
-        quantity: selection[product.id] ?? 0,
-      }));
-  }, [products, selection]);
+    const items: QuoteSelectionItem[] = [];
+    for (const [idText, quantity] of Object.entries(selection)) {
+      if (quantity <= 0) continue;
+      const product = selectedProducts[Number(idText)];
+      if (!product) continue;
+      items.push({ product, quantity });
+    }
+    return items;
+  }, [selection, selectedProducts]);
 
   async function onSubmitQuote() {
     try {
       const result = await submitQuote.mutateAsync({
         items: selectedItems,
         notes,
+        requestKey,
       });
-      if (!result.success) return;
+      if (!result.success || !result.complete) return;
       setSelection({});
+      setSelectedProducts({});
       setNotes('');
+      setRequestKey(newQuoteRequestKey());
     } catch {
       // Surfaced via submitQuote.status below.
     }
   }
 
   const submitFailed =
-    submitQuote.status === 'error' || submitQuote.data?.success === false;
+    submitQuote.status === 'error' ||
+    (submitQuote.data != null && submitQuote.data.success === false);
+  const submitPartial =
+    submitQuote.data?.success === true && submitQuote.data.complete === false;
   const submitMessage = submitFailed
     ? (submitQuote.data?.message ??
       (submitQuote.data?.error === 'min_quantity_not_met'
         ? 'Ajuste as quantidades mínimas antes de enviar.'
         : 'Não foi possível enviar a solicitação.'))
     : submitQuote.data?.success
-      ? submitQuote.data.message ?? 'Solicitação enviada.'
+      ? (submitQuote.data.message ?? 'Solicitação enviada.')
       : null;
 
   if (!configured) {
@@ -95,6 +133,25 @@ export function B2BCatalogPage() {
 
   if (gate === 'loading') {
     return <p className="text-secondary">Carregando sessão B2B…</p>;
+  }
+
+  if (sessionError) {
+    return (
+      <div className="grid gap-6">
+        <PageIntro
+          description="Não foi possível verificar sua sessão comercial agora."
+          title="Falha de sessão B2B"
+        />
+        <p className="text-accent" role="alert">
+          {sessionError === 'session_failed'
+            ? 'Erro ao carregar a sessão. Tente novamente em instantes.'
+            : sessionError}
+        </p>
+        <Button asChild variant="outline">
+          <Link to="/b2b">Voltar para login / cadastro</Link>
+        </Button>
+      </div>
+    );
   }
 
   if (gate !== 'approved') {
@@ -177,23 +234,20 @@ export function B2BCatalogPage() {
                         0,
                         Math.floor(Number(event.target.value) || 0),
                       );
-                      setSelection((prev) => ({
-                        ...prev,
-                        [product.id]: next,
-                      }));
+                      setProductQuantity(product, next);
                     }}
                   />
                   <Button
                     type="button"
                     variant="secondary"
                     onClick={() =>
-                      setSelection((prev) => ({
-                        ...prev,
-                        [product.id]: Math.max(
+                      setProductQuantity(
+                        product,
+                        Math.max(
                           product.minQuantity,
-                          prev[product.id] ?? 0,
+                          selection[product.id] ?? 0,
                         ),
-                      }))
+                      )
                     }
                   >
                     Usar mínimo
@@ -224,7 +278,9 @@ export function B2BCatalogPage() {
           {submitMessage ? (
             <p
               className={
-                submitFailed ? 'text-sm text-accent' : 'text-sm text-secondary'
+                submitFailed || submitPartial
+                  ? 'text-sm text-accent'
+                  : 'text-sm text-secondary'
               }
               role="status"
             >
@@ -238,7 +294,9 @@ export function B2BCatalogPage() {
           >
             {submitQuote.isPending
               ? 'Enviando…'
-              : 'Enviar solicitação à GHENO rotors'}
+              : submitPartial
+                ? 'Tentar enviar aviso novamente'
+                : 'Enviar solicitação à GHENO rotors'}
           </Button>
         </div>
       </Card>

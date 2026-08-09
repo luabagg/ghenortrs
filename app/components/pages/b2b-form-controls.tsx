@@ -112,8 +112,20 @@ export function B2BTextareaField({
   );
 }
 
-export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
-  if (status !== 'no-config' && status !== 'error') return null;
+export function B2BFormStatusAlert({
+  status,
+  message,
+}: {
+  status: SubmitStatus;
+  message?: string;
+}) {
+  if (
+    status !== 'no-config' &&
+    status !== 'error' &&
+    status !== 'partial-success'
+  ) {
+    return null;
+  }
 
   return (
     <div
@@ -128,6 +140,16 @@ export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
           </Link>{' '}
           para atendimento.
         </p>
+      ) : status === 'partial-success' ? (
+        <p className="text-sm text-secondary">
+          {message ??
+            'Recebemos seu cadastro, mas o aviso à GHENO falhou. Tente enviar de novo ou fale pelos canais de contato.'}{' '}
+          <Link className="font-semibold text-primary underline" to="/contato">
+            Ver canais de contato
+          </Link>
+        </p>
+      ) : message ? (
+        <p className="text-sm text-secondary">{message}</p>
       ) : (
         <p className="text-sm text-secondary">
           Erro ao enviar. Tente novamente ou{' '}

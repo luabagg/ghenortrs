@@ -1,6 +1,6 @@
-// Vercel Edge Function — B2B lead-capture email delivery via Resend REST API.
-// Required env vars: RESEND_API_KEY, RESEND_TO_EMAIL
-// Optional: RESEND_FROM (defaults to noreply@ghenortrs.com.br)
+// Vercel Edge: B2B lead email via Resend REST API.
+// Required: RESEND_API_KEY, RESEND_TO_EMAIL
+// Optional: RESEND_FROM (default noreply@ghenortrs.com.br)
 
 import { parseB2BRegistration } from '../b2b/schemas';
 import {

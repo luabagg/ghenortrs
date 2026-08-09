@@ -23,10 +23,10 @@ type ScrollImageProps = Omit<
 };
 
 const ZOOM_REST_SCALE = 1.06;
-/** Light bleed; with origin top, 8% Y stays inside bottom headroom. */
+/** Light bleed. Origin top; 8% Y stays in bottom headroom. */
 const PARALLAX_SCALE = 1.1;
 
-// useLayoutEffect warns under SSR; fall back to useEffect on the server.
+// useLayoutEffect warns under SSR. Use useEffect on the server.
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
@@ -35,14 +35,13 @@ export function ScrollImage({
   className,
   ...imageProps
 }: ScrollImageProps) {
-  // Measure a non-transformed frame. Transforms on the scroll target feed back
-  // into getBoundingClientRect and make progress (and the image) jitter.
+  // Measure a non-transformed frame. Transforms on the target cause jitter.
   const frameRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const [motionReady, setMotionReady] = useState(false);
 
-  // Parallax tracks exit only (hero sits at progress 0 at page top).
-  // Zoom tracks full enter→leave for Ken Burns on mid-page cards.
+  // Parallax tracks exit only (hero at progress 0 at page top).
+  // Zoom tracks full enter-leave for Ken Burns on mid-page cards.
   const { scrollYProgress } = useScroll({
     target: frameRef,
     offset:
@@ -51,8 +50,7 @@ export function ScrollImage({
         : ['start end', 'end start'],
   });
 
-  // useScroll's MotionValue starts at 0, then jumps to the real progress after
-  // layout. Gate transforms until after that pass so reload does not pop y.
+  // useScroll starts at 0, then jumps after layout. Gate until then.
   useIsomorphicLayoutEffect(() => {
     setMotionReady(true);
   }, []);
@@ -63,7 +61,7 @@ export function ScrollImage({
     [1.16, ZOOM_REST_SCALE, 1.12],
   );
 
-  // Fixed scale + one-way drift (no mid-valley grow on overscroll).
+  // Fixed scale and one-way drift. No mid-valley grow on overscroll.
   const parallaxY = useTransform(scrollYProgress, [0, 1], ['0%', '8%']);
 
   const allowMotion = motionReady && reduceMotion !== true;

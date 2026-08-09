@@ -16,7 +16,7 @@ const navigationLinkClassName = ({ isActive }: { isActive: boolean }) =>
     variant: isActive ? 'nav-active' : 'nav',
   });
 
-/** Single-line shortcut hint for chips and the shortcuts dialog. */
+/** One-line shortcut hint for chips and the shortcuts dialog. */
 function getShortcutLabel(): string {
   if (typeof navigator === 'undefined') return 'Ctrl+K';
 
@@ -29,7 +29,7 @@ function getShortcutLabel(): string {
   const isApple =
     /Mac|iPhone|iPad|iPod/i.test(platform) ||
     /Mac OS X|Macintosh|\biPhone\b|\biPad\b|\biPod\b/.test(ua) ||
-    // iPadOS “desktop” Safari reports MacIntel with touch points.
+    // iPadOS desktop Safari reports MacIntel with touch points.
     (platform === 'MacIntel' &&
       typeof navigator.maxTouchPoints === 'number' &&
       navigator.maxTouchPoints > 1);

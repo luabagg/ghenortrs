@@ -1,45 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-// Mirror of api/_shared/bling.normalizeBlingProduct for pure unit coverage
-// without pulling Edge/runtime modules into the Vite test graph.
-
-type BlingProduct = {
-  id: number;
-  nome: string;
-  codigo?: string | null;
-  preco?: number | null;
-  estoque?: { saldoVirtualTotal?: number | null } | null;
-  imagemURL?: string | null;
-  situacao?: string | null;
-  unidade?: string | null;
-  descricaoCurta?: string | null;
-  categoria?: { descricao?: string | null } | null;
-};
-
-function normalizeBlingProduct(product: BlingProduct, defaultMinQuantity: number) {
-  const price =
-    typeof product.preco === 'number' && Number.isFinite(product.preco)
-      ? Math.round(product.preco * 100)
-      : null;
-  const stock =
-    typeof product.estoque?.saldoVirtualTotal === 'number'
-      ? product.estoque.saldoVirtualTotal
-      : null;
-  const active =
-    !product.situacao ||
-    product.situacao.toLowerCase() === 'a' ||
-    product.situacao.toLowerCase() === 'ativo';
-
-  return {
-    id: product.id,
-    sku: product.codigo ?? null,
-    name: product.nome,
-    price_cents: price,
-    stock,
-    min_quantity: defaultMinQuantity,
-    active,
-  };
-}
+import { normalizeBlingProduct } from '~/server/bling-normalize';
 
 describe('normalizeBlingProduct', () => {
   it('converts BRL price to cents and applies default min quantity', () => {
@@ -58,13 +19,49 @@ describe('normalizeBlingProduct', () => {
     expect(row.min_quantity).toBe(6);
     expect(row.active).toBe(true);
     expect(row.stock).toBe(12);
+    expect(row.sku).toBe('PE-01');
+    expect(row.name).toBe('Pastilha Elite');
   });
 
   it('marks inactive products', () => {
-    const row = normalizeBlingProduct(
-      { id: 2, nome: 'X', situacao: 'I' },
-      6,
-    );
+    const row = normalizeBlingProduct({ id: 2, nome: 'X', situacao: 'I' }, 6);
     expect(row.active).toBe(false);
+  });
+
+  it('treats missing situacao and ativo as active', () => {
+    expect(
+      normalizeBlingProduct({ id: 1, nome: 'Sem status' }, 6).active,
+    ).toBe(true);
+    expect(
+      normalizeBlingProduct({ id: 2, nome: 'Ativo', situacao: 'Ativo' }, 6)
+        .active,
+    ).toBe(true);
+  });
+
+  it('maps description, image, unit, category, and search terms', () => {
+    const row = normalizeBlingProduct(
+      {
+        id: 3,
+        nome: 'Disco Elite',
+        codigo: 'DE-03',
+        imagemURL: 'https://cdn.example.com/disco.webp',
+        unidade: 'UN',
+        descricaoCurta: 'Rotor 223mm',
+        categoria: { descricao: 'Freios' },
+        preco: null,
+        estoque: null,
+      },
+      4,
+    );
+
+    expect(row.description).toBe('Rotor 223mm');
+    expect(row.image_url).toBe('https://cdn.example.com/disco.webp');
+    expect(row.unit).toBe('UN');
+    expect(row.category).toBe('Freios');
+    expect(row.price_cents).toBeNull();
+    expect(row.stock).toBeNull();
+    expect(row.min_quantity).toBe(4);
+    expect(row.search_terms).toBe('Disco Elite DE-03 Freios Rotor 223mm');
+    expect(row.raw).toMatchObject({ id: 3, nome: 'Disco Elite' });
   });
 });

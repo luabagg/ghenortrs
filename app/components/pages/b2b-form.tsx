@@ -16,6 +16,7 @@ type B2BFormProps = {
   errors: Partial<B2BFields>;
   fields: B2BFields;
   honeypot: string;
+  message?: string;
   status: SubmitStatus;
   onFieldChange: B2BFieldChangeHandler;
   onHoneypotChange: (value: string) => void;
@@ -26,6 +27,7 @@ export function B2BForm({
   errors,
   fields,
   honeypot,
+  message,
   status,
   onFieldChange,
   onHoneypotChange,
@@ -93,7 +95,7 @@ export function B2BForm({
         value={fields.mensagem}
         onFieldChange={onFieldChange}
       />
-      <B2BFormStatusAlert status={status} />
+      <B2BFormStatusAlert message={message} status={status} />
       <B2BSubmitButton status={status} />
     </form>
   );

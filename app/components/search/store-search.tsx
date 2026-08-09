@@ -109,7 +109,7 @@ export function StoreSearch({
           onChange={(event) => {
             const nextQuery = event.target.value;
             setQuery(nextQuery);
-            // Keep Enter-to-open useful while typing; leave suggestions unselected.
+            // Keep Enter-to-open; leave suggestions unselected.
             setActiveIndex(nextQuery.trim() ? 0 : null);
           }}
           onKeyDown={handleKeyDown}

@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: GHENO rotors Components
-description: Dark, technical, performance-first visual system for a Brazilian MTB components landing page and B2B storefront bridge.
+description: Dark technical visual system for a Brazilian MTB components landing page and B2B storefront bridge.
 colors:
   primary: '#F5F5F5'
   secondary: '#A1A1AA'
@@ -148,62 +148,137 @@ components:
 
 ## Overview
 
-GHENO rotors should feel like race equipment, not lifestyle merch and not generic ecommerce. The personality is dark, engineered, aggressive, credible, and premium. Interfaces should feel precise and durable, with clear hierarchy and very little decorative noise.
+GHENO rotors must feel like race equipment.
 
-The design language comes from MTB performance culture filtered through a Stripe-like product surface: hard contrast, technical details, product-first imagery, quiet borders, square geometry, and direct calls to action. Red is a pressure point, not a wash and not a badge factory. Most of the UI should stay black, graphite, smoke, and white so the accent keeps its force.
+Do not make it look like lifestyle merch or generic ecommerce.
+
+Keep the personality dark, engineered, aggressive, credible, and premium.
+
+Keep interfaces precise and durable.
+
+Use clear hierarchy and little decorative noise.
+
+The design language mixes MTB performance culture with a Stripe-like product surface.
+
+Use hard contrast, technical detail, product-first imagery, quiet borders, square geometry, and direct CTAs.
+
+Use red as a pressure point.
+
+Do not wash pages in red.
+
+Do not use red as a badge factory.
+
+Keep most UI black, graphite, smoke, and white so the accent stays strong.
 
 ## Colors
 
 - **Primary:** Main text on dark surfaces. Use for headlines, important labels, and high-emphasis UI.
 - **Secondary:** Supporting copy, metadata, helper text, and lower-emphasis UI.
-- **Accent:** The only primary highlight color. Use for filled CTAs when conversion needs weight, selected emphasis words, and rare active states.
-- **Accent Dark:** Use for darker hover states on filled accent surfaces. Prefer border-only accent treatments on heroes and promotional surfaces when a filled red button would feel loud.
-- **Background:** Default page background. It should read as near-black, not charcoal gray.
-- **Background Soft:** Secondary dark area for subtle section separation without creating a new visual theme.
+- **Accent:** The only primary highlight. Use for filled CTAs that need weight, selected emphasis words, and rare active states.
+- **Accent Dark:** Darker hover on filled accent surfaces. Prefer border-only accent on heroes and promos when filled red feels loud.
+- **Background:** Default page background. Keep it near-black, not charcoal gray.
+- **Background Soft:** Secondary dark area for light section separation. Do not start a new theme.
 - **Surface:** Product cards, content blocks, and dark grouped panels.
-- **Surface Elevated:** Higher-elevation cards and controls that need a stronger edge against the page.
-- **Surface Glass:** Reserved for mobile menu sheets and command overlays only. Do not use glass on marketing strips, trust bars, or hero overlays.
+- **Surface Elevated:** Higher-elevation cards and controls that need a stronger edge.
+- **Surface Glass:** Mobile menu sheets and command overlays only. Do not use glass on marketing strips, trust bars, or hero overlays.
 - **Border:** Default dark stroke for cards, dividers, and panels.
-- **Border Strong:** Inputs, outlined buttons, and focus-adjacent UI where extra definition is needed.
-- **Brand Gradient Base:** Base red for brand-gradient recipes derived from the logo. Use sparingly; prefer flat surfaces.
+- **Border Strong:** Inputs, outlined buttons, and focus-adjacent UI that need more definition.
+- **Brand Gradient Base:** Base red for logo-derived brand gradients. Use sparingly. Prefer flat surfaces.
 
-Red should stay scarce enough to signal importance. Do not tint whole sections red. Do not use red pill badges as section markers. Let black carry most of the composition.
-When translucency is needed for overlays, treat `surface-glass` as the base color and apply opacity in code. Treat `overlay` as the base black for scrims and darkening layers.
+Keep red scarce so it signals importance.
+
+Do not tint whole sections red.
+
+Do not use red pill badges as section markers.
+
+Let black carry most of the composition.
+
+For translucent overlays, use `surface-glass` as the base color and set opacity in code.
+
+Use `overlay` as the base black for scrims and darkening layers.
 
 ## Typography
 
-The type system should separate impact from readability.
+Separate impact from readability.
 
-- Use `h1` for hero headlines and only the most important page-level statements.
+- Use `h1` for hero headlines and the most important page statements.
 - Use `h2` for major section headers.
 - Use `h3` for feature blocks, card titles, and product-family statements.
-- Use `body-lg` for short supporting copy near hero areas and commercial statements.
+- Use `body-lg` for short support copy near heroes and commercial statements.
 - Use `body-md` for standard paragraphs and explanatory copy.
 - Use `body-sm` for metadata, captions, helper copy, and dense UI text.
 - Use `label` for buttons, tabs, field labels, and inline CTA text.
-- Use `eyebrow` for quiet uppercase section markers such as `Componentes`, `Tecnologia`, or `B2B`. Eyebrows are text only — never red pills, never filled chips.
+- Use `eyebrow` for quiet uppercase section markers such as `Componentes`, `Tecnologia`, or `B2B`. Eyebrows are text only. Never use red pills or filled chips.
 
-Headlines should feel compressed and forceful, with tight tracking and short lines. Body copy should stay clean and neutral so the product and imagery carry the emotion.
+Keep headlines compressed and forceful.
+
+Use tight tracking and short lines.
+
+Keep body copy clean and neutral.
+
+Let product and imagery carry emotion.
 
 ## Layout
 
-Layouts should feel asymmetric and intentional, closer to Stripe than to sports-template landing pages. Avoid centered, template-looking hero sections. The first screen should place copy and CTA weight with generous breathing room, a dominant full-bleed image plane, and restrained overlays.
+Make layouts asymmetric and intentional.
 
-Use large vertical spacing between sections and tighter spacing inside components. Cards can be dense, but the page-level rhythm should breathe. Product grids should feel like a system of parts, not a marketplace.
+Prefer a Stripe-like product surface over sports-template landing pages.
 
-Prefer square geometry: small radii (`sm`/`md`/`lg`), hairline borders, and flat surfaces over soft consumer rounding. Avoid glassmorphism on content rows. Avoid icon-above-title feature grids — they read as generic AI marketing.
+Avoid centered, template-looking heroes.
 
-Use dark sectional bands to control pacing. A light band is allowed only when it clarifies a commercial or B2B block and creates a deliberate contrast break.
+On the first screen, place copy and CTA with room to breathe.
 
-On mobile, preserve hierarchy by stacking without flattening the design. The hero should still feel dramatic. Menus and overlays may use smoked-glass panels; marketing content should not.
+Use one dominant full-bleed image plane and restrained overlays.
+
+Use large vertical spacing between sections.
+
+Use tighter spacing inside components.
+
+Cards may be dense.
+
+Keep page-level rhythm open.
+
+Make product grids feel like a system of parts, not a marketplace.
+
+Prefer square geometry: small radii (`sm`/`md`/`lg`), hairline borders, and flat surfaces.
+
+Avoid soft consumer rounding.
+
+Avoid glassmorphism on content rows.
+
+Avoid icon-above-title feature grids. They read as generic AI marketing.
+
+Use dark sectional bands to control pacing.
+
+Use a light band only when it clarifies a commercial or B2B block and creates a deliberate contrast break.
+
+On mobile, stack content and keep hierarchy.
+
+Keep the hero dramatic.
+
+Menus and overlays may use smoked-glass panels.
+
+Marketing content must stay opaque.
 
 ## Media And Imagery
 
-Use real MTB action imagery, product macro shots, rotor/cube/rim silhouettes, and technical closeups. Images should feel fast, dirty, metallic, and real.
+Use real MTB action imagery, product macros, rotor/cube/rim silhouettes, and technical closeups.
 
-Prefer one dominant image or a tight 2–3 image composition per section over image grids with tiny captions. Product renders and photos should be dark, high-contrast, and tightly cropped. Sell product quality with copy next to fewer images, not with six equal tiles.
+Images must feel fast, dirty, metallic, and real.
 
-Do not overlay red badges on images. Do not add fake telemetry, fake engineering numbers, or meaningless dashboard motifs.
+Prefer one dominant image, or a tight 2–3 image composition, per section.
+
+Avoid image grids with tiny captions.
+
+Keep product renders and photos dark, high-contrast, and tightly cropped.
+
+Sell quality with copy beside fewer images.
+
+Do not use six equal tiles.
+
+Do not overlay red badges on images.
+
+Do not add fake telemetry, fake engineering numbers, or empty dashboard motifs.
 
 ## Components
 
@@ -215,44 +290,93 @@ Marketing CTAs use at most three variants:
 2. **`secondary`** — thin white/light border, transparent fill. Alternate CTA on dark surfaces (hero secondary).
 3. **`ghost`** — text only, no border. Quiet links inside sections (component families, proof).
 
-Filled **`primary`** is reserved for form submits and other high-commitment product actions outside marketing sections. Do not invent a fourth marketing button style.
+Filled **`primary`** is for form submits and other high-commitment product actions outside marketing sections.
 
-Keep buttons compact and square. Prefer thin 1px borders. Avoid pill shapes and trailing arrows on every link.
+Do not invent a fourth marketing button style.
+
+Keep buttons compact and square.
+
+Prefer thin 1px borders.
+
+Avoid pill shapes.
+
+Avoid trailing arrows on every link.
 
 ### Cards
 
-Cards should feel like product housings: dark, edged, slightly dense, and structured. Use thin borders and almost no shadow. On the home families grid, the whole card links to `/componentes` — no per-card store arrows.
+Cards must feel like product housings: dark, edged, slightly dense, and structured.
+
+Use thin borders and almost no shadow.
+
+On the home families grid, the whole card links to `/componentes`.
+
+Do not add per-card store arrows.
 
 Do not use soft pastel cards, oversized floating shadows, glass panels, or empty generic marketing cards.
 
 ### Navigation And Menus
 
-Desktop navigation should be lean and confident. Mobile navigation can become a smoked-glass command surface with search, grouped actions, and icon-led rows. This is one of the few places where translucency is encouraged.
-Use `surface-glass` with opacity and blur in code for these layers. Add thin strokes using `border` or `border-strong`.
+Keep desktop navigation lean and confident.
+
+Mobile navigation may become a smoked-glass command surface with search, grouped actions, and icon-led rows.
+
+This is one of the few places where translucency is allowed.
+
+Use `surface-glass` with opacity and blur in code for these layers.
+
+Add thin strokes with `border` or `border-strong`.
 
 ### Forms
 
-Labels belong above inputs. Field styling should stay dark, clear, and trustworthy. Validation states should be direct and readable, never playful. The B2B form should feel credible for Brazilian distributors, workshops, and resellers.
+Place labels above inputs.
+
+Keep field styling dark, clear, and trustworthy.
+
+Keep validation direct and readable.
+
+Never make validation playful.
+
+The B2B form must feel credible for Brazilian distributors, workshops, and resellers.
 
 ### Trust Bars And Proof Blocks
 
-Proof blocks should use short, concrete claims in a text-first horizontal strip with hairline dividers. No glass. No icons stacked above titles. They support the hero and should never overpower it.
+Use short, concrete claims in a text-first horizontal strip with hairline dividers.
 
-Closing commerce prompts should stay light — a simple strip with one sentence and one or two links, not a dramatized card with a red badge.
+No glass.
+
+No icons stacked above titles.
+
+Proof supports the hero.
+
+Proof must not overpower the hero.
+
+Keep closing commerce prompts light: one strip, one sentence, one or two links.
+
+Do not use a dramatized card with a red badge.
 
 ## Motion
 
-Motion should feel mechanical and purposeful. Use it to clarify hierarchy, reveal content, or confirm state changes. Short fades, slide-ins, and image parallax are acceptable if they stay smooth on mobile.
+Make motion mechanical and purposeful.
 
-Reduced motion support is required. Avoid heavy animation systems unless the visual gain is material. Motion should never block first render or distract from conversion paths.
+Use motion to clarify hierarchy, reveal content, or confirm state changes.
+
+Short fades, slide-ins, and image parallax are allowed when they stay smooth on mobile.
+
+Support reduced motion.
+
+Avoid heavy animation systems unless the visual gain is material.
+
+Motion must not block first render.
+
+Motion must not distract from conversion paths.
 
 ## Do's And Don'ts
 
-- Do use the token names in this file instead of inventing close alternatives.
-- Do keep the page predominantly black, graphite, white, and red.
+- Do use the token names in this file. Do not invent close alternatives.
+- Do keep the page mostly black, graphite, white, and red.
 - Do keep radii small and geometry square.
-- Do preserve Portuguese-first hierarchy and direct product-led messaging.
-- Do make mobile layouts feel intentional, not merely collapsed desktop layouts.
+- Do keep Portuguese-first hierarchy and direct product-led messaging.
+- Do make mobile layouts intentional. Do not only collapse the desktop layout.
 - Do keep contrast WCAG AA compliant.
 - Don't introduce purple, blue, or rainbow gradients.
 - Don't use red pill badges, red chips on images, or repeated red labels as decoration.
@@ -268,7 +392,7 @@ Reduced motion support is required. Avoid heavy animation systems unless the vis
 
 ## Implementation Notes
 
-- Build the logo-inspired red gradient in code as `radial-gradient(circle at 0% 0%, #E81414 0%, #C70303 52%, #C70303 72%, #E81414 100%)` only when a brand surface truly needs it.
+- Build the logo red gradient in code as `radial-gradient(circle at 0% 0%, #E81414 0%, #C70303 52%, #C70303 72%, #E81414 100%)` only when a brand surface needs it.
 - Map `rounded.sm/md/lg/xl` to CSS `--radius-*` and Tailwind radius tokens. Prefer `rounded-sm` / `rounded-md` / `rounded-lg` in marketing UI.
-- Use `border` and `border-strong` for strokes even though the current schema does not support border tokens inside component definitions.
-- Use alpha and blur in implementation for overlay navigation only; marketing sections should stay opaque.
+- Use `border` and `border-strong` for strokes. The schema does not support border tokens inside component definitions.
+- Use alpha and blur for overlay navigation only. Keep marketing sections opaque.

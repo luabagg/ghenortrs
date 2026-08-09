@@ -1,5 +1,5 @@
 /**
- * Remix server entry — streams the HTML response.
+ * Remix server entry. Streams the HTML response.
  */
 import { PassThrough } from 'node:stream';
 

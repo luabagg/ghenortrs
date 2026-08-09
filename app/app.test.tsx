@@ -387,7 +387,7 @@ describe('App', () => {
         name: 'Cadastro comercial GHENO rotors.',
       }),
     ).toBeInTheDocument();
-    // Without VITE_SUPABASE_* the login gate stays off and registration remains.
+    // Without VITE_SUPABASE_*, login gate stays off; registration remains.
     expect(screen.queryByRole('button', { name: 'Já tenho cadastro' })).toBeNull();
     expect(screen.queryByText('Acessar produtos B2B')).toBeNull();
     expect(screen.queryByRole('heading', { name: 'Solicitar cadastro.' })).toBeNull();

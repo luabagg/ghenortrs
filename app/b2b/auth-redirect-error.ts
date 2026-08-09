@@ -1,16 +1,13 @@
 /**
- * Captures Supabase's magic-link failure redirect so the app can show a
- * clear Portuguese message instead of silently dropping the error.
+ * Capture Supabase magic-link failure from the URL hash.
+ * Show a clear Portuguese message. Do not drop the error silently.
  *
- * Supabase's email link verification runs on Supabase's own domain and
- * redirects back to `emailRedirectTo` (here, `/b2b`). On success it appends
- * `?code=...` (PKCE); on failure — expired, already used, or invalid link —
- * it appends an error to the URL **hash**: `#error=...&error_code=...
- * &error_description=...` (see Supabase's redirect-urls guide). The
- * Supabase client also inspects the URL on init (`detectSessionInUrl`), so
- * `captureAuthRedirectError` must run before that client is ever created —
- * it is called once, synchronously, in `entry.client.tsx` — to read and
- * strip the raw hash first.
+ * Supabase verifies on its domain, then redirects to `emailRedirectTo` (`/b2b`).
+ * Success appends `?code=...` (PKCE).
+ * Failure appends `#error=...&error_code=...&error_description=...`.
+ *
+ * Call `captureAuthRedirectError` once in `entry.client.tsx` before any
+ * Supabase client. The client also reads the URL on init (`detectSessionInUrl`).
  */
 
 export type AuthRedirectError = {
@@ -42,14 +39,11 @@ export function captureAuthRedirectError(): void {
 }
 
 /**
- * `useSyncExternalStore` bindings so React can read this module-level value
- * safely across SSR/hydration: `getServerSnapshot` always returns `null`
- * (the server never sees the redirect hash), and React reconciles to the
- * real client snapshot right after hydration without a manual effect.
+ * `useSyncExternalStore` bindings for this module value across SSR/hydration.
+ * `getServerSnapshot` always returns `null`. React reconciles after hydration.
  */
 export function subscribeAuthRedirectError(): () => void {
-  // The value is set once (before hydration) and only ever cleared
-  // afterwards; there is no later external event to subscribe to.
+  // Set once before hydration. Cleared later. No other event to subscribe.
   return () => {};
 }
 
@@ -61,7 +55,7 @@ export function getAuthRedirectErrorServerSnapshot(): AuthRedirectError | null {
   return null;
 }
 
-/** Clears the captured error so revisiting the page won't show it again. */
+/** Clear the captured error so a revisit does not show it again. */
 export function clearAuthRedirectError(): void {
   pendingError = null;
 }

@@ -1,24 +1,17 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import type { Database, Json, Tables } from './database.types';
+import type { Database, Tables } from './database.types';
+import {
+  type BlingProduct,
+  type NormalizedBlingProduct,
+  normalizeBlingProduct,
+} from './bling-normalize';
 import { getServerEnv } from './env';
 
-export type BlingTokenRow = Tables<'bling_oauth_tokens'>;
+export type { BlingProduct, NormalizedBlingProduct };
+export { normalizeBlingProduct };
 
-export type BlingProduct = {
-  id: number;
-  nome: string;
-  codigo?: string | null;
-  preco?: number | null;
-  estoque?: { saldoVirtualTotal?: number | null } | null;
-  imagemURL?: string | null;
-  situacao?: string | null;
-  formato?: string | null;
-  tipo?: string | null;
-  unidade?: string | null;
-  descricaoCurta?: string | null;
-  categoria?: { descricao?: string | null } | null;
-};
+export type BlingTokenRow = Tables<'bling_oauth_tokens'>;
 
 type TokenResponse = {
   access_token: string;
@@ -137,7 +130,7 @@ export async function getValidAccessToken(
   const stored = await readStoredTokens(service);
   if (!stored) {
     throw new Error(
-      'Bling OAuth not connected. Visit /api/bling-oauth-start once.',
+      'Bling OAuth not connected. POST /api/bling-oauth-start with X-Admin-Secret, then open the returned authorizeUrl.',
     );
   }
 
@@ -179,64 +172,8 @@ export async function blingFetch<T>(
   return (await res.json()) as T;
 }
 
-export type NormalizedBlingProduct = {
-  id: number;
-  sku: string | null;
-  name: string;
-  description: string;
-  image_url: string | null;
-  price_cents: number | null;
-  stock: number | null;
-  unit: string | null;
-  min_quantity: number;
-  active: boolean;
-  category: string | null;
-  search_terms: string;
-  raw: Json;
-};
-
-export function normalizeBlingProduct(
-  product: BlingProduct,
-  defaultMinQuantity: number,
-): NormalizedBlingProduct {
-  const price =
-    typeof product.preco === 'number' && Number.isFinite(product.preco)
-      ? Math.round(product.preco * 100)
-      : null;
-  const stock =
-    typeof product.estoque?.saldoVirtualTotal === 'number'
-      ? product.estoque.saldoVirtualTotal
-      : null;
-  const active =
-    !product.situacao ||
-    product.situacao.toLowerCase() === 'a' ||
-    product.situacao.toLowerCase() === 'ativo';
-
-  const terms = [
-    product.nome,
-    product.codigo ?? '',
-    product.categoria?.descricao ?? '',
-    product.descricaoCurta ?? '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  return {
-    id: product.id,
-    sku: product.codigo ?? null,
-    name: product.nome,
-    description: product.descricaoCurta ?? '',
-    image_url: product.imagemURL ?? null,
-    price_cents: price,
-    stock,
-    unit: product.unidade ?? null,
-    min_quantity: defaultMinQuantity,
-    active,
-    category: product.categoria?.descricao ?? null,
-    search_terms: terms,
-    raw: product,
-  };
-}
+/** Safety cap on Bling list pages (100 items each). Partial snapshots are rejected. */
+export const BLING_PRODUCT_PAGE_CAP = 200;
 
 export async function listAllBlingProducts(
   service: SupabaseClient<Database>,
@@ -254,7 +191,11 @@ export async function listAllBlingProducts(
     products.push(...batch);
     if (batch.length < limit) break;
     page += 1;
-    if (page > 200) break;
+    if (page > BLING_PRODUCT_PAGE_CAP) {
+      throw new Error(
+        `Bling product list exceeded safety cap of ${BLING_PRODUCT_PAGE_CAP} pages; refusing partial snapshot`,
+      );
+    }
   }
   return products;
 }
@@ -264,25 +205,25 @@ export async function syncBlingProductsToCache(
   defaultMinQuantity: number,
 ): Promise<{ upserted: number }> {
   const products = await listAllBlingProducts(service);
+  const syncedAt = new Date().toISOString();
   const rows = products.map((product) => {
     const normalized = normalizeBlingProduct(product, defaultMinQuantity);
     return {
       ...normalized,
-      synced_at: new Date().toISOString(),
+      synced_at: syncedAt,
     };
   });
 
-  if (rows.length === 0) return { upserted: 0 };
-
-  // Upsert in chunks to stay under payload limits.
-  const chunkSize = 100;
-  for (let i = 0; i < rows.length; i += chunkSize) {
-    const chunk = rows.slice(i, i + chunkSize);
-    const { error } = await service.from('bling_products').upsert(chunk, {
-      onConflict: 'id',
-    });
-    if (error) throw error;
+  if (rows.length === 0) {
+    throw new Error(
+      'Bling product snapshot is empty; refusing to clear catalog cache',
+    );
   }
 
-  return { upserted: rows.length };
+  const { data, error } = await service.rpc('replace_bling_products_snapshot', {
+    p_products: rows,
+  });
+  if (error) throw error;
+
+  return { upserted: typeof data === 'number' ? data : rows.length };
 }

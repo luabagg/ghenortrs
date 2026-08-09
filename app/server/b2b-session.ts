@@ -1,5 +1,5 @@
 // GET /api/b2b-session
-// Returns auth + seller gate state for the current Bearer token.
+// Return auth and seller gate state for the Bearer token.
 
 import { handleOptions, json, methodNotAllowed } from './http';
 import {

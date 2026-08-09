@@ -2,14 +2,17 @@ import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useActionData, useNavigation } from '@remix-run/react';
 
-import { validateB2BFields } from '~/b2b/schemas';
+import { parseB2BRegistration, validateB2BFields } from '~/b2b/schemas';
 import { B2BPage } from '~/components/pages/b2b-page';
 import type {
   B2BActionData,
   B2BFields,
 } from '~/components/pages/b2b-form-types';
 import { buildSeoMetaForPath } from '~/lib/seo';
-import registerHandler from '~/server/b2b-register';
+import {
+  mapRegisterResultToRemix,
+  registerSellerApplication,
+} from '~/server/b2b-register-service';
 import submitHandler from '~/server/b2b-submit';
 
 export const meta: MetaFunction = () => buildSeoMetaForPath('/b2b');
@@ -50,35 +53,19 @@ export async function action({ request }: ActionFunctionArgs) {
     return json<B2BActionData>({ status: 'idle', errors });
   }
 
-  // Forward as JSON to existing register handler (Bearer passthrough).
-  const registerRequest = new Request(request.url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(request.headers.get('Authorization')
-        ? { Authorization: request.headers.get('Authorization')! }
-        : {}),
-    },
-    body: JSON.stringify({
-      empresa: fields.empresa,
-      cnpj: fields.cnpj,
-      telefone: fields.telefone,
-      email: fields.email,
-      mensagem: fields.mensagem,
-      website: honeypot,
-    }),
+  const parsed = parseB2BRegistration(fields);
+  if (!parsed.ok) {
+    return json<B2BActionData>({ status: 'error', message: parsed.error });
+  }
+
+  // Remix form has no session Bearer. Call the typed service directly.
+  const result = await registerSellerApplication({
+    data: parsed.data,
+    authenticatedUser: null,
   });
 
-  const registerResponse = await registerHandler(registerRequest);
-  const registerBody = (await registerResponse.json().catch(() => ({}))) as {
-    success?: boolean;
-    status?: string;
-    error?: string;
-    message?: string;
-  };
-
-  if (registerBody.error === 'server_not_configured') {
-    // Legacy Resend-only fallback.
+  // Legacy Resend-only fallback only when Supabase server env is missing.
+  if (result.kind === 'server_not_configured') {
     const legacyRequest = new Request(request.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -99,26 +86,8 @@ export async function action({ request }: ActionFunctionArgs) {
     return json<B2BActionData>({ status: 'success' });
   }
 
-  if (registerResponse.status === 409 && registerBody.error === 'already_approved') {
-    return json<B2BActionData>({
-      status: 'error',
-      message: registerBody.message ?? 'already_approved',
-      gateHint: 'login',
-    });
-  }
-
-  if (registerBody.error && !registerBody.success) {
-    return json<B2BActionData>({
-      status: 'error',
-      message: registerBody.error,
-    });
-  }
-
-  return json<B2BActionData>({
-    status: 'success',
-    message: registerBody.message,
-    gateHint: registerBody.status,
-  });
+  const mapped = mapRegisterResultToRemix(result);
+  return json<B2BActionData>(mapped);
 }
 
 export default function B2BRoute() {

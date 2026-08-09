@@ -28,7 +28,7 @@ describe('ScrollImage', () => {
 
     expect(image).toHaveAttribute('loading', 'lazy');
     expect(image).toHaveAttribute('data-motion-image', 'parallax');
-    // Layout classes land on the measured frame; cover is applied on the img.
+    // Layout classes on measured frame. Cover on the img.
     expect(image).toHaveClass('object-cover');
     expect(image.parentElement).toHaveClass('object-cover');
   });

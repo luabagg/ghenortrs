@@ -12,6 +12,7 @@ export type SubmitStatus =
   | 'idle'
   | 'loading'
   | 'success'
+  | 'partial-success'
   | 'error'
   | 'no-config';
 

@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
-// Remix hooks that need a full Remix data router are mocked for unit tests.
-// Client validation runs before useSubmit is invoked.
+// Mock Remix hooks that need a full data router.
+// Client validation runs before useSubmit.
 vi.mock('@remix-run/react', async () => {
   const actual = await vi.importActual<typeof import('@remix-run/react')>(
     '@remix-run/react',

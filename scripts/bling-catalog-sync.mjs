@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Offline/CI Bling → Supabase product cache sync.
- * Requires env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
- * and either stored Bling tokens in Supabase or a one-shot access token.
+ * Offline/CI sync: Bling products into Supabase cache.
+ * Needs: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+ * and Bling tokens in Supabase or a one-shot access token.
  *
- * Preferred production path: POST /api/bling-sync with admin secret
- * (handles OAuth refresh in the edge runtime).
+ * Prefer production path: POST /api/bling-sync with admin secret
+ * (OAuth refresh runs in the edge runtime).
  *
- * This script calls the deployed sync endpoint when B2B_SYNC_URL is set:
+ * When B2B_SYNC_URL is set, this script calls the deployed endpoint:
  *   B2B_SYNC_URL=https://…/api/bling-sync B2B_ADMIN_APPROVE_SECRET=… pnpm catalog:sync
  */
 
@@ -24,7 +24,7 @@ Set:
   B2B_ADMIN_APPROVE_SECRET=…
 
 Or call the endpoint directly after connecting Bling OAuth once via
-  /api/bling-oauth-start?secret=…
+  POST /api/bling-oauth-start with X-Admin-Secret, then open authorizeUrl.
 `);
     process.exitCode = 1;
     return;

@@ -1,4 +1,19 @@
-Before making UI changes, read `DESIGN.md` and follow its tokens and rationale. Do not invent colors, spacing, typography, or component variants unless the design file is missing the needed token.
-Planning source of truth is Linear project `Gheno rotors`. Use Linear milestones and issues for order, scope, and priorities. Do not maintain a parallel local planning layer under `docs/project/`.
-If you change the site's routes, product positioning, B2B flow, commerce boundary, or other externally visible project facts, update `public/llms.txt` in the same work session so LLM-facing project guidance stays accurate.
-After completing work tied to Linear issues or milestones, update the relevant Linear tickets with current progress, verification evidence, and any remaining blockers before reporting completion.
+Before you change UI, read `DESIGN.md`.
+
+Follow its tokens and rationale.
+
+Do not invent colors, spacing, typography, or component variants.
+
+Invent a token only when `DESIGN.md` lacks what you need.
+
+Plan work in Linear project `Gheno rotors`.
+
+Use Linear milestones and issues for order, scope, and priority.
+
+Do not keep a second plan under `docs/project/`.
+
+If you change routes, product positioning, B2B flow, commerce boundary, or other public project facts, update `public/llms.txt` in the same session.
+
+After work tied to Linear issues or milestones, update those tickets.
+
+Include progress, verification evidence, and blockers.

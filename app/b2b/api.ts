@@ -68,25 +68,34 @@ export async function fetchB2BCatalog(query = ''): Promise<{
   return data;
 }
 
+export type SubmitB2BQuoteResult = {
+  success?: boolean;
+  persisted?: boolean;
+  complete?: boolean;
+  id?: string;
+  requestKey?: string;
+  notification?: 'pending' | 'sent' | 'failed' | 'not_configured';
+  error?: string;
+  message?: string;
+};
+
 export async function submitB2BQuote(input: {
   items: QuoteSelectionItem[];
   notes: string;
-}): Promise<{ success?: boolean; error?: string; message?: string }> {
+  requestKey: string;
+}): Promise<SubmitB2BQuoteResult> {
   const headers = await authHeaders();
   const res = await fetch(apiUrl('/api/b2b-quote'), {
     method: 'POST',
     headers,
     body: JSON.stringify({
       notes: input.notes,
+      requestKey: input.requestKey,
       items: input.items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
       })),
     }),
   });
-  return (await res.json()) as {
-    success?: boolean;
-    error?: string;
-    message?: string;
-  };
+  return (await res.json()) as SubmitB2BQuoteResult;
 }

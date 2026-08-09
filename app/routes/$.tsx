@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function NotFoundRoute() {
-  // loader always throws; this is a fallback for client navigations.
+  // Loader always throws. Fallback for client navigations.
   return (
     <div className="grid gap-8" data-section="not-found-page">
       <PageIntro

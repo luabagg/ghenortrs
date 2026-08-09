@@ -32,12 +32,12 @@ type B2BPageProps = {
 };
 
 export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
-  const { configured, gate, session, signOut, refresh } = useB2BSession();
+  const { configured, gate, session, signOut, refresh, error: sessionError } =
+    useB2BSession();
   const [mode, setMode] = useState<GateMode>(
     actionData?.gateHint === 'login' ? 'login' : 'register',
   );
-  // SSR always sees `null` (see auth-redirect-error.ts); React reconciles
-  // to the real client value right after hydration, no manual effect needed.
+  // SSR sees `null` (auth-redirect-error.ts). React reconciles after hydration.
   const capturedLinkError = useSyncExternalStore(
     subscribeAuthRedirectError,
     getAuthRedirectErrorSnapshot,
@@ -55,6 +55,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
     handleFieldChange,
     handleSubmit,
     honeypot,
+    message,
     setHoneypot,
     status,
   } = useB2BLeadForm({
@@ -73,6 +74,22 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
           title="B2B GHENO rotors."
         />
         <p className="text-secondary">Carregando…</p>
+      </div>
+    );
+  }
+
+  if (sessionError) {
+    return (
+      <div className="grid gap-8">
+        <B2BAccessHeroSection
+          description="Não foi possível verificar a sessão comercial agora."
+          title="Falha de sessão B2B."
+        />
+        <p className="text-accent" role="alert">
+          {sessionError === 'session_failed'
+            ? 'Erro ao carregar a sessão. Tente novamente em instantes.'
+            : sessionError}
+        </p>
       </div>
     );
   }
@@ -169,6 +186,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
             errors={errors}
             fields={fields}
             honeypot={honeypot}
+            message={message}
             status={status}
             onFieldChange={handleFieldChange}
             onHoneypotChange={setHoneypot}

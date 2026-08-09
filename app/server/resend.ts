@@ -5,9 +5,31 @@ type SendEmailInput = {
   subject: string;
   html: string;
   replyTo?: string;
+  /**
+   * Official Resend Idempotency-Key header (1-256 chars, retained 24h).
+   * Same key + different payload, or concurrent same-key requests, return 409.
+   */
+  idempotencyKey?: string;
 };
 
-/** Resend-only config — does not require Supabase (legacy submit path). */
+const RESEND_IDEMPOTENCY_KEY_MIN = 1;
+const RESEND_IDEMPOTENCY_KEY_MAX = 256;
+
+/** Validate Resend Idempotency-Key length before fetch. */
+export function assertResendIdempotencyKey(key: string): string {
+  const trimmed = key.trim();
+  if (
+    trimmed.length < RESEND_IDEMPOTENCY_KEY_MIN ||
+    trimmed.length > RESEND_IDEMPOTENCY_KEY_MAX
+  ) {
+    throw new Error(
+      `Resend Idempotency-Key must be ${RESEND_IDEMPOTENCY_KEY_MIN}-${RESEND_IDEMPOTENCY_KEY_MAX} characters`,
+    );
+  }
+  return trimmed;
+}
+
+/** Resend-only config. No Supabase required (legacy submit path). */
 export function getResendMailConfig(): {
   apiKey: string | null;
   toEmail: string | null;
@@ -76,12 +98,19 @@ export async function sendResendEmail(
   }
 
   const to = Array.isArray(input.to) ? input.to : [input.to];
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${mail.apiKey}`,
+    'Content-Type': 'application/json',
+  };
+  if (input.idempotencyKey != null) {
+    headers['Idempotency-Key'] = assertResendIdempotencyKey(
+      input.idempotencyKey,
+    );
+  }
+
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${mail.apiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({
       from: mail.from,
       to,

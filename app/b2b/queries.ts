@@ -47,7 +47,10 @@ export function useRegisterSellerMutation() {
 
 export function useSubmitB2BQuoteMutation() {
   return useMutation({
-    mutationFn: (input: { items: QuoteSelectionItem[]; notes: string }) =>
-      submitB2BQuote(input),
+    mutationFn: (input: {
+      items: QuoteSelectionItem[];
+      notes: string;
+      requestKey: string;
+    }) => submitB2BQuote(input),
   });
 }

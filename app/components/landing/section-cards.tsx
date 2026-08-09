@@ -20,7 +20,7 @@ export function PageIntro({
   title: string;
   description: string;
   headingLevel?: 1 | 2;
-  /** Keep the surface card frame (B2B form intros). */
+  /** Keep the surface card frame for B2B form intros. */
   framed?: boolean;
   className?: string;
 }) {

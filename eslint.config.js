@@ -14,7 +14,6 @@ export default tseslint.config(
       '.cache',
       '*.tsbuildinfo',
       'public/**',
-      'scripts/**',
     ],
   },
   {
@@ -34,6 +33,17 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.{js,mjs,cjs}'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
     },
   },
   {

@@ -68,7 +68,7 @@ export default async function handler(req: Request): Promise<Response> {
       .limit(limit);
 
     if (q) {
-      // Simple ilike search across name/sku/terms. Good enough for MVP catalog.
+      // Simple ilike across name/sku/terms. Enough for MVP.
       const safe = q.replace(/[%_,.()'"]/g, ' ').trim();
       const pattern = `%${safe}%`;
       query = query.or(

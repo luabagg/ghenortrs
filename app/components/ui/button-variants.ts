@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority';
 
 /**
  * Marketing CTAs: outline (red), secondary (white outline), ghost (text).
- * `primary` stays filled for form submits only.
+ * Keep `primary` filled for form submits only.
  */
 export const buttonVariants = cva(
   'inline-flex min-h-12 items-center justify-center gap-2 rounded-button border text-sm font-bold uppercase tracking-[0.08em] transition-colors active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50',

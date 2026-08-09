@@ -17,7 +17,7 @@ const require = createRequire(import.meta.url);
 const appPath = fileURLToPath(new URL('./app', import.meta.url));
 const isVitest = Boolean(process.env.VITEST);
 
-// Vitest only: force Remix and the test harness onto one react-router copy.
+// Vitest only: force Remix and harness onto one react-router copy.
 // Resolve through @remix-run/react so pnpm nested deps stay consistent.
 const testRouterAliases = isVitest
   ? (() => {

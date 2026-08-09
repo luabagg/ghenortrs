@@ -14,7 +14,8 @@
     "format:check": "prettier --check \"app/**/*.{ts,tsx,css}\" \"docs/**/*.md\" \"{package,components}.json\" \"pnpm-lock.yaml\" \"{README,DESIGN}.md\" \"{vite,eslint}.config.{ts,js}\" \"tsconfig*.json\"",
     "preview": "remix-serve ./build/server/nodejs-eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
     "search:sync": "node scripts/store-search-index.mjs",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc",
     "catalog:sync": "node scripts/bling-catalog-sync.mjs",
     "supabase:types": "supabase gen types typescript --linked --schema public > app/server/database.types.ts"

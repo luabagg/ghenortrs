@@ -1,15 +1,14 @@
 // Hand-authored Supabase Database types.
 //
-// The Supabase CLI (`npx supabase gen types typescript --local`) requires a
-// running local Postgres/Docker stack, which is unavailable in this sandbox
-// and in CI without secrets. This file mirrors exactly what that command
-// would produce for `supabase/migrations/20260801000000_b2b_sellers_bling.sql`.
+// `npx supabase gen types typescript --local` needs local Postgres/Docker.
+// That stack is unavailable here and in CI without secrets.
+// This file mirrors the output for
+// `supabase/migrations/20260801000000_b2b_sellers_bling.sql`.
 //
-// Regenerate against a linked project once credentials are available:
+// Regenerate against a linked project when credentials exist:
 //   pnpm supabase:types
 //
-// If you add/alter tables, keep this file in sync with the migration by hand
-// (or regenerate) — do not let it drift.
+// When you add or alter tables, keep this file in sync with the migration.
 
 export type Json =
   | string
@@ -155,25 +154,37 @@ export type Database = {
         Row: {
           id: string;
           seller_id: string;
+          request_key: string;
           items: Json;
           notes: string;
           status: string;
+          notification_status: 'pending' | 'sent' | 'failed' | 'not_configured';
+          notification_attempts: number;
+          notified_at: string | null;
           created_at: string;
         };
         Insert: {
           id?: string;
           seller_id: string;
+          request_key: string;
           items: Json;
           notes?: string;
           status?: string;
+          notification_status?: 'pending' | 'sent' | 'failed' | 'not_configured';
+          notification_attempts?: number;
+          notified_at?: string | null;
           created_at?: string;
         };
         Update: {
           id?: string;
           seller_id?: string;
+          request_key?: string;
           items?: Json;
           notes?: string;
           status?: string;
+          notification_status?: 'pending' | 'sent' | 'failed' | 'not_configured';
+          notification_attempts?: number;
+          notified_at?: string | null;
           created_at?: string;
         };
         Relationships: [
@@ -188,7 +199,14 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      replace_bling_products_snapshot: {
+        Args: {
+          p_products: Json;
+        };
+        Returns: number;
+      };
+    };
     Enums: {
       seller_status: 'pending' | 'approved' | 'rejected' | 'suspended';
     };

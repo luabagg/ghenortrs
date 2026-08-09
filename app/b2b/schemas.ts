@@ -1,7 +1,5 @@
-// Shared Zod schemas for the B2B lead form and quote requests. Used by the
-// Remix `b2b` route action/client validation and by the server handlers
-// (b2b-register, b2b-quote, legacy b2b-submit) so validation rules stay in
-// one place instead of being hand-rolled per caller.
+// Shared Zod schemas for B2B lead form and quote requests.
+// Used by Remix `b2b` route and server handlers so rules stay in one place.
 
 import { z } from 'zod';
 
@@ -50,7 +48,7 @@ function buildB2BFieldsSchema(messages: B2BFieldMessages) {
   });
 }
 
-// Portuguese, per-field messages for the lead form UI.
+// Portuguese per-field messages for the lead form UI.
 export const b2bRegistrationSchema = buildB2BFieldsSchema({
   empresaRequired: 'Nome da empresa é obrigatório.',
   cnpjRequired: 'CNPJ é obrigatório.',
@@ -64,10 +62,7 @@ export const b2bRegistrationSchema = buildB2BFieldsSchema({
 export type B2BRegistrationFields = z.input<typeof b2bRegistrationSchema>;
 export type B2BRegistrationData = z.output<typeof b2bRegistrationSchema>;
 
-/**
- * Validates raw form fields and returns Portuguese, per-field error messages
- * suitable for rendering next to each input.
- */
+/** Validate raw form fields. Return Portuguese per-field errors. */
 export function validateB2BFields(
   fields: B2BRegistrationFields,
 ): Partial<Record<keyof B2BRegistrationFields, string>> {
@@ -84,8 +79,7 @@ export function validateB2BFields(
   return errors;
 }
 
-// Generic error codes (matching the previous hand-rolled `validate()`) for
-// the /api/b2b-register handler.
+// Generic error codes for /api/b2b-register (match prior `validate()`).
 const registerFieldsSchema = buildB2BFieldsSchema({
   empresaRequired: 'empresa_required',
   cnpjRequired: 'cnpj_invalid',
@@ -101,7 +95,7 @@ function stringField(record: Record<string, unknown>, key: string): string {
   return typeof value === 'string' ? value : '';
 }
 
-/** Accepts an untrusted request body and normalizes missing/non-string fields to `''`. */
+/** Normalize untrusted body fields. Missing or non-string becomes `''`. */
 export const b2bRegisterRequestSchema = z.preprocess((raw) => {
   const record = (raw ?? {}) as Record<string, unknown>;
   return {
@@ -116,10 +110,8 @@ export const b2bRegisterRequestSchema = z.preprocess((raw) => {
 export type B2BRegisterRequestData = z.output<typeof b2bRegisterRequestSchema>;
 
 /**
- * Validates raw registration input for server handlers, returning normalized
- * data (digits-only cnpj/telefone, trimmed + lowercased email) on success or
- * a generic error code (matching the previous hand-rolled `validate()`) on
- * failure.
+ * Validate registration input for server handlers.
+ * Success: normalized data. Failure: generic error code.
  */
 export function parseB2BRegistration(
   input: unknown,
@@ -139,9 +131,8 @@ export const b2bQuoteItemSchema = z.object({
 
 export type B2BQuoteItem = z.output<typeof b2bQuoteItemSchema>;
 
-// Malformed individual items are dropped (matching the previous hand-rolled
-// filtering) rather than failing the whole request; callers should treat a
-// resulting empty `items` array as `items_invalid`.
+// Drop malformed items. Empty `items` means `items_invalid` for callers.
+// `requestKey` is required for idempotent persistence (unique per seller).
 export const b2bQuoteRequestSchema = z.object({
   items: z.array(z.unknown()).transform((items) =>
     items
@@ -150,20 +141,45 @@ export const b2bQuoteRequestSchema = z.object({
       .map((result) => result.data),
   ),
   notes: z.string().trim().default(''),
+  requestKey: z.uuid(),
 });
 
 export type B2BQuoteRequestData = z.output<typeof b2bQuoteRequestSchema>;
 
 /**
- * Validates a quote request body. The request is only rejected if the item
- * list is missing/not an array (`items_required`) or every item turns out to
- * be malformed (`items_invalid`).
+ * Validate a quote request body.
+ * Fail if requestKey is missing/invalid, items are missing, or every item is malformed.
  */
 export function parseB2BQuoteRequest(input: unknown):
-  | { ok: true; items: B2BQuoteItem[]; notes: string }
-  | { ok: false; error: 'items_required' | 'items_invalid' } {
+  | { ok: true; items: B2BQuoteItem[]; notes: string; requestKey: string }
+  | {
+      ok: false;
+      error: 'items_required' | 'items_invalid' | 'request_key_invalid';
+    } {
+  if (
+    input == null ||
+    typeof input !== 'object' ||
+    !('items' in input) ||
+    !Array.isArray((input as { items: unknown }).items)
+  ) {
+    return { ok: false, error: 'items_required' };
+  }
+
   const parsed = b2bQuoteRequestSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: 'items_required' };
-  if (parsed.data.items.length === 0) return { ok: false, error: 'items_invalid' };
-  return { ok: true, items: parsed.data.items, notes: parsed.data.notes };
+  if (!parsed.success) {
+    const requestKeyIssue = parsed.error.issues.some((issue) =>
+      issue.path.includes('requestKey'),
+    );
+    if (requestKeyIssue) return { ok: false, error: 'request_key_invalid' };
+    return { ok: false, error: 'items_required' };
+  }
+  if (parsed.data.items.length === 0) {
+    return { ok: false, error: 'items_invalid' };
+  }
+  return {
+    ok: true,
+    items: parsed.data.items,
+    notes: parsed.data.notes,
+    requestKey: parsed.data.requestKey,
+  };
 }

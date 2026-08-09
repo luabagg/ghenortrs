@@ -15,6 +15,16 @@ export function json(body: unknown, status = 200): Response {
   });
 }
 
+export function html(body: string, status = 200): Response {
+  return new Response(body, {
+    status,
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      ...CORS_HEADERS,
+    },
+  });
+}
+
 export function noContent(): Response {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }

@@ -1,39 +1,48 @@
 # ghenortrs
 
-GHENO rotors marketing + B2B site on **Remix (Vite)** + React + TypeScript.
+GHENO rotors marketing and B2B site.
 
-Styling tokens live in `DESIGN.md` / `app/styles.css`. Planning lives in Linear project `Gheno rotors`.
+Stack: Remix (Vite), React, TypeScript.
+
+Style tokens: `DESIGN.md` and `app/styles.css`.
+
+Plan work in Linear project `Gheno rotors`.
 
 ## Commands
 
 ```bash
 pnpm install
 pnpm dev          # remix vite:dev
-npm test             # vitest
+pnpm test         # vitest run
+pnpm test:watch   # vitest
 pnpm typecheck    # tsc
 pnpm lint         # eslint
 pnpm build        # search:sync + remix vite:build
-npm start            # remix-serve production server
+pnpm start        # remix-serve production server
 pnpm search:sync  # refresh Nuvemshop search index
 pnpm catalog:sync # pull Bling catalog cache
 ```
 
 ## App layout
 
-- `app/routes/*` — Remix file routes (pages + `/api/*` resource routes)
+- `app/routes/*` — Remix file routes (pages and `/api/*` resource routes)
 - `app/components/*` — UI (GHENO design system)
 - `app/server/*` — server handlers (B2B, Bling, Resend, Supabase)
-- `public/` — static assets + `llms.txt`
+- `public/` — static assets and `llms.txt`
 
 ## Environment
 
-Copy `.env.example` → `.env` / Vercel project env. Public browser vars still use the `VITE_*` prefix.
+Copy `.env.example` to `.env`.
 
-## B2B auth + Bling catalog
+Also set the same keys in the Vercel project.
 
-1. Apply `supabase/migrations/20260801000000_b2b_sellers_bling.sql`
-2. Fill credentials (see `docs/integrations/b2b-auth-bling.md`)
-3. Connect Bling OAuth once via `/api/bling-oauth-start?secret=…`
-4. Sync products: `pnpm catalog:sync` or `POST /api/bling-sync`
+Public browser vars use the `VITE_*` prefix.
 
-Public marketing search remains Nuvemshop-based (`pnpm search:sync`).
+## B2B auth and Bling catalog
+
+1. Apply `supabase/migrations/20260801000000_b2b_sellers_bling.sql`.
+2. Set credentials. See `docs/integrations/b2b-auth-bling.md`.
+3. Connect Bling OAuth once via `POST /api/bling-oauth-start` with `X-Admin-Secret`, then open the returned `authorizeUrl`.
+4. Sync products: `pnpm catalog:sync` or `POST /api/bling-sync` with `X-Admin-Secret`.
+
+Public marketing search still uses Nuvemshop (`pnpm search:sync`).

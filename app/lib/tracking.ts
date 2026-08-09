@@ -9,6 +9,7 @@ type FormEventName =
   | 'b2b_form_submit_attempt'
   | 'b2b_form_validation_error'
   | 'b2b_form_submit_success'
+  | 'b2b_form_submit_partial_success'
   | 'b2b_form_submit_error';
 
 interface FormEventPayload {

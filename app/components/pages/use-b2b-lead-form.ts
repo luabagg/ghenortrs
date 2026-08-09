@@ -24,10 +24,7 @@ const emptyFields: B2BFields = {
   mensagem: '',
 };
 
-/**
- * Client state for the B2B lead form.
- * Client validates first; Remix route action handles server submit.
- */
+/** B2B lead form client state. Validate client-side, then Remix action. */
 export function useB2BLeadForm(options?: {
   actionData?: B2BActionData;
   isSubmitting?: boolean;
@@ -66,6 +63,12 @@ export function useB2BLeadForm(options?: {
 
     if (actionData.status === 'success') {
       trackFormEvent('b2b_form_submit_success', {
+        form: 'b2b_seller_register',
+      });
+      // Both success and partial-success persist a pending seller.
+      onRegistered?.();
+    } else if (actionData.status === 'partial-success') {
+      trackFormEvent('b2b_form_submit_partial_success', {
         form: 'b2b_seller_register',
       });
       onRegistered?.();
@@ -114,6 +117,7 @@ export function useB2BLeadForm(options?: {
     handleFieldChange,
     handleSubmit,
     honeypot,
+    message: actionData?.message,
     setHoneypot,
     status,
   };

@@ -1,4 +1,4 @@
--- GHENO B2B sellers + Bling catalog cache
+-- GHENO B2B sellers and Bling catalog cache
 -- Apply in Supabase SQL editor or via supabase db push.
 
 create extension if not exists "pgcrypto";
@@ -56,8 +56,8 @@ create policy "sellers_select_own"
   to authenticated
   using (auth.uid() = id);
 
--- Inserts/updates go through service-role edge functions only.
--- No insert/update/delete policies for authenticated/anon.
+-- Inserts and updates use service-role edge functions only.
+-- No insert/update/delete policies for authenticated or anon.
 
 -- ---------------------------------------------------------------------------
 -- Bling OAuth token store (service role only)
@@ -74,10 +74,10 @@ create table if not exists public.bling_oauth_tokens (
 );
 
 alter table public.bling_oauth_tokens enable row level security;
--- No policies: only service role can touch this table.
+-- No policies. Only service role can touch this table.
 
 -- ---------------------------------------------------------------------------
--- Cached Bling products for B2B catalog / search
+-- Cached Bling products for B2B catalog and search
 -- ---------------------------------------------------------------------------
 create table if not exists public.bling_products (
   id bigint primary key,
@@ -119,7 +119,7 @@ create policy "bling_products_select_approved"
   );
 
 -- ---------------------------------------------------------------------------
--- Quote requests (selection → human follow-up; no checkout)
+-- Quote requests (selection to human follow-up; no checkout)
 -- ---------------------------------------------------------------------------
 create table if not exists public.b2b_quote_requests (
   id uuid primary key default gen_random_uuid(),
@@ -141,4 +141,4 @@ create policy "quote_select_own"
   to authenticated
   using (seller_id = auth.uid());
 
--- Inserts via service role after validation.
+-- Insert via service role after validation.
