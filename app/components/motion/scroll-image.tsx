@@ -22,14 +22,9 @@ type ScrollImageProps = Omit<
   effect: 'zoom' | 'parallax';
 };
 
-/**
- * Resting / bleed scale. Parallax keeps this constant so scroll never
- * reflows size (mobile overscroll used to grow the image via a mid valley).
- * Headroom must cover the max |y| for that effect.
- */
 const ZOOM_REST_SCALE = 1.06;
-/** Bleed scale — must exceed max parallax |y| on each side from center. */
-const PARALLAX_SCALE = 1.28;
+/** Light bleed; with origin top, 8% Y stays inside bottom headroom. */
+const PARALLAX_SCALE = 1.1;
 
 // useLayoutEffect warns under SSR; fall back to useEffect on the server.
 const useIsomorphicLayoutEffect =
@@ -62,27 +57,28 @@ export function ScrollImage({
     setMotionReady(true);
   }, []);
 
-  // Zoom: gentle Ken Burns around the resting baseline.
   const zoomScale = useTransform(
     scrollYProgress,
     [0, 0.5, 1],
     [1.16, ZOOM_REST_SCALE, 1.12],
   );
 
-  // Parallax: fixed scale + one-way drift. Monotonic y means overscroll /
-  // URL-bar resize cannot "grow" the image when scrolling back up.
-  // 14% stays inside 1.28 scale headroom (~14% per side from center).
-  const parallaxY = useTransform(scrollYProgress, [0, 1], ['0%', '14%']);
+  // Fixed scale + one-way drift (no mid-valley grow on overscroll).
+  const parallaxY = useTransform(scrollYProgress, [0, 1], ['0%', '8%']);
 
   const allowMotion = motionReady && reduceMotion !== true;
 
   const style = !allowMotion
     ? effect === 'zoom'
       ? { scale: ZOOM_REST_SCALE }
-      : { scale: PARALLAX_SCALE, y: 0 }
+      : { scale: PARALLAX_SCALE, y: 0, transformOrigin: 'center top' }
     : effect === 'zoom'
       ? { scale: zoomScale }
-      : { scale: PARALLAX_SCALE, y: parallaxY };
+      : {
+          scale: PARALLAX_SCALE,
+          y: parallaxY,
+          transformOrigin: 'center top',
+        };
 
   return (
     <div ref={frameRef} className={cn('overflow-hidden', className)}>
