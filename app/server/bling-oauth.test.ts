@@ -13,6 +13,7 @@ function baseEnv(overrides: Partial<ServerEnv> = {}): ServerEnv {
     supabaseUrl: 'https://example.supabase.co',
     supabaseAnonKey: 'anon',
     supabaseServiceRoleKey: 'service',
+    databaseUrl: 'postgres://postgres:postgres@localhost:5432/postgres',
     resendApiKey: null,
     resendToEmail: null,
     resendFrom: 'test@example.com',

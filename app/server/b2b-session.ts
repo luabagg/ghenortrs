@@ -2,12 +2,7 @@
 // Return auth and seller gate state for the Bearer token.
 
 import { handleOptions, json, methodNotAllowed } from './http';
-import {
-  createServiceClient,
-  getSellerById,
-  requireUser,
-} from './supabase';
-
+import { getSellerById, requireUser } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
   const opt = handleOptions(req);
@@ -28,8 +23,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const service = createServiceClient();
-    const seller = await getSellerById(service, auth.user.id);
+    const seller = await getSellerById(auth.user.id);
 
     if (!seller) {
       return json({

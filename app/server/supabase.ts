@@ -1,12 +1,18 @@
-import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js';
+import {
+  createClient,
+  type SupabaseClient,
+  type User,
+} from '@supabase/supabase-js';
 
 import type { Database, Enums, Tables } from './database.types';
+import { getSellerById, type SellerRow } from './db/sellers';
 import { getServerEnv } from './env';
 import { getBearerToken, json } from './http';
 
 export type SellerStatus = Enums<'seller_status'>;
-export type SellerRow = Tables<'sellers'>;
+export type { SellerRow };
 export type BlingProductRow = Tables<'bling_products'>;
+export { getSellerById, getSellerByEmail } from './db/sellers';
 
 export function createServiceClient(): SupabaseClient<Database> {
   const env = getServerEnv();
@@ -18,7 +24,9 @@ export function createServiceClient(): SupabaseClient<Database> {
   });
 }
 
-export function createUserClient(accessToken: string): SupabaseClient<Database> {
+export function createUserClient(
+  accessToken: string,
+): SupabaseClient<Database> {
   const env = getServerEnv();
   return createClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
     global: {
@@ -45,40 +53,13 @@ export async function requireUser(
   return { user: data.user, accessToken };
 }
 
-export async function getSellerById(
-  service: SupabaseClient<Database>,
-  id: string,
-): Promise<SellerRow | null> {
-  const { data, error } = await service
-    .from('sellers')
-    .select('*')
-    .eq('id', id)
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
-
-export async function getSellerByEmail(
-  service: SupabaseClient<Database>,
-  email: string,
-): Promise<SellerRow | null> {
-  const { data, error } = await service
-    .from('sellers')
-    .select('*')
-    .eq('email', email.toLowerCase())
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
-
 export async function requireApprovedSeller(
   req: Request,
 ): Promise<{ user: User; seller: SellerRow; accessToken: string } | Response> {
   const auth = await requireUser(req);
   if (auth instanceof Response) return auth;
 
-  const service = createServiceClient();
-  const seller = await getSellerById(service, auth.user.id);
+  const seller = await getSellerById(auth.user.id);
   if (!seller) {
     return json(
       {

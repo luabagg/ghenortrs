@@ -1,30 +1,39 @@
 // GET /api/b2b-catalog?q=&limit=
 // Approved sellers only. Reads cached Bling products.
 
+import { and, eq, ilike, or } from 'drizzle-orm';
+
+import { createDb } from './db/client';
+import { blingProducts } from './db/schema';
 import { getServerEnv } from './env';
 import { handleOptions, json, methodNotAllowed } from './http';
-import {
-  createServiceClient,
-  requireApprovedSeller,
-  type BlingProductRow,
-} from './supabase';
+import { requireApprovedSeller } from './supabase';
 
-const CATALOG_SELECT =
-  'id, sku, name, description, image_url, price_cents, stock, unit, min_quantity, active, category, search_terms, synced_at' as const;
+const CATALOG_COLUMNS = {
+  id: blingProducts.id,
+  sku: blingProducts.sku,
+  name: blingProducts.name,
+  description: blingProducts.description,
+  image_url: blingProducts.image_url,
+  price_cents: blingProducts.price_cents,
+  stock: blingProducts.stock,
+  unit: blingProducts.unit,
+  min_quantity: blingProducts.min_quantity,
+  category: blingProducts.category,
+} as const;
 
-type CatalogProductRow = Pick<
-  BlingProductRow,
-  | 'id'
-  | 'sku'
-  | 'name'
-  | 'description'
-  | 'image_url'
-  | 'price_cents'
-  | 'stock'
-  | 'unit'
-  | 'min_quantity'
-  | 'category'
->;
+type CatalogProductRow = {
+  id: number;
+  sku: string | null;
+  name: string;
+  description: string;
+  image_url: string | null;
+  price_cents: number | null;
+  stock: number | null;
+  unit: string | null;
+  min_quantity: number;
+  category: string | null;
+};
 
 function toPublicProduct(row: CatalogProductRow) {
   return {
@@ -59,27 +68,30 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const env = getServerEnv();
-    const service = createServiceClient();
-    let query = service
-      .from('bling_products')
-      .select(CATALOG_SELECT)
-      .eq('active', true)
-      .order('name', { ascending: true })
+    const db = createDb();
+    const active = eq(blingProducts.active, true);
+
+    const search = q
+      ? (() => {
+          const safe = q.replace(/[%_,.()'"]/g, ' ').trim();
+          const pattern = `%${safe}%`;
+          return or(
+            ilike(blingProducts.name, pattern),
+            ilike(blingProducts.sku, pattern),
+            ilike(blingProducts.search_terms, pattern),
+            ilike(blingProducts.category, pattern),
+          );
+        })()
+      : undefined;
+
+    const rows = await db
+      .select(CATALOG_COLUMNS)
+      .from(blingProducts)
+      .where(search ? and(active, search) : active)
+      .orderBy(blingProducts.name)
       .limit(limit);
 
-    if (q) {
-      // Simple ilike across name/sku/terms. Enough for MVP.
-      const safe = q.replace(/[%_,.()'"]/g, ' ').trim();
-      const pattern = `%${safe}%`;
-      query = query.or(
-        `name.ilike."${pattern}",sku.ilike."${pattern}",search_terms.ilike."${pattern}",category.ilike."${pattern}"`,
-      );
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    const products = (data ?? []).map(toPublicProduct);
+    const products = rows.map(toPublicProduct);
 
     return json({
       source: 'bling_cache',

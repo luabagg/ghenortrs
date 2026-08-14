@@ -5,6 +5,7 @@ export type ServerEnv = {
   supabaseUrl: string;
   supabaseAnonKey: string;
   supabaseServiceRoleKey: string;
+  databaseUrl: string;
   resendApiKey: string | null;
   resendToEmail: string | null;
   resendFrom: string;
@@ -41,6 +42,7 @@ const serverEnvSchema = z
     SUPABASE_URL: requiredEnv('SUPABASE_URL'),
     SUPABASE_ANON_KEY: requiredEnv('SUPABASE_ANON_KEY'),
     SUPABASE_SERVICE_ROLE_KEY: requiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    DATABASE_URL: requiredEnv('DATABASE_URL'),
     RESEND_API_KEY: optionalEnv(),
     RESEND_TO_EMAIL: optionalEnv(),
     RESEND_FROM: optionalEnv(),
@@ -59,6 +61,7 @@ const serverEnvSchema = z
       supabaseUrl: env.SUPABASE_URL,
       supabaseAnonKey: env.SUPABASE_ANON_KEY,
       supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      databaseUrl: env.DATABASE_URL,
       resendApiKey: env.RESEND_API_KEY ?? null,
       resendToEmail: env.RESEND_TO_EMAIL ?? null,
       resendFrom: env.RESEND_FROM ?? 'GHENO B2B <noreply@ghenortrs.com.br>',

@@ -63,9 +63,7 @@ function unauthorized(): Response {
 }
 
 function readHeaderAdminSecret(req: Request): string | null {
-  return (
-    req.headers.get('x-admin-secret') ?? req.headers.get('X-Admin-Secret')
-  );
+  return req.headers.get('x-admin-secret') ?? req.headers.get('X-Admin-Secret');
 }
 
 async function sendSellerApprovedEmail(input: {
@@ -169,7 +167,7 @@ async function applyStatus(
 ): Promise<Response> {
   const env = deps.getEnv();
   const service = deps.createServiceClient();
-  const seller = await deps.getSellerByEmail(service, input.email);
+  const seller = await deps.getSellerByEmail(input.email);
   if (!seller) return json({ error: 'seller_not_found' }, 404);
 
   if (
@@ -204,7 +202,7 @@ async function applyStatus(
   if (error || !data) {
     if (input.expectedUpdatedAt !== undefined) {
       // Concurrent update or already consumed token version.
-      const fresh = await deps.getSellerByEmail(service, input.email);
+      const fresh = await deps.getSellerByEmail(input.email);
       if (!fresh || fresh.updated_at !== input.expectedUpdatedAt) {
         return json({ error: 'token_stale' }, 409);
       }
@@ -271,8 +269,7 @@ async function handleSignedTokenGet(
     );
   }
 
-  const service = deps.createServiceClient();
-  const seller = await deps.getSellerByEmail(service, verified.payload.email);
+  const seller = await deps.getSellerByEmail(verified.payload.email);
   if (!seller) {
     return html(
       buildApproveResultHtml({
@@ -288,7 +285,8 @@ async function handleSignedTokenGet(
       buildApproveResultHtml({
         ok: false,
         title: 'Link já usado',
-        message: 'Este link não é mais válido. Peça um novo alerta de cadastro.',
+        message:
+          'Este link não é mais válido. Peça um novo alerta de cadastro.',
       }),
       409,
     );

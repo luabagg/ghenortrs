@@ -6,10 +6,7 @@ import type { User } from '@supabase/supabase-js';
 import type { B2BRegisterRequestData } from '../b2b/schemas';
 import { buildSellerApproveUrl } from './admin-approve-seller';
 import { getServerEnv, type ServerEnv } from './env';
-import {
-  buildSellerRegistrationHtml,
-  sendResendEmail,
-} from './resend';
+import { buildSellerRegistrationHtml, sendResendEmail } from './resend';
 import {
   createServiceClient,
   getSellerByEmail,
@@ -98,7 +95,10 @@ export type B2BRegisterDeps = {
       phone: string;
       message: string;
     },
-  ) => Promise<{ seller: SellerRow | null; error: { message?: string } | null }>;
+  ) => Promise<{
+    seller: SellerRow | null;
+    error: { message?: string } | null;
+  }>;
 };
 
 const ALREADY_APPROVED_MESSAGE =
@@ -124,7 +124,9 @@ const REGISTERED_NOT_CONFIGURED_MESSAGE =
 
 const AUTH_USER_PAGE_SIZE = 200;
 
-export function bindingFromUser(user: User): NonNullable<AuthenticatedUserBinding> {
+export function bindingFromUser(
+  user: User,
+): NonNullable<AuthenticatedUserBinding> {
   return {
     id: user.id,
     email: user.email?.toLowerCase() ?? null,
@@ -288,12 +290,7 @@ async function notifyRegistration(input: {
   env: ServerEnv;
   seller: Pick<
     SellerRow,
-    | 'company_name'
-    | 'cnpj'
-    | 'phone'
-    | 'email'
-    | 'message'
-    | 'updated_at'
+    'company_name' | 'cnpj' | 'phone' | 'email' | 'message' | 'updated_at'
   >;
   deps: B2BRegisterDeps;
 }): Promise<NotificationOutcome> {
@@ -348,7 +345,7 @@ export async function registerSellerApplication(
   }
 
   const service = deps.createServiceClient();
-  const existing = await deps.getSellerByEmail(service, input.data.email);
+  const existing = await deps.getSellerByEmail(input.data.email);
 
   if (existing?.status === 'approved') {
     return {
