@@ -1,0 +1,33 @@
+---
+description: Write English project text in ASD-STE100 Simplified Technical English.
+alwaysApply: true
+---
+
+# ASD-STE100 Simplified Technical English
+
+Use this standard for docs, code comments, commit messages, PR descriptions, reports, and technical replies.
+
+Keep `public/llms.txt` and on-site copy in Brazilian Portuguese.
+
+## Rules
+
+- Use approved words. Give each word one meaning.
+- Use one word for one idea. Do not use two words for the same idea.
+- Write short sentences. Keep instructions to 20 words or fewer.
+- Use active voice. Write "Turn the switch," not "The switch must be turned."
+- Write short paragraphs. Cover one topic in each paragraph.
+
+## Do
+
+```text
+Copy `.env.example` to `.env`.
+Set the same keys in the Vercel project.
+Do not put secrets in `VITE_*` variables.
+```
+
+## Do not
+
+```text
+Please ensure credentials are configured prior to utilizing the catalog.
+The switch must be turned / secrets should never be exposed.
+```

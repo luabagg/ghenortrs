@@ -1,21 +1,21 @@
 # B2B auth and Bling catalog
 
-Goal: add credentials only. The code paths are already wired.
+Add credentials only. The code is already connected.
 
 ## What you get
 
 | Surface | Behavior |
 |---|---|
-| `/b2b` | Register (pending seller) or magic-link login |
-| Unapproved login | Session ok; catalog blocked (`pending` / `rejected`) |
-| Approved login | `/b2b/catalogo` — Bling cache, min qty, quote request |
+| `/b2b` | Register a pending seller, or log in with a magic link |
+| Unapproved login | Session is valid. Catalog is blocked (`pending` / `rejected`) |
+| Approved login | `/b2b/catalogo` shows the Bling cache, min qty, and quote request |
 | Public site search | Nuvemshop sitemap index (B2C) |
-| Checkout | None in B2B. Quote goes to human follow-up via Resend |
+| Checkout | None in B2B. A quote goes to a person through Resend |
 
 ## 1. Supabase
 
 1. Create a project.
-2. Run SQL in `supabase/migrations/20260801000000_b2b_sellers_bling.sql`.
+2. Run the SQL in `supabase/migrations/20260801000000_b2b_sellers_bling.sql`.
 3. Enable Auth → Providers → Email.
 4. Set Auth → URL config:
    - Site URL: `https://ghenortrs.vercel.app`
@@ -25,18 +25,18 @@ Goal: add credentials only. The code paths are already wired.
    - `anon` key → `VITE_SUPABASE_ANON_KEY` and `SUPABASE_ANON_KEY`
    - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` (server only)
 
-Optional: Auth Hook or SMTP via Resend for branded magic links.
+If you need branded magic links, set an Auth Hook or SMTP through Resend.
 
 ## 2. Resend
 
 1. Verify the sending domain (for example `ghenortrs.com.br`).
 2. Create an API key. Set `RESEND_API_KEY`.
 3. Set `RESEND_TO_EMAIL` to the GHENO inbox.
-4. Optional: `RESEND_FROM=GHENO B2B <noreply@…>`.
+4. If you want a from address, set `RESEND_FROM=GHENO B2B <noreply@…>`.
 
 Resend sends:
 
-- New seller registration alert (plus short-lived signed approve link when admin secret is set)
+- New seller registration alert (and a short-lived signed approve link if the admin secret is set)
 - Seller approval email
 - B2B quote requests
 - Legacy `api/b2b-submit.ts` fallback
@@ -47,7 +47,7 @@ Resend sends:
 2. Set redirect URI: `https://ghenortrs.vercel.app/api/bling-oauth-callback`
 3. Set `BLING_CLIENT_ID`, `BLING_CLIENT_SECRET`, `BLING_REDIRECT_URI`.
 4. Set a strong `B2B_ADMIN_APPROVE_SECRET`.
-5. Start OAuth with an admin POST (header secret only; no query secret):
+5. Start OAuth with an admin POST. Use the header secret only. Do not put the secret in the query:
 
 ```bash
 curl -X POST "https://ghenortrs.vercel.app/api/bling-oauth-start" \
@@ -63,26 +63,26 @@ curl -X POST "https://ghenortrs.vercel.app/api/bling-sync" \
   -H "X-Admin-Secret: YOUR_ADMIN_SECRET"
 ```
 
-Or run locally after tokens exist in Supabase:
+Or run this command locally after tokens exist in Supabase:
 
 ```bash
 pnpm catalog:sync
 ```
 
-Schedule `bling-sync` each hour if stock or price must stay current.
+Schedule `bling-sync` each hour to keep stock and price current.
 
 ## 4. Approve a seller
 
-Registration emails include a short-lived signed link when `B2B_ADMIN_APPROVE_SECRET` is set:
+Registration emails include a short-lived signed link if `B2B_ADMIN_APPROVE_SECRET` is set:
 
 ```text
 /api/admin-approve-seller?token=SIGNED_TOKEN
 ```
 
-- `GET` shows a confirmation page only. It never changes seller status.
+- `GET` shows a confirmation page only. It does not change seller status.
 - Confirm with the HTML form `POST`. The token is bound to the seller email and the current `sellers.updated_at` value. Replay after approval fails.
 
-Or call the admin JSON API (header secret only):
+Or call the admin JSON API. Use the header secret only:
 
 ```bash
 curl -X POST "https://ghenortrs.vercel.app/api/admin-approve-seller" \
@@ -95,9 +95,9 @@ Statuses for the JSON API: `approved` | `rejected` | `suspended` | `pending`.
 
 ## 5. Analytics (GTM)
 
-When `VITE_GTM_ID` is set, `app/root.tsx` loads the GTM script.
+If `VITE_GTM_ID` is set, `app/root.tsx` loads the GTM script.
 
-B2B and commerce events go through `app/lib/tracking.ts` into `dataLayer` (and `gtag` when present):
+B2B and commerce events go through `app/lib/tracking.ts` into `dataLayer` (and `gtag` if it is present):
 
 | Event | When | Payload |
 |---|---|---|
@@ -138,8 +138,8 @@ Server:
 ## 7. Local dev notes
 
 - Vite does not run `/api/*`. Point `VITE_SITE_URL` at a deployed preview, or use `vercel dev`.
-- Without Supabase public env, `/b2b` stays registration-only (legacy Resend path).
-- The magic link must redirect to `/b2b` on the same origin you opened.
+- If Supabase public env is not set, `/b2b` stays registration-only (legacy Resend path).
+- Make the magic link redirect to `/b2b` on the same origin that you opened.
 
 ## 8. API map
 
@@ -159,9 +159,9 @@ Server:
 
 ## 9. Security notes
 
-- Never put `SUPABASE_SERVICE_ROLE_KEY` or Bling secrets in `VITE_*`.
-- Never put `B2B_ADMIN_APPROVE_SECRET` in generated URLs, HTML, JSON bodies, or logs.
-- Admin routes accept the long-lived secret only via the `X-Admin-Secret` header.
+- Do not put `SUPABASE_SERVICE_ROLE_KEY` or Bling secrets in `VITE_*`.
+- Do not put `B2B_ADMIN_APPROVE_SECRET` in generated URLs, HTML, JSON bodies, or logs.
+- Admin routes accept the long-lived secret only in the `X-Admin-Secret` header.
 - Seller approval email links use a short-lived HMAC token scoped to email + `sellers.updated_at`.
 - OAuth `state` is a short-lived HMAC token with purpose `bling_oauth_state`.
 - Seller rows: users can select their own row only. Writes use the service role.
