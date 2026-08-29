@@ -20,12 +20,11 @@ export const B2B_DEFAULT_MIN_QUANTITY = Number(
     6,
 );
 
-export const SUPABASE_URL = readPublicEnv('VITE_SUPABASE_URL') ??
-  readPublicEnv('SUPABASE_URL');
+export const SUPABASE_URL =
+  readPublicEnv('VITE_SUPABASE_URL') ?? readPublicEnv('SUPABASE_URL');
 
 export const SUPABASE_ANON_KEY =
-  readPublicEnv('VITE_SUPABASE_ANON_KEY') ??
-  readPublicEnv('SUPABASE_ANON_KEY');
+  readPublicEnv('VITE_SUPABASE_ANON_KEY') ?? readPublicEnv('SUPABASE_ANON_KEY');
 
 export const SITE_URL =
   readPublicEnv('VITE_SITE_URL') ??

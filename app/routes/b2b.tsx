@@ -10,7 +10,6 @@ import type {
 } from '~/components/pages/b2b-form-types';
 import { buildSeoMetaForPath } from '~/lib/seo';
 import registerHandler from '~/server/b2b-register';
-import submitHandler from '~/server/b2b-submit';
 
 export const meta: MetaFunction = () => buildSeoMetaForPath('/b2b');
 
@@ -78,28 +77,13 @@ export async function action({ request }: ActionFunctionArgs) {
   };
 
   if (registerBody.error === 'server_not_configured') {
-    // Legacy Resend-only fallback.
-    const legacyRequest = new Request(request.url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(fields),
-    });
-    const legacyResponse = await submitHandler(legacyRequest);
-    if (!legacyResponse.ok) {
-      if (legacyResponse.status === 500) {
-        const legacyBody = (await legacyResponse
-          .json()
-          .catch(() => ({}))) as { error?: string };
-        if (legacyBody.error === 'Server configuration error') {
-          return json<B2BActionData>({ status: 'no-config' });
-        }
-      }
-      return json<B2BActionData>({ status: 'error' });
-    }
-    return json<B2BActionData>({ status: 'success' });
+    return json<B2BActionData>({ status: 'no-config' });
   }
 
-  if (registerResponse.status === 409 && registerBody.error === 'already_approved') {
+  if (
+    registerResponse.status === 409 &&
+    registerBody.error === 'already_approved'
+  ) {
     return json<B2BActionData>({
       status: 'error',
       message: registerBody.message ?? 'already_approved',
@@ -128,7 +112,5 @@ export default function B2BRoute() {
     navigation.state === 'submitting' &&
     navigation.formData?.get('intent') === 'register';
 
-  return (
-    <B2BPage actionData={actionData} isSubmitting={isSubmitting} />
-  );
+  return <B2BPage actionData={actionData} isSubmitting={isSubmitting} />;
 }

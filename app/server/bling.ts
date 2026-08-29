@@ -1,9 +1,10 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-
-import type { Database, Json, Tables } from './database.types';
+import type { Json } from './json';
+import {
+  readStoredBlingTokens,
+  saveBlingTokens as persistBlingTokens,
+  upsertBlingProducts,
+} from './db/queries';
 import { getServerEnv } from './env';
-
-export type BlingTokenRow = Tables<'bling_oauth_tokens'>;
 
 export type BlingProduct = {
   id: number;
@@ -98,67 +99,45 @@ export async function refreshAccessToken(
   return exchangeToken(body);
 }
 
-export async function saveBlingTokens(
-  service: SupabaseClient<Database>,
-  tokens: TokenResponse,
-): Promise<void> {
-  const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
-  const { error } = await service.from('bling_oauth_tokens').upsert(
-    {
-      id: 1,
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      token_type: tokens.token_type ?? 'Bearer',
-      expires_at: expiresAt,
-      scope: tokens.scope ?? null,
-      raw: tokens,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'id' },
-  );
-  if (error) throw error;
+export async function saveBlingTokens(tokens: TokenResponse): Promise<void> {
+  const expiresAt = new Date(
+    Date.now() + tokens.expires_in * 1000,
+  ).toISOString();
+  await persistBlingTokens({
+    accessToken: tokens.access_token,
+    refreshToken: tokens.refresh_token,
+    tokenType: tokens.token_type ?? 'Bearer',
+    expiresAt,
+    scope: tokens.scope ?? null,
+    raw: tokens,
+  });
 }
 
-async function readStoredTokens(
-  service: SupabaseClient<Database>,
-): Promise<BlingTokenRow | null> {
-  const { data, error } = await service
-    .from('bling_oauth_tokens')
-    .select('*')
-    .eq('id', 1)
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
-
-export async function getValidAccessToken(
-  service: SupabaseClient<Database>,
-): Promise<string> {
-  const stored = await readStoredTokens(service);
+export async function getValidAccessToken(): Promise<string> {
+  const stored = await readStoredBlingTokens();
   if (!stored) {
     throw new Error(
       'Bling OAuth not connected. Visit /api/bling-oauth-start once.',
     );
   }
 
-  const expiresAt = new Date(stored.expires_at).getTime();
+  const expiresAt = new Date(stored.expiresAt).getTime();
   const skewMs = 60_000;
   if (Date.now() < expiresAt - skewMs) {
-    return stored.access_token;
+    return stored.accessToken;
   }
 
-  const refreshed = await refreshAccessToken(stored.refresh_token);
-  await saveBlingTokens(service, refreshed);
+  const refreshed = await refreshAccessToken(stored.refreshToken);
+  await saveBlingTokens(refreshed);
   return refreshed.access_token;
 }
 
 export async function blingFetch<T>(
-  service: SupabaseClient<Database>,
   path: string,
   init?: RequestInit,
 ): Promise<T> {
   const env = getServerEnv();
-  const token = await getValidAccessToken(service);
+  const token = await getValidAccessToken();
   const url = path.startsWith('http')
     ? path
     : `${env.blingApiBase}${path.startsWith('/') ? path : `/${path}`}`;
@@ -238,16 +217,13 @@ export function normalizeBlingProduct(
   };
 }
 
-export async function listAllBlingProducts(
-  service: SupabaseClient<Database>,
-): Promise<BlingProduct[]> {
+export async function listAllBlingProducts(): Promise<BlingProduct[]> {
   const products: BlingProduct[] = [];
   let page = 1;
   const limit = 100;
 
   for (;;) {
     const payload = await blingFetch<{ data?: BlingProduct[] }>(
-      service,
       `/produtos?pagina=${page}&limite=${limit}`,
     );
     const batch = payload.data ?? [];
@@ -260,28 +236,34 @@ export async function listAllBlingProducts(
 }
 
 export async function syncBlingProductsToCache(
-  service: SupabaseClient<Database>,
   defaultMinQuantity: number,
 ): Promise<{ upserted: number }> {
-  const products = await listAllBlingProducts(service);
+  const products = await listAllBlingProducts();
   const rows = products.map((product) => {
     const normalized = normalizeBlingProduct(product, defaultMinQuantity);
     return {
-      ...normalized,
-      synced_at: new Date().toISOString(),
+      id: normalized.id,
+      sku: normalized.sku,
+      name: normalized.name,
+      description: normalized.description,
+      imageUrl: normalized.image_url,
+      priceCents: normalized.price_cents,
+      stock: normalized.stock,
+      unit: normalized.unit,
+      minQuantity: normalized.min_quantity,
+      active: normalized.active,
+      category: normalized.category,
+      searchTerms: normalized.search_terms,
+      raw: normalized.raw,
+      syncedAt: new Date().toISOString(),
     };
   });
 
   if (rows.length === 0) return { upserted: 0 };
 
-  // Upsert in chunks to stay under payload limits.
   const chunkSize = 100;
   for (let i = 0; i < rows.length; i += chunkSize) {
-    const chunk = rows.slice(i, i + chunkSize);
-    const { error } = await service.from('bling_products').upsert(chunk, {
-      onConflict: 'id',
-    });
-    if (error) throw error;
+    await upsertBlingProducts(rows.slice(i, i + chunkSize));
   }
 
   return { upserted: rows.length };

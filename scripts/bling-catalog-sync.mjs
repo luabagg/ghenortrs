@@ -20,11 +20,11 @@ async function main() {
 bling-catalog-sync
 
 Set:
-  B2B_SYNC_URL=https://ghenortrs.vercel.app/api/bling-sync
+  B2B_SYNC_URL=https://www.ghenortrs.com.br/api/bling-sync
   B2B_ADMIN_APPROVE_SECRET=…
 
 Or call the endpoint directly after connecting Bling OAuth once via
-  /api/bling-oauth-start?secret=…
+  /api/bling-oauth-start with header X-Admin-Secret.
 `);
     process.exitCode = 1;
     return;

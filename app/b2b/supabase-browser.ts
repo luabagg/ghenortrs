@@ -1,4 +1,8 @@
-import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js';
+import {
+  createClient,
+  type Session,
+  type SupabaseClient,
+} from '@supabase/supabase-js';
 
 import {
   isB2BAuthConfigured,
@@ -44,7 +48,7 @@ export async function requestMagicLink(email: string): Promise<{
     email: email.trim().toLowerCase(),
     options: {
       emailRedirectTo: redirectTo,
-      shouldCreateUser: true,
+      shouldCreateUser: false,
     },
   });
 

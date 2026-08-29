@@ -1,38 +1,19 @@
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-  'Access-Control-Allow-Headers':
-    'Authorization, Content-Type, X-Admin-Secret',
-};
-
 export function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'Content-Type': 'application/json',
-      ...CORS_HEADERS,
     },
   });
 }
 
-export function noContent(): Response {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
-}
-
-export function handleOptions(req: Request): Response | null {
-  if (req.method === 'OPTIONS') return noContent();
-  return null;
-}
-
 export function methodNotAllowed(allowed: string[]): Response {
-  return json(
-    { error: 'Method not allowed', allowed },
-    405,
-  );
+  return json({ error: 'Method not allowed', allowed }, 405);
 }
 
 export function getBearerToken(req: Request): string | null {
-  const header = req.headers.get('authorization') ?? req.headers.get('Authorization');
+  const header =
+    req.headers.get('authorization') ?? req.headers.get('Authorization');
   if (!header) return null;
   const match = /^Bearer\s+(.+)$/i.exec(header.trim());
   return match?.[1]?.trim() || null;
@@ -44,6 +25,10 @@ export async function readJson<T>(req: Request): Promise<T | null> {
   } catch {
     return null;
   }
+}
+
+export function readAdminSecret(req: Request): string | null {
+  return req.headers.get('x-admin-secret') ?? req.headers.get('X-Admin-Secret');
 }
 
 export function escHtml(value: string): string {

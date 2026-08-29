@@ -43,7 +43,7 @@ export function useB2BSession() {
     void queryClient.invalidateQueries({ queryKey: b2bKeys.session });
   }, [queryClient]);
 
-  const session = isError ? emptySession : data ?? emptySession;
+  const session = isError ? emptySession : (data ?? emptySession);
   const gate: SellerGate = !configured
     ? 'unconfigured'
     : isPending

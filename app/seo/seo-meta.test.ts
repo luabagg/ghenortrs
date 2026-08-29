@@ -29,13 +29,13 @@ describe('buildSeoMetaForPath', () => {
         'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
       );
       expect(asRecord['link:canonical']).toBe(
-        `https://ghenortrs.vercel.app${path === '/' ? '/' : path}`,
+        `https://www.ghenortrs.com.br${path === '/' ? '/' : path}`,
       );
       expect(asRecord['property:og:url']).toBe(
-        `https://ghenortrs.vercel.app${path === '/' ? '/' : path}`,
+        `https://www.ghenortrs.com.br${path === '/' ? '/' : path}`,
       );
       expect(asRecord['property:og:image']).toEqual(
-        expect.stringContaining('https://ghenortrs.vercel.app/'),
+        expect.stringContaining('https://www.ghenortrs.com.br/'),
       );
       expect(meta.some((entry) => 'script:ld+json' in entry)).toBe(true);
     },

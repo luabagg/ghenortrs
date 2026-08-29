@@ -5,6 +5,7 @@ export type ServerEnv = {
   supabaseUrl: string;
   supabaseAnonKey: string;
   supabaseServiceRoleKey: string;
+  databaseUrl: string;
   resendApiKey: string | null;
   resendToEmail: string | null;
   resendFrom: string;
@@ -41,6 +42,10 @@ const serverEnvSchema = z
     SUPABASE_URL: requiredEnv('SUPABASE_URL'),
     SUPABASE_ANON_KEY: requiredEnv('SUPABASE_ANON_KEY'),
     SUPABASE_SERVICE_ROLE_KEY: requiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    DATABASE_URL: optionalEnv(),
+    POSTGRES_URL: optionalEnv(),
+    POSTGRES_PRISMA_URL: optionalEnv(),
+    POSTGRES_URL_NON_POOLING: optionalEnv(),
     RESEND_API_KEY: optionalEnv(),
     RESEND_TO_EMAIL: optionalEnv(),
     RESEND_FROM: optionalEnv(),
@@ -53,12 +58,23 @@ const serverEnvSchema = z
     B2B_DEFAULT_MIN_QUANTITY: optionalEnv(),
   })
   .transform((env): ServerEnv => {
+    const databaseUrl =
+      env.DATABASE_URL ??
+      env.POSTGRES_PRISMA_URL ??
+      env.POSTGRES_URL ??
+      env.POSTGRES_URL_NON_POOLING;
+    if (!databaseUrl) {
+      throw new Error(
+        'Missing required env: DATABASE_URL (or POSTGRES_URL / POSTGRES_PRISMA_URL)',
+      );
+    }
     const defaultMin = Number(env.B2B_DEFAULT_MIN_QUANTITY ?? '6');
     return {
       siteUrl: env.SITE_URL ?? env.VITE_SITE_URL ?? 'http://localhost:5173',
       supabaseUrl: env.SUPABASE_URL,
       supabaseAnonKey: env.SUPABASE_ANON_KEY,
       supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      databaseUrl,
       resendApiKey: env.RESEND_API_KEY ?? null,
       resendToEmail: env.RESEND_TO_EMAIL ?? null,
       resendFrom: env.RESEND_FROM ?? 'GHENO B2B <noreply@ghenortrs.com.br>',

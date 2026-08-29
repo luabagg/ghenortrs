@@ -4,17 +4,15 @@
 
 import { parseB2BRegistration } from '../b2b/schemas';
 import { getServerEnv } from './env';
+import { json, methodNotAllowed, readJson } from './http';
+import { buildSellerRegistrationHtml, sendResendEmail } from './resend';
+import { getSellerByEmail, upsertSeller } from './db/queries';
+import { buildApproveSellerToken } from './signed-token';
 import {
-  handleOptions,
-  json,
-  methodNotAllowed,
-  readJson,
-} from './http';
-import {
-  buildSellerRegistrationHtml,
-  sendResendEmail,
-} from './resend';
-import { createServiceClient, getSellerByEmail, requireUser } from './supabase';
+  createAuthAdminClient,
+  findAuthUserIdByEmail,
+  requireUser,
+} from './supabase';
 
 type RegisterBody = {
   empresa?: string;
@@ -26,9 +24,7 @@ type RegisterBody = {
 };
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'POST') return methodNotAllowed(['POST', 'OPTIONS']);
+  if (req.method !== 'POST') return methodNotAllowed(['POST']);
 
   const raw = await readJson<RegisterBody>(req);
   if (!raw) return json({ error: 'invalid_body' }, 400);
@@ -49,8 +45,8 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'server_not_configured' }, 503);
   }
 
-  const service = createServiceClient();
-  const existing = await getSellerByEmail(service, data.email);
+  const authAdmin = createAuthAdminClient();
+  const existing = await getSellerByEmail(data.email);
 
   if (existing?.status === 'approved') {
     return json(
@@ -90,7 +86,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (!userId) {
     // Create auth user without password (magic-link only).
-    const created = await service.auth.admin.createUser({
+    const created = await authAdmin.auth.admin.createUser({
       email: data.email,
       email_confirm: true,
       user_metadata: {
@@ -100,48 +96,44 @@ export default async function handler(req: Request): Promise<Response> {
     });
 
     if (created.error || !created.data.user) {
-      // User may already exist in auth without seller row.
-      const listed = await service.auth.admin.listUsers({ page: 1, perPage: 200 });
-      const found = listed.data.users.find(
-        (user) => user.email?.toLowerCase() === data.email,
-      );
-      if (!found) {
+      const existingUserId = await findAuthUserIdByEmail(authAdmin, data.email);
+      if (!existingUserId) {
         console.error('createUser failed', created.error);
         return json({ error: 'auth_create_failed' }, 500);
       }
-      userId = found.id;
+      userId = existingUserId;
     } else {
       userId = created.data.user.id;
     }
   }
 
-  const sellerPayload = {
-    id: userId,
-    email: data.email,
-    company_name: data.empresa,
-    cnpj: data.cnpj,
-    phone: data.telefone,
-    message: data.mensagem,
-    status: 'pending' as const,
-    approved_at: null,
-    approved_by: null,
-    rejected_reason: null,
-  };
-
-  const { data: seller, error: upsertError } = await service
-    .from('sellers')
-    .upsert(sellerPayload, { onConflict: 'id' })
-    .select('*')
-    .single();
-
-  if (upsertError || !seller) {
+  let seller;
+  try {
+    seller = await upsertSeller({
+      id: userId,
+      email: data.email,
+      companyName: data.empresa,
+      cnpj: data.cnpj,
+      phone: data.telefone,
+      message: data.mensagem,
+      status: 'pending',
+      approvedAt: null,
+      approvedBy: null,
+      rejectedReason: null,
+    });
+  } catch (upsertError) {
     console.error('seller upsert failed', upsertError);
     return json({ error: 'seller_save_failed' }, 500);
   }
 
   const approveUrl =
     env.adminApproveSecret && env.siteUrl
-      ? `${env.siteUrl.replace(/\/$/, '')}/api/admin-approve-seller?email=${encodeURIComponent(data.email)}&secret=${encodeURIComponent(env.adminApproveSecret)}`
+      ? `${env.siteUrl.replace(/\/$/, '')}/api/admin-approve-seller?token=${encodeURIComponent(
+          buildApproveSellerToken(
+            { email: data.email },
+            env.adminApproveSecret,
+          ),
+        )}`
       : undefined;
 
   if (env.resendApiKey && env.resendToEmail) {

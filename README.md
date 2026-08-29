@@ -22,18 +22,10 @@ pnpm catalog:sync # pull Bling catalog cache
 
 - `app/routes/*` — Remix file routes (pages + `/api/*` resource routes)
 - `app/components/*` — UI (GHENO design system)
-- `app/server/*` — server handlers (B2B, Bling, Resend, Supabase)
+- `app/server/*` — server handlers (B2B, Bling, Resend, Supabase Auth)
+- `app/server/db/*` — Drizzle schema and Postgres queries
 - `public/` — static assets + `llms.txt`
 
 ## Environment
 
-Copy `.env.example` → `.env` / Vercel project env. Public browser vars still use the `VITE_*` prefix.
-
-## B2B auth + Bling catalog
-
-1. Apply `supabase/migrations/20260801000000_b2b_sellers_bling.sql`
-2. Fill credentials (see `docs/integrations/b2b-auth-bling.md`)
-3. Connect Bling OAuth once via `/api/bling-oauth-start?secret=…`
-4. Sync products: `pnpm catalog:sync` or `POST /api/bling-sync`
-
-Public marketing search remains Nuvemshop-based (`pnpm search:sync`).
+Copy `.env.example` → `.env` / Vercel project env. Public browser vars still use the `VITE_*` prefix. Server queries also need `DATABASE_URL` (Supabase transaction pooler, port 6543).

@@ -1,4 +1,5 @@
 import type { LinksFunction, MetaFunction } from '@remix-run/node';
+import { Analytics } from '@vercel/analytics/remix';
 import type { ReactNode } from 'react';
 import {
   isRouteErrorResponse,
@@ -78,6 +79,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </noscript>
         ) : null}
         {children}
+        <Analytics />
         <ScrollRestoration />
         <Scripts />
       </body>

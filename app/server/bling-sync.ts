@@ -3,16 +3,10 @@
 
 import { syncBlingProductsToCache } from './bling';
 import { getServerEnv } from './env';
-import { handleOptions, json, methodNotAllowed } from './http';
-import { createServiceClient } from './supabase';
-
+import { json, methodNotAllowed, readAdminSecret } from './http';
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'POST' && req.method !== 'GET') {
-    return methodNotAllowed(['GET', 'POST', 'OPTIONS']);
-  }
+  if (req.method !== 'POST') return methodNotAllowed(['POST']);
 
   let env;
   try {
@@ -21,19 +15,13 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'server_not_configured' }, 503);
   }
 
-  const url = new URL(req.url);
-  const secret =
-    req.headers.get('x-admin-secret') ?? url.searchParams.get('secret');
+  const secret = readAdminSecret(req);
   if (!env.adminApproveSecret || secret !== env.adminApproveSecret) {
     return json({ error: 'unauthorized' }, 401);
   }
 
   try {
-    const service = createServiceClient();
-    const result = await syncBlingProductsToCache(
-      service,
-      env.defaultMinQuantity,
-    );
+    const result = await syncBlingProductsToCache(env.defaultMinQuantity);
     return json({
       success: true,
       upserted: result.upserted,

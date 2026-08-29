@@ -3,13 +3,11 @@
 
 import { getBlingAuthorizeUrl } from './bling';
 import { getServerEnv } from './env';
-import { handleOptions, json, methodNotAllowed } from './http';
-
+import { json, methodNotAllowed, readAdminSecret } from './http';
+import { buildBlingOAuthState } from './signed-token';
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'GET') return methodNotAllowed(['GET', 'OPTIONS']);
+  if (req.method !== 'GET') return methodNotAllowed(['GET']);
 
   let env;
   try {
@@ -19,8 +17,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const url = new URL(req.url);
-  const secret =
-    req.headers.get('x-admin-secret') ?? url.searchParams.get('secret');
+  const secret = readAdminSecret(req) ?? url.searchParams.get('secret');
   if (!env.adminApproveSecret || secret !== env.adminApproveSecret) {
     return json({ error: 'unauthorized' }, 401);
   }
@@ -37,7 +34,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const state = crypto.randomUUID();
+    const state = buildBlingOAuthState(env.adminApproveSecret);
     const authorizeUrl = getBlingAuthorizeUrl(state);
     return Response.redirect(authorizeUrl, 302);
   } catch (error) {

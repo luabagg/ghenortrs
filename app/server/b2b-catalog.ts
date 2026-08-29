@@ -1,50 +1,30 @@
 // GET /api/b2b-catalog?q=&limit=
 // Approved sellers only. Reads cached Bling products.
 
+import { listActiveCatalogProducts } from './db/queries';
 import { getServerEnv } from './env';
-import { handleOptions, json, methodNotAllowed } from './http';
-import {
-  createServiceClient,
-  requireApprovedSeller,
-  type BlingProductRow,
-} from './supabase';
+import { json, methodNotAllowed } from './http';
+import { requireApprovedSeller } from './supabase';
 
-const CATALOG_SELECT =
-  'id, sku, name, description, image_url, price_cents, stock, unit, min_quantity, active, category, search_terms, synced_at' as const;
-
-type CatalogProductRow = Pick<
-  BlingProductRow,
-  | 'id'
-  | 'sku'
-  | 'name'
-  | 'description'
-  | 'image_url'
-  | 'price_cents'
-  | 'stock'
-  | 'unit'
-  | 'min_quantity'
-  | 'category'
->;
-
-function toPublicProduct(row: CatalogProductRow) {
+function toPublicProduct(
+  row: Awaited<ReturnType<typeof listActiveCatalogProducts>>[number],
+) {
   return {
     id: row.id,
     sku: row.sku,
     name: row.name,
     description: row.description,
-    imageUrl: row.image_url,
-    priceCents: row.price_cents,
+    imageUrl: row.imageUrl,
+    priceCents: row.priceCents,
     stock: row.stock,
     unit: row.unit,
-    minQuantity: row.min_quantity,
+    minQuantity: row.minQuantity,
     category: row.category,
   };
 }
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'GET') return methodNotAllowed(['GET', 'OPTIONS']);
+  if (req.method !== 'GET') return methodNotAllowed(['GET']);
 
   const auth = await requireApprovedSeller(req);
   if (auth instanceof Response) return auth;
@@ -59,27 +39,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const env = getServerEnv();
-    const service = createServiceClient();
-    let query = service
-      .from('bling_products')
-      .select(CATALOG_SELECT)
-      .eq('active', true)
-      .order('name', { ascending: true })
-      .limit(limit);
-
-    if (q) {
-      // Simple ilike search across name/sku/terms. Good enough for MVP catalog.
-      const safe = q.replace(/[%_,.()'"]/g, ' ').trim();
-      const pattern = `%${safe}%`;
-      query = query.or(
-        `name.ilike."${pattern}",sku.ilike."${pattern}",search_terms.ilike."${pattern}",category.ilike."${pattern}"`,
-      );
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    const products = (data ?? []).map(toPublicProduct);
+    const products = (await listActiveCatalogProducts(q, limit)).map(
+      toPublicProduct,
+    );
 
     return json({
       source: 'bling_cache',
@@ -87,7 +49,7 @@ export default async function handler(req: Request): Promise<Response> {
       count: products.length,
       products,
       seller: {
-        companyName: auth.seller.company_name,
+        companyName: auth.seller.companyName,
         email: auth.seller.email,
       },
     });

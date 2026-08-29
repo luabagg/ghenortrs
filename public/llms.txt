@@ -4,7 +4,7 @@
 
 Idioma principal: português do Brasil (`pt-BR`).
 
-URL canônica deste site: https://ghenortrs.vercel.app/
+URL canônica deste site: https://www.ghenortrs.com.br/
 
 ## Escopo verificado
 
@@ -19,11 +19,11 @@ URL canônica deste site: https://ghenortrs.vercel.app/
 
 ## Páginas canônicas
 
-- [Início](https://ghenortrs.vercel.app/): visão geral da marca, famílias de componentes, conteúdo técnico, contexto de competição e entrada B2B.
-- [Componentes MTB](https://ghenortrs.vercel.app/componentes): pastilhas de freio, cubos, aros e discos GHENO rotors, com o destino atual de cada família.
-- [GHENO rotors B2B](https://ghenortrs.vercel.app/b2b): solicitação de cadastro comercial para lojistas, oficinas e revendas.
-- [Sobre a GHENO rotors](https://ghenortrs.vercel.app/sobre): posicionamento e foco de desenvolvimento da marca.
-- [Contato GHENO rotors](https://ghenortrs.vercel.app/contato): caminhos oficiais para varejo, atendimento B2B e Instagram.
+- [Início](https://www.ghenortrs.com.br/): visão geral da marca, famílias de componentes, conteúdo técnico, contexto de competição e entrada B2B.
+- [Componentes MTB](https://www.ghenortrs.com.br/componentes): pastilhas de freio, cubos, aros e discos GHENO rotors, com o destino atual de cada família.
+- [GHENO rotors B2B](https://www.ghenortrs.com.br/b2b): solicitação de cadastro comercial para lojistas, oficinas e revendas.
+- [Sobre a GHENO rotors](https://www.ghenortrs.com.br/sobre): posicionamento e foco de desenvolvimento da marca.
+- [Contato GHENO rotors](https://www.ghenortrs.com.br/contato): caminhos oficiais para varejo, atendimento B2B e Instagram.
 
 ## Destinos externos oficiais
 

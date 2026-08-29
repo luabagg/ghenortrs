@@ -34,7 +34,12 @@ export async function registerSeller(input: {
   email: string;
   mensagem: string;
   website?: string;
-}): Promise<{ success?: boolean; status?: string; error?: string; message?: string }> {
+}): Promise<{
+  success?: boolean;
+  status?: string;
+  error?: string;
+  message?: string;
+}> {
   const headers = await authHeaders();
   const res = await fetch(apiUrl('/api/b2b-register'), {
     method: 'POST',

@@ -107,3 +107,7 @@ build/
 
 .vercel/
 
+# drizzle-kit generate output (schema is hand-written)
+drizzle/
+
+.vercel

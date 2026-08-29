@@ -2,20 +2,14 @@
 // Approved sellers submit a quote request (no checkout). Enforces min quantities.
 
 import { parseB2BQuoteRequest } from '../b2b/schemas';
+import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
-import {
-  handleOptions,
-  json,
-  methodNotAllowed,
-  readJson,
-} from './http';
+import { json, methodNotAllowed, readJson } from './http';
 import { buildQuoteRequestHtml, sendResendEmail } from './resend';
-import { createServiceClient, requireApprovedSeller } from './supabase';
+import { requireApprovedSeller } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'POST') return methodNotAllowed(['POST', 'OPTIONS']);
+  if (req.method !== 'POST') return methodNotAllowed(['POST']);
 
   const auth = await requireApprovedSeller(req);
   if (auth instanceof Response) return auth;
@@ -28,19 +22,8 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const env = getServerEnv();
-    const service = createServiceClient();
     const ids = requested.map((item) => item.productId);
-
-    const { data, error } = await service
-      .from('bling_products')
-      .select(
-        'id, sku, name, description, image_url, price_cents, stock, unit, min_quantity, active, category, search_terms, synced_at',
-      )
-      .in('id', ids)
-      .eq('active', true);
-
-    if (error) throw error;
-    const products = data ?? [];
+    const products = await listActiveProductsByIds(ids);
     const byId = new Map(products.map((product) => [product.id, product]));
 
     const lineItems: Array<{
@@ -66,7 +49,7 @@ export default async function handler(req: Request): Promise<Response> {
           400,
         );
       }
-      const minQuantity = product.min_quantity || env.defaultMinQuantity;
+      const minQuantity = product.minQuantity || env.defaultMinQuantity;
       if (item.quantity < minQuantity) {
         violations.push({
           productId: product.id,
@@ -90,34 +73,26 @@ export default async function handler(req: Request): Promise<Response> {
       return json(
         {
           error: 'min_quantity_not_met',
-          message:
-            'Um ou mais itens estão abaixo da quantidade mínima B2B.',
+          message: 'Um ou mais itens estão abaixo da quantidade mínima B2B.',
           violations,
         },
         400,
       );
     }
 
-    const { data: saved, error: saveError } = await service
-      .from('b2b_quote_requests')
-      .insert({
-        seller_id: auth.seller.id,
-        items: lineItems,
-        notes,
-        status: 'submitted',
-      })
-      .select('id, created_at')
-      .single();
-
-    if (saveError || !saved) throw saveError;
+    const saved = await insertQuoteRequest({
+      sellerId: auth.seller.id,
+      items: lineItems,
+      notes,
+    });
 
     if (env.resendApiKey && env.resendToEmail) {
       await sendResendEmail({
         to: env.resendToEmail,
-        subject: `[B2B orçamento] ${auth.seller.company_name}`,
+        subject: `[B2B orçamento] ${auth.seller.companyName}`,
         replyTo: auth.seller.email,
         html: buildQuoteRequestHtml({
-          companyName: auth.seller.company_name,
+          companyName: auth.seller.companyName,
           email: auth.seller.email,
           phone: auth.seller.phone,
           notes,
@@ -134,7 +109,7 @@ export default async function handler(req: Request): Promise<Response> {
     return json({
       success: true,
       id: saved.id,
-      createdAt: saved.created_at,
+      createdAt: saved.createdAt,
       itemCount: lineItems.length,
       message:
         'Solicitação enviada. A equipe GHENO retorna com condições comerciais.',

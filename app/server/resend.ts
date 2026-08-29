@@ -7,7 +7,7 @@ type SendEmailInput = {
   replyTo?: string;
 };
 
-/** Resend-only config — does not require Supabase (legacy submit path). */
+/** Resend-only config — email delivery does not require the database. */
 export function getResendMailConfig(): {
   apiKey: string | null;
   toEmail: string | null;
@@ -16,8 +16,7 @@ export function getResendMailConfig(): {
   const apiKey = process.env.RESEND_API_KEY?.trim() || null;
   const toEmail = process.env.RESEND_TO_EMAIL?.trim() || null;
   const from =
-    process.env.RESEND_FROM?.trim() ||
-    'GHENO B2B <noreply@ghenortrs.com.br>';
+    process.env.RESEND_FROM?.trim() || 'GHENO B2B <noreply@ghenortrs.com.br>';
   return { apiKey, toEmail, from };
 }
 

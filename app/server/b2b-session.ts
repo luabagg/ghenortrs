@@ -1,18 +1,12 @@
 // GET /api/b2b-session
 // Returns auth + seller gate state for the current Bearer token.
 
-import { handleOptions, json, methodNotAllowed } from './http';
-import {
-  createServiceClient,
-  getSellerById,
-  requireUser,
-} from './supabase';
-
+import { json, methodNotAllowed } from './http';
+import { getSellerById } from './db/queries';
+import { requireUser } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'GET') return methodNotAllowed(['GET', 'OPTIONS']);
+  if (req.method !== 'GET') return methodNotAllowed(['GET']);
 
   const auth = await requireUser(req);
   if (auth instanceof Response) {
@@ -28,8 +22,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const service = createServiceClient();
-    const seller = await getSellerById(service, auth.user.id);
+    const seller = await getSellerById(auth.user.id);
 
     if (!seller) {
       return json({
@@ -55,7 +48,7 @@ export default async function handler(req: Request): Promise<Response> {
       seller: {
         id: seller.id,
         email: seller.email,
-        companyName: seller.company_name,
+        companyName: seller.companyName,
         status: seller.status,
         cnpj: seller.cnpj,
         phone: seller.phone,

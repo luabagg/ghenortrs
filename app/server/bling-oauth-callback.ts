@@ -1,22 +1,17 @@
 // GET /api/bling-oauth-callback?code=&state=
-// Bling redirects here after app authorization. Stores tokens in Supabase.
+// Bling redirects here after app authorization. Stores tokens via Drizzle.
 
-import {
-  exchangeAuthorizationCode,
-  saveBlingTokens,
-} from './bling';
+import { exchangeAuthorizationCode, saveBlingTokens } from './bling';
 import { getServerEnv } from './env';
-import { handleOptions, json, methodNotAllowed } from './http';
-import { createServiceClient } from './supabase';
-
+import { json, methodNotAllowed } from './http';
+import { verifyToken } from './signed-token';
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-  if (req.method !== 'GET') return methodNotAllowed(['GET', 'OPTIONS']);
+  if (req.method !== 'GET') return methodNotAllowed(['GET']);
 
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
   const error = url.searchParams.get('error');
 
   if (error) {
@@ -25,10 +20,15 @@ export default async function handler(req: Request): Promise<Response> {
   if (!code) return json({ error: 'code_required' }, 400);
 
   try {
-    getServerEnv();
+    const env = getServerEnv();
+    if (!env.adminApproveSecret) {
+      return json({ error: 'admin_secret_not_configured' }, 503);
+    }
+    if (!verifyToken(state, env.adminApproveSecret, 'bling-oauth')) {
+      return json({ error: 'invalid_state' }, 400);
+    }
     const tokens = await exchangeAuthorizationCode(code);
-    const service = createServiceClient();
-    await saveBlingTokens(service, tokens);
+    await saveBlingTokens(tokens);
     return json({
       success: true,
       message:

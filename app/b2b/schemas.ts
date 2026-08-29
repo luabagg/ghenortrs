@@ -1,7 +1,6 @@
 // Shared Zod schemas for the B2B lead form and quote requests. Used by the
 // Remix `b2b` route action/client validation and by the server handlers
-// (b2b-register, b2b-quote, legacy b2b-submit) so validation rules stay in
-// one place instead of being hand-rolled per caller.
+// (b2b-register, b2b-quote) so validation rules stay in one place.
 
 import { z } from 'zod';
 
@@ -28,7 +27,10 @@ function buildB2BFieldsSchema(messages: B2BFieldMessages) {
       .string()
       .transform(digitsOnly)
       .pipe(
-        z.string().min(1, messages.cnpjRequired).length(14, messages.cnpjLength),
+        z
+          .string()
+          .min(1, messages.cnpjRequired)
+          .length(14, messages.cnpjLength),
       ),
     telefone: z
       .string()
@@ -159,11 +161,14 @@ export type B2BQuoteRequestData = z.output<typeof b2bQuoteRequestSchema>;
  * list is missing/not an array (`items_required`) or every item turns out to
  * be malformed (`items_invalid`).
  */
-export function parseB2BQuoteRequest(input: unknown):
+export function parseB2BQuoteRequest(
+  input: unknown,
+):
   | { ok: true; items: B2BQuoteItem[]; notes: string }
   | { ok: false; error: 'items_required' | 'items_invalid' } {
   const parsed = b2bQuoteRequestSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: 'items_required' };
-  if (parsed.data.items.length === 0) return { ok: false, error: 'items_invalid' };
+  if (parsed.data.items.length === 0)
+    return { ok: false, error: 'items_invalid' };
   return { ok: true, items: parsed.data.items, notes: parsed.data.notes };
 }

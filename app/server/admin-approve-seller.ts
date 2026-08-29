@@ -1,25 +1,14 @@
 // POST /api/admin-approve-seller
 // Header: X-Admin-Secret: $B2B_ADMIN_APPROVE_SECRET
 // Body: { "email": "...", "status": "approved" | "rejected", "reason"?: "..." }
-// Also supports GET ?email=&secret=&status=approved for one-click email links.
+// GET /api/admin-approve-seller?token=... uses a signed one-click token.
 
+import { getSellerByEmail, updateSellerStatus } from './db/queries';
+import type { SellerStatus } from './db/schema';
 import { getServerEnv } from './env';
-import {
-  handleOptions,
-  json,
-  methodNotAllowed,
-  readJson,
-} from './http';
-import {
-  buildSellerApprovedHtml,
-  sendResendEmail,
-} from './resend';
-import {
-  createServiceClient,
-  getSellerByEmail,
-  type SellerStatus,
-} from './supabase';
-
+import { json, methodNotAllowed, readAdminSecret, readJson } from './http';
+import { buildSellerApprovedHtml, sendResendEmail } from './resend';
+import { verifyToken } from './signed-token';
 
 type Body = {
   email?: string;
@@ -27,16 +16,19 @@ type Body = {
   reason?: string;
 };
 
+const STATUSES: SellerStatus[] = [
+  'approved',
+  'rejected',
+  'suspended',
+  'pending',
+];
+
 function unauthorized(): Response {
   return json({ error: 'unauthorized' }, 401);
 }
 
-function readSecret(req: Request, url: URL): string | null {
-  return (
-    req.headers.get('x-admin-secret') ??
-    req.headers.get('X-Admin-Secret') ??
-    url.searchParams.get('secret')
-  );
+function isSellerStatus(value: string): value is SellerStatus {
+  return STATUSES.includes(value as SellerStatus);
 }
 
 async function applyStatus(input: {
@@ -45,36 +37,32 @@ async function applyStatus(input: {
   reason?: string;
 }): Promise<Response> {
   const env = getServerEnv();
-  const service = createServiceClient();
-  const seller = await getSellerByEmail(service, input.email);
+  const seller = await getSellerByEmail(input.email);
   if (!seller) return json({ error: 'seller_not_found' }, 404);
 
   const patch =
     input.status === 'approved'
       ? {
           status: 'approved' as const,
-          approved_at: new Date().toISOString(),
-          approved_by: 'admin-approve-seller',
-          rejected_reason: null,
+          approvedAt: new Date().toISOString(),
+          approvedBy: 'admin-approve-seller',
+          rejectedReason: null,
         }
       : {
           status: input.status,
-          approved_at: null,
-          approved_by: null,
-          rejected_reason: input.reason ?? null,
+          approvedAt: null,
+          approvedBy: null,
+          rejectedReason: input.reason ?? null,
         };
 
-  const { data, error } = await service
-    .from('sellers')
-    .update(patch)
-    .eq('id', seller.id)
-    .select('*')
-    .single();
-
-  if (error || !data) {
+  let data;
+  try {
+    data = await updateSellerStatus(seller.id, patch);
+  } catch (error) {
     console.error('approve update failed', error);
     return json({ error: 'update_failed' }, 500);
   }
+  if (!data) return json({ error: 'update_failed' }, 500);
 
   if (input.status === 'approved' && env.resendApiKey) {
     const loginUrl = `${env.siteUrl.replace(/\/$/, '')}/b2b`;
@@ -82,7 +70,7 @@ async function applyStatus(input: {
       to: seller.email,
       subject: 'Acesso B2B GHENO liberado',
       html: buildSellerApprovedHtml({
-        companyName: seller.company_name,
+        companyName: seller.companyName,
         loginUrl,
       }),
     });
@@ -96,11 +84,8 @@ async function applyStatus(input: {
 }
 
 export default async function handler(req: Request): Promise<Response> {
-  const opt = handleOptions(req);
-  if (opt) return opt;
-
   if (req.method !== 'POST' && req.method !== 'GET') {
-    return methodNotAllowed(['GET', 'POST', 'OPTIONS']);
+    return methodNotAllowed(['GET', 'POST']);
   }
 
   let env;
@@ -113,24 +98,24 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'admin_secret_not_configured' }, 503);
   }
 
-  const url = new URL(req.url);
-  const secret = readSecret(req, url);
-  if (!secret || secret !== env.adminApproveSecret) return unauthorized();
-
   if (req.method === 'GET') {
-    const email = (url.searchParams.get('email') ?? '').trim().toLowerCase();
-    const status = (url.searchParams.get('status') ?? 'approved') as SellerStatus;
-    if (!email) return json({ error: 'email_required' }, 400);
-    if (!['approved', 'rejected', 'suspended', 'pending'].includes(status)) {
-      return json({ error: 'status_invalid' }, 400);
-    }
-    return applyStatus({ email, status });
+    const token = new URL(req.url).searchParams.get('token');
+    const payload = verifyToken(
+      token,
+      env.adminApproveSecret,
+      'approve-seller',
+    );
+    if (!payload) return unauthorized();
+    return applyStatus({ email: payload.email, status: payload.status });
   }
+
+  const secret = readAdminSecret(req);
+  if (!secret || secret !== env.adminApproveSecret) return unauthorized();
 
   const body = await readJson<Body>(req);
   if (!body?.email) return json({ error: 'email_required' }, 400);
-  const status = (body.status ?? 'approved') as SellerStatus;
-  if (!['approved', 'rejected', 'suspended', 'pending'].includes(status)) {
+  const status = body.status ?? 'approved';
+  if (!isSellerStatus(status)) {
     return json({ error: 'status_invalid' }, 400);
   }
 

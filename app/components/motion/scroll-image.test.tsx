@@ -18,7 +18,7 @@ describe('ScrollImage', () => {
       <ScrollImage
         alt="Aro GHENO rotors"
         className="object-cover"
-        effect="parallax"
+        effect="zoom"
         loading="lazy"
         src="/aro.jpg"
       />,
@@ -27,7 +27,7 @@ describe('ScrollImage', () => {
     const image = screen.getByRole('img', { name: 'Aro GHENO rotors' });
 
     expect(image).toHaveAttribute('loading', 'lazy');
-    expect(image).toHaveAttribute('data-motion-image', 'parallax');
+    expect(image).toHaveAttribute('data-motion-image', 'zoom');
     // Layout classes land on the measured frame; cover is applied on the img.
     expect(image).toHaveClass('object-cover');
     expect(image.parentElement).toHaveClass('object-cover');

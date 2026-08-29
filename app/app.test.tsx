@@ -21,9 +21,17 @@ describe('App', () => {
       'src',
       '/brand/logo-wide.png',
     );
-    expect(
-      screen.getByAltText('Rider GHENO rotors em trilha com controle total'),
-    ).toHaveAttribute('src', '/reference-images/mtb-action-hero.jpg');
+    const heroImage = screen.getByAltText(
+      'Rider GHENO rotors em trilha com controle total',
+    );
+    expect(heroImage).toHaveAttribute(
+      'src',
+      '/reference-images/mtb-action-hero.jpg',
+    );
+    expect(heroImage).not.toHaveAttribute('data-motion-image');
+    expect(heroImage).toHaveClass(
+      'motion-safe:animate-[gheno-hero-settle_1.4s_cubic-bezier(0.16,1,0.3,1)_both]',
+    );
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       /Frenagem e controle para/,
     );
