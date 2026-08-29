@@ -3,6 +3,7 @@
 
 import { json, methodNotAllowed } from './http';
 import { getSellerById } from './db/queries';
+import { resolveSellerTier } from './seller-tier';
 import { requireUser } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
@@ -53,6 +54,8 @@ export default async function handler(req: Request): Promise<Response> {
         cnpj: seller.cnpj,
         phone: seller.phone,
       },
+      tier: resolveSellerTier(seller.volume),
+      volume: seller.volume,
       gate,
     });
   } catch (error) {

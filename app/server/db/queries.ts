@@ -1,14 +1,14 @@
-import { and, eq, ilike, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, ilike, inArray, isNotNull, or, sql } from 'drizzle-orm';
 import { QueryBuilder } from 'drizzle-orm/pg-core';
 
 import type { Json } from '../json';
+import { type SellerTier, tierPriceColumn } from '../seller-tier';
 import { getDb } from './client';
 import {
   b2bQuoteRequests,
   blingOauthTokens,
   blingProducts,
   sellers,
-  type BlingProductRow,
   type BlingTokenRow,
   type SellerRow,
   type SellerStatus,
@@ -46,15 +46,35 @@ export function sanitizeCatalogQuery(raw: string): string {
   return raw.replace(/[%_,.()'"]/g, ' ').trim();
 }
 
-export function buildCatalogSearchSql(query: string, limit: number) {
+export function catalogSelectColumns(tier: SellerTier) {
+  const priceCol = blingProducts[tierPriceColumn(tier)];
+  return {
+    ...catalogProductColumns,
+    priceCents: sql<number | null>`${priceCol}`.as('priceCents'),
+  };
+}
+
+export function catalogVisibilityConditions(tier: SellerTier) {
+  return [
+    eq(blingProducts.active, true),
+    eq(blingProducts.visibleB2b, true),
+    isNotNull(blingProducts[tierPriceColumn(tier)]),
+  ] as const;
+}
+
+export function buildCatalogSearchSql(
+  query: string,
+  limit: number,
+  tier: SellerTier,
+) {
   const safe = sanitizeCatalogQuery(query);
   const pattern = `%${safe}%`;
   return qb
-    .select(catalogProductColumns)
+    .select(catalogSelectColumns(tier))
     .from(blingProducts)
     .where(
       and(
-        eq(blingProducts.active, true),
+        ...catalogVisibilityConditions(tier),
         or(
           ilike(blingProducts.name, pattern),
           ilike(blingProducts.sku, pattern),
@@ -149,8 +169,9 @@ export async function updateSellerStatus(
 export async function listActiveCatalogProducts(
   query: string,
   limit: number,
+  tier: SellerTier,
 ): Promise<CatalogProductRow[]> {
-  const conditions = [eq(blingProducts.active, true)];
+  const conditions = [...catalogVisibilityConditions(tier)];
   const safe = sanitizeCatalogQuery(query);
   if (safe) {
     const pattern = `%${safe}%`;
@@ -165,7 +186,7 @@ export async function listActiveCatalogProducts(
   }
 
   return getDb()
-    .select(catalogProductColumns)
+    .select(catalogSelectColumns(tier))
     .from(blingProducts)
     .where(and(...conditions))
     .orderBy(blingProducts.name)
@@ -174,12 +195,15 @@ export async function listActiveCatalogProducts(
 
 export async function listActiveProductsByIds(
   ids: number[],
-): Promise<BlingProductRow[]> {
+  tier: SellerTier,
+): Promise<CatalogProductRow[]> {
   if (ids.length === 0) return [];
   return getDb()
-    .select()
+    .select(catalogSelectColumns(tier))
     .from(blingProducts)
-    .where(and(inArray(blingProducts.id, ids), eq(blingProducts.active, true)));
+    .where(
+      and(inArray(blingProducts.id, ids), ...catalogVisibilityConditions(tier)),
+    );
 }
 
 export async function insertQuoteRequest(input: {

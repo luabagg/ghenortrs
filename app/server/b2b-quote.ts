@@ -6,6 +6,7 @@ import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed, readJson } from './http';
 import { buildQuoteRequestHtml, sendResendEmail } from './resend';
+import { resolveSellerTier } from './seller-tier';
 import { requireApprovedSeller } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
@@ -23,7 +24,10 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     const env = getServerEnv();
     const ids = requested.map((item) => item.productId);
-    const products = await listActiveProductsByIds(ids);
+    const products = await listActiveProductsByIds(
+      ids,
+      resolveSellerTier(auth.seller.volume),
+    );
     const byId = new Map(products.map((product) => [product.id, product]));
 
     const lineItems: Array<{

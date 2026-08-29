@@ -8,6 +8,8 @@ export type SellerGate =
   | 'loading'
   | 'unconfigured';
 
+export type SellerTier = 'start' | 'pro' | 'max';
+
 export type SellerSummary = {
   id: string;
   email: string;
@@ -22,6 +24,8 @@ export type B2BSessionResponse = {
   email?: string | null;
   seller: SellerSummary | null;
   gate: Exclude<SellerGate, 'loading' | 'unconfigured'>;
+  tier?: SellerTier | null;
+  volume?: number | null;
   error?: string;
 };
 
