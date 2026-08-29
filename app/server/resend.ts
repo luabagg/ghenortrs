@@ -1,3 +1,4 @@
+import { formatCentsToBRL } from './br-money';
 import { escHtml } from './http';
 
 type SendEmailInput = {
@@ -161,6 +162,7 @@ export function buildQuoteRequestHtml(input: {
     sku: string | null;
     quantity: number;
     minQuantity: number;
+    unitPriceCents: number;
   }>;
 }): string {
   const rows = input.items
@@ -171,6 +173,7 @@ export function buildQuoteRequestHtml(input: {
           <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(item.sku ?? '—')}</td>
           <td style="padding:8px 12px;border-bottom:1px solid #eee">${item.quantity}</td>
           <td style="padding:8px 12px;border-bottom:1px solid #eee">${item.minQuantity}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(formatCentsToBRL(item.unitPriceCents))}</td>
         </tr>`,
     )
     .join('');
@@ -185,6 +188,7 @@ export function buildQuoteRequestHtml(input: {
         <th style="padding:8px 12px">SKU</th>
         <th style="padding:8px 12px">Qtd</th>
         <th style="padding:8px 12px">Mín.</th>
+        <th style="padding:8px 12px">Preço un.</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>

@@ -37,6 +37,7 @@ export default async function handler(req: Request): Promise<Response> {
       quantity: number;
       minQuantity: number;
       unit: string | null;
+      unitPriceCents: number;
     }> = [];
     const violations: Array<{
       productId: number;
@@ -47,7 +48,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     for (const item of requested) {
       const product = byId.get(item.productId);
-      if (!product) {
+      if (!product || product.priceCents == null) {
         return json(
           { error: 'product_not_found', productId: item.productId },
           400,
@@ -70,6 +71,7 @@ export default async function handler(req: Request): Promise<Response> {
         quantity: Math.floor(item.quantity),
         minQuantity,
         unit: product.unit,
+        unitPriceCents: product.priceCents,
       });
     }
 
@@ -105,6 +107,7 @@ export default async function handler(req: Request): Promise<Response> {
             sku: item.sku,
             quantity: item.quantity,
             minQuantity: item.minQuantity,
+            unitPriceCents: item.unitPriceCents,
           })),
         }),
       });
