@@ -68,6 +68,47 @@ pnpm catalog:sync
 
 Schedule `bling-sync` (cron / GitHub Action) every hour if stock/price matter.
 
+### Tier prices (Start / Pro / Max)
+
+Wholesale prices in `/b2b/catalogo` come from three Bling price lists, **not** the Nuvemshop store or Bling base `preco`. Each approved seller sees one tier based on `sellers.volume`.
+
+**Schema** — run `supabase/migrations/20260829200000_b2b_tier_prices.sql` in the Supabase SQL editor, or locally:
+
+```bash
+pnpm db:push
+```
+
+Adds `sellers.volume` and on `bling_products`: `visible_b2b`, `price_start_cents`, `price_pro_cents`, `price_max_cents`.
+
+**Seller volume → tier**
+
+| Tier  | Rule                          |
+| ----- | ----------------------------- |
+| start | `volume <= 1000`              |
+| pro   | `1001 <= volume < 5000`       |
+| max   | `volume >= 5000`              |
+
+Set volume via SQL / Drizzle Studio, e.g. `update sellers set volume = 2500 where email = 'loja@example.com';`.
+
+**Import list prices**
+
+1. Maintain Start / Pro / Max lists in Bling (same lists used for NFE).
+2. Export each list to CSV (`Sku` + list-price column from Bling export).
+3. Run product sync first so SKUs exist (`pnpm catalog:sync` or `POST /api/bling-sync`).
+4. Import each tier (requires `DATABASE_URL`):
+
+```bash
+pnpm prices:import --tier=start --file=./exports/start.csv
+pnpm prices:import --tier=pro --file=./exports/pro.csv
+pnpm prices:import --tier=max --file=./exports/max.csv
+```
+
+Optional `--apply-name-hints`: if the Bling product name starts with `[INATIVO]` or `[INTERNO]`, set `visible_b2b = false`. Hints never set `visible_b2b` back to `true`. Manual hide: `update bling_products set visible_b2b = false where sku = '…';`.
+
+**Sync-safe:** `bling-sync` updates name, stock, image, base `price_cents`, and `active` from Bling. It **does not** overwrite `visible_b2b` or `price_start/pro/max_cents`. Re-run the three imports when list prices change in Bling.
+
+Catalog shows a product only when `active`, `visible_b2b`, and the seller’s tier price column is not null.
+
 ## 4. Approve a seller
 
 Email link (signed token, no raw secret in the URL):

@@ -1,7 +1,7 @@
 # B2B tier prices + visibility override
 
 Date: 2026-08-29  
-Status: draft (awaiting review)  
+Status: approved  
 Related: Bling catalog sync (`app/server/bling.ts`), B2B catalog (`app/server/b2b-catalog.ts`)
 
 ## Problem
