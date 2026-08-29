@@ -6,7 +6,15 @@ describe('parseBrMoneyToCents', () => {
   it('parses Brazilian money strings to integer cents', () => {
     expect(parseBrMoneyToCents('61,49')).toBe(6149);
     expect(parseBrMoneyToCents('R$ 1.234,56')).toBe(123456);
+    expect(parseBrMoneyToCents('100')).toBe(10000);
     expect(parseBrMoneyToCents('')).toBeNull();
+  });
+
+  it('rejects garbage, spaces, and extra decimals', () => {
+    expect(parseBrMoneyToCents('61,49oops')).toBeNull();
+    expect(parseBrMoneyToCents('R$ 1 234,56')).toBeNull();
+    expect(parseBrMoneyToCents('12,34,56')).toBeNull();
+    expect(parseBrMoneyToCents('n/a')).toBeNull();
   });
 });
 

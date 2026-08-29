@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildCatalogSearchSql, sanitizeCatalogQuery } from './queries';
+import { and } from 'drizzle-orm';
+import { QueryBuilder } from 'drizzle-orm/pg-core';
+
+import {
+  blingProductSyncConflictSet,
+  buildCatalogSearchSql,
+  catalogVisibilityConditions,
+  sanitizeCatalogQuery,
+} from './queries';
 import { blingProducts, sellerStatusEnum, sellers } from './schema';
 
 describe('drizzle catalog query builder', () => {
@@ -46,6 +54,38 @@ describe('drizzle catalog query builder', () => {
 
     expect(max.sql).toMatch(/"price_max_cents".*as "priceCents"/i);
     expect(max.sql).toMatch(/"price_max_cents" is not null/i);
+  });
+
+  it('requires a non-null tier price on catalog and quote lookups', () => {
+    const qb = new QueryBuilder();
+    const { sql } = qb
+      .select({ id: blingProducts.id })
+      .from(blingProducts)
+      .where(and(...catalogVisibilityConditions('pro')))
+      .toSQL();
+
+    expect(sql).toContain('"active"');
+    expect(sql).toContain('"visible_b2b"');
+    expect(sql).toMatch(/"price_pro_cents" is not null/i);
+  });
+});
+
+describe('upsertBlingProducts sync-safe conflict set', () => {
+  it('does not overwrite visible_b2b or tier price columns', () => {
+    const setKeys = Object.keys(blingProductSyncConflictSet);
+
+    expect(setKeys).not.toContain('visibleB2b');
+    expect(setKeys).not.toContain('priceStartCents');
+    expect(setKeys).not.toContain('priceProCents');
+    expect(setKeys).not.toContain('priceMaxCents');
+
+    const excludedSql = Object.values(blingProductSyncConflictSet)
+      .map((fragment) => String(fragment.queryChunks ?? fragment))
+      .join(' ');
+    expect(excludedSql).not.toMatch(/visible_b2b/);
+    expect(excludedSql).not.toMatch(/price_start_cents/);
+    expect(excludedSql).not.toMatch(/price_pro_cents/);
+    expect(excludedSql).not.toMatch(/price_max_cents/);
   });
 });
 

@@ -37,6 +37,7 @@ export function parseBrMoneyToCents(raw) {
   const withoutCurrency = trimmed.replace(/R\$\s*/gi, '').trim();
   const withoutThousands = withoutCurrency.replace(/\./g, '');
   const normalized = withoutThousands.replace(',', '.');
+  if (!/^\d+(\.\d+)?$/.test(normalized)) return null;
 
   const value = Number.parseFloat(normalized);
   if (!Number.isFinite(value)) return null;

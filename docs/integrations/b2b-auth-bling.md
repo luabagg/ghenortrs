@@ -72,7 +72,7 @@ Schedule `bling-sync` (cron / GitHub Action) every hour if stock/price matter.
 
 Wholesale prices in `/b2b/catalogo` come from three Bling price lists, **not** the Nuvemshop store or Bling base `preco`. Each approved seller sees one tier based on `sellers.volume`.
 
-**Schema** — run `supabase/migrations/20260829200000_b2b_tier_prices.sql` in the Supabase SQL editor, or locally:
+**Schema** — run `supabase/migrations/20260829200000_b2b_tier_prices.sql` and `supabase/migrations/20260829210000_bling_products_api_only.sql` in the Supabase SQL editor, or locally:
 
 ```bash
 pnpm db:push
@@ -108,6 +108,8 @@ Optional `--apply-name-hints`: if the Bling product name starts with `[INATIVO]`
 **Sync-safe:** `bling-sync` updates name, stock, image, base `price_cents`, and `active` from Bling. It **does not** overwrite `visible_b2b` or `price_start/pro/max_cents`. Re-run the three imports when list prices change in Bling.
 
 Catalog shows a product only when `active`, `visible_b2b`, and the seller’s tier price column is not null.
+
+`bling_products` is API-only: there is no authenticated RLS SELECT. Approved sellers read the catalog through the server (`DATABASE_URL` / service role), not as the Supabase `authenticated` role.
 
 ## 4. Approve a seller
 
@@ -195,3 +197,4 @@ Server:
 - Bling OAuth `state` is HMAC-signed and checked on callback.
 - Seller rows: users can **select own** only; writes go through Drizzle with the database URL.
 - Catalog reads are approved-seller only; the API double-checks status.
+- `bling_products` is API-only (no authenticated RLS SELECT). Catalog is served only via the server.

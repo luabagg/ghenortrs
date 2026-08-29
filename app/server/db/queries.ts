@@ -270,6 +270,23 @@ export async function readStoredBlingTokens(): Promise<BlingTokenRow | null> {
   return row ?? null;
 }
 
+/** Sync upsert SET. Must omit visible_b2b and price_*_cents. */
+export const blingProductSyncConflictSet = {
+  sku: sql`excluded.sku`,
+  name: sql`excluded.name`,
+  description: sql`excluded.description`,
+  imageUrl: sql`excluded.image_url`,
+  priceCents: sql`excluded.price_cents`,
+  stock: sql`excluded.stock`,
+  unit: sql`excluded.unit`,
+  minQuantity: sql`excluded.min_quantity`,
+  active: sql`excluded.active`,
+  category: sql`excluded.category`,
+  searchTerms: sql`excluded.search_terms`,
+  raw: sql`excluded.raw`,
+  syncedAt: sql`excluded.synced_at`,
+};
+
 export async function upsertBlingProducts(
   rows: Array<{
     id: number;
@@ -294,20 +311,6 @@ export async function upsertBlingProducts(
     .values(rows)
     .onConflictDoUpdate({
       target: blingProducts.id,
-      set: {
-        sku: sql`excluded.sku`,
-        name: sql`excluded.name`,
-        description: sql`excluded.description`,
-        imageUrl: sql`excluded.image_url`,
-        priceCents: sql`excluded.price_cents`,
-        stock: sql`excluded.stock`,
-        unit: sql`excluded.unit`,
-        minQuantity: sql`excluded.min_quantity`,
-        active: sql`excluded.active`,
-        category: sql`excluded.category`,
-        searchTerms: sql`excluded.search_terms`,
-        raw: sql`excluded.raw`,
-        syncedAt: sql`excluded.synced_at`,
-      },
+      set: blingProductSyncConflictSet,
     });
 }

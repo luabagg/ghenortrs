@@ -24,12 +24,22 @@ describe('parseBrMoneyToCents', () => {
   it('matches Task 2 BR money vectors', () => {
     expect(parseBrMoneyToCents('61,49')).toBe(6149);
     expect(parseBrMoneyToCents('R$ 1.234,56')).toBe(123456);
+    expect(parseBrMoneyToCents('100')).toBe(10000);
     expect(parseBrMoneyToCents('')).toBeNull();
     expect(parseBrMoneyToCents('61,49')).toBe(parseBrMoneyFromTs('61,49'));
     expect(parseBrMoneyToCents('R$ 1.234,56')).toBe(
       parseBrMoneyFromTs('R$ 1.234,56'),
     );
     expect(parseBrMoneyToCents('')).toBe(parseBrMoneyFromTs(''));
+  });
+
+  it('rejects garbage, spaces, and extra decimals in both copies', () => {
+    const invalid = ['61,49oops', 'R$ 1 234,56', '12,34,56', 'n/a'];
+    for (const raw of invalid) {
+      expect(parseBrMoneyToCents(raw)).toBeNull();
+      expect(parseBrMoneyFromTs(raw)).toBeNull();
+      expect(parseBrMoneyToCents(raw)).toBe(parseBrMoneyFromTs(raw));
+    }
   });
 });
 
