@@ -38,6 +38,7 @@ export const sellers = pgTable(
     }),
     approvedBy: text('approved_by'),
     rejectedReason: text('rejected_reason'),
+    volume: integer('volume').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),
@@ -79,6 +80,10 @@ export const blingProducts = pgTable('bling_products', {
   unit: text('unit'),
   minQuantity: integer('min_quantity').notNull().default(1),
   active: boolean('active').notNull().default(true),
+  visibleB2b: boolean('visible_b2b').notNull().default(true),
+  priceStartCents: integer('price_start_cents'),
+  priceProCents: integer('price_pro_cents'),
+  priceMaxCents: integer('price_max_cents'),
   category: text('category'),
   raw: jsonb('raw').$type<Json>().notNull().default({}),
   searchTerms: text('search_terms').notNull().default(''),

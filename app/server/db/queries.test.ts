@@ -39,6 +39,14 @@ describe('drizzle schema contract', () => {
       'suspended',
     ]);
     expect(sellers.companyName.name).toBe('company_name');
+    expect(sellers.volume.name).toBe('volume');
     expect(blingProducts.searchTerms.name).toBe('search_terms');
+  });
+
+  it('declares B2B tier price and visibility columns on bling_products', () => {
+    expect(blingProducts.visibleB2b.name).toBe('visible_b2b');
+    expect(blingProducts.priceStartCents.name).toBe('price_start_cents');
+    expect(blingProducts.priceProCents.name).toBe('price_pro_cents');
+    expect(blingProducts.priceMaxCents.name).toBe('price_max_cents');
   });
 });
