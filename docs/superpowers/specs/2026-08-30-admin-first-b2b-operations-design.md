@@ -58,9 +58,13 @@ The action is unavailable for pending, rejected, or suspended sellers. The catal
 
 ### Tier price imports
 
-Move the CSV parser from `scripts/bling-price-list-import.mjs` into a tested server module. `/admin/produtos` accepts a CSV upload and a selected Start, Pro, or Max tier. The route validates size, UTF-8 text, headers, price format, and SKU rows; it displays a preview with valid updates, missing SKUs, and skipped rows. The administrator explicitly confirms the preview before the database writes occur.
+Replace CSV upload with a paste form on `/admin/produtos`. The administrator selects Start, Pro, or Max, then pastes the price-list table copied directly from Bling/spreadsheet software. The supported input is tab-separated text (TSV), as produced by copying the supplied columns such as `Produto`, `Sku`, `GTIN/EAN`, `R$ Preço no Bling`, and `R$ Preço da lista`. The UI explicitly says to paste the original table rather than manually align whitespace: product names contain spaces, so whitespace-separated prose is deliberately not guessed.
 
-The import updates only the selected tier's price column. It does not change Bling fields or `visible_b2b`. The CLI script is removed from normal documentation and package scripts after equivalent behavior is covered by the UI.
+The parser normalizes header accents/case and locates `Sku` plus `Preço da lista`; it ignores `Produto`, `GTIN/EAN`, and `Preço no Bling` for writes. It accepts Brazilian currency values such as `61,49` and `R$ 61,49`. It rejects missing required headers, rows without SKU, malformed list prices, conflicting duplicate SKUs, oversized input, and a paste without tabs. Exact duplicate SKUs with the same normalized price are collapsed and reported once.
+
+Before any write, the route displays a preview: recognized input rows, matched SKUs and new values, unchanged values, missing SKUs, skipped/invalid rows, and duplicate resolution. The administrator must explicitly confirm that preview; the server retains a short-lived, integrity-protected preview payload so a submitted confirmation cannot be altered in the browser. The commit runs in a transaction.
+
+The import updates only the selected tier's price column. It does not change Bling fields, seller tier selection, active status, or `visible_b2b`. It may update a cached inactive SKU, matching the former CLI behavior, and calls that out in the preview. Remove `scripts/bling-price-list-import.mjs`, `prices:import`, and their CSV instructions after this workflow is covered by tests and documentation.
 
 ### Product visibility
 
@@ -95,6 +99,6 @@ Use existing `AdminChrome`, buttons, inputs, tables, surfaces, and dark technica
 
 - All admin actions require `requireAdmin`; non-admin sessions receive the existing login/forbidden flow.
 - OAuth callback failures return to the admin product page with a generic message and log a redacted audit failure.
-- Sync/import failures do not partially overwrite unrelated fields; imports are performed in a transaction after confirmation.
+- Sync/import failures do not partially overwrite unrelated fields; confirmed imports are performed in a transaction.
 - Email delivery failures do not claim successful delivery and are auditable.
-- Tests cover permissions, token expiry/tampering/replay, GET-not-mutating approval, catalog-access eligibility, OAuth cookie/state validation, parser validation/preview/commit, field-preservation invariants, and audit redaction.
+- Tests cover permissions, token expiry/tampering/replay, GET-not-mutating approval, catalog-access eligibility, OAuth cookie/state validation, TSV header/currency parsing, missing and conflicting duplicate SKU handling, preview-integrity and commit behavior, field-preservation invariants, and audit redaction.
