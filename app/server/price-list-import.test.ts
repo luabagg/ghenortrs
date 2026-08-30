@@ -109,6 +109,33 @@ describe('parsePastedPriceList', () => {
     );
   });
 
+  it('refuses a row that lost a column, instead of reading the wrong one', () => {
+    const missingGtinCell = [
+      HEADER,
+      'Hayes Dominion A4\tPADS-ULTR-HAYE-DOMI\t183,61\t70,68',
+    ].join('\n');
+
+    expect(() => parsePastedPriceList(missingGtinCell)).toThrow(
+      new PriceListError('row_column_mismatch'),
+    );
+    try {
+      parsePastedPriceList(missingGtinCell);
+    } catch (error) {
+      expect((error as PriceListError).row).toBe(1);
+    }
+  });
+
+  it('accepts a table that carries only the two columns it needs', () => {
+    const trimmed = [
+      'Sku\tR$ Preço da lista',
+      'PADS-ULTR-HAYE-DOMI\t70,68',
+    ].join('\n');
+
+    expect(parsePastedPriceList(trimmed)).toMatchObject({
+      rows: [{ sku: 'PADS-ULTR-HAYE-DOMI', priceCents: 7068 }],
+    });
+  });
+
   it('skips rows without a SKU or with an unreadable price', () => {
     const text = [
       HEADER,

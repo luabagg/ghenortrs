@@ -116,6 +116,7 @@ export const blingProducts = pgTable('bling_products', {
   description: text('description').notNull().default(''),
   imageUrl: text('image_url'),
   priceCents: integer('price_cents'),
+  costCents: integer('cost_cents'),
   stock: numeric('stock', { mode: 'number' }),
   unit: text('unit'),
   minQuantity: integer('min_quantity').notNull().default(1),

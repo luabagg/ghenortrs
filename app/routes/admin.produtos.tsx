@@ -54,9 +54,11 @@ const PRICE_LIST_MESSAGES: Record<
 > = {
   empty: 'Cole a tabela de preços antes de pré-visualizar.',
   not_tab_separated:
-    'Cole a tabela original: as colunas precisam vir separadas por tabulação.',
+    'Cole a tabela original do Bling ou da planilha. Texto alinhado com espaços não serve: os nomes dos produtos também têm espaços.',
   missing_sku_column: 'A tabela precisa da coluna Sku.',
   missing_price_column: 'A tabela precisa da coluna R$ Preço da lista.',
+  row_column_mismatch:
+    'Uma linha tem menos colunas que o cabeçalho. Copie a tabela inteira, incluindo as colunas vazias, ou cole só as colunas Sku e R$ Preço da lista.',
   conflicting_duplicate_sku:
     'O mesmo SKU aparece com preços diferentes. Corrija a tabela e cole outra vez.',
   too_large: 'Tabela grande demais. Importe em partes menores.',
@@ -271,7 +273,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     } catch (error) {
       if (!(error instanceof PriceListError)) throw error;
       return json(
-        { kind: 'price-list' as const, ok: false as const, error: error.code },
+        {
+          kind: 'price-list' as const,
+          ok: false as const,
+          error: error.code,
+          row: error.row ?? null,
+        },
         { status: 400, headers },
       );
     }
@@ -391,7 +398,14 @@ export default function AdminProducts() {
 
       <PriceListImportPanel
         errorMessage={
-          priceList && !priceList.ok ? priceListMessage(priceList.error) : null
+          priceList && !priceList.ok
+            ? [
+                priceList.row ? `Linha ${priceList.row}:` : null,
+                priceListMessage(priceList.error),
+              ]
+                .filter(Boolean)
+                .join(' ')
+            : null
         }
         importMessage={importMessage}
         preview={priceList?.ok ? priceList.preview : null}

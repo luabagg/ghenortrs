@@ -548,16 +548,16 @@ export async function readStoredBlingTokens(): Promise<BlingTokenRow | null> {
   return row ?? null;
 }
 
-/** Sync upsert SET. Must omit visible_b2b and price_*_cents. */
+/** Sync upsert SET. Must omit visible_b2b, min_quantity, and price_*_cents. */
 export const blingProductSyncConflictSet = {
   sku: sql`excluded.sku`,
   name: sql`excluded.name`,
   description: sql`excluded.description`,
   imageUrl: sql`excluded.image_url`,
   priceCents: sql`excluded.price_cents`,
+  costCents: sql`excluded.cost_cents`,
   stock: sql`excluded.stock`,
   unit: sql`excluded.unit`,
-  minQuantity: sql`excluded.min_quantity`,
   active: sql`excluded.active`,
   category: sql`excluded.category`,
   searchTerms: sql`excluded.search_terms`,

@@ -24,12 +24,17 @@ export type PriceListErrorCode =
   | 'not_tab_separated'
   | 'missing_sku_column'
   | 'missing_price_column'
+  | 'row_column_mismatch'
   | 'conflicting_duplicate_sku'
   | 'too_large'
   | 'too_many_rows';
 
 export class PriceListError extends Error {
-  constructor(readonly code: PriceListErrorCode) {
+  constructor(
+    readonly code: PriceListErrorCode,
+    /** 1-based data row, when the problem belongs to one row. */
+    readonly row?: number,
+  ) {
     super(code);
     this.name = 'PriceListError';
   }
@@ -81,13 +86,19 @@ export function parsePastedPriceList(text: string): ParsedPriceList {
     throw new PriceListError('too_many_rows');
   }
 
+  const headerCells = lines[0].split('\t');
   const columns = findColumns(lines[0]);
   const centsBySku = new Map<string, number>();
   const duplicates: string[] = [];
   const skipped: SkippedRow[] = [];
 
-  for (const line of lines.slice(1)) {
+  for (const [index, line] of lines.slice(1).entries()) {
     const cells = line.split('\t');
+    // Misaligned rows would read a neighbouring column, so never guess.
+    if (cells.length !== headerCells.length) {
+      throw new PriceListError('row_column_mismatch', index + 1);
+    }
+
     const sku = (cells[columns.sku] ?? '').trim();
     if (!sku) {
       skipped.push({ sku: '', reason: 'empty_sku' });

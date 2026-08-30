@@ -11,6 +11,7 @@ export type BlingProduct = {
   nome: string;
   codigo?: string | null;
   preco?: number | null;
+  precoCusto?: number | null;
   estoque?: { saldoVirtualTotal?: number | null } | null;
   imagemURL?: string | null;
   situacao?: string | null;
@@ -163,6 +164,7 @@ export type NormalizedBlingProduct = {
   description: string;
   image_url: string | null;
   price_cents: number | null;
+  cost_cents: number | null;
   stock: number | null;
   unit: string | null;
   min_quantity: number;
@@ -176,10 +178,11 @@ export function normalizeBlingProduct(
   product: BlingProduct,
   defaultMinQuantity: number,
 ): NormalizedBlingProduct {
-  const price =
-    typeof product.preco === 'number' && Number.isFinite(product.preco)
-      ? Math.round(product.preco * 100)
+  const toCents = (value: number | null | undefined): number | null =>
+    typeof value === 'number' && Number.isFinite(value)
+      ? Math.round(value * 100)
       : null;
+  const price = toCents(product.preco);
   const stock =
     typeof product.estoque?.saldoVirtualTotal === 'number'
       ? product.estoque.saldoVirtualTotal
@@ -205,6 +208,7 @@ export function normalizeBlingProduct(
     description: product.descricaoCurta ?? '',
     image_url: product.imagemURL ?? null,
     price_cents: price,
+    cost_cents: toCents(product.precoCusto),
     stock,
     unit: product.unidade ?? null,
     min_quantity: defaultMinQuantity,
@@ -246,6 +250,7 @@ export async function syncBlingProductsToCache(
       description: normalized.description,
       imageUrl: normalized.image_url,
       priceCents: normalized.price_cents,
+      costCents: normalized.cost_cents,
       stock: normalized.stock,
       unit: normalized.unit,
       minQuantity: normalized.min_quantity,
