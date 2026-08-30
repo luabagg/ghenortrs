@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 import { Link } from '@remix-run/react';
 
 import { B2B_DEFAULT_MIN_QUANTITY } from '@/b2b/config';
@@ -33,26 +33,43 @@ function formatBRL(cents: number | null): string {
   });
 }
 
+const tierListeners = new Set<() => void>();
+
+/** The chosen tier lives in sessionStorage, so it survives a reload. */
+function subscribeTier(listener: () => void): () => void {
+  tierListeners.add(listener);
+  return () => {
+    tierListeners.delete(listener);
+  };
+}
+
 function readStoredTier(): SellerTier {
-  if (typeof window === 'undefined') return 'start';
   return parseSellerTier(window.sessionStorage.getItem(TIER_STORAGE_KEY));
+}
+
+function readServerTier(): SellerTier {
+  return 'start';
+}
+
+function writeStoredTier(tier: SellerTier): void {
+  window.sessionStorage.setItem(TIER_STORAGE_KEY, tier);
+  for (const listener of tierListeners) listener();
 }
 
 export function B2BCatalogPage() {
   const { gate, session, signOut, configured } = useB2BSession();
   const [query, setQuery] = useState('');
-  const [tier, setTier] = useState<SellerTier>('start');
+  const tier = useSyncExternalStore(
+    subscribeTier,
+    readStoredTier,
+    readServerTier,
+  );
   const [selection, setSelection] = useState<Record<number, number>>({});
   const [notes, setNotes] = useState('');
 
-  useEffect(() => {
-    setTier(readStoredTier());
-  }, []);
-
   function onSelectTier(next: SellerTier) {
-    setTier(next);
+    writeStoredTier(next);
     setSelection({});
-    window.sessionStorage.setItem(TIER_STORAGE_KEY, next);
   }
 
   const {

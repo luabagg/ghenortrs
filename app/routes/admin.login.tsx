@@ -78,24 +78,17 @@ export default function AdminLoginPage() {
   const actionResponse = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
   const forbidden = searchParams.get('error') === 'forbidden';
-  const [isDisabled, setIsDisabled] = useState(false);
-  const [timer, setTimer] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const isDisabled = secondsLeft > 0;
 
   useEffect(() => {
-    if (!isDisabled) return undefined;
-    setTimer(30);
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setIsDisabled(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [isDisabled]);
+    if (secondsLeft <= 0) return undefined;
+    const timeout = setTimeout(
+      () => setSecondsLeft((previous) => previous - 1),
+      1000,
+    );
+    return () => clearTimeout(timeout);
+  }, [secondsLeft]);
 
   return (
     <div className="mx-auto grid w-full max-w-md gap-6 py-10">
@@ -123,7 +116,7 @@ export default function AdminLoginPage() {
         <Form
           method="post"
           className="grid gap-5 border border-border bg-surface p-5 sm:p-7"
-          onSubmit={() => setIsDisabled(true)}
+          onSubmit={() => setSecondsLeft(30)}
         >
           <div className="grid gap-2">
             <Label htmlFor="admin-email">E-mail</Label>
@@ -138,7 +131,9 @@ export default function AdminLoginPage() {
             />
           </div>
           <Button className="w-full" disabled={isDisabled} type="submit">
-            {isDisabled ? `Aguarde (${timer}s)` : 'Receber link de acesso'}
+            {isDisabled
+              ? `Aguarde (${secondsLeft}s)`
+              : 'Receber link de acesso'}
           </Button>
           {actionResponse?.error ? (
             <p className="text-sm text-accent" role="alert">
