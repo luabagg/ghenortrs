@@ -9,7 +9,11 @@ import { Form, useActionData, useLoaderData } from '@remix-run/react';
 import { AdminChrome } from '~/components/admin/admin-chrome';
 import { Button } from '~/components/ui/button';
 import { buildNoIndexMeta } from '~/lib/seo';
-import { listSellers, updateSellerStatus } from '~/server/db/queries';
+import {
+  insertAdminAuditEvent,
+  listSellers,
+  updateSellerStatus,
+} from '~/server/db/queries';
 import { sendSellerCatalogAccessLink } from '~/server/seller-access-link';
 import type { SellerStatus } from '~/server/db/schema';
 import { requireAdmin } from '~/server/require-admin.server';
@@ -120,6 +124,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       { status: 404, headers },
     );
   }
+
+  try {
+    await insertAdminAuditEvent({
+      actorUserId: user.id,
+      actorEmail: user.email ?? null,
+      action: 'seller.status.changed',
+      targetSellerId: sellerId,
+      metadata: { status: statusRaw },
+    });
+  } catch (error) {
+    console.error('seller status audit failed', error);
+  }
+
   return redirect('/admin', { headers });
 };
 

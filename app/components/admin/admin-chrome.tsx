@@ -3,7 +3,7 @@ import { Form, Link } from '@remix-run/react';
 
 import { Button } from '~/components/ui/button';
 
-type AdminSection = 'sellers' | 'products';
+type AdminSection = 'sellers' | 'products' | 'settings' | 'activity';
 
 export function AdminChrome({
   title,
@@ -35,6 +35,18 @@ export function AdminChrome({
               href="/admin/produtos"
             >
               Produtos
+            </AdminNavLink>
+            <AdminNavLink
+              active={current === 'activity'}
+              href="/admin/atividade"
+            >
+              Atividade
+            </AdminNavLink>
+            <AdminNavLink
+              active={current === 'settings'}
+              href="/admin/configuracao"
+            >
+              Configuração
             </AdminNavLink>
           </nav>
           <h1 className="font-heading text-[30px] font-semibold tracking-[-0.03em]">
