@@ -46,7 +46,13 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const authAdmin = createAuthAdminClient();
-  const existing = await getSellerByEmail(data.email);
+  let existing;
+  try {
+    existing = await getSellerByEmail(data.email);
+  } catch (lookupError) {
+    console.error('seller lookup failed', lookupError);
+    return json({ error: 'seller_lookup_failed' }, 500);
+  }
 
   if (existing?.status === 'approved') {
     return json(

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { and } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { QueryBuilder } from 'drizzle-orm/pg-core';
 
 import {
@@ -121,6 +121,15 @@ describe('drizzle schema contract', () => {
     expect(sellers.companyName.name).toBe('company_name');
     expect(sellers.volume).toBeUndefined();
     expect(blingProducts.searchTerms.name).toBe('search_terms');
+
+    const { sql } = new QueryBuilder()
+      .select()
+      .from(sellers)
+      .where(eq(sellers.email, 'x@y.z'))
+      .limit(1)
+      .toSQL();
+    expect(sql).toContain('from "sellers"');
+    expect(sql).not.toMatch(/"volume"/);
   });
 
   it('declares B2B tier price and visibility columns on bling_products', () => {

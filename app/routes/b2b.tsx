@@ -68,7 +68,14 @@ export async function action({ request }: ActionFunctionArgs) {
     }),
   });
 
-  const registerResponse = await registerHandler(registerRequest);
+  let registerResponse: Response;
+  try {
+    registerResponse = await registerHandler(registerRequest);
+  } catch (registerError) {
+    console.error('b2b register failed', registerError);
+    return json<B2BActionData>({ status: 'error', message: 'server_error' });
+  }
+
   const registerBody = (await registerResponse.json().catch(() => ({}))) as {
     success?: boolean;
     status?: string;
