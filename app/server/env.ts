@@ -18,7 +18,7 @@ export type ServerEnv = {
   blingApiBase: string;
   blingAuthBase: string;
   adminApproveSecret: string | null;
-  adminEmails: string[];
+  adminBootstrapEmails: string[];
   defaultMinQuantity: number;
 };
 
@@ -60,7 +60,7 @@ const serverEnvSchema = z
     BLING_API_BASE: optionalEnv(),
     BLING_AUTH_BASE: optionalEnv(),
     B2B_ADMIN_APPROVE_SECRET: optionalEnv(),
-    ADMIN_EMAILS: optionalEnv(),
+    ADMIN_BOOTSTRAP_EMAILS: optionalEnv(),
     B2B_DEFAULT_MIN_QUANTITY: optionalEnv(),
   })
   .transform((env): ServerEnv => {
@@ -92,7 +92,7 @@ const serverEnvSchema = z
       blingAuthBase:
         env.BLING_AUTH_BASE ?? 'https://www.bling.com.br/Api/v3/oauth',
       adminApproveSecret: env.B2B_ADMIN_APPROVE_SECRET ?? null,
-      adminEmails: parseAdminEmails(env.ADMIN_EMAILS),
+      adminBootstrapEmails: parseAdminEmails(env.ADMIN_BOOTSTRAP_EMAILS),
       defaultMinQuantity:
         Number.isFinite(defaultMin) && defaultMin > 0 ? defaultMin : 6,
     };

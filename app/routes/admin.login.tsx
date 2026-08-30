@@ -7,7 +7,7 @@ import { json, redirect } from '@remix-run/node';
 import { Form, useActionData, useSearchParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
-import { isAdminEmail } from '~/server/admin-emails';
+import { ensureAdminUser } from '~/server/admin-users';
 import { getServerEnv } from '~/server/env';
 import { publicOriginFromRequest } from '~/server/public-origin';
 import { createSupabaseRequestClient } from '~/server/supabase-ssr.server';
@@ -32,7 +32,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user && isAdminEmail(user.email, getServerEnv().adminEmails)) {
+  if (user && (await ensureAdminUser(user))) {
     return redirect('/admin', { headers });
   }
   return new Response(null, { headers });
@@ -46,9 +46,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     .trim()
     .toLowerCase();
 
-  if (!isAdminEmail(email, getServerEnv().adminEmails)) {
+  if (!email) {
     return json<ActionResponse>(
-      { success: false, error: 'Este e-mail não tem acesso administrativo.' },
+      { success: false, error: 'Informe um e-mail válido.' },
       { headers },
     );
   }
@@ -107,9 +107,9 @@ export default function AdminLoginPage() {
           Acesso interno
         </h1>
         <p className="text-sm text-secondary">
-          Enviamos um link de acesso para o e-mail cadastrado em{' '}
-          <code className="text-primary">ADMIN_EMAILS</code>. Crie esse usuário
-          no Supabase Auth antes do primeiro login.
+          Use o e-mail de um administrador cadastrado. No primeiro acesso, use o
+          e-mail configurado em{' '}
+          <code className="text-primary">ADMIN_BOOTSTRAP_EMAILS</code>.
         </p>
       </div>
 

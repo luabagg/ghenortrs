@@ -14,7 +14,7 @@ describe('parseAdminEmails', () => {
 });
 
 describe('isAdminEmail', () => {
-  it('requires a non-empty allowlist match', () => {
+  it('matches a configured bootstrap email case-insensitively', () => {
     expect(isAdminEmail('ada@gheno.com', ['ada@gheno.com'])).toBe(true);
     expect(isAdminEmail('ADA@gheno.com', ['ada@gheno.com'])).toBe(true);
     expect(isAdminEmail('loja@example.com', ['ada@gheno.com'])).toBe(false);

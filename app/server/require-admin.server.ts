@@ -2,8 +2,7 @@ import { redirect } from '@remix-run/node';
 import type { User } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { isAdminEmail } from './admin-emails';
-import { getServerEnv } from './env';
+import { ensureAdminUser } from './admin-users';
 import { createSupabaseRequestClient } from './supabase-ssr.server';
 
 export async function requireAdmin(request: Request): Promise<{
@@ -20,8 +19,7 @@ export async function requireAdmin(request: Request): Promise<{
     throw redirect('/admin/login', { headers });
   }
 
-  const env = getServerEnv();
-  if (!isAdminEmail(user.email, env.adminEmails)) {
+  if (!(await ensureAdminUser(user))) {
     await supabase.auth.signOut();
     throw redirect('/admin/login?error=forbidden', { headers });
   }

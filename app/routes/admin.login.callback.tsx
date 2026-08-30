@@ -1,8 +1,7 @@
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 
-import { isAdminEmail } from '~/server/admin-emails';
-import { getServerEnv } from '~/server/env';
+import { ensureAdminUser } from '~/server/admin-users';
 import { createSupabaseRequestClient } from '~/server/supabase-ssr.server';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -21,7 +20,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!isAdminEmail(user?.email, getServerEnv().adminEmails)) {
+  if (!user || !(await ensureAdminUser(user))) {
     await supabase.auth.signOut();
     return redirect('/admin/login?error=forbidden', { headers });
   }
