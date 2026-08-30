@@ -454,6 +454,24 @@ export async function saveBlingTokens(tokens: {
     });
 }
 
+export type BlingTokenStatusRow = {
+  expiresAt: string;
+  updatedAt: string;
+};
+
+/** Connection metadata only. Never selects the token columns. */
+export async function readBlingTokenStatus(): Promise<BlingTokenStatusRow | null> {
+  const [row] = await getDb()
+    .select({
+      expiresAt: blingOauthTokens.expiresAt,
+      updatedAt: blingOauthTokens.updatedAt,
+    })
+    .from(blingOauthTokens)
+    .where(eq(blingOauthTokens.id, 1))
+    .limit(1);
+  return row ?? null;
+}
+
 export async function readStoredBlingTokens(): Promise<BlingTokenRow | null> {
   const [row] = await getDb()
     .select()
