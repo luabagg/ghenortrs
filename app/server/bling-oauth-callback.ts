@@ -4,7 +4,7 @@
 import { exchangeAuthorizationCode, saveBlingTokens } from './bling';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed } from './http';
-import { verifyToken } from './signed-token';
+import { isValidBlingOAuthState } from './signed-token';
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'GET') return methodNotAllowed(['GET']);
@@ -24,8 +24,21 @@ export default async function handler(req: Request): Promise<Response> {
     if (!env.adminApproveSecret) {
       return json({ error: 'admin_secret_not_configured' }, 503);
     }
-    if (!verifyToken(state, env.adminApproveSecret, 'bling-oauth')) {
-      return json({ error: 'invalid_state' }, 400);
+    if (
+      !isValidBlingOAuthState(
+        state,
+        env.adminApproveSecret,
+        env.blingOauthInviteState,
+      )
+    ) {
+      return json(
+        {
+          error: 'invalid_state',
+          message:
+            'Use /api/bling-oauth-start?secret=... or set BLING_OAUTH_INVITE_STATE to the state from Bling invite link.',
+        },
+        400,
+      );
     }
     const tokens = await exchangeAuthorizationCode(code);
     await saveBlingTokens(tokens);

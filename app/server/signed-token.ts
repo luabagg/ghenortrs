@@ -95,3 +95,14 @@ export function buildBlingOAuthState(
     secret,
   );
 }
+
+/** Start-flow HMAC state, or the static `state` from Bling's invite URL. */
+export function isValidBlingOAuthState(
+  state: string | null | undefined,
+  secret: string,
+  inviteState?: string | null,
+): boolean {
+  if (verifyToken(state, secret, 'bling-oauth')) return true;
+  if (!state || !inviteState) return false;
+  return signaturesMatch(state, inviteState);
+}

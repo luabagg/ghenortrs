@@ -19,7 +19,9 @@ export function isForeignAuthCallbackPath(pathname: string): boolean {
 }
 
 function isSellerAuthPath(pathname: string): boolean {
-  return pathname === SELLER_AUTH_HOME || pathname.startsWith(`${SELLER_AUTH_HOME}/`);
+  return (
+    pathname === SELLER_AUTH_HOME || pathname.startsWith(`${SELLER_AUTH_HOME}/`)
+  );
 }
 
 export function sellerPkceCode(url: URL): string | null {

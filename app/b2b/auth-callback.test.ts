@@ -21,9 +21,7 @@ describe('sellerAuthCallbackRedirect', () => {
 
   it('does not bounce when the seller is already on /b2b', () => {
     expect(
-      sellerAuthCallbackRedirect(
-        url('http://localhost:3000/b2b?code=abc'),
-      ),
+      sellerAuthCallbackRedirect(url('http://localhost:3000/b2b?code=abc')),
     ).toBeNull();
   });
 
@@ -41,7 +39,9 @@ describe('sellerAuthCallbackRedirect', () => {
   });
 
   it('ignores pages without a PKCE code', () => {
-    expect(sellerAuthCallbackRedirect(url('http://localhost:3000/'))).toBeNull();
+    expect(
+      sellerAuthCallbackRedirect(url('http://localhost:3000/')),
+    ).toBeNull();
   });
 });
 

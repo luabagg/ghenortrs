@@ -6,11 +6,10 @@
  * redirects back to `emailRedirectTo` (here, `/b2b`). On success it appends
  * `?code=...` (PKCE); on failure — expired, already used, or invalid link —
  * it appends an error to the URL **hash**: `#error=...&error_code=...
- * &error_description=...` (see Supabase's redirect-urls guide). The
- * Supabase client also inspects the URL on init (`detectSessionInUrl`), so
- * `captureAuthRedirectError` must run before that client is ever created —
- * it is called once, synchronously, in `entry.client.tsx` — to read and
- * strip the raw hash first.
+ * &error_description=...` (see Supabase's redirect-urls guide). PKCE success
+ * is consumed explicitly in `getBrowserSession`. `captureAuthRedirectError`
+ * still runs first in `entry.client.tsx` so a failure hash is read and
+ * stripped before any client is created.
  */
 
 export type AuthRedirectError = {

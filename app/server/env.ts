@@ -14,6 +14,7 @@ export type ServerEnv = {
   blingClientId: string | null;
   blingClientSecret: string | null;
   blingRedirectUri: string | null;
+  blingOauthInviteState: string | null;
   blingApiBase: string;
   blingAuthBase: string;
   adminApproveSecret: string | null;
@@ -55,6 +56,7 @@ const serverEnvSchema = z
     BLING_CLIENT_ID: optionalEnv(),
     BLING_CLIENT_SECRET: optionalEnv(),
     BLING_REDIRECT_URI: optionalEnv(),
+    BLING_OAUTH_INVITE_STATE: optionalEnv(),
     BLING_API_BASE: optionalEnv(),
     BLING_AUTH_BASE: optionalEnv(),
     B2B_ADMIN_APPROVE_SECRET: optionalEnv(),
@@ -85,6 +87,7 @@ const serverEnvSchema = z
       blingClientId: env.BLING_CLIENT_ID ?? null,
       blingClientSecret: env.BLING_CLIENT_SECRET ?? null,
       blingRedirectUri: env.BLING_REDIRECT_URI ?? null,
+      blingOauthInviteState: env.BLING_OAUTH_INVITE_STATE ?? null,
       blingApiBase: env.BLING_API_BASE ?? 'https://api.bling.com.br/Api/v3',
       blingAuthBase:
         env.BLING_AUTH_BASE ?? 'https://www.bling.com.br/Api/v3/oauth',

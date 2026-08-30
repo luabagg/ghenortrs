@@ -4,6 +4,7 @@ import {
   type SupabaseClient,
 } from '@supabase/supabase-js';
 
+import { sellerPkceCode, stripPkceCode } from '@/b2b/auth-callback';
 import {
   isB2BAuthConfigured,
   SITE_URL,
@@ -12,6 +13,7 @@ import {
 } from '@/b2b/config';
 
 let client: SupabaseClient | null = null;
+let consumeInFlight: Promise<void> | null = null;
 
 export function getSupabaseBrowserClient(): SupabaseClient | null {
   if (!isB2BAuthConfigured()) return null;
@@ -20,16 +22,45 @@ export function getSupabaseBrowserClient(): SupabaseClient | null {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
+      // Exchange is explicit in consumeSellerAuthCode. Auto-detect races
+      // getSession() and can consume the one-time PKCE code twice.
+      detectSessionInUrl: false,
       flowType: 'pkce',
     },
   });
   return client;
 }
 
+async function consumeSellerAuthCode(supabase: SupabaseClient): Promise<void> {
+  if (typeof window === 'undefined') return;
+  if (consumeInFlight) {
+    await consumeInFlight;
+    return;
+  }
+
+  consumeInFlight = (async () => {
+    const url = new URL(window.location.href);
+    const code = sellerPkceCode(url);
+    if (!code) return;
+
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    window.history.replaceState(window.history.state, '', stripPkceCode(url));
+    if (error) {
+      console.error('seller PKCE exchange failed', error.message);
+    }
+  })();
+
+  try {
+    await consumeInFlight;
+  } finally {
+    consumeInFlight = null;
+  }
+}
+
 export async function getBrowserSession(): Promise<Session | null> {
   const supabase = getSupabaseBrowserClient();
   if (!supabase) return null;
+  await consumeSellerAuthCode(supabase);
   const { data } = await supabase.auth.getSession();
   return data.session;
 }

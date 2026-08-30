@@ -1,4 +1,8 @@
-import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import type {
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { Analytics } from '@vercel/analytics/remix';
 import type { ReactNode } from 'react';
@@ -121,7 +125,10 @@ export function ErrorBoundary() {
           }
           title={isNotFound ? 'Página não encontrada' : 'Erro no servidor'}
         />
-        <nav aria-label="Recuperação de página" className="flex flex-wrap gap-3">
+        <nav
+          aria-label="Recuperação de página"
+          className="flex flex-wrap gap-3"
+        >
           <Button asChild variant="outline">
             <Link to="/">Voltar ao início</Link>
           </Button>
