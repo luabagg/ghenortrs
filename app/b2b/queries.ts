@@ -12,11 +12,16 @@ import {
   submitB2BQuote,
 } from '@/b2b/api';
 import { isB2BAuthConfigured } from '@/b2b/config';
-import type { B2BSessionResponse, QuoteSelectionItem } from '@/b2b/types';
+import type {
+  B2BSessionResponse,
+  QuoteSelectionItem,
+  SellerTier,
+} from '@/b2b/types';
 
 export const b2bKeys = {
   session: ['b2b', 'session'] as const,
-  catalog: (query: string) => ['b2b', 'catalog', query] as const,
+  catalog: (query: string, tier: SellerTier) =>
+    ['b2b', 'catalog', query, tier] as const,
 };
 
 export function useB2BSessionQuery(): UseQueryResult<B2BSessionResponse> {
@@ -27,10 +32,14 @@ export function useB2BSessionQuery(): UseQueryResult<B2BSessionResponse> {
   });
 }
 
-export function useB2BCatalogQuery(query: string, enabled: boolean) {
+export function useB2BCatalogQuery(
+  query: string,
+  enabled: boolean,
+  tier: SellerTier = 'start',
+) {
   return useQuery({
-    queryKey: b2bKeys.catalog(query),
-    queryFn: () => fetchB2BCatalog(query),
+    queryKey: b2bKeys.catalog(query, tier),
+    queryFn: () => fetchB2BCatalog(query, tier),
     enabled,
   });
 }
@@ -47,7 +56,10 @@ export function useRegisterSellerMutation() {
 
 export function useSubmitB2BQuoteMutation() {
   return useMutation({
-    mutationFn: (input: { items: QuoteSelectionItem[]; notes: string }) =>
-      submitB2BQuote(input),
+    mutationFn: (input: {
+      items: QuoteSelectionItem[];
+      notes: string;
+      tier: SellerTier;
+    }) => submitB2BQuote(input),
   });
 }

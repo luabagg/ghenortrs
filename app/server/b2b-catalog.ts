@@ -4,7 +4,7 @@
 import { listActiveCatalogProducts } from './db/queries';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed } from './http';
-import { resolveSellerTier } from './seller-tier';
+import { parseSellerTier } from './seller-tier';
 import { requireApprovedSeller } from './supabase';
 
 function toPublicProduct(
@@ -40,7 +40,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const env = getServerEnv();
-    const tier = resolveSellerTier(auth.seller.volume);
+    const tier = parseSellerTier(url.searchParams.get('tier'));
     const products = (await listActiveCatalogProducts(q, limit, tier)).map(
       toPublicProduct,
     );
@@ -50,6 +50,7 @@ export default async function handler(req: Request): Promise<Response> {
       defaultMinQuantity: env.defaultMinQuantity,
       count: products.length,
       products,
+      tier,
       seller: {
         companyName: auth.seller.companyName,
         email: auth.seller.email,

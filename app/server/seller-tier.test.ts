@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { resolveSellerTier, tierPriceColumn } from './seller-tier';
+import { parseSellerTier, tierPriceColumn } from './seller-tier';
 
-describe('resolveSellerTier', () => {
-  it('maps volume to start, pro, or max tier', () => {
-    expect(resolveSellerTier(0)).toBe('start');
-    expect(resolveSellerTier(1000)).toBe('start');
-    expect(resolveSellerTier(1001)).toBe('pro');
-    expect(resolveSellerTier(4999)).toBe('pro');
-    expect(resolveSellerTier(5000)).toBe('max');
+describe('parseSellerTier', () => {
+  it('accepts start, pro, and max and defaults invalid values', () => {
+    expect(parseSellerTier('start')).toBe('start');
+    expect(parseSellerTier('PRO')).toBe('pro');
+    expect(parseSellerTier(' max ')).toBe('max');
+    expect(parseSellerTier(null)).toBe('start');
+    expect(parseSellerTier('gold', 'pro')).toBe('pro');
   });
 });
 

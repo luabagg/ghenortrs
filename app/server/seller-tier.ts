@@ -1,14 +1,22 @@
 export type SellerTier = 'start' | 'pro' | 'max';
 
+export const SELLER_TIERS = ['start', 'pro', 'max'] as const;
+
 export type TierPriceColumn =
   | 'priceStartCents'
   | 'priceProCents'
   | 'priceMaxCents';
 
-export function resolveSellerTier(volume: number): SellerTier {
-  if (volume >= 5000) return 'max';
-  if (volume > 1000) return 'pro';
-  return 'start';
+export function isSellerTier(value: string): value is SellerTier {
+  return (SELLER_TIERS as readonly string[]).includes(value);
+}
+
+export function parseSellerTier(
+  value: string | null | undefined,
+  fallback: SellerTier = 'start',
+): SellerTier {
+  const normalized = value?.trim().toLowerCase() ?? '';
+  return isSellerTier(normalized) ? normalized : fallback;
 }
 
 export function tierPriceColumn(tier: SellerTier): TierPriceColumn {

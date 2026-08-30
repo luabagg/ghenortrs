@@ -6,7 +6,6 @@ import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed, readJson } from './http';
 import { buildQuoteRequestHtml, sendResendEmail } from './resend';
-import { resolveSellerTier } from './seller-tier';
 import { requireApprovedSeller } from './supabase';
 
 export default async function handler(req: Request): Promise<Response> {
@@ -19,15 +18,12 @@ export default async function handler(req: Request): Promise<Response> {
   const parsed = parseB2BQuoteRequest(body);
   if (!parsed.ok) return json({ error: parsed.error }, 400);
 
-  const { items: requested, notes } = parsed;
+  const { items: requested, notes, tier } = parsed;
 
   try {
     const env = getServerEnv();
     const ids = requested.map((item) => item.productId);
-    const products = await listActiveProductsByIds(
-      ids,
-      resolveSellerTier(auth.seller.volume),
-    );
+    const products = await listActiveProductsByIds(ids, tier);
     const byId = new Map(products.map((product) => [product.id, product]));
 
     const lineItems: Array<{
@@ -88,7 +84,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     const saved = await insertQuoteRequest({
       sellerId: auth.seller.id,
-      items: lineItems,
+      items: { tier, lines: lineItems },
       notes,
     });
 
@@ -101,6 +97,7 @@ export default async function handler(req: Request): Promise<Response> {
           companyName: auth.seller.companyName,
           email: auth.seller.email,
           phone: auth.seller.phone,
+          tier,
           notes,
           items: lineItems.map((item) => ({
             name: item.name,

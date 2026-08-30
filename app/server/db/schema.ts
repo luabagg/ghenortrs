@@ -38,7 +38,6 @@ export const sellers = pgTable(
     }),
     approvedBy: text('approved_by'),
     rejectedReason: text('rejected_reason'),
-    volume: integer('volume').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),

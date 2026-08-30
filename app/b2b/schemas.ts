@@ -145,6 +145,7 @@ export type B2BQuoteItem = z.output<typeof b2bQuoteItemSchema>;
 // filtering) rather than failing the whole request; callers should treat a
 // resulting empty `items` array as `items_invalid`.
 export const b2bQuoteRequestSchema = z.object({
+  tier: z.enum(['start', 'pro', 'max']),
   items: z.array(z.unknown()).transform((items) =>
     items
       .map((item) => b2bQuoteItemSchema.safeParse(item))
@@ -164,11 +165,30 @@ export type B2BQuoteRequestData = z.output<typeof b2bQuoteRequestSchema>;
 export function parseB2BQuoteRequest(
   input: unknown,
 ):
-  | { ok: true; items: B2BQuoteItem[]; notes: string }
-  | { ok: false; error: 'items_required' | 'items_invalid' } {
+  | {
+      ok: true;
+      items: B2BQuoteItem[];
+      notes: string;
+      tier: 'start' | 'pro' | 'max';
+    }
+  | { ok: false; error: 'items_required' | 'items_invalid' | 'tier_invalid' } {
   const parsed = b2bQuoteRequestSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: 'items_required' };
+  if (!parsed.success) {
+    const tierIssue = parsed.error.issues.some(
+      (issue) => issue.path[0] === 'tier',
+    );
+    const itemsIssue = parsed.error.issues.some(
+      (issue) => issue.path[0] === 'items',
+    );
+    if (tierIssue && !itemsIssue) return { ok: false, error: 'tier_invalid' };
+    return { ok: false, error: 'items_required' };
+  }
   if (parsed.data.items.length === 0)
     return { ok: false, error: 'items_invalid' };
-  return { ok: true, items: parsed.data.items, notes: parsed.data.notes };
+  return {
+    ok: true,
+    items: parsed.data.items,
+    notes: parsed.data.notes,
+    tier: parsed.data.tier,
+  };
 }

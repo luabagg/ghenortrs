@@ -8,6 +8,7 @@ describe('buildQuoteRequestHtml', () => {
       companyName: 'Oficina Norte',
       email: 'compras@norte.test',
       phone: '11999999999',
+      tier: 'pro',
       notes: '',
       items: [
         {
@@ -20,6 +21,7 @@ describe('buildQuoteRequestHtml', () => {
       ],
     });
 
+    expect(html).toContain('Tabela: <strong>PRO</strong>');
     expect(html).toContain('Preço un.');
     expect(html).toContain('R$ 61,49');
     expect(html).toContain('Disco Elite');

@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@remix-run/react';
 
 import { B2B_DEFAULT_MIN_QUANTITY } from '@/b2b/config';
 import { useB2BCatalogQuery, useSubmitB2BQuoteMutation } from '@/b2b/queries';
-import type { QuoteSelectionItem } from '@/b2b/types';
+import type { QuoteSelectionItem, SellerTier } from '@/b2b/types';
 import { useB2BSession } from '@/b2b/use-b2b-session';
+import { SELLER_TIERS, parseSellerTier } from '@/server/seller-tier';
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +17,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
+const TIER_STORAGE_KEY = 'gheno-b2b-tier';
+
+const TIER_LABELS: Record<SellerTier, string> = {
+  start: 'Start',
+  pro: 'Pro',
+  max: 'Max',
+};
+
 function formatBRL(cents: number | null): string {
   if (cents == null) return 'Sob consulta';
   return (cents / 100).toLocaleString('pt-BR', {
@@ -24,21 +33,34 @@ function formatBRL(cents: number | null): string {
   });
 }
 
+function readStoredTier(): SellerTier {
+  if (typeof window === 'undefined') return 'start';
+  return parseSellerTier(window.sessionStorage.getItem(TIER_STORAGE_KEY));
+}
+
 export function B2BCatalogPage() {
   const { gate, session, signOut, configured } = useB2BSession();
   const [query, setQuery] = useState('');
+  const [tier, setTier] = useState<SellerTier>('start');
   const [selection, setSelection] = useState<Record<number, number>>({});
   const [notes, setNotes] = useState('');
+
+  useEffect(() => {
+    setTier(readStoredTier());
+  }, []);
+
+  function onSelectTier(next: SellerTier) {
+    setTier(next);
+    setSelection({});
+    window.sessionStorage.setItem(TIER_STORAGE_KEY, next);
+  }
 
   const {
     data: catalog,
     isLoading: loading,
     error: catalogError,
-  } = useB2BCatalogQuery(query, gate === 'approved');
-  const products = useMemo(
-    () => catalog?.products ?? [],
-    [catalog?.products],
-  );
+  } = useB2BCatalogQuery(query, gate === 'approved', tier);
+  const products = useMemo(() => catalog?.products ?? [], [catalog?.products]);
   const defaultMin = catalog?.defaultMinQuantity ?? B2B_DEFAULT_MIN_QUANTITY;
   const error = catalogError
     ? catalogError instanceof Error
@@ -62,6 +84,7 @@ export function B2BCatalogPage() {
       const result = await submitQuote.mutateAsync({
         items: selectedItems,
         notes,
+        tier,
       });
       if (!result.success) return;
       setSelection({});
@@ -79,7 +102,7 @@ export function B2BCatalogPage() {
         ? 'Ajuste as quantidades mínimas antes de enviar.'
         : 'Não foi possível enviar a solicitação.'))
     : submitQuote.data?.success
-      ? submitQuote.data.message ?? 'Solicitação enviada.'
+      ? (submitQuote.data.message ?? 'Solicitação enviada.')
       : null;
 
   if (!configured) {
@@ -115,12 +138,38 @@ export function B2BCatalogPage() {
     <div className="grid gap-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageIntro
-          description={`${session.seller?.companyName ?? 'Sua empresa'} · catálogo Bling · pedido mínimo por item (padrão ${defaultMin}). Sem checkout online.`}
+          description={`${session.seller?.companyName ?? 'Sua empresa'} · tabela ${TIER_LABELS[tier]} · pedido mínimo por item (padrão ${defaultMin}). Sem checkout online.`}
           title="Selecione itens e solicite orçamento."
         />
-        <Button type="button" variant="secondary" onClick={() => void signOut()}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => void signOut()}
+        >
           Sair
         </Button>
+      </div>
+
+      <div
+        className="flex flex-wrap gap-2"
+        role="radiogroup"
+        aria-label="Tabela de preços"
+      >
+        {SELLER_TIERS.map((value) => {
+          const selected = value === tier;
+          return (
+            <Button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              variant={selected ? 'outline' : 'secondary'}
+              onClick={() => onSelectTier(value)}
+            >
+              {TIER_LABELS[value]}
+            </Button>
+          );
+        })}
       </div>
 
       <div className="grid gap-3 sm:max-w-md">
@@ -135,9 +184,7 @@ export function B2BCatalogPage() {
         />
       </div>
 
-      {loading ? (
-        <p className="text-secondary">Carregando produtos…</p>
-      ) : null}
+      {loading ? <p className="text-secondary">Carregando produtos…</p> : null}
       {error ? (
         <p className="text-accent" role="alert">
           Falha ao carregar catálogo ({error}). Confirme o sync Bling.
@@ -148,7 +195,10 @@ export function B2BCatalogPage() {
         {products.map((product) => {
           const qty = selection[product.id] ?? 0;
           return (
-            <Card key={product.id} className="rounded-md border-border bg-surface px-0 py-0">
+            <Card
+              key={product.id}
+              className="rounded-md border-border bg-surface px-0 py-0"
+            >
               <CardHeader>
                 <CardTitle className="text-lg">{product.name}</CardTitle>
                 <CardDescription>
@@ -209,7 +259,8 @@ export function B2BCatalogPage() {
         <CardHeader>
           <CardTitle>Solicitação de orçamento</CardTitle>
           <CardDescription>
-            Sem checkout. A GHENO rotors retorna com condições e disponibilidade.
+            Sem checkout. A GHENO rotors retorna com condições e
+            disponibilidade.
           </CardDescription>
         </CardHeader>
         <div className="grid gap-4 px-6 pb-6">

@@ -24,8 +24,6 @@ export type B2BSessionResponse = {
   email?: string | null;
   seller: SellerSummary | null;
   gate: Exclude<SellerGate, 'loading' | 'unconfigured'>;
-  tier?: SellerTier | null;
-  volume?: number | null;
   error?: string;
 };
 

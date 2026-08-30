@@ -5,6 +5,7 @@ import { QueryBuilder } from 'drizzle-orm/pg-core';
 
 import {
   blingProductSyncConflictSet,
+  buildAdminProductListSql,
   buildCatalogSearchSql,
   catalogVisibilityConditions,
   sanitizeCatalogQuery,
@@ -56,6 +57,26 @@ describe('drizzle catalog query builder', () => {
     expect(max.sql).toMatch(/"price_max_cents" is not null/i);
   });
 
+  it('lists admin products without catalog visibility filters', () => {
+    const empty = buildAdminProductListSql('', 200);
+    expect(empty.sql).toContain('from "bling_products"');
+    expect(empty.sql).toContain('"visible_b2b"');
+    expect(empty.sql).toContain('"active"');
+    expect(empty.sql).not.toMatch(/"visible_b2b"\s*=/i);
+    expect(empty.sql).not.toMatch(/"active"\s*=/i);
+    expect(empty.sql).not.toMatch(/ilike/i);
+    expect(empty.sql).not.toMatch(
+      /price_start_cents|price_pro_cents|price_max_cents/,
+    );
+    expect(empty.params).toEqual([200]);
+
+    const searched = buildAdminProductListSql('elite', 50);
+    expect(searched.sql).toContain('ilike');
+    expect(searched.sql).toContain('"sku"');
+    expect(searched.sql).toContain('"name"');
+    expect(searched.params).toEqual(['%elite%', '%elite%', 50]);
+  });
+
   it('requires a non-null tier price on catalog and quote lookups', () => {
     const qb = new QueryBuilder();
     const { sql } = qb
@@ -98,7 +119,7 @@ describe('drizzle schema contract', () => {
       'suspended',
     ]);
     expect(sellers.companyName.name).toBe('company_name');
-    expect(sellers.volume.name).toBe('volume');
+    expect(sellers.volume).toBeUndefined();
     expect(blingProducts.searchTerms.name).toBe('search_terms');
   });
 

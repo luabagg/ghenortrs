@@ -7,7 +7,6 @@ import {
   foldHeader,
   importExitCode,
   importPriceList,
-  nameHintHides,
   parseBrMoneyToCents,
   parseCliArgs,
   parseCsvText,
@@ -132,24 +131,16 @@ describe('parseCsvText / parseRow', () => {
 });
 
 describe('parseCliArgs / tier column', () => {
-  it('parses equals and space forms plus name-hint flag', () => {
+  it('parses equals and space forms', () => {
     expect(
-      parseCliArgs([
-        '--tier=start',
-        '--file=./exports/start.csv',
-        '--apply-name-hints',
-      ]),
+      parseCliArgs(['--tier=start', '--file=./exports/start.csv']),
     ).toEqual({
       tier: 'start',
       file: './exports/start.csv',
-      applyNameHints: true,
     });
-    expect(
-      parseCliArgs(['--', '--tier', 'max', '--file', 'pro.csv']),
-    ).toEqual({
+    expect(parseCliArgs(['--', '--tier', 'max', '--file', 'pro.csv'])).toEqual({
       tier: 'max',
       file: 'pro.csv',
-      applyNameHints: false,
     });
   });
 
@@ -162,6 +153,13 @@ describe('parseCliArgs / tier column', () => {
     expect(() =>
       parseCliArgs(['--tier=pro', '--file=x.csv', '--dry-run']),
     ).toThrow(/Unknown argument/);
+    expect(() =>
+      parseCliArgs([
+        '--tier=pro',
+        '--file=x.csv',
+        '--apply-name-hints',
+      ]),
+    ).toThrow(/Unknown argument/);
   });
 
   it('maps each tier to its SQL column only', () => {
@@ -169,16 +167,6 @@ describe('parseCliArgs / tier column', () => {
     expect(tierPriceSqlColumn('pro')).toBe('price_pro_cents');
     expect(tierPriceSqlColumn('max')).toBe('price_max_cents');
     expect(() => tierPriceSqlColumn('gold')).toThrow(/Invalid tier/);
-  });
-});
-
-describe('nameHintHides', () => {
-  it('hides only [INATIVO]/[INTERNO] prefixes and never implies re-enable', () => {
-    expect(nameHintHides('[INATIVO] Cubo')).toBe(true);
-    expect(nameHintHides('[INTERNO] Disco')).toBe(true);
-    expect(nameHintHides('[inativo] Cubo')).toBe(false);
-    expect(nameHintHides('Cubo [INATIVO]')).toBe(false);
-    expect(nameHintHides('Cubo')).toBe(false);
   });
 });
 
@@ -191,7 +179,6 @@ describe('importPriceList', () => {
     const result = await importPriceList({
       csvText: csv,
       tier: 'pro',
-      applyNameHints: false,
       warn: (message) => warnings.push(message),
       updateBySku: async (input) => {
         calls.push(input);
@@ -204,13 +191,11 @@ describe('importPriceList', () => {
         sku: 'KNOWN',
         priceCents: 6149,
         column: 'price_pro_cents',
-        applyNameHints: false,
       },
       {
         sku: 'MISSING',
         priceCents: 1000,
         column: 'price_pro_cents',
-        applyNameHints: false,
       },
     ]);
     expect(result.updateCount).toBe(1);
@@ -221,22 +206,6 @@ describe('importPriceList', () => {
     expect(importExitCode(result)).toBe(0);
     expect(importExitCode({ dataRowCount: 2, updateCount: 0 })).toBe(1);
     expect(importExitCode({ dataRowCount: 0, updateCount: 0 })).toBe(0);
-  });
-
-  it('records hidden rows from name hints without setting visible true', async () => {
-    const result = await importPriceList({
-      csvText: 'sku,price_lista\nHID,"10,00"\nVIS,"20,00"\n',
-      tier: 'max',
-      applyNameHints: true,
-      updateBySku: async ({ sku }) => {
-        if (sku === 'HID') {
-          return { found: true, name: '[INTERNO] Spare', hidden: true };
-        }
-        return { found: true, name: 'Visible', hidden: false };
-      },
-    });
-    expect(result.updateCount).toBe(2);
-    expect(result.hiddenCount).toBe(1);
   });
 });
 

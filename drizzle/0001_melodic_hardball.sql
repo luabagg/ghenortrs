@@ -1,0 +1,1 @@
+ALTER TABLE "sellers" DROP COLUMN "volume";

@@ -1,4 +1,4 @@
-import { and, eq, ilike, inArray, isNotNull, or, sql } from 'drizzle-orm';
+import { and, desc, eq, ilike, inArray, isNotNull, or, sql } from 'drizzle-orm';
 import { QueryBuilder } from 'drizzle-orm/pg-core';
 
 import type { Json } from '../json';
@@ -62,6 +62,69 @@ export function catalogVisibilityConditions(tier: SellerTier) {
   ] as const;
 }
 
+export const ADMIN_PRODUCT_LIST_LIMIT = 200;
+
+export type AdminProductRow = {
+  id: number;
+  sku: string | null;
+  name: string;
+  active: boolean;
+  visibleB2b: boolean;
+  category: string | null;
+};
+
+export const adminProductColumns = {
+  id: blingProducts.id,
+  sku: blingProducts.sku,
+  name: blingProducts.name,
+  active: blingProducts.active,
+  visibleB2b: blingProducts.visibleB2b,
+  category: blingProducts.category,
+} as const;
+
+export function buildAdminProductListSql(query: string, limit: number) {
+  const safe = sanitizeCatalogQuery(query);
+  const select = qb.select(adminProductColumns).from(blingProducts);
+  const filtered = safe
+    ? select.where(
+        or(
+          ilike(blingProducts.name, `%${safe}%`),
+          ilike(blingProducts.sku, `%${safe}%`),
+        ),
+      )
+    : select;
+  return filtered.orderBy(blingProducts.name).limit(limit).toSQL();
+}
+
+export async function listAdminProducts(
+  query: string,
+  limit = ADMIN_PRODUCT_LIST_LIMIT,
+): Promise<AdminProductRow[]> {
+  const safe = sanitizeCatalogQuery(query);
+  const select = getDb().select(adminProductColumns).from(blingProducts);
+  const filtered = safe
+    ? select.where(
+        or(
+          ilike(blingProducts.name, `%${safe}%`),
+          ilike(blingProducts.sku, `%${safe}%`),
+        ),
+      )
+    : select;
+  return filtered.orderBy(blingProducts.name).limit(limit);
+}
+
+export async function updateProductVisibleB2b(
+  id: number,
+  visibleB2b: boolean,
+): Promise<AdminProductRow | null> {
+  const [row] = await getDb()
+    .update(blingProducts)
+    .set({ visibleB2b })
+    .where(eq(blingProducts.id, id))
+    .returning(adminProductColumns);
+  return row ?? null;
+}
+
 export function buildCatalogSearchSql(
   query: string,
   limit: number,
@@ -95,6 +158,10 @@ export async function getSellerById(id: string): Promise<SellerRow | null> {
     .where(eq(sellers.id, id))
     .limit(1);
   return row ?? null;
+}
+
+export async function listSellers(): Promise<SellerRow[]> {
+  return getDb().select().from(sellers).orderBy(desc(sellers.createdAt));
 }
 
 export async function getSellerByEmail(
@@ -306,11 +373,8 @@ export async function upsertBlingProducts(
   }>,
 ): Promise<void> {
   if (rows.length === 0) return;
-  await getDb()
-    .insert(blingProducts)
-    .values(rows)
-    .onConflictDoUpdate({
-      target: blingProducts.id,
-      set: blingProductSyncConflictSet,
-    });
+  await getDb().insert(blingProducts).values(rows).onConflictDoUpdate({
+    target: blingProducts.id,
+    set: blingProductSyncConflictSet,
+  });
 }

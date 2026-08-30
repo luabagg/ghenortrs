@@ -10,6 +10,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const isHome = pathname === '/';
+  const isAdmin = pathname.startsWith('/admin');
 
   return (
     <div
@@ -22,19 +23,25 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         Pular para o conteúdo
       </a>
-      <MobileMenuOverlay onClose={() => setMenuOpen(false)} open={menuOpen} />
-      <AppHeader isHome={isHome} onOpenMenu={() => setMenuOpen(true)} />
+      {isAdmin ? null : (
+        <MobileMenuOverlay onClose={() => setMenuOpen(false)} open={menuOpen} />
+      )}
+      {isAdmin ? null : (
+        <AppHeader isHome={isHome} onOpenMenu={() => setMenuOpen(true)} />
+      )}
       <main
         id="main-content"
         className={
           isHome
             ? 'flex w-full flex-1'
-            : 'mx-auto flex w-full max-w-[90rem] flex-1 px-6 pb-10 pt-32 sm:px-10 sm:pb-14 sm:pt-36 lg:px-16 lg:pb-18'
+            : isAdmin
+              ? 'mx-auto flex w-full max-w-[90rem] flex-1 px-6 py-10 sm:px-10 lg:px-16'
+              : 'mx-auto flex w-full max-w-[90rem] flex-1 px-6 pb-10 pt-32 sm:px-10 sm:pb-14 sm:pt-36 lg:px-16 lg:pb-18'
         }
       >
         <div className="w-full">{children}</div>
       </main>
-      <AppFooter />
+      {isAdmin ? null : <AppFooter />}
     </div>
   );
 }

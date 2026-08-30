@@ -3,7 +3,7 @@
  * Import one Bling price-list CSV into a single tier column on bling_products.
  *
  *   pnpm prices:import --tier=start --file=./exports/start.csv
- *   pnpm prices:import --tier=pro --file=./exports/pro.csv [--apply-name-hints]
+ *   pnpm prices:import --tier=pro --file=./exports/pro.csv
  *
  * Requires DATABASE_URL or POSTGRES_* (same fallbacks as drizzle.config.ts).
  */
@@ -22,8 +22,6 @@ export const TIER_PRICE_COLUMNS = {
   pro: 'price_pro_cents',
   max: 'price_max_cents',
 };
-
-const NAME_HIDE_PREFIXES = ['[INATIVO]', '[INTERNO]'];
 
 /**
  * Same rules as app/server/br-money.ts (inlined: no tsx in this package).
@@ -218,14 +216,6 @@ export function parsePriceList(csvText) {
 }
 
 /**
- * @param {string} name
- * @returns {boolean}
- */
-export function nameHintHides(name) {
-  return NAME_HIDE_PREFIXES.some((prefix) => name.startsWith(prefix));
-}
-
-/**
  * @param {string} tier
  * @returns {string}
  */
@@ -239,19 +229,15 @@ export function tierPriceSqlColumn(tier) {
 
 /**
  * @param {string[]} argv
- * @returns {{ tier: SellerTier, file: string, applyNameHints: boolean }}
+ * @returns {{ tier: SellerTier, file: string }}
  */
 export function parseCliArgs(argv) {
-  /** @type {{ tier: string | null, file: string | null, applyNameHints: boolean }} */
-  const args = { tier: null, file: null, applyNameHints: false };
+  /** @type {{ tier: string | null, file: string | null }} */
+  const args = { tier: null, file: null };
 
   for (let i = 0; i < argv.length; i++) {
     const token = argv[i];
     if (token === '--') continue;
-    if (token === '--apply-name-hints') {
-      args.applyNameHints = true;
-      continue;
-    }
 
     let key = token;
     /** @type {string | undefined} */
@@ -287,7 +273,6 @@ export function parseCliArgs(argv) {
   return {
     tier: /** @type {SellerTier} */ (args.tier),
     file: args.file,
-    applyNameHints: args.applyNameHints,
   };
 }
 
@@ -323,15 +308,13 @@ export function importExitCode({ dataRowCount, updateCount }) {
  * @param {object} options
  * @param {string} options.csvText
  * @param {SellerTier} options.tier
- * @param {boolean} options.applyNameHints
- * @param {(input: { sku: string, priceCents: number, column: string, applyNameHints: boolean }) => Promise<{ found: boolean, name?: string, hidden?: boolean }>} options.updateBySku
+ * @param {(input: { sku: string, priceCents: number, column: string }) => Promise<{ found: boolean }>} options.updateBySku
  * @param {(message: string) => void} [options.warn]
- * @returns {Promise<{ dataRowCount: number, updateCount: number, missingSkus: string[], hiddenCount: number, skipped: { sku: string, reason: string }[] }>}
+ * @returns {Promise<{ dataRowCount: number, updateCount: number, missingSkus: string[], skipped: { sku: string, reason: string }[] }>}
  */
 export async function importPriceList({
   csvText,
   tier,
-  applyNameHints,
   updateBySku,
   warn = console.warn,
 }) {
@@ -347,7 +330,6 @@ export async function importPriceList({
   }
 
   let updateCount = 0;
-  let hiddenCount = 0;
   /** @type {string[]} */
   const missingSkus = [];
 
@@ -356,7 +338,6 @@ export async function importPriceList({
       sku: row.sku,
       priceCents: row.priceCents,
       column,
-      applyNameHints,
     });
     if (!result.found) {
       missingSkus.push(row.sku);
@@ -364,57 +345,38 @@ export async function importPriceList({
       continue;
     }
     updateCount += 1;
-    if (result.hidden) hiddenCount += 1;
   }
 
   return {
     dataRowCount: parsed.dataRowCount,
     updateCount,
     missingSkus,
-    hiddenCount,
     skipped: parsed.skipped,
   };
 }
 
 /**
  * @param {import('postgres').Sql} sql
- * @param {{ column: string, sku: string, cents: number, applyNameHints: boolean }} input
+ * @param {{ column: string, sku: string, cents: number }} input
  */
 export async function updateProductPrice(sql, input) {
-  const { column, sku, cents, applyNameHints } = input;
+  const { column, sku, cents } = input;
   if (!Object.values(TIER_PRICE_COLUMNS).includes(column)) {
     throw new Error(`Refusing unknown price column: ${column}`);
   }
 
-  const rows = applyNameHints
-    ? await sql`
-        UPDATE bling_products
-        SET
-          ${sql(column)} = ${cents},
-          visible_b2b = CASE
-            WHEN name LIKE '[INATIVO]%' OR name LIKE '[INTERNO]%' THEN false
-            ELSE visible_b2b
-          END
-        WHERE sku = ${sku}
-        RETURNING name, visible_b2b
-      `
-    : await sql`
-        UPDATE bling_products
-        SET ${sql(column)} = ${cents}
-        WHERE sku = ${sku}
-        RETURNING name, visible_b2b
-      `;
+  const rows = await sql`
+    UPDATE bling_products
+    SET ${sql(column)} = ${cents}
+    WHERE sku = ${sku}
+    RETURNING sku
+  `;
 
   if (rows.length === 0) {
     return { found: false };
   }
 
-  const row = rows[0];
-  return {
-    found: true,
-    name: row.name,
-    hidden: applyNameHints && nameHintHides(String(row.name ?? '')),
-  };
+  return { found: true };
 }
 
 function loadEnvFile() {
@@ -432,14 +394,11 @@ function printUsage() {
 bling-price-list-import
 
 Usage:
-  pnpm prices:import --tier=start|pro|max --file=path [--apply-name-hints]
+  pnpm prices:import --tier=start|pro|max --file=path
 
 Updates only price_<tier>_cents on bling_products WHERE sku matches (trimmed).
 Missing SKUs are skipped with a warning. Exits 1 when the file had data rows
-but no rows were updated.
-
---apply-name-hints  set visible_b2b = false when name starts with [INATIVO]
-                    or [INTERNO]; never sets visible_b2b back to true
+but no rows were updated. Hide/show SKUs from /admin/produtos.
 `);
 }
 
@@ -461,13 +420,11 @@ export async function main(argv = process.argv.slice(2)) {
     const result = await importPriceList({
       csvText,
       tier: options.tier,
-      applyNameHints: options.applyNameHints,
-      updateBySku: ({ sku, priceCents, column, applyNameHints }) =>
+      updateBySku: ({ sku, priceCents, column }) =>
         updateProductPrice(sql, {
           column,
           sku,
           cents: priceCents,
-          applyNameHints,
         }),
     });
 
@@ -481,7 +438,6 @@ export async function main(argv = process.argv.slice(2)) {
           updated: result.updateCount,
           missingSkus: result.missingSkus.length,
           skippedRows: result.skipped.length,
-          hiddenByNameHint: result.hiddenCount,
         },
         null,
         2,

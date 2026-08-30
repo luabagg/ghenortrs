@@ -137,7 +137,7 @@ export default async function handler(req: Request): Promise<Response> {
       : undefined;
 
   if (env.resendApiKey && env.resendToEmail) {
-    await sendResendEmail({
+    const mailed = await sendResendEmail({
       to: env.resendToEmail,
       subject: `[B2B cadastro] ${data.empresa}`,
       replyTo: data.email,
@@ -150,6 +150,13 @@ export default async function handler(req: Request): Promise<Response> {
         approveUrl,
       }),
     });
+    if (!mailed.ok) {
+      console.error('b2b-register notify skipped', mailed.reason);
+    }
+  } else {
+    console.warn(
+      'b2b-register: registration saved but GHENO alert not sent (set RESEND_API_KEY and RESEND_TO_EMAIL)',
+    );
   }
 
   return json({

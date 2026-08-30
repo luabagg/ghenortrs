@@ -3,6 +3,7 @@ import type {
   B2BCatalogProduct,
   B2BSessionResponse,
   QuoteSelectionItem,
+  SellerTier,
 } from '@/b2b/types';
 import { getBrowserSession } from '@/b2b/supabase-browser';
 
@@ -54,12 +55,16 @@ export async function registerSeller(input: {
   };
 }
 
-export async function fetchB2BCatalog(query = ''): Promise<{
+export async function fetchB2BCatalog(
+  query = '',
+  tier: SellerTier = 'start',
+): Promise<{
   products: B2BCatalogProduct[];
   defaultMinQuantity: number;
 }> {
   const headers = await authHeaders();
   const url = new URL(apiUrl('/api/b2b-catalog'));
+  url.searchParams.set('tier', tier);
   if (query.trim()) url.searchParams.set('q', query.trim());
   const res = await fetch(url, { headers });
   if (!res.ok) {
@@ -76,12 +81,14 @@ export async function fetchB2BCatalog(query = ''): Promise<{
 export async function submitB2BQuote(input: {
   items: QuoteSelectionItem[];
   notes: string;
+  tier: SellerTier;
 }): Promise<{ success?: boolean; error?: string; message?: string }> {
   const headers = await authHeaders();
   const res = await fetch(apiUrl('/api/b2b-quote'), {
     method: 'POST',
     headers,
     body: JSON.stringify({
+      tier: input.tier,
       notes: input.notes,
       items: input.items.map((item) => ({
         productId: item.product.id,

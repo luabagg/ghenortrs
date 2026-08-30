@@ -156,6 +156,7 @@ export function buildQuoteRequestHtml(input: {
   companyName: string;
   email: string;
   phone: string;
+  tier: 'start' | 'pro' | 'max';
   notes: string;
   items: Array<{
     name: string;
@@ -181,6 +182,7 @@ export function buildQuoteRequestHtml(input: {
   const content = `
   <h2 style="color:#E81414">Solicitação de orçamento B2B</h2>
   <p><strong>${escHtml(input.companyName)}</strong> · ${escHtml(input.email)} · ${escHtml(input.phone)}</p>
+  <p>Tabela: <strong>${escHtml(input.tier.toUpperCase())}</strong></p>
   <table style="width:100%;border-collapse:collapse;margin-top:16px">
     <thead>
       <tr style="background:#f5f5f5;text-align:left">
