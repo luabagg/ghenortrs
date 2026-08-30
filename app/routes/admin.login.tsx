@@ -100,9 +100,8 @@ export default function AdminLoginPage() {
           Acesso interno
         </h1>
         <p className="text-sm text-secondary">
-          Use o e-mail de um administrador cadastrado. No primeiro acesso, use o
-          e-mail configurado em{' '}
-          <code className="text-primary">ADMIN_BOOTSTRAP_EMAILS</code>.
+          Use o e-mail de um administrador cadastrado. Você recebe um link de
+          acesso por e-mail; abra o link neste mesmo dispositivo.
         </p>
       </div>
 

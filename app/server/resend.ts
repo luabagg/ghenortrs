@@ -145,7 +145,7 @@ export function buildSellerApprovedHtml(input: {
   <p>Olá, ${escHtml(input.companyName)}.</p>
   <p>Seu cadastro comercial GHENO foi aprovado. Use o mesmo e-mail para entrar no catálogo B2B:</p>
   <p><a href="${escHtml(input.loginUrl)}" style="background:#E81414;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px;font-weight:bold">Acessar catálogo B2B</a></p>
-  <p style="color:#666;font-size:14px">Não há checkout online. Após selecionar os itens, envie a solicitação de orçamento pela área B2B.</p>`;
+  <p style="color:#666;font-size:14px">Selecione os itens no catálogo e envie a solicitação de orçamento. A GHENO responde com condições, prazos e disponibilidade.</p>`;
 
   return buildEmailShell({
     title: 'Acesso B2B liberado',
@@ -162,7 +162,7 @@ export function buildSellerCatalogAccessHtml(input: {
   <p>Olá, ${escHtml(input.companyName)}.</p>
   <p>Use este link para entrar no catálogo B2B GHENO:</p>
   ${buildPrimaryButton(input.actionLink, 'Acessar catálogo B2B')}
-  <p style="color:#666;font-size:14px">Não há checkout online. Após selecionar os itens, envie a solicitação de orçamento pela área B2B.</p>`;
+  <p style="color:#666;font-size:14px">Selecione os itens no catálogo e envie a solicitação de orçamento. A GHENO responde com condições, prazos e disponibilidade.</p>`;
 
   return buildEmailShell({
     title: 'Acesso ao catálogo B2B GHENO',

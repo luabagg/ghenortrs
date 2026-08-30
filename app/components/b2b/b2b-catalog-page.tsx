@@ -155,7 +155,7 @@ export function B2BCatalogPage() {
     <div className="grid gap-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageIntro
-          description={`${session.seller?.companyName ?? 'Sua empresa'} · tabela ${TIER_LABELS[tier]} · pedido mínimo por item (padrão ${defaultMin}). Sem checkout online.`}
+          description={`${session.seller?.companyName ?? 'Sua empresa'} · tabela ${TIER_LABELS[tier]} · pedido mínimo por item (padrão ${defaultMin}).`}
           title="Selecione itens e solicite orçamento."
         />
         <Button
@@ -276,8 +276,7 @@ export function B2BCatalogPage() {
         <CardHeader>
           <CardTitle>Solicitação de orçamento</CardTitle>
           <CardDescription>
-            Sem checkout. A GHENO rotors retorna com condições e
-            disponibilidade.
+            A GHENO rotors retorna com condições, prazos e disponibilidade.
           </CardDescription>
         </CardHeader>
         <div className="grid gap-4 px-6 pb-6">
