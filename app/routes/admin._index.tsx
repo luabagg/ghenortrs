@@ -3,13 +3,14 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { createCookie, json, redirect } from '@remix-run/node';
 import { Form, useActionData, useLoaderData } from '@remix-run/react';
 
 import { AdminChrome } from '~/components/admin/admin-chrome';
 import { Button } from '~/components/ui/button';
 import { buildNoIndexMeta } from '~/lib/seo';
 import { listSellers, updateSellerStatus } from '~/server/db/queries';
+import { sendSellerCatalogAccessLink } from '~/server/seller-access-link';
 import type { SellerStatus } from '~/server/db/schema';
 import { requireAdmin } from '~/server/require-admin.server';
 
@@ -18,6 +19,14 @@ export const meta: MetaFunction = () =>
     'Lojistas | GHENO rotors',
     'Painel interno para aprovar e suspender lojistas B2B.',
   );
+
+const catalogAccessFlash = createCookie('admin_catalog_access', {
+  httpOnly: true,
+  maxAge: 60,
+  path: '/admin',
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+});
 
 const STATUSES: SellerStatus[] = [
   'approved',
@@ -33,8 +42,19 @@ function isSellerStatus(value: string): value is SellerStatus {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers } = await requireAdmin(request);
   const sellers = await listSellers();
+  const catalogAccess = await catalogAccessFlash.parse(
+    request.headers.get('Cookie'),
+  );
+  if (catalogAccess === 'sent' || catalogAccess === 'failed') {
+    headers.append(
+      'Set-Cookie',
+      await catalogAccessFlash.serialize('', { maxAge: 0 }),
+    );
+  }
+
   return json(
     {
+      catalogAccess,
       sellers: sellers.map((seller) => ({
         id: seller.id,
         email: seller.email,
@@ -51,6 +71,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { user, headers } = await requireAdmin(request);
   const formData = await request.formData();
   const sellerId = String(formData.get('sellerId') ?? '');
+  if (formData.get('intent') === 'send-catalog-access') {
+    if (!sellerId) {
+      return json(
+        { ok: false, error: 'invalid_seller' },
+        { status: 400, headers },
+      );
+    }
+
+    const result = await sendSellerCatalogAccessLink({
+      sellerId,
+      actor: { id: user.id, email: user.email },
+    });
+    headers.append(
+      'Set-Cookie',
+      await catalogAccessFlash.serialize(result.ok ? 'sent' : 'failed'),
+    );
+    return redirect('/admin', { headers });
+  }
+
   const statusRaw = String(formData.get('status') ?? '');
   if (!sellerId || !isSellerStatus(statusRaw)) {
     return json(
@@ -85,7 +124,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function AdminIndex() {
-  const { sellers } = useLoaderData<typeof loader>();
+  const { catalogAccess, sellers } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   return (
@@ -94,6 +133,16 @@ export default function AdminIndex() {
       description="Aprove, suspenda ou recuse cadastros. A tabela de preços (Start / Pro / Max) o lojista escolhe no catálogo."
       title="Lojistas B2B"
     >
+      {catalogAccess === 'sent' ? (
+        <p className="text-sm text-primary" role="status">
+          Acesso ao catálogo enviado.
+        </p>
+      ) : null}
+      {catalogAccess === 'failed' ? (
+        <p className="text-sm text-accent" role="alert">
+          Não foi possível enviar o acesso ao catálogo.
+        </p>
+      ) : null}
       {actionData && 'ok' in actionData && actionData.ok === false ? (
         <p className="text-sm text-accent" role="alert">
           Não foi possível atualizar o lojista.
@@ -130,7 +179,9 @@ export default function AdminIndex() {
                         <StatusButton sellerId={seller.id} status="approved">
                           Aprovar
                         </StatusButton>
-                      ) : null}
+                      ) : (
+                        <CatalogAccessButton sellerId={seller.id} />
+                      )}
                       {seller.status !== 'suspended' ? (
                         <StatusButton sellerId={seller.id} status="suspended">
                           Suspender
@@ -150,6 +201,18 @@ export default function AdminIndex() {
         </div>
       )}
     </AdminChrome>
+  );
+}
+
+function CatalogAccessButton({ sellerId }: { sellerId: string }) {
+  return (
+    <Form method="post">
+      <input name="intent" type="hidden" value="send-catalog-access" />
+      <input name="sellerId" type="hidden" value={sellerId} />
+      <Button type="submit" variant="secondary">
+        Enviar acesso
+      </Button>
+    </Form>
   );
 }
 

@@ -153,6 +153,23 @@ export function buildSellerApprovedHtml(input: {
   });
 }
 
+export function buildSellerCatalogAccessHtml(input: {
+  companyName: string;
+  actionLink: string;
+}): string {
+  const content = `
+  <h2 style="color:#E81414">Acesse o catálogo B2B</h2>
+  <p>Olá, ${escHtml(input.companyName)}.</p>
+  <p>Use este link para entrar no catálogo B2B GHENO:</p>
+  ${buildPrimaryButton(input.actionLink, 'Acessar catálogo B2B')}
+  <p style="color:#666;font-size:14px">Não há checkout online. Após selecionar os itens, envie a solicitação de orçamento pela área B2B.</p>`;
+
+  return buildEmailShell({
+    title: 'Acesso ao catálogo B2B GHENO',
+    content,
+  });
+}
+
 export function buildQuoteRequestHtml(input: {
   companyName: string;
   email: string;

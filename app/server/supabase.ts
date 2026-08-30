@@ -21,6 +21,14 @@ type AuthAdmin = {
       listUsers: (input: { page: number; perPage: number }) => Promise<{
         data: { users: Array<{ id: string; email?: string | null }> };
       }>;
+      generateLink: (input: {
+        type: 'magiclink';
+        email: string;
+        options: { redirectTo: string };
+      }) => Promise<{
+        data: { properties: { action_link?: string } | null };
+        error: { message: string } | null;
+      }>;
     };
   };
 };
