@@ -112,7 +112,18 @@ export function B2BTextareaField({
   );
 }
 
-export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
+function humanErrorMessage(message?: string): string {
+  if (message && !/^[a-z0-9_]+$/.test(message)) return message;
+  return 'Erro ao enviar. Tente novamente ou';
+}
+
+export function B2BFormStatusAlert({
+  message,
+  status,
+}: {
+  message?: string;
+  status: SubmitStatus;
+}) {
   if (status !== 'no-config' && status !== 'error') return null;
 
   return (
@@ -130,7 +141,7 @@ export function B2BFormStatusAlert({ status }: { status: SubmitStatus }) {
         </p>
       ) : (
         <p className="text-sm text-secondary">
-          Erro ao enviar. Tente novamente ou{' '}
+          {humanErrorMessage(message)}{' '}
           <Link className="font-semibold text-primary underline" to="/contato">
             use os canais de contato
           </Link>

@@ -1,4 +1,5 @@
-import type { LinksFunction, MetaFunction } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { Analytics } from '@vercel/analytics/remix';
 import type { ReactNode } from 'react';
 import {
@@ -12,6 +13,7 @@ import {
   useRouteError,
 } from '@remix-run/react';
 
+import { sellerAuthCallbackRedirect } from '~/b2b/auth-callback';
 import { B2BQueryProvider } from '~/b2b/query-provider';
 import { PageIntro } from '~/components/landing/section-cards';
 import { AppShell } from '~/components/navigation/app-shell';
@@ -43,6 +45,12 @@ export const links: LinksFunction = () => [
 ];
 
 export const meta: MetaFunction = () => buildSeoMetaForPath('/');
+
+export function loader({ request }: LoaderFunctionArgs) {
+  const target = sellerAuthCallbackRedirect(new URL(request.url));
+  if (target) return redirect(target);
+  return null;
+}
 
 const GTM_ID = (import.meta.env.VITE_GTM_ID ?? '').trim();
 

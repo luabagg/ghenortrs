@@ -72,5 +72,6 @@ Login: `/admin/login`. Approve / suspend / reject sellers on `/admin`. Hide / sh
 
 - Re-run **2** when products/stock change; re-run **3** when Bling list prices change.
 - Step 2 does not overwrite tier prices or `visible_b2b`. Toggle catalog visibility in `/admin/produtos`.
-- Approve seller: `POST /api/admin-approve-seller` with `X-Admin-Secret` and `{"email":"…","status":"approved"}`.
+- One-click approve from registration email: `/admin/approve?token=…` (HTML OK page; no admin login — the signed token is the credential). Old `/api/admin-approve-seller?token=…` links redirect there.
+- Programmatic approve: `POST /api/admin-approve-seller` with `X-Admin-Secret` and `{"email":"…","status":"approved"}`.
 - Full env names: `BLING_*`, `B2B_ADMIN_APPROVE_SECRET`, `ADMIN_EMAILS`, `DATABASE_URL` / `POSTGRES_*`, `SUPABASE_*`, `RESEND_*`.

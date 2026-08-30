@@ -134,7 +134,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const approveUrl =
     env.adminApproveSecret && env.siteUrl
-      ? `${env.siteUrl.replace(/\/$/, '')}/api/admin-approve-seller?token=${encodeURIComponent(
+      ? `${env.siteUrl.replace(/\/$/, '')}/admin/approve?token=${encodeURIComponent(
           buildApproveSellerToken(
             { email: data.email },
             env.adminApproveSecret,

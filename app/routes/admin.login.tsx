@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { isAdminEmail } from '~/server/admin-emails';
 import { getServerEnv } from '~/server/env';
+import { publicOriginFromRequest } from '~/server/public-origin';
 import { createSupabaseRequestClient } from '~/server/supabase-ssr.server';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -39,7 +40,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { supabase, headers } = createSupabaseRequestClient(request);
-  const origin = new URL(request.url).origin;
+  const origin = publicOriginFromRequest(request, getServerEnv().siteUrl);
   const formData = await request.formData();
   const email = String(formData.get('email') ?? '')
     .trim()

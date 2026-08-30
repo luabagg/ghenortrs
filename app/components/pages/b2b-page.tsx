@@ -169,6 +169,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
             errors={errors}
             fields={fields}
             honeypot={honeypot}
+            message={actionData?.message}
             status={status}
             onFieldChange={handleFieldChange}
             onHoneypotChange={setHoneypot}

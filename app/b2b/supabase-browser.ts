@@ -43,7 +43,16 @@ export async function requestMagicLink(email: string): Promise<{
     return { ok: false, error: 'auth_unconfigured' };
   }
 
-  const redirectTo = `${SITE_URL.replace(/\/$/, '')}/b2b`;
+  // PKCE stores the verifier in this browser. Redirect must match the
+  // origin that requested the link — never a baked localhost SITE_URL.
+  const origin =
+    typeof window !== 'undefined' && window.location.origin
+      ? window.location.origin
+      : SITE_URL;
+  if (!origin) {
+    return { ok: false, error: 'auth_unconfigured' };
+  }
+  const redirectTo = `${origin.replace(/\/$/, '')}/b2b`;
   const { error } = await supabase.auth.signInWithOtp({
     email: email.trim().toLowerCase(),
     options: {
