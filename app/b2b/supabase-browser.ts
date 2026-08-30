@@ -4,7 +4,11 @@ import {
   type SupabaseClient,
 } from '@supabase/supabase-js';
 
-import { sellerPkceCode, stripPkceCode } from '@/b2b/auth-callback';
+import {
+  sellerImplicitTokens,
+  sellerPkceCode,
+  stripSellerAuthParams,
+} from '@/b2b/auth-callback';
 import {
   isB2BAuthConfigured,
   SITE_URL,
@@ -22,8 +26,8 @@ export function getSupabaseBrowserClient(): SupabaseClient | null {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      // Exchange is explicit in consumeSellerAuthCode. Auto-detect races
-      // getSession() and can consume the one-time PKCE code twice.
+      // The handover is explicit in consumeSellerAuth. Auto-detect races
+      // getSession() and can consume the one-time credential twice.
       detectSessionInUrl: false,
       flowType: 'pkce',
     },
@@ -31,7 +35,11 @@ export function getSupabaseBrowserClient(): SupabaseClient | null {
   return client;
 }
 
-async function consumeSellerAuthCode(supabase: SupabaseClient): Promise<void> {
+/**
+ * Accepts either link shape: the PKCE code the seller requested, or the
+ * tokens an admin-generated access link leaves in the hash.
+ */
+async function consumeSellerAuth(supabase: SupabaseClient): Promise<void> {
   if (typeof window === 'undefined') return;
   if (consumeInFlight) {
     await consumeInFlight;
@@ -40,14 +48,31 @@ async function consumeSellerAuthCode(supabase: SupabaseClient): Promise<void> {
 
   consumeInFlight = (async () => {
     const url = new URL(window.location.href);
+
+    function finish(error: { message: string } | null): void {
+      window.history.replaceState(
+        window.history.state,
+        '',
+        stripSellerAuthParams(url),
+      );
+      if (error) console.error('seller sign-in failed', error.message);
+    }
+
+    const tokens = sellerImplicitTokens(url);
+    if (tokens) {
+      const { error } = await supabase.auth.setSession({
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+      });
+      finish(error);
+      return;
+    }
+
     const code = sellerPkceCode(url);
     if (!code) return;
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    window.history.replaceState(window.history.state, '', stripPkceCode(url));
-    if (error) {
-      console.error('seller PKCE exchange failed', error.message);
-    }
+    finish(error);
   })();
 
   try {
@@ -60,7 +85,7 @@ async function consumeSellerAuthCode(supabase: SupabaseClient): Promise<void> {
 export async function getBrowserSession(): Promise<Session | null> {
   const supabase = getSupabaseBrowserClient();
   if (!supabase) return null;
-  await consumeSellerAuthCode(supabase);
+  await consumeSellerAuth(supabase);
   const { data } = await supabase.auth.getSession();
   return data.session;
 }

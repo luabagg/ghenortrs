@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   sellerAuthCallbackRedirect,
+  sellerImplicitTokens,
   sellerPkceCode,
-  stripPkceCode,
+  stripSellerAuthParams,
 } from './auth-callback';
 
 function url(href: string): URL {
@@ -58,10 +59,58 @@ describe('sellerPkceCode', () => {
   });
 });
 
-describe('stripPkceCode', () => {
+describe('sellerImplicitTokens', () => {
+  it('reads the tokens an admin-generated access link leaves in the hash', () => {
+    expect(
+      sellerImplicitTokens(
+        url(
+          'http://localhost:3000/b2b/catalogo#access_token=at-1&refresh_token=rt-1&token_type=bearer',
+        ),
+      ),
+    ).toEqual({ accessToken: 'at-1', refreshToken: 'rt-1' });
+  });
+
+  it('ignores a hash without both tokens', () => {
+    expect(
+      sellerImplicitTokens(
+        url('http://localhost:3000/b2b/catalogo#access_token=at-1'),
+      ),
+    ).toBeNull();
+    expect(
+      sellerImplicitTokens(url('http://localhost:3000/b2b/catalogo')),
+    ).toBeNull();
+    expect(
+      sellerImplicitTokens(
+        url('http://localhost:3000/b2b/catalogo#error=access_denied'),
+      ),
+    ).toBeNull();
+  });
+
+  it('does not steal admin or Bling callbacks', () => {
+    expect(
+      sellerImplicitTokens(
+        url(
+          'http://localhost:3000/admin/login/callback#access_token=at&refresh_token=rt',
+        ),
+      ),
+    ).toBeNull();
+  });
+});
+
+describe('stripSellerAuthParams', () => {
   it('removes only the code param so a refresh cannot reuse it', () => {
     expect(
-      stripPkceCode(url('http://localhost:3000/b2b?code=abc&keep=1')),
+      stripSellerAuthParams(url('http://localhost:3000/b2b?code=abc&keep=1')),
     ).toBe('/b2b?keep=1');
+  });
+
+  it('removes the token hash so a refresh cannot replay it', () => {
+    expect(
+      stripSellerAuthParams(
+        url(
+          'http://localhost:3000/b2b/catalogo?q=1#access_token=at&refresh_token=rt',
+        ),
+      ),
+    ).toBe('/b2b/catalogo?q=1');
   });
 });
