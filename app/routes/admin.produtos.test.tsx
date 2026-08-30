@@ -11,7 +11,7 @@ import {
   buildPriceImportPreview,
   commitPriceImport,
 } from '~/server/price-list-import';
-import { setProductsVisibility } from '~/server/product-visibility';
+import { setProductsVisibility } from '~/server/product-admin';
 import { requireAdmin } from '~/server/require-admin.server';
 import { action } from './admin.produtos';
 
@@ -30,7 +30,7 @@ vi.mock('~/server/db/queries', () => ({
   ADMIN_PRODUCT_LIST_LIMIT: 200,
   listAdminProducts: vi.fn(),
 }));
-vi.mock('~/server/product-visibility', () => ({
+vi.mock('~/server/product-admin', () => ({
   setProductsVisibility: vi.fn(),
 }));
 vi.mock('~/server/price-list-import', async (importOriginal) => ({

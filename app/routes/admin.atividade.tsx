@@ -19,6 +19,7 @@ export const meta: MetaFunction = () =>
 /** Only these metadata fields reach the screen. Everything else is dropped. */
 const METADATA_FIELDS = [
   'destinationPath',
+  'minQuantity',
   'query',
   'reason',
   'requested',

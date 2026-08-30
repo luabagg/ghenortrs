@@ -4,7 +4,7 @@ import type {
   MetaFunction,
 } from '@remix-run/node';
 import { createCookie, json, redirect } from '@remix-run/node';
-import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 
 import { AdminChrome } from '~/components/admin/admin-chrome';
 import { PriceListImportPanel } from '~/components/admin/price-list-import-panel';
@@ -29,7 +29,7 @@ import {
   ADMIN_PRODUCT_LIST_LIMIT,
   listAdminProducts,
 } from '~/server/db/queries';
-import { setProductsVisibility } from '~/server/product-visibility';
+import { setProductsVisibility } from '~/server/product-admin';
 import type { PriceListErrorCode } from '~/server/price-list-import';
 import {
   PriceListError,
@@ -508,7 +508,14 @@ export default function AdminProducts() {
                     <td className="px-4 py-3 text-secondary">
                       {product.sku ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-primary">{product.name}</td>
+                    <td className="px-4 py-3">
+                      <Link
+                        className="text-primary underline"
+                        to={`/admin/produtos/${product.id}`}
+                      >
+                        {product.name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 text-secondary">
                       {product.active ? 'Ativo' : 'Inativo'}
                     </td>

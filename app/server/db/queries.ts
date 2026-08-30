@@ -131,6 +131,68 @@ export async function listAdminProducts(
   return filtered.orderBy(blingProducts.name).limit(limit);
 }
 
+export type AdminProductDetailRow = {
+  id: number;
+  sku: string | null;
+  name: string;
+  description: string;
+  imageUrl: string | null;
+  category: string | null;
+  unit: string | null;
+  active: boolean;
+  visibleB2b: boolean;
+  minQuantity: number;
+  stock: number | null;
+  priceCents: number | null;
+  costCents: number | null;
+  priceStartCents: number | null;
+  priceProCents: number | null;
+  priceMaxCents: number | null;
+  syncedAt: string | null;
+};
+
+export async function getAdminProductDetail(
+  id: number,
+): Promise<AdminProductDetailRow | null> {
+  const [row] = await getDb()
+    .select({
+      id: blingProducts.id,
+      sku: blingProducts.sku,
+      name: blingProducts.name,
+      description: blingProducts.description,
+      imageUrl: blingProducts.imageUrl,
+      category: blingProducts.category,
+      unit: blingProducts.unit,
+      active: blingProducts.active,
+      visibleB2b: blingProducts.visibleB2b,
+      minQuantity: blingProducts.minQuantity,
+      stock: blingProducts.stock,
+      priceCents: blingProducts.priceCents,
+      costCents: blingProducts.costCents,
+      priceStartCents: blingProducts.priceStartCents,
+      priceProCents: blingProducts.priceProCents,
+      priceMaxCents: blingProducts.priceMaxCents,
+      syncedAt: blingProducts.syncedAt,
+    })
+    .from(blingProducts)
+    .where(eq(blingProducts.id, id))
+    .limit(1);
+  return row ?? null;
+}
+
+/** Per-product order minimum. The sync no longer overwrites this column. */
+export async function updateProductMinQuantity(
+  id: number,
+  minQuantity: number,
+): Promise<boolean> {
+  const [row] = await getDb()
+    .update(blingProducts)
+    .set({ minQuantity })
+    .where(eq(blingProducts.id, id))
+    .returning({ id: blingProducts.id });
+  return row !== undefined;
+}
+
 /** Sets an explicit visibility on exactly the given product IDs. */
 export async function updateProductsVisibleB2b(
   ids: number[],

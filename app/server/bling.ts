@@ -39,6 +39,37 @@ function basicAuthHeader(clientId: string, clientSecret: string): string {
   return `Basic ${Buffer.from(raw, 'utf8').toString('base64')}`;
 }
 
+const HTML_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  '#39': "'",
+  nbsp: ' ',
+};
+
+/**
+ * Bling stores the short description as seller-authored HTML. The catalog
+ * shows it as text, so flatten it here instead of trusting markup later.
+ */
+export function htmlToPlainText(html: string): string {
+  return html
+    .replace(/<\s*br\s*\/?>/gi, '\n')
+    .replace(/<\/\s*(p|div|li|h[1-6])\s*>/gi, '\n')
+    .replace(/<[^>]*>/g, '')
+    .replace(
+      /&(amp|lt|gt|quot|#39|nbsp);/g,
+      (_match, entity: string) => HTML_ENTITIES[entity] ?? ' ',
+    )
+    .replace(/\r/g, '')
+    .replace(/[ \t]+/g, ' ')
+    .split('\n')
+    .map((line) => line.trim())
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export function getBlingAuthorizeUrl(state: string): string {
   const env = getServerEnv();
   if (!env.blingClientId || !env.blingRedirectUri) {
@@ -192,11 +223,12 @@ export function normalizeBlingProduct(
     product.situacao.toLowerCase() === 'a' ||
     product.situacao.toLowerCase() === 'ativo';
 
+  const description = htmlToPlainText(product.descricaoCurta ?? '');
   const terms = [
     product.nome,
     product.codigo ?? '',
     product.categoria?.descricao ?? '',
-    product.descricaoCurta ?? '',
+    description,
   ]
     .filter(Boolean)
     .join(' ');
@@ -205,7 +237,7 @@ export function normalizeBlingProduct(
     id: product.id,
     sku: product.codigo ?? null,
     name: product.nome,
-    description: product.descricaoCurta ?? '',
+    description,
     image_url: product.imagemURL ?? null,
     price_cents: price,
     cost_cents: toCents(product.precoCusto),
