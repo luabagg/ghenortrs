@@ -92,7 +92,11 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
           <Button asChild variant="outline">
             <Link to="/b2b/catalogo">Abrir catálogo B2B</Link>
           </Button>
-          <Button type="button" variant="secondary" onClick={() => void signOut()}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => void signOut()}
+          >
             Sair
           </Button>
         </div>
@@ -107,7 +111,10 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
           description="Recebemos seus dados. O catálogo libera após aprovação manual da GHENO rotors."
           title="Cadastro em análise."
         />
-        <B2BPendingPanel seller={session.seller} onSignOut={() => void signOut()} />
+        <B2BPendingPanel
+          seller={session.seller}
+          onSignOut={() => void signOut()}
+        />
       </div>
     );
   }

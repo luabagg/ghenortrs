@@ -147,7 +147,11 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
       '@graph': [
         websiteReference,
         organizationReference,
-        webpage('Componentes MTB GHENO rotors', componentsDescription, '/componentes'),
+        webpage(
+          'Componentes MTB GHENO rotors',
+          componentsDescription,
+          '/componentes',
+        ),
         breadcrumbs('Componentes', '/componentes'),
         {
           '@type': 'ItemList',
@@ -251,7 +255,8 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
 
 export const NOT_FOUND_SEO = {
   title: 'Página não encontrada | GHENO rotors',
-  description: 'A página solicitada não foi encontrada no site da GHENO rotors.',
+  description:
+    'A página solicitada não foi encontrada no site da GHENO rotors.',
   robots: 'noindex, nofollow',
 } as const;
 

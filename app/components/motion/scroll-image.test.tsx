@@ -5,12 +5,13 @@ import { ScrollImage } from './scroll-image';
 
 describe('ScrollImage', () => {
   it('renders meaningful image semantics through the motion primitive', () => {
-    render(<ScrollImage alt="Cubo GHENO rotors" effect="zoom" src="/cubo.jpg" />);
-
-    expect(screen.getByRole('img', { name: 'Cubo GHENO rotors' })).toHaveAttribute(
-      'data-motion-image',
-      'zoom',
+    render(
+      <ScrollImage alt="Cubo GHENO rotors" effect="zoom" src="/cubo.jpg" />,
     );
+
+    expect(
+      screen.getByRole('img', { name: 'Cubo GHENO rotors' }),
+    ).toHaveAttribute('data-motion-image', 'zoom');
   });
 
   it('preserves native image attributes', () => {

@@ -1,7 +1,4 @@
-import type {
-  CommerceFamilyId,
-  CommerceMode,
-} from '@/catalog/commerce';
+import type { CommerceFamilyId, CommerceMode } from '@/catalog/commerce';
 
 export type SearchEntryKind = 'product' | 'category' | 'page';
 

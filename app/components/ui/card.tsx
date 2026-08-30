@@ -41,7 +41,10 @@ function CardDescription({
 }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn('font-body text-[12px] leading-5 text-secondary', className)}
+      className={cn(
+        'font-body text-[12px] leading-5 text-secondary',
+        className,
+      )}
       {...props}
     />
   );

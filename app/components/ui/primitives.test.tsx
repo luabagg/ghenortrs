@@ -167,11 +167,9 @@ describe('ui primitives', () => {
       />,
     );
 
-    expect(screen.getByLabelText('Carregando vitrine GHENO rotors')).toHaveClass(
-      'rounded-panel',
-      'border-border',
-      'bg-surface',
-    );
+    expect(
+      screen.getByLabelText('Carregando vitrine GHENO rotors'),
+    ).toHaveClass('rounded-panel', 'border-border', 'bg-surface');
     expect(
       screen.getByText('Sincronizando famílias de componentes.'),
     ).toBeVisible();

@@ -26,12 +26,14 @@
 ### Task 1: Establish durable operations schema and query boundaries
 
 **Files:**
+
 - Modify: `app/server/db/schema.ts`
 - Modify: `app/server/db/queries.ts`
 - Create: `drizzle/0002_admin_first_operations.sql`
 - Modify: `app/server/db/queries.test.ts`
 
 **Interfaces:**
+
 - Produces `adminUsers`, `emailActionTokens`, `adminAuditEvents` schema exports.
 - Produces `isAdminUser`, `countAdminUsers`, `createAdminUser`, `listAdminUsers`, `deleteAdminUser`, `createEmailActionToken`, `consumeEmailActionToken`, `insertAdminAuditEvent`, and `listAdminAuditEvents` query functions.
 
@@ -39,13 +41,25 @@
 
 ```ts
 it('consumes an approval token once', async () => {
-  await createEmailActionToken({ jtiHash: 'hash', purpose: 'approve-seller', sellerId: 'seller', expiresAt: future });
-  expect(await consumeEmailActionToken('hash', now)).toMatchObject({ sellerId: 'seller' });
+  await createEmailActionToken({
+    jtiHash: 'hash',
+    purpose: 'approve-seller',
+    sellerId: 'seller',
+    expiresAt: future,
+  });
+  expect(await consumeEmailActionToken('hash', now)).toMatchObject({
+    sellerId: 'seller',
+  });
   expect(await consumeEmailActionToken('hash', now)).toBeNull();
 });
 
 it('stores audit metadata without sensitive keys', async () => {
-  await expect(insertAdminAuditEvent({ action: 'seller.access_link.sent', metadata: { actionLink: 'secret' } })).rejects.toThrow('sensitive audit metadata');
+  await expect(
+    insertAdminAuditEvent({
+      action: 'seller.access_link.sent',
+      metadata: { actionLink: 'secret' },
+    }),
+  ).rejects.toThrow('sensitive audit metadata');
 });
 ```
 
@@ -61,15 +75,22 @@ Expected: FAIL with missing exports/functions.
 export const adminUsers = pgTable('admin_users', {
   userId: uuid('user_id').primaryKey(),
   email: text('email').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    .notNull()
+    .defaultNow(),
   createdBy: uuid('created_by'),
 });
 
 export const emailActionTokens = pgTable('email_action_tokens', {
   jtiHash: text('jti_hash').primaryKey(),
   purpose: text('purpose').notNull(),
-  sellerId: uuid('seller_id').notNull().references(() => sellers.id, { onDelete: 'cascade' }),
-  expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'string' }).notNull(),
+  sellerId: uuid('seller_id')
+    .notNull()
+    .references(() => sellers.id, { onDelete: 'cascade' }),
+  expiresAt: timestamp('expires_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).notNull(),
   consumedAt: timestamp('consumed_at', { withTimezone: true, mode: 'string' }),
 });
 ```
@@ -92,6 +113,7 @@ git commit -m "feat: add admin operations persistence"
 ### Task 2: Move admin authorization from runtime allowlist to bootstrap-backed roles
 
 **Files:**
+
 - Modify: `app/server/env.ts`
 - Modify: `.env.example`
 - Modify: `app/server/require-admin.server.ts`
@@ -100,6 +122,7 @@ git commit -m "feat: add admin operations persistence"
 - Modify: `app/server/admin-emails.test.ts`
 
 **Interfaces:**
+
 - Consumes Task 1 `countAdminUsers`, `isAdminUser`, `createAdminUser`, and audit insertion.
 - Produces `ensureAdminUser(user): Promise<boolean>` called by `requireAdmin`.
 
@@ -143,6 +166,7 @@ git commit -m "feat: use database-backed admin roles"
 ### Task 3: Make approval email links one-time, POST-confirmed capabilities
 
 **Files:**
+
 - Modify: `app/server/signed-token.ts`
 - Modify: `app/server/signed-token.test.ts`
 - Modify: `app/server/b2b-register.ts`
@@ -153,6 +177,7 @@ git commit -m "feat: use database-backed admin roles"
 - Modify: `app/server/env.ts`
 
 **Interfaces:**
+
 - Produces `buildApproveSellerToken(input, approvalLinkSecret)` with `{ purpose, email, status: 'approved', jti, exp }`.
 - Produces `confirmEmailSellerApproval(token): Promise<ApplySellerStatusResult>`.
 
@@ -160,7 +185,9 @@ git commit -m "feat: use database-backed admin roles"
 
 ```ts
 it('includes a unique jti in each approval token', () => {
-  expect(buildApproveSellerToken({ email: 'a@b.com' }, secret)).not.toEqual(buildApproveSellerToken({ email: 'a@b.com' }, secret));
+  expect(buildApproveSellerToken({ email: 'a@b.com' }, secret)).not.toEqual(
+    buildApproveSellerToken({ email: 'a@b.com' }, secret),
+  );
 });
 
 it('rejects a token used for a different purpose', () => {
@@ -177,8 +204,14 @@ it('does not mutate seller status while rendering the approval page', async () =
 });
 
 it('consumes a valid approval token before approving exactly once', async () => {
-  await expect(confirmEmailSellerApproval(token)).resolves.toMatchObject({ ok: true, status: 'approved' });
-  await expect(confirmEmailSellerApproval(token)).resolves.toMatchObject({ ok: false, error: 'token_used' });
+  await expect(confirmEmailSellerApproval(token)).resolves.toMatchObject({
+    ok: true,
+    status: 'approved',
+  });
+  await expect(confirmEmailSellerApproval(token)).resolves.toMatchObject({
+    ok: false,
+    error: 'token_used',
+  });
 });
 ```
 
@@ -208,6 +241,7 @@ git commit -m "feat: confirm seller email approvals safely"
 ### Task 4: Generate and send seller catalog access links from Admin
 
 **Files:**
+
 - Modify: `app/server/supabase.ts`
 - Create: `app/server/seller-access-link.ts`
 - Create: `app/server/seller-access-link.test.ts`
@@ -216,6 +250,7 @@ git commit -m "feat: confirm seller email approvals safely"
 - Modify: `app/components/admin/admin-chrome.tsx`
 
 **Interfaces:**
+
 - Produces `sendSellerCatalogAccessLink({ sellerId, actor }): Promise<{ ok: true } | { ok: false; error: string }>`.
 - Uses `createAuthAdminClient().auth.admin.generateLink({ type: 'magiclink', email, options: { redirectTo } })` and `buildSellerCatalogAccessHtml`.
 
@@ -223,13 +258,22 @@ git commit -m "feat: confirm seller email approvals safely"
 
 ```ts
 it('sends a Supabase magic link only for an approved seller', async () => {
-  await expect(sendSellerCatalogAccessLink({ sellerId: approved.id, actor })).resolves.toEqual({ ok: true });
-  expect(generateLink).toHaveBeenCalledWith(expect.objectContaining({ type: 'magiclink', email: approved.email }));
+  await expect(
+    sendSellerCatalogAccessLink({ sellerId: approved.id, actor }),
+  ).resolves.toEqual({ ok: true });
+  expect(generateLink).toHaveBeenCalledWith(
+    expect.objectContaining({ type: 'magiclink', email: approved.email }),
+  );
 });
 
-it.each(['pending', 'rejected', 'suspended'])('refuses %s sellers', async (status) => {
-  await expect(sendSellerCatalogAccessLink({ sellerId: seller(status).id, actor })).resolves.toEqual({ ok: false, error: 'seller_not_approved' });
-});
+it.each(['pending', 'rejected', 'suspended'])(
+  'refuses %s sellers',
+  async (status) => {
+    await expect(
+      sendSellerCatalogAccessLink({ sellerId: seller(status).id, actor }),
+    ).resolves.toEqual({ ok: false, error: 'seller_not_approved' });
+  },
+);
 ```
 
 - [ ] **Step 2: Run the service tests to verify failure**
@@ -262,6 +306,7 @@ git commit -m "feat: send seller catalog access links"
 ### Task 5: Bind Bling OAuth to the admin browser and eliminate secret endpoints
 
 **Files:**
+
 - Create: `app/server/bling-oauth-state.ts`
 - Create: `app/server/bling-oauth-state.test.ts`
 - Modify: `app/server/bling-oauth-start.ts`
@@ -273,6 +318,7 @@ git commit -m "feat: send seller catalog access links"
 - Modify: `app/server/bling.ts`
 
 **Interfaces:**
+
 - Produces `startBlingOAuth(request): Promise<Response>` and `validateBlingOAuthCallback(request): Promise<{ valid: boolean; headers: Headers }>`.
 - Deletes secret checks and `BLING_OAUTH_INVITE_STATE` acceptance.
 
@@ -281,11 +327,15 @@ git commit -m "feat: send seller catalog access links"
 ```ts
 it('accepts only the state issued in the current HttpOnly cookie', async () => {
   const start = await startBlingOAuth(adminRequest);
-  expect(await validateBlingOAuthCallback(callbackWith(start))).toMatchObject({ valid: true });
+  expect(await validateBlingOAuthCallback(callbackWith(start))).toMatchObject({
+    valid: true,
+  });
 });
 
 it('rejects callbacks without or with mismatched state cookies', async () => {
-  await expect(validateBlingOAuthCallback(foreignCallback)).resolves.toMatchObject({ valid: false });
+  await expect(
+    validateBlingOAuthCallback(foreignCallback),
+  ).resolves.toMatchObject({ valid: false });
 });
 ```
 
@@ -316,12 +366,14 @@ git commit -m "feat: secure Bling OAuth through admin"
 ### Task 6: Add protected Bling status and catalog synchronization controls
 
 **Files:**
+
 - Modify: `app/server/bling.ts`
 - Modify: `app/server/db/queries.ts`
 - Modify: `app/routes/admin.produtos.tsx`
 - Create: `app/server/bling-admin.test.ts`
 
 **Interfaces:**
+
 - Produces `getBlingConnectionStatus(): Promise<{ connected: boolean; expiresAt: string | null }>`.
 - Extends Products action intents with `sync-bling`.
 
@@ -329,7 +381,10 @@ git commit -m "feat: secure Bling OAuth through admin"
 
 ```ts
 it('reports disconnected without persisted tokens', async () => {
-  await expect(getBlingConnectionStatus()).resolves.toEqual({ connected: false, expiresAt: null });
+  await expect(getBlingConnectionStatus()).resolves.toEqual({
+    connected: false,
+    expiresAt: null,
+  });
 });
 
 it('runs sync only through an admin action and audits the upsert count', async () => {
@@ -364,6 +419,7 @@ git commit -m "feat: manage Bling sync in admin"
 ### Task 7: Replace the CLI CSV importer with signed pasted-TSV preview/commit
 
 **Files:**
+
 - Create: `app/server/price-list-import.ts`
 - Create: `app/server/price-list-import.test.ts`
 - Modify: `app/server/db/queries.ts`
@@ -375,16 +431,24 @@ git commit -m "feat: manage Bling sync in admin"
 - Modify: `package.json`
 
 **Interfaces:**
+
 - Produces `parsePastedPriceList(text)`, `buildPriceImportPreview(tier, text)`, `signPriceImportPreview(preview, secret)`, and `commitPriceImport(preview)`.
 - Parser result includes `matched`, `unchanged`, `missingSkus`, `skipped`, and `conflicts`.
 
 - [ ] **Step 1: Write parser tests for supplied table shape**
 
 ```ts
-const text = 'Produto\tSku\tGTIN/EAN\tR$ Preço no Bling\tR$ Preço da lista\nHayes\tPADS-ULTR-HAYE-DOMI\t\t183,61\t61,49';
-expect(parsePastedPriceList(text)).toMatchObject({ rows: [{ sku: 'PADS-ULTR-HAYE-DOMI', priceCents: 6149 }] });
-expect(() => parsePastedPriceList('Produto Sku Preço da lista\nHayes SKU 61,49')).toThrow('tab-separated');
-expect(() => parsePastedPriceList(conflictingDuplicate)).toThrow('conflicting duplicate SKU');
+const text =
+  'Produto\tSku\tGTIN/EAN\tR$ Preço no Bling\tR$ Preço da lista\nHayes\tPADS-ULTR-HAYE-DOMI\t\t183,61\t61,49';
+expect(parsePastedPriceList(text)).toMatchObject({
+  rows: [{ sku: 'PADS-ULTR-HAYE-DOMI', priceCents: 6149 }],
+});
+expect(() =>
+  parsePastedPriceList('Produto Sku Preço da lista\nHayes SKU 61,49'),
+).toThrow('tab-separated');
+expect(() => parsePastedPriceList(conflictingDuplicate)).toThrow(
+  'conflicting duplicate SKU',
+);
 ```
 
 - [ ] **Step 2: Write preview/commit invariant tests**
@@ -392,12 +456,16 @@ expect(() => parsePastedPriceList(conflictingDuplicate)).toThrow('conflicting du
 ```ts
 it('changes only the chosen tier after a valid signed confirmation', async () => {
   const preview = await buildPriceImportPreview('pro', text);
-  await commitPriceImport(verifyPriceImportPreview(signPriceImportPreview(preview, secret), secret));
+  await commitPriceImport(
+    verifyPriceImportPreview(signPriceImportPreview(preview, secret), secret),
+  );
   expect(updateTierPrices).toHaveBeenCalledWith('pro', expect.any(Array));
 });
 
 it('rejects a modified or expired preview token', () => {
-  expect(() => verifyPriceImportPreview(tampered, secret)).toThrow('invalid preview');
+  expect(() => verifyPriceImportPreview(tampered, secret)).toThrow(
+    'invalid preview',
+  );
 });
 ```
 
@@ -433,11 +501,13 @@ git commit -m "feat: import pasted Bling price lists in admin"
 ### Task 8: Add audited bulk catalog visibility controls
 
 **Files:**
+
 - Modify: `app/server/db/queries.ts`
 - Modify: `app/routes/admin.produtos.tsx`
 - Modify: `app/server/db/queries.test.ts`
 
 **Interfaces:**
+
 - Produces `updateProductsVisibleB2b(ids: number[], visibleB2b: boolean)`.
 - Adds `intent=bulk-visibility` with `productIds[]` and explicit `visibleB2b`.
 
@@ -474,6 +544,7 @@ git commit -m "feat: manage product visibility in bulk"
 ### Task 9: Build administrator management and activity screens
 
 **Files:**
+
 - Modify: `app/components/admin/admin-chrome.tsx`
 - Create: `app/routes/admin.configuracao.tsx`
 - Create: `app/routes/admin.atividade.tsx`
@@ -482,6 +553,7 @@ git commit -m "feat: manage product visibility in bulk"
 - Modify: `app/server/admin-users.ts`
 
 **Interfaces:**
+
 - Uses Tasks 1–2 role/audit services.
 - Adds AdminChrome sections `settings` and `activity`.
 
@@ -522,6 +594,7 @@ git commit -m "feat: add admin roles and activity history"
 ### Task 10: Remove old operational paths and update documentation
 
 **Files:**
+
 - Modify: `docs/integrations/b2b-auth-bling.md`
 - Modify: `.env.example`
 - Modify: `README.md` if it names old scripts/endpoints
@@ -531,6 +604,7 @@ git commit -m "feat: add admin roles and activity history"
 - Modify: `public/llms.txt` only if any public B2B access behavior/canonical route wording changed
 
 **Interfaces:**
+
 - Removes `catalog:sync`, `prices:import`, `B2B_ADMIN_APPROVE_SECRET`, `ADMIN_EMAILS`, `BLING_OAUTH_INVITE_STATE`, `/api/bling-sync`, and `/api/bling-oauth-start` from operational documentation.
 
 - [ ] **Step 1: Write a documentation regression check**
@@ -566,6 +640,7 @@ git commit -m "docs: centralize B2B operations in admin"
 ### Task 11: Full verification and migration handoff
 
 **Files:**
+
 - Modify only if verification exposes a defect.
 
 - [ ] **Step 1: Generate and inspect migration SQL**

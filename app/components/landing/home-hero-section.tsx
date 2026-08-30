@@ -12,13 +12,17 @@ const HERO_IMAGE = {
 const DISCIPLINES = ['Downhill', 'Enduro', 'E-bike'] as const;
 
 function prefersReducedMotion() {
-  return Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  return Boolean(
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
+  );
 }
 
 function useDisciplineTypewriter(words: readonly string[]) {
   const [wordIndex, setWordIndex] = useState(0);
   const [charCount, setCharCount] = useState(words[0].length);
-  const [phase, setPhase] = useState<'typing' | 'holding' | 'deleting'>('holding');
+  const [phase, setPhase] = useState<'typing' | 'holding' | 'deleting'>(
+    'holding',
+  );
 
   useEffect(() => {
     if (prefersReducedMotion()) {

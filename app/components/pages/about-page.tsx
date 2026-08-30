@@ -25,7 +25,9 @@ export function AboutPage() {
 
       <Card className="rounded-md border-border bg-surface px-0 py-0">
         <CardHeader className="gap-5 px-6 py-6 sm:px-8 sm:py-8">
-          <CardTitle className="text-xl sm:text-2xl">O que entregamos</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">
+            O que entregamos
+          </CardTitle>
           <CardDescription className="sr-only">
             Linha de atuação da GHENO rotors
           </CardDescription>

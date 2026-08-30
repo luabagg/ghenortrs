@@ -1,10 +1,6 @@
 import { Link } from '@remix-run/react';
 
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { MetaLabel } from '@/components/ui/meta-label';
 import { cn } from '@/lib/utils';
 
@@ -51,7 +47,9 @@ export function PageIntro({
       className={cn('rounded-md border-border bg-surface px-0 py-0', className)}
       data-slot="page-intro"
     >
-      <CardHeader className="gap-4 px-6 py-8 sm:px-8 sm:py-10">{body}</CardHeader>
+      <CardHeader className="gap-4 px-6 py-8 sm:px-8 sm:py-10">
+        {body}
+      </CardHeader>
     </Card>
   );
 }

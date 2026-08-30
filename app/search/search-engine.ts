@@ -21,7 +21,8 @@ function scoreEntry(
   if (!tokens.every((token) => searchable.includes(token))) return 0;
 
   const titleWords = title.split(' ');
-  let score = entry.kind === 'product' ? 30 : entry.kind === 'category' ? 20 : 10;
+  let score =
+    entry.kind === 'product' ? 30 : entry.kind === 'category' ? 20 : 10;
   if (title === normalizedQuery) score += 1_000;
   else if (title.includes(normalizedQuery)) score += 600;
   else if (tokens.every((token) => title.includes(token))) score += 300;

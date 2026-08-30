@@ -1,7 +1,4 @@
-import type {
-  CommerceFamilyId,
-  CommerceMode,
-} from '@/catalog/commerce';
+import type { CommerceFamilyId, CommerceMode } from '@/catalog/commerce';
 
 import storeIndexJson from './store-search-index.json';
 import type { SearchEntry } from './search-types';

@@ -162,9 +162,7 @@ export type B2BQuoteRequestData = z.output<typeof b2bQuoteRequestSchema>;
  * list is missing/not an array (`items_required`) or every item turns out to
  * be malformed (`items_invalid`).
  */
-export function parseB2BQuoteRequest(
-  input: unknown,
-):
+export function parseB2BQuoteRequest(input: unknown):
   | {
       ok: true;
       items: B2BQuoteItem[];

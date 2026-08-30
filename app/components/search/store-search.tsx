@@ -66,8 +66,7 @@ export function StoreSearch({
   }
 
   const normalizedQuery = query.trim();
-  const activeResult =
-    activeIndex === null ? undefined : results[activeIndex];
+  const activeResult = activeIndex === null ? undefined : results[activeIndex];
 
   return (
     <div className="grid gap-3" data-search-mode={mode}>
@@ -211,7 +210,8 @@ function SearchResultContent({ result }: { result: SearchResult }): ReactNode {
         : 'Neste site';
 
   const thumbnailSrc =
-    result.image ?? (result.family ? FAMILY_THUMBNAILS[result.family] : undefined);
+    result.image ??
+    (result.family ? FAMILY_THUMBNAILS[result.family] : undefined);
 
   return (
     <>
@@ -227,7 +227,11 @@ function SearchResultContent({ result }: { result: SearchResult }): ReactNode {
           aria-hidden="true"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-sm font-bold text-accent"
         >
-          {result.kind === 'product' ? 'P' : result.kind === 'category' ? 'C' : 'G'}
+          {result.kind === 'product'
+            ? 'P'
+            : result.kind === 'category'
+              ? 'C'
+              : 'G'}
         </span>
       )}
       <span className="min-w-0 flex-1">

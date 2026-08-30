@@ -118,8 +118,8 @@ export function ComponentsB2BCTA() {
             Atendimento comercial para oficinas e revendas.
           </h2>
           <p className="max-w-xl font-body text-[14px] leading-5 text-on-primary/72">
-            Peças que o rider pede de novo. Cadastre sua loja e compre direto com
-            a GHENO rotors.
+            Peças que o rider pede de novo. Cadastre sua loja e compre direto
+            com a GHENO rotors.
           </p>
         </div>
         <Button

@@ -66,7 +66,9 @@ export function B2BRegisterAside({
         </div>
       ) : null}
 
-      <div className={`grid gap-2 ${configured ? 'border-t border-border pt-6' : ''}`}>
+      <div
+        className={`grid gap-2 ${configured ? 'border-t border-border pt-6' : ''}`}
+      >
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-secondary">
           Contato
         </p>

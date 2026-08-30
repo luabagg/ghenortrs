@@ -4,9 +4,10 @@ import { vi } from 'vitest';
 // Remix hooks that need a full Remix data router are mocked for unit tests.
 // Client validation runs before useSubmit is invoked.
 vi.mock('@remix-run/react', async () => {
-  const actual = await vi.importActual<typeof import('@remix-run/react')>(
-    '@remix-run/react',
-  );
+  const actual =
+    await vi.importActual<typeof import('@remix-run/react')>(
+      '@remix-run/react',
+    );
   return {
     ...actual,
     useSubmit: () => vi.fn(),

@@ -30,9 +30,12 @@ function fireEvent(eventName: string, payload: Record<string, unknown>) {
   }
 
   const isDev =
-    (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+    (typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'development') ||
     (typeof import.meta !== 'undefined' &&
-      Boolean((import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV));
+      Boolean(
+        (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV,
+      ));
   if (isDev) {
     console.info(`[GHENO rotors tracking] ${eventName}`, payload);
   }

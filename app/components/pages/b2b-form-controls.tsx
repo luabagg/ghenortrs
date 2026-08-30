@@ -154,7 +154,11 @@ export function B2BFormStatusAlert({
 
 export function B2BSubmitButton({ status }: { status: SubmitStatus }) {
   return (
-    <Button className="w-full sm:w-auto" disabled={status === 'loading'} type="submit">
+    <Button
+      className="w-full sm:w-auto"
+      disabled={status === 'loading'}
+      type="submit"
+    >
       {status === 'loading' ? 'Enviando...' : 'Enviar cadastro'}
     </Button>
   );

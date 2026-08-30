@@ -50,10 +50,10 @@ export function ContactPage() {
           >
             <CardHeader className="flex flex-1 flex-col gap-4 px-5 py-6 sm:px-6 sm:py-7">
               <div className="grid gap-2">
-                <CardTitle className="text-lg sm:text-xl">{path.label}</CardTitle>
-                <CardDescription>
-                  {path.description}
-                </CardDescription>
+                <CardTitle className="text-lg sm:text-xl">
+                  {path.label}
+                </CardTitle>
+                <CardDescription>{path.description}</CardDescription>
               </div>
               <div className="mt-auto pt-2">
                 <Button asChild className="w-fit" variant={path.variant}>

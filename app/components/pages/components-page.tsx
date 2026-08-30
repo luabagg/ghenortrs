@@ -7,7 +7,10 @@ import {
 
 export function ComponentsPage() {
   return (
-    <div className="flex flex-col gap-14 sm:gap-16" data-section="componentes-page">
+    <div
+      className="flex flex-col gap-14 sm:gap-16"
+      data-section="componentes-page"
+    >
       <ComponentsPageIntro />
 
       <div className="flex flex-col">

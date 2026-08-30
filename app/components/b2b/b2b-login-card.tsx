@@ -15,9 +15,9 @@ export function B2BLoginCard({
   onSwitchToRegister,
 }: B2BLoginCardProps) {
   const [email, setEmail] = useState(initialEmail);
-  const [status, setStatus] = useState<
-    'idle' | 'loading' | 'sent' | 'error'
-  >('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>(
+    'idle',
+  );
   const [message, setMessage] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent) {
@@ -70,7 +70,11 @@ export function B2BLoginCard({
           {message}
         </p>
       ) : null}
-      <Button className="w-full sm:w-auto" disabled={status === 'loading'} type="submit">
+      <Button
+        className="w-full sm:w-auto"
+        disabled={status === 'loading'}
+        type="submit"
+      >
         {status === 'loading' ? 'Enviando…' : 'Receber link de acesso'}
       </Button>
       {onSwitchToRegister ? (
