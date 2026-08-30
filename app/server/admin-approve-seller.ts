@@ -1,26 +1,14 @@
-// POST /api/admin-approve-seller
-// Header: X-Admin-Secret: $B2B_ADMIN_APPROVE_SECRET
-// Body: { "email": "...", "status": "approved" | "rejected", "reason"?: "..." }
-// GET /api/admin-approve-seller?token=... redirects to /admin/approve (HTML).
-
-import { getSellerByEmail, updateSellerStatus } from './db/queries';
+import {
+  consumeEmailActionToken,
+  getSellerByEmail,
+  insertAdminAuditEvent,
+  updateSellerStatus,
+} from './db/queries';
 import type { SellerStatus } from './db/schema';
 import { getServerEnv } from './env';
-import { json, methodNotAllowed, readAdminSecret, readJson } from './http';
+import { json } from './http';
 import { buildSellerApprovedHtml, sendResendEmail } from './resend';
-
-type Body = {
-  email?: string;
-  status?: SellerStatus;
-  reason?: string;
-};
-
-const STATUSES: SellerStatus[] = [
-  'approved',
-  'rejected',
-  'suspended',
-  'pending',
-];
+import { hashEmailActionTokenJti, verifyToken } from './signed-token';
 
 export type ApplySellerStatusResult =
   | {
@@ -31,12 +19,8 @@ export type ApplySellerStatusResult =
     }
   | { ok: false; error: string; httpStatus: number };
 
-function unauthorized(): Response {
-  return json({ error: 'unauthorized' }, 401);
-}
-
-function isSellerStatus(value: string): value is SellerStatus {
-  return STATUSES.includes(value as SellerStatus);
+function failure(error: string, httpStatus: number): ApplySellerStatusResult {
+  return { ok: false, error, httpStatus };
 }
 
 export async function applySellerStatus(input: {
@@ -47,8 +31,15 @@ export async function applySellerStatus(input: {
 }): Promise<ApplySellerStatusResult> {
   const env = getServerEnv();
   const seller = await getSellerByEmail(input.email);
-  if (!seller) {
-    return { ok: false, error: 'seller_not_found', httpStatus: 404 };
+  if (!seller) return failure('seller_not_found', 404);
+
+  if (input.status === 'approved' && seller.status === 'approved') {
+    return {
+      ok: true,
+      email: seller.email,
+      status: seller.status,
+      companyName: seller.companyName,
+    };
   }
 
   const patch =
@@ -56,7 +47,7 @@ export async function applySellerStatus(input: {
       ? {
           status: 'approved' as const,
           approvedAt: new Date().toISOString(),
-          approvedBy: input.approvedBy ?? 'admin-approve-seller',
+          approvedBy: input.approvedBy ?? 'approval-link',
           rejectedReason: null,
         }
       : {
@@ -70,12 +61,10 @@ export async function applySellerStatus(input: {
   try {
     data = await updateSellerStatus(seller.id, patch);
   } catch (error) {
-    console.error('approve update failed', error);
-    return { ok: false, error: 'update_failed', httpStatus: 500 };
+    console.error('seller status update failed', error);
+    return failure('update_failed', 500);
   }
-  if (!data) {
-    return { ok: false, error: 'update_failed', httpStatus: 500 };
-  }
+  if (!data) return failure('update_failed', 500);
 
   if (input.status === 'approved' && env.resendApiKey) {
     const loginUrl = `${env.siteUrl.replace(/\/$/, '')}/b2b`;
@@ -97,59 +86,66 @@ export async function applySellerStatus(input: {
   };
 }
 
-export function approveResultToJson(result: ApplySellerStatusResult): Response {
-  if (!result.ok) {
-    return json({ error: result.error }, result.httpStatus);
-  }
-  return json({
-    success: true,
-    email: result.email,
-    status: result.status,
-  });
-}
-
-export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== 'POST' && req.method !== 'GET') {
-    return methodNotAllowed(['GET', 'POST']);
-  }
-
+export async function confirmEmailSellerApproval(
+  token: string | null | undefined,
+): Promise<ApplySellerStatusResult> {
   let env;
   try {
     env = getServerEnv();
   } catch {
-    return json({ error: 'server_not_configured' }, 503);
+    return failure('server_not_configured', 503);
   }
-  if (!env.adminApproveSecret) {
-    return json({ error: 'admin_secret_not_configured' }, 503);
+  if (!env.approvalLinkSecret) {
+    return failure('approval_link_secret_not_configured', 503);
   }
 
-  if (req.method === 'GET') {
-    const token = new URL(req.url).searchParams.get('token');
-    if (!token) return unauthorized();
-    // One-click email links land on the HTML page, not raw JSON.
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: `/admin/approve?token=${encodeURIComponent(token)}`,
-      },
+  const payload = verifyToken(token, env.approvalLinkSecret, 'approve-seller');
+  if (!payload || payload.status !== 'approved' || !payload.jti) {
+    return failure('unauthorized', 401);
+  }
+
+  let consumed;
+  try {
+    consumed = await consumeEmailActionToken(
+      hashEmailActionTokenJti(payload.jti),
+      new Date().toISOString(),
+    );
+  } catch (error) {
+    console.error('approval token consumption failed', error);
+    return failure('update_failed', 500);
+  }
+  if (!consumed) return failure('token_used', 409);
+
+  const result = await applySellerStatus({
+    email: payload.email,
+    status: 'approved',
+    approvedBy: 'approval-link',
+  });
+  if (!result.ok) return result;
+
+  try {
+    await insertAdminAuditEvent({
+      action: 'seller.approval_link.consumed',
+      targetSellerId: consumed.sellerId,
     });
+  } catch (error) {
+    console.error('approval audit event failed', error);
   }
 
-  const secret = readAdminSecret(req);
-  if (!secret || secret !== env.adminApproveSecret) return unauthorized();
+  return result;
+}
 
-  const body = await readJson<Body>(req);
-  if (!body?.email) return json({ error: 'email_required' }, 400);
-  const status = body.status ?? 'approved';
-  if (!isSellerStatus(status)) {
-    return json({ error: 'status_invalid' }, 400);
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method !== 'GET') {
+    return json({ error: 'gone' }, 410);
   }
 
-  return approveResultToJson(
-    await applySellerStatus({
-      email: body.email.trim().toLowerCase(),
-      status,
-      reason: body.reason,
-    }),
-  );
+  const token = new URL(req.url).searchParams.get('token');
+  if (!token) return json({ error: 'gone' }, 410);
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: `/admin/approve?token=${encodeURIComponent(token)}`,
+    },
+  });
 }

@@ -6,8 +6,16 @@ import { parseB2BRegistration } from '../b2b/schemas';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed, readJson } from './http';
 import { buildSellerRegistrationHtml, sendResendEmail } from './resend';
-import { getSellerByEmail, upsertSeller } from './db/queries';
-import { buildApproveSellerToken } from './signed-token';
+import {
+  createEmailActionToken,
+  getSellerByEmail,
+  upsertSeller,
+} from './db/queries';
+import {
+  buildApproveSellerToken,
+  hashEmailActionTokenJti,
+  verifyToken,
+} from './signed-token';
 import {
   createAuthAdminClient,
   findAuthUserIdByEmail,
@@ -132,15 +140,35 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'seller_save_failed' }, 500);
   }
 
-  const approveUrl =
-    env.adminApproveSecret && env.siteUrl
-      ? `${env.siteUrl.replace(/\/$/, '')}/admin/approve?token=${encodeURIComponent(
-          buildApproveSellerToken(
-            { email: data.email },
-            env.adminApproveSecret,
-          ),
-        )}`
-      : undefined;
+  let approveUrl: string | undefined;
+  if (env.approvalLinkSecret && env.siteUrl) {
+    const approvalToken = buildApproveSellerToken(
+      { email: data.email },
+      env.approvalLinkSecret,
+    );
+    const approvalPayload = verifyToken(
+      approvalToken,
+      env.approvalLinkSecret,
+      'approve-seller',
+    );
+    if (!approvalPayload) {
+      return json({ error: 'approval_token_create_failed' }, 500);
+    }
+
+    try {
+      await createEmailActionToken({
+        jtiHash: hashEmailActionTokenJti(approvalPayload.jti),
+        purpose: approvalPayload.purpose,
+        sellerId: seller.id,
+        expiresAt: new Date(approvalPayload.exp).toISOString(),
+      });
+    } catch (tokenError) {
+      console.error('approval token save failed', tokenError);
+      return json({ error: 'approval_token_save_failed' }, 500);
+    }
+
+    approveUrl = `${env.siteUrl.replace(/\/$/, '')}/admin/approve?token=${encodeURIComponent(approvalToken)}`;
+  }
 
   if (env.resendApiKey && env.resendToEmail) {
     const mailed = await sendResendEmail({

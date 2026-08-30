@@ -1,11 +1,15 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
-
-import type { SellerStatus } from './db/schema';
+import {
+  createHash,
+  createHmac,
+  randomUUID,
+  timingSafeEqual,
+} from 'node:crypto';
 
 export type ApproveSellerToken = {
   purpose: 'approve-seller';
   email: string;
-  status: SellerStatus;
+  status: 'approved';
+  jti: string;
   exp: number;
 };
 
@@ -64,22 +68,23 @@ export function verifyToken<T extends SignedPayload['purpose']>(
 }
 
 export function buildApproveSellerToken(
-  input: {
-    email: string;
-    status?: SellerStatus;
-    ttlMs?: number;
-  },
+  input: { email: string; ttlMs?: number },
   secret: string,
 ): string {
   return signToken(
     {
       purpose: 'approve-seller',
       email: input.email.trim().toLowerCase(),
-      status: input.status ?? 'approved',
+      status: 'approved',
+      jti: randomUUID(),
       exp: Date.now() + (input.ttlMs ?? DEFAULT_APPROVE_TTL_MS),
     },
     secret,
   );
+}
+
+export function hashEmailActionTokenJti(jti: string): string {
+  return createHash('sha256').update(jti).digest('hex');
 }
 
 export function buildBlingOAuthState(

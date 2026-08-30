@@ -114,6 +114,7 @@ export function buildSellerRegistrationHtml(input: {
   const content = `
   <h2 style="color:#E81414;margin-bottom:4px">Novo cadastro B2B</h2>
   <p style="color:#666;margin-top:0">Aguardando aprovação manual.</p>
+  <p style="color:#666;font-size:14px">O link de aprovação abre uma página de confirmação e expira em sete dias.</p>
   ${buildLabelValueTable([
     { label: 'Empresa', value: escHtml(input.companyName) },
     { label: 'CNPJ', value: escHtml(input.cnpj) },

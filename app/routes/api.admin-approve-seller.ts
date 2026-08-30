@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 
+/** Legacy approval-link redirect retained for one release. */
 import handler from '~/server/admin-approve-seller';
 
 export async function loader({ request }: LoaderFunctionArgs) {

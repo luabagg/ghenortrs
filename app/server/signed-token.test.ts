@@ -13,7 +13,7 @@ const SECRET = 'test-admin-secret';
 describe('signed tokens', () => {
   it('round-trips an approve-seller token', () => {
     const token = buildApproveSellerToken(
-      { email: 'Loja@Example.com', status: 'approved' },
+      { email: 'Loja@Example.com' },
       SECRET,
     );
     const payload = verifyToken(token, SECRET, 'approve-seller');
@@ -22,6 +22,22 @@ describe('signed tokens', () => {
       email: 'loja@example.com',
       status: 'approved',
     });
+  });
+
+  it('includes a unique jti in each approval token', () => {
+    const first = buildApproveSellerToken({ email: 'a@b.com' }, SECRET);
+    const second = buildApproveSellerToken({ email: 'a@b.com' }, SECRET);
+
+    expect(first).not.toEqual(second);
+    expect(verifyToken(first, SECRET, 'approve-seller')).toMatchObject({
+      jti: expect.any(String),
+      status: 'approved',
+    });
+  });
+
+  it('rejects an approval token used for a different purpose', () => {
+    const token = buildApproveSellerToken({ email: 'a@b.com' }, SECRET);
+    expect(verifyToken(token, SECRET, 'bling-oauth')).toBeNull();
   });
 
   it('rejects a tampered payload', () => {
@@ -54,6 +70,7 @@ describe('signed tokens', () => {
         purpose: 'approve-seller',
         email: 'loja@example.com',
         status: 'approved',
+        jti: 'expired-approval-token',
         exp: Date.now() - 1,
       },
       SECRET,
