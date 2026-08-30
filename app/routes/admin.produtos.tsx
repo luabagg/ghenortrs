@@ -3,10 +3,11 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { createCookie, json, redirect } from '@remix-run/node';
 import { Form, useActionData, useLoaderData } from '@remix-run/react';
 
 import { AdminChrome } from '~/components/admin/admin-chrome';
+import { PriceListImportPanel } from '~/components/admin/price-list-import-panel';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -29,7 +30,14 @@ import {
   listAdminProducts,
   updateProductVisibleB2b,
 } from '~/server/db/queries';
+import type { PriceListErrorCode } from '~/server/price-list-import';
+import {
+  PriceListError,
+  buildPriceImportPreview,
+  commitPriceImport,
+} from '~/server/price-list-import';
 import { requireAdmin } from '~/server/require-admin.server';
+import { parseSellerTier } from '~/server/seller-tier';
 
 const CONNECT_MESSAGES: Record<BlingConnectResult, string> = {
   connected: 'Bling conectado.',
@@ -39,6 +47,66 @@ const CONNECT_MESSAGES: Record<BlingConnectResult, string> = {
     'Bling não configurado. Defina BLING_CLIENT_ID, BLING_CLIENT_SECRET e BLING_REDIRECT_URI.',
   failed: 'Falha ao conectar o Bling. Tente outra vez.',
 };
+
+const PRICE_LIST_MESSAGES: Record<
+  PriceListErrorCode | 'preview_stale',
+  string
+> = {
+  empty: 'Cole a tabela de preços antes de pré-visualizar.',
+  not_tab_separated:
+    'Cole a tabela original: as colunas precisam vir separadas por tabulação.',
+  missing_sku_column: 'A tabela precisa da coluna Sku.',
+  missing_price_column: 'A tabela precisa da coluna R$ Preço da lista.',
+  conflicting_duplicate_sku:
+    'O mesmo SKU aparece com preços diferentes. Corrija a tabela e cole outra vez.',
+  too_large: 'Tabela grande demais. Importe em partes menores.',
+  too_many_rows: 'Tabela com linhas demais. Importe em partes menores.',
+  preview_stale:
+    'O catálogo mudou depois da pré-visualização. Gere a pré-visualização outra vez.',
+};
+
+function priceListMessage(code: string): string {
+  return (
+    PRICE_LIST_MESSAGES[code as PriceListErrorCode] ??
+    'Não foi possível ler a tabela colada.'
+  );
+}
+
+const priceImportFlash = createCookie('price_import_result', {
+  httpOnly: true,
+  maxAge: 60,
+  path: '/admin',
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+});
+
+type PriceImportFlash =
+  | { ok: true; updated: number }
+  | { ok: false; error: 'preview_stale' };
+
+function buildImportMessage(
+  flash: PriceImportFlash | null,
+): { ok: boolean; text: string } | null {
+  if (!flash) return null;
+  if (!flash.ok) {
+    return { ok: false, text: priceListMessage(flash.error) };
+  }
+  return { ok: true, text: `Preços atualizados: ${flash.updated} SKUs.` };
+}
+
+async function readPriceImportFlash(request: Request): Promise<{
+  flash: PriceImportFlash | null;
+  clearCookie: string | null;
+}> {
+  const stored = await priceImportFlash.parse(request.headers.get('Cookie'));
+  if (typeof stored !== 'object' || stored === null || !('ok' in stored)) {
+    return { flash: null, clearCookie: null };
+  }
+  return {
+    flash: stored as PriceImportFlash,
+    clearCookie: await priceImportFlash.serialize('', { maxAge: 0 }),
+  };
+}
 
 const DATE_TIME_FORMAT = new Intl.DateTimeFormat('pt-BR', {
   dateStyle: 'short',
@@ -98,8 +166,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const connection = await getBlingConnectionStatus();
   const connect = await readBlingConnectResult(request);
   const sync = await readBlingSyncResult(request);
+  const priceImport = await readPriceImportFlash(request);
   if (connect.clearCookie) headers.append('Set-Cookie', connect.clearCookie);
   if (sync.clearCookie) headers.append('Set-Cookie', sync.clearCookie);
+  if (priceImport.clearCookie) {
+    headers.append('Set-Cookie', priceImport.clearCookie);
+  }
 
   return json(
     {
@@ -111,6 +183,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         expiresAtLabel: formatInstant(connection.expiresAt),
       },
       syncMessage: buildSyncMessage(sync.result),
+      importMessage: buildImportMessage(priceImport.flash),
       truncated: products.length === ADMIN_PRODUCT_LIST_LIMIT,
     },
     { headers },
@@ -143,9 +216,44 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect('/admin/produtos', { headers });
   }
 
+  if (intent === 'preview-price-list' || intent === 'commit-price-list') {
+    const tier = parseSellerTier(String(formData.get('tier') ?? ''));
+    const text = String(formData.get('priceList') ?? '');
+
+    try {
+      if (intent === 'preview-price-list') {
+        return json(
+          {
+            kind: 'price-list' as const,
+            ok: true as const,
+            preview: await buildPriceImportPreview(tier, text),
+            text,
+            tier,
+          },
+          { headers },
+        );
+      }
+
+      const result = await commitPriceImport({
+        actor: { id: user.id, email: user.email },
+        digest: String(formData.get('digest') ?? ''),
+        text,
+        tier,
+      });
+      headers.append('Set-Cookie', await priceImportFlash.serialize(result));
+      return redirect('/admin/produtos', { headers });
+    } catch (error) {
+      if (!(error instanceof PriceListError)) throw error;
+      return json(
+        { kind: 'price-list' as const, ok: false as const, error: error.code },
+        { status: 400, headers },
+      );
+    }
+  }
+
   if (intent !== 'toggle-visibility') {
     return json(
-      { ok: false as const, error: 'invalid_intent' },
+      { kind: 'intent' as const, ok: false as const, error: 'invalid_intent' },
       { status: 400, headers },
     );
   }
@@ -156,7 +264,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (!Number.isInteger(productId) || productId <= 0 || visibleB2b === null) {
     return json(
-      { ok: false as const, error: 'invalid_visibility' },
+      {
+        kind: 'visibility' as const,
+        ok: false as const,
+        error: 'invalid_visibility',
+      },
       { status: 400, headers },
     );
   }
@@ -164,7 +276,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const updated = await updateProductVisibleB2b(productId, visibleB2b);
   if (!updated) {
     return json(
-      { ok: false as const, error: 'update_failed' },
+      {
+        kind: 'visibility' as const,
+        ok: false as const,
+        error: 'update_failed',
+      },
       { status: 404, headers },
     );
   }
@@ -172,9 +288,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function AdminProducts() {
-  const { connectResult, connection, query, products, syncMessage, truncated } =
-    useLoaderData<typeof loader>();
+  const {
+    connectResult,
+    connection,
+    importMessage,
+    query,
+    products,
+    syncMessage,
+    truncated,
+  } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const priceList = actionData?.kind === 'price-list' ? actionData : null;
 
   return (
     <AdminChrome
@@ -243,7 +367,17 @@ export default function AdminProducts() {
         ) : null}
       </section>
 
-      {actionData && actionData.ok === false ? (
+      <PriceListImportPanel
+        errorMessage={
+          priceList && !priceList.ok ? priceListMessage(priceList.error) : null
+        }
+        importMessage={importMessage}
+        preview={priceList?.ok ? priceList.preview : null}
+        text={priceList?.ok ? priceList.text : ''}
+        tier={priceList?.ok ? priceList.tier : 'start'}
+      />
+
+      {actionData?.kind === 'visibility' ? (
         <p className="text-sm text-accent" role="alert">
           Não foi possível atualizar o produto.
         </p>

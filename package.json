@@ -16,7 +16,6 @@
     "search:sync": "node scripts/store-search-index.mjs",
     "test": "vitest",
     "typecheck": "tsc",
-    "prices:import": "node scripts/bling-price-list-import.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",

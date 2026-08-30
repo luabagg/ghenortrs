@@ -143,6 +143,71 @@ export async function updateProductVisibleB2b(
   return row ?? null;
 }
 
+export type PriceImportProductRow = {
+  id: number;
+  sku: string;
+  name: string;
+  active: boolean;
+  priceCents: number | null;
+};
+
+/** Cached products for the pasted SKUs, with the chosen tier price. */
+export async function listProductsBySkus(
+  tier: SellerTier,
+  skus: string[],
+): Promise<PriceImportProductRow[]> {
+  if (skus.length === 0) return [];
+  return getDb()
+    .select({
+      id: blingProducts.id,
+      sku: sql<string>`${blingProducts.sku}`,
+      name: blingProducts.name,
+      active: blingProducts.active,
+      priceCents: sql<number | null>`${blingProducts[tierPriceColumn(tier)]}`,
+    })
+    .from(blingProducts)
+    .where(inArray(blingProducts.sku, skus));
+}
+
+/** Only the tier price column. Never touches visible_b2b, active, or Bling fields. */
+function tierPriceUpdate(tier: SellerTier, priceCents: number) {
+  switch (tier) {
+    case 'start':
+      return { priceStartCents: priceCents };
+    case 'pro':
+      return { priceProCents: priceCents };
+    case 'max':
+      return { priceMaxCents: priceCents };
+  }
+}
+
+export async function updateTierPrices(
+  tier: SellerTier,
+  rows: { sku: string; priceCents: number }[],
+): Promise<number> {
+  if (rows.length === 0) return 0;
+
+  const skusByPrice = new Map<number, string[]>();
+  for (const row of rows) {
+    const grouped = skusByPrice.get(row.priceCents);
+    if (grouped) grouped.push(row.sku);
+    else skusByPrice.set(row.priceCents, [row.sku]);
+  }
+
+  return getDb().transaction(async (tx) => {
+    let updated = 0;
+    for (const [priceCents, skus] of skusByPrice) {
+      const changed = await tx
+        .update(blingProducts)
+        .set(tierPriceUpdate(tier, priceCents))
+        .where(inArray(blingProducts.sku, skus))
+        .returning({ sku: blingProducts.sku });
+      updated += changed.length;
+    }
+    return updated;
+  });
+}
+
 export function buildCatalogSearchSql(
   query: string,
   limit: number,

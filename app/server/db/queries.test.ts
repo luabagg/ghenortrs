@@ -12,6 +12,7 @@ import {
   createEmailActionToken,
   insertAdminAuditEvent,
   sanitizeCatalogQuery,
+  updateTierPrices,
 } from './queries';
 import { getDb } from './client';
 import { blingProducts, sellerStatusEnum, sellers } from './schema';
@@ -159,6 +160,41 @@ describe('admin operations queries', () => {
     expect(
       await consumeEmailActionToken(token.jtiHash, '2026-08-30T11:00:00.000Z'),
     ).toBeNull();
+  });
+
+  it('writes only the chosen tier price column for the pasted SKUs', async () => {
+    const returning = vi.fn().mockResolvedValue([{ sku: 'SKU-1' }]);
+    const where = vi.fn(() => ({ returning }));
+    const set = vi.fn(() => ({ where }));
+    const update = vi.fn(() => ({ set }));
+    getDbMock.mockReturnValue({
+      transaction: (run: (tx: unknown) => unknown) => run({ update }),
+    } as never);
+
+    await expect(
+      updateTierPrices('pro', [{ sku: 'SKU-1', priceCents: 990 }]),
+    ).resolves.toBe(1);
+
+    expect(update).toHaveBeenCalledWith(blingProducts);
+    expect(set).toHaveBeenCalledWith({ priceProCents: 990 });
+  });
+
+  it('groups SKUs that share a price into one statement', async () => {
+    const returning = vi.fn().mockResolvedValue([{ sku: 'a' }, { sku: 'b' }]);
+    const where = vi.fn(() => ({ returning }));
+    const set = vi.fn(() => ({ where }));
+    const update = vi.fn(() => ({ set }));
+    getDbMock.mockReturnValue({
+      transaction: (run: (tx: unknown) => unknown) => run({ update }),
+    } as never);
+
+    await updateTierPrices('max', [
+      { sku: 'a', priceCents: 990 },
+      { sku: 'b', priceCents: 990 },
+    ]);
+
+    expect(update).toHaveBeenCalledOnce();
+    expect(set).toHaveBeenCalledWith({ priceMaxCents: 990 });
   });
 
   it('rejects sensitive audit metadata before insertion', async () => {

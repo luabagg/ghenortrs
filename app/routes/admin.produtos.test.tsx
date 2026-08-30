@@ -7,6 +7,11 @@ import {
   syncBlingCatalog,
 } from '~/server/bling-admin';
 import { updateProductVisibleB2b } from '~/server/db/queries';
+import {
+  PriceListError,
+  buildPriceImportPreview,
+  commitPriceImport,
+} from '~/server/price-list-import';
 import { requireAdmin } from '~/server/require-admin.server';
 import { action } from './admin.produtos';
 
@@ -26,8 +31,15 @@ vi.mock('~/server/db/queries', () => ({
   listAdminProducts: vi.fn(),
   updateProductVisibleB2b: vi.fn(),
 }));
+vi.mock('~/server/price-list-import', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~/server/price-list-import')>()),
+  buildPriceImportPreview: vi.fn(),
+  commitPriceImport: vi.fn(),
+}));
 vi.mock('~/server/require-admin.server', () => ({ requireAdmin: vi.fn() }));
 
+const buildPriceImportPreviewMock = vi.mocked(buildPriceImportPreview);
+const commitPriceImportMock = vi.mocked(commitPriceImport);
 const requireAdminMock = vi.mocked(requireAdmin);
 const syncBlingCatalogMock = vi.mocked(syncBlingCatalog);
 
@@ -88,5 +100,67 @@ describe('/admin/produtos action', () => {
       expect.objectContaining({ status: 302 }),
     );
     expect(syncBlingCatalogMock).not.toHaveBeenCalled();
+  });
+
+  it('previews a pasted price list without writing', async () => {
+    const preview = { tier: 'pro', digest: 'abc', updates: [] };
+    buildPriceImportPreviewMock.mockResolvedValue(preview as never);
+
+    const response = await action(
+      postIntent({
+        intent: 'preview-price-list',
+        priceList: 'Sku\tR$ Preço da lista',
+        tier: 'pro',
+      }),
+    );
+
+    expect(buildPriceImportPreviewMock).toHaveBeenCalledWith(
+      'pro',
+      'Sku\tR$ Preço da lista',
+    );
+    expect(commitPriceImportMock).not.toHaveBeenCalled();
+    await expect(response.json()).resolves.toMatchObject({
+      kind: 'price-list',
+      ok: true,
+      tier: 'pro',
+    });
+  });
+
+  it('reports an unreadable paste as a 400 with its code', async () => {
+    buildPriceImportPreviewMock.mockRejectedValue(
+      new PriceListError('not_tab_separated'),
+    );
+
+    const response = await action(
+      postIntent({ intent: 'preview-price-list', priceList: 'a b c' }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      error: 'not_tab_separated',
+      ok: false,
+    });
+  });
+
+  it('commits the confirmed preview for the signed-in admin', async () => {
+    commitPriceImportMock.mockResolvedValue({ ok: true, updated: 3 });
+
+    const response = await action(
+      postIntent({
+        digest: 'abc',
+        intent: 'commit-price-list',
+        priceList: 'text',
+        tier: 'max',
+      }),
+    );
+
+    expect(commitPriceImportMock).toHaveBeenCalledWith({
+      actor: { id: admin.id, email: admin.email },
+      digest: 'abc',
+      text: 'text',
+      tier: 'max',
+    });
+    expect(response.status).toBe(302);
+    expect(response.headers.get('Set-Cookie')).toContain('price_import_result');
   });
 });
