@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { and, eq } from 'drizzle-orm';
-import { QueryBuilder } from 'drizzle-orm/pg-core';
+import { PgDialect, QueryBuilder } from 'drizzle-orm/pg-core';
 
 import {
   blingProductSyncConflictSet,
@@ -12,6 +12,7 @@ import {
   createEmailActionToken,
   insertAdminAuditEvent,
   sanitizeCatalogQuery,
+  updateProductsVisibleB2b,
   updateTierPrices,
 } from './queries';
 import { getDb } from './client';
@@ -160,6 +161,28 @@ describe('admin operations queries', () => {
     expect(
       await consumeEmailActionToken(token.jtiHash, '2026-08-30T11:00:00.000Z'),
     ).toBeNull();
+  });
+
+  it('updates exactly the selected product IDs to an explicit value', async () => {
+    const returning = vi.fn().mockResolvedValue([{ id: 1 }, { id: 2 }]);
+    const where = vi.fn(() => ({ returning }));
+    const set = vi.fn(() => ({ where }));
+    getDbMock.mockReturnValue({ update: vi.fn(() => ({ set })) } as never);
+
+    await expect(updateProductsVisibleB2b([1, 2], false)).resolves.toBe(2);
+
+    expect(set).toHaveBeenCalledWith({ visibleB2b: false });
+    const rendered = new PgDialect().sqlToQuery(where.mock.calls[0][0]);
+    expect(rendered.sql).toContain('"id" in');
+    expect(rendered.params).toEqual([1, 2]);
+  });
+
+  it('never issues a visibility update without IDs', async () => {
+    const update = vi.fn();
+    getDbMock.mockReturnValue({ update } as never);
+
+    await expect(updateProductsVisibleB2b([], true)).resolves.toBe(0);
+    expect(update).not.toHaveBeenCalled();
   });
 
   it('writes only the chosen tier price column for the pasted SKUs', async () => {

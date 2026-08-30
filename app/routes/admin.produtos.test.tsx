@@ -6,12 +6,12 @@ import {
   serializeBlingSyncResult,
   syncBlingCatalog,
 } from '~/server/bling-admin';
-import { updateProductVisibleB2b } from '~/server/db/queries';
 import {
   PriceListError,
   buildPriceImportPreview,
   commitPriceImport,
 } from '~/server/price-list-import';
+import { setProductsVisibility } from '~/server/product-visibility';
 import { requireAdmin } from '~/server/require-admin.server';
 import { action } from './admin.produtos';
 
@@ -29,7 +29,9 @@ vi.mock('~/server/bling-oauth-state', () => ({
 vi.mock('~/server/db/queries', () => ({
   ADMIN_PRODUCT_LIST_LIMIT: 200,
   listAdminProducts: vi.fn(),
-  updateProductVisibleB2b: vi.fn(),
+}));
+vi.mock('~/server/product-visibility', () => ({
+  setProductsVisibility: vi.fn(),
 }));
 vi.mock('~/server/price-list-import', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~/server/price-list-import')>()),
@@ -41,6 +43,7 @@ vi.mock('~/server/require-admin.server', () => ({ requireAdmin: vi.fn() }));
 const buildPriceImportPreviewMock = vi.mocked(buildPriceImportPreview);
 const commitPriceImportMock = vi.mocked(commitPriceImport);
 const requireAdminMock = vi.mocked(requireAdmin);
+const setProductsVisibilityMock = vi.mocked(setProductsVisibility);
 const syncBlingCatalogMock = vi.mocked(syncBlingCatalog);
 
 const admin = { id: 'admin-1', email: 'admin@example.com' };
@@ -90,7 +93,53 @@ describe('/admin/produtos action', () => {
 
     expect(response.status).toBe(400);
     expect(syncBlingCatalogMock).not.toHaveBeenCalled();
-    expect(vi.mocked(updateProductVisibleB2b)).not.toHaveBeenCalled();
+    expect(setProductsVisibilityMock).not.toHaveBeenCalled();
+  });
+
+  it('hides every checked product in one explicit request', async () => {
+    setProductsVisibilityMock.mockResolvedValue({ updated: 2 });
+    const body = new URLSearchParams({ intent: 'bulk-hide', q: 'pad' });
+    body.append('productIds', '4');
+    body.append('productIds', '9');
+
+    const response = await action({
+      request: new Request('https://example.com/admin/produtos', {
+        body,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        method: 'POST',
+      }),
+      context: {},
+      params: {},
+    });
+
+    expect(setProductsVisibilityMock).toHaveBeenCalledWith({
+      actor: { id: admin.id, email: admin.email },
+      ids: [4, 9],
+      query: 'pad',
+      visibleB2b: false,
+    });
+    expect(response.status).toBe(302);
+    expect(response.headers.get('Location')).toBe('/admin/produtos?q=pad');
+  });
+
+  it('shows one product from its row button', async () => {
+    setProductsVisibilityMock.mockResolvedValue({ updated: 1 });
+
+    await action(postIntent({ showProduct: '7' }));
+
+    expect(setProductsVisibilityMock).toHaveBeenCalledWith({
+      actor: { id: admin.id, email: admin.email },
+      ids: [7],
+      query: '',
+      visibleB2b: true,
+    });
+  });
+
+  it('refuses a bulk request with no selection', async () => {
+    const response = await action(postIntent({ intent: 'bulk-show' }));
+
+    expect(response.status).toBe(400);
+    expect(setProductsVisibilityMock).not.toHaveBeenCalled();
   });
 
   it('never syncs when the request is not an admin session', async () => {

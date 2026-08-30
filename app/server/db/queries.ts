@@ -131,16 +131,18 @@ export async function listAdminProducts(
   return filtered.orderBy(blingProducts.name).limit(limit);
 }
 
-export async function updateProductVisibleB2b(
-  id: number,
+/** Sets an explicit visibility on exactly the given product IDs. */
+export async function updateProductsVisibleB2b(
+  ids: number[],
   visibleB2b: boolean,
-): Promise<AdminProductRow | null> {
-  const [row] = await getDb()
+): Promise<number> {
+  if (ids.length === 0) return 0;
+  const rows = await getDb()
     .update(blingProducts)
     .set({ visibleB2b })
-    .where(eq(blingProducts.id, id))
-    .returning(adminProductColumns);
-  return row ?? null;
+    .where(inArray(blingProducts.id, ids))
+    .returning({ id: blingProducts.id });
+  return rows.length;
 }
 
 export type PriceImportProductRow = {

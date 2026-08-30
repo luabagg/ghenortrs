@@ -28,8 +28,8 @@ import {
 import {
   ADMIN_PRODUCT_LIST_LIMIT,
   listAdminProducts,
-  updateProductVisibleB2b,
 } from '~/server/db/queries';
+import { setProductsVisibility } from '~/server/product-visibility';
 import type { PriceListErrorCode } from '~/server/price-list-import';
 import {
   PriceListError,
@@ -146,10 +146,36 @@ export const meta: MetaFunction = () =>
     'Painel interno para ocultar e mostrar produtos no catálogo B2B.',
   );
 
-function parseVisibleB2b(value: string): boolean | null {
-  if (value === 'true') return true;
-  if (value === 'false') return false;
-  return null;
+function parseProductId(value: FormDataEntryValue | null): number | null {
+  const id = Number(value);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+/** Reads an explicit show/hide target. There is no implicit toggle. */
+function readVisibilityTarget(
+  formData: FormData,
+): { ids: number[]; visibleB2b: boolean } | null {
+  const single = [
+    { field: 'showProduct', visibleB2b: true },
+    { field: 'hideProduct', visibleB2b: false },
+  ];
+  for (const option of single) {
+    const raw = formData.get(option.field);
+    if (raw === null) continue;
+    const id = parseProductId(raw);
+    return id === null ? null : { ids: [id], visibleB2b: option.visibleB2b };
+  }
+
+  const intent = String(formData.get('intent') ?? '');
+  if (intent !== 'bulk-show' && intent !== 'bulk-hide') return null;
+
+  const ids = formData.getAll('productIds').map(parseProductId);
+  if (ids.length === 0 || ids.some((id) => id === null)) return null;
+
+  return {
+    ids: ids as number[],
+    visibleB2b: intent === 'bulk-show',
+  };
 }
 
 function productsRedirect(query: string, headers: Headers) {
@@ -251,18 +277,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
   }
 
-  if (intent !== 'toggle-visibility') {
-    return json(
-      { kind: 'intent' as const, ok: false as const, error: 'invalid_intent' },
-      { status: 400, headers },
-    );
-  }
-
-  const productId = Number(formData.get('productId'));
-  const visibleB2b = parseVisibleB2b(String(formData.get('visibleB2b') ?? ''));
   const query = String(formData.get('q') ?? '').trim();
-
-  if (!Number.isInteger(productId) || productId <= 0 || visibleB2b === null) {
+  const target = readVisibilityTarget(formData);
+  if (!target) {
     return json(
       {
         kind: 'visibility' as const,
@@ -273,8 +290,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  const updated = await updateProductVisibleB2b(productId, visibleB2b);
-  if (!updated) {
+  const { updated } = await setProductsVisibility({
+    actor: { id: user.id, email: user.email },
+    ids: target.ids,
+    query,
+    visibleB2b: target.visibleB2b,
+  });
+  if (updated !== target.ids.length) {
     return json(
       {
         kind: 'visibility' as const,
@@ -416,72 +438,88 @@ export default function AdminProducts() {
             : 'Nenhum produto sincronizado.'}
         </p>
       ) : (
-        <div className="overflow-x-auto border border-border bg-surface">
-          <table className="w-full min-w-160 text-left text-sm">
-            <thead className="border-b border-border text-secondary">
-              <tr>
-                <th className="px-4 py-3 font-bold">SKU</th>
-                <th className="px-4 py-3 font-bold">Produto</th>
-                <th className="px-4 py-3 font-bold">Bling</th>
-                <th className="px-4 py-3 font-bold">Catálogo</th>
-                <th className="px-4 py-3 font-bold">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr
-                  key={product.id}
-                  className="border-b border-border last:border-0"
-                >
-                  <td className="px-4 py-3 text-secondary">
-                    {product.sku ?? '—'}
-                  </td>
-                  <td className="px-4 py-3 text-primary">{product.name}</td>
-                  <td className="px-4 py-3 text-secondary">
-                    {product.active ? 'Ativo' : 'Inativo'}
-                  </td>
-                  <td className="px-4 py-3 text-primary">
-                    {product.visibleB2b ? 'Visível' : 'Oculto'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <VisibilityButton
-                      productId={product.id}
-                      query={query}
-                      visibleB2b={product.visibleB2b}
-                    />
-                  </td>
+        <Form className="grid gap-3" method="post">
+          <input name="q" type="hidden" value={query} />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm text-secondary">
+              Marque os produtos e escolha o estado no catálogo B2B.
+            </p>
+            <Button
+              name="intent"
+              type="submit"
+              value="bulk-show"
+              variant="secondary"
+            >
+              Mostrar marcados
+            </Button>
+            <Button
+              name="intent"
+              type="submit"
+              value="bulk-hide"
+              variant="secondary"
+            >
+              Ocultar marcados
+            </Button>
+          </div>
+
+          <div className="overflow-x-auto border border-border bg-surface">
+            <table className="w-full min-w-160 text-left text-sm">
+              <thead className="border-b border-border text-secondary">
+                <tr>
+                  <th className="px-4 py-3 font-bold">
+                    <span className="sr-only">Selecionar</span>
+                  </th>
+                  <th className="px-4 py-3 font-bold">SKU</th>
+                  <th className="px-4 py-3 font-bold">Produto</th>
+                  <th className="px-4 py-3 font-bold">Bling</th>
+                  <th className="px-4 py-3 font-bold">Catálogo</th>
+                  <th className="px-4 py-3 font-bold">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr
+                    key={product.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="px-4 py-3">
+                      <input
+                        aria-label={`Selecionar ${product.name}`}
+                        name="productIds"
+                        type="checkbox"
+                        value={product.id}
+                      />
+                    </td>
+                    <td className="px-4 py-3 text-secondary">
+                      {product.sku ?? '—'}
+                    </td>
+                    <td className="px-4 py-3 text-primary">{product.name}</td>
+                    <td className="px-4 py-3 text-secondary">
+                      {product.active ? 'Ativo' : 'Inativo'}
+                    </td>
+                    <td className="px-4 py-3 text-primary">
+                      {product.visibleB2b ? 'Visível' : 'Oculto'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Button
+                        name={
+                          product.visibleB2b ? 'hideProduct' : 'showProduct'
+                        }
+                        type="submit"
+                        value={product.id}
+                        variant="secondary"
+                      >
+                        {product.visibleB2b ? 'Ocultar' : 'Mostrar'}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Form>
       )}
     </AdminChrome>
-  );
-}
-
-function VisibilityButton({
-  productId,
-  query,
-  visibleB2b,
-}: {
-  productId: number;
-  query: string;
-  visibleB2b: boolean;
-}) {
-  return (
-    <Form method="post">
-      <input name="intent" type="hidden" value="toggle-visibility" />
-      <input name="productId" type="hidden" value={productId} />
-      <input
-        name="visibleB2b"
-        type="hidden"
-        value={visibleB2b ? 'false' : 'true'}
-      />
-      <input name="q" type="hidden" value={query} />
-      <Button type="submit" variant="secondary">
-        {visibleB2b ? 'Ocultar' : 'Mostrar'}
-      </Button>
-    </Form>
   );
 }
