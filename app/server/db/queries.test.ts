@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { and, eq } from 'drizzle-orm';
 import { QueryBuilder } from 'drizzle-orm/pg-core';
@@ -8,9 +8,21 @@ import {
   buildAdminProductListSql,
   buildCatalogSearchSql,
   catalogVisibilityConditions,
+  consumeEmailActionToken,
+  createEmailActionToken,
+  insertAdminAuditEvent,
   sanitizeCatalogQuery,
 } from './queries';
+import { getDb } from './client';
 import { blingProducts, sellerStatusEnum, sellers } from './schema';
+
+vi.mock('./client', () => ({ getDb: vi.fn() }));
+
+const getDbMock = vi.mocked(getDb);
+
+beforeEach(() => {
+  getDbMock.mockReset();
+});
 
 describe('drizzle catalog query builder', () => {
   it('strips like metacharacters from seller search input', () => {
@@ -107,6 +119,55 @@ describe('upsertBlingProducts sync-safe conflict set', () => {
     expect(excludedSql).not.toMatch(/price_start_cents/);
     expect(excludedSql).not.toMatch(/price_pro_cents/);
     expect(excludedSql).not.toMatch(/price_max_cents/);
+  });
+});
+
+describe('admin operations queries', () => {
+  it('consumes an approval token once', async () => {
+    const token = {
+      jtiHash: 'hash',
+      purpose: 'approve-seller',
+      sellerId: 'seller',
+      expiresAt: '2026-08-30T12:00:00.000Z',
+      consumedAt: null,
+    };
+    const updateResults = [[token], []];
+    const insert = vi.fn(() => ({
+      values: vi.fn().mockResolvedValue(undefined),
+    }));
+    const update = vi.fn(() => ({
+      set: vi.fn(() => ({
+        where: vi.fn(() => ({
+          returning: vi
+            .fn()
+            .mockImplementation(async () => updateResults.shift()),
+        })),
+      })),
+    }));
+    getDbMock.mockReturnValue({ insert, update } as never);
+
+    await createEmailActionToken({
+      jtiHash: token.jtiHash,
+      purpose: token.purpose,
+      sellerId: token.sellerId,
+      expiresAt: token.expiresAt,
+    });
+
+    expect(
+      await consumeEmailActionToken(token.jtiHash, '2026-08-30T11:00:00.000Z'),
+    ).toMatchObject({ sellerId: token.sellerId });
+    expect(
+      await consumeEmailActionToken(token.jtiHash, '2026-08-30T11:00:00.000Z'),
+    ).toBeNull();
+  });
+
+  it('rejects sensitive audit metadata before insertion', async () => {
+    await expect(
+      insertAdminAuditEvent({
+        action: 'seller.access_link.sent',
+        metadata: { actionLink: 'secret' },
+      }),
+    ).rejects.toThrow('sensitive audit metadata');
   });
 });
 

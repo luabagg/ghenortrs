@@ -1,15 +1,33 @@
-import { and, desc, eq, ilike, inArray, isNotNull, or, sql } from 'drizzle-orm';
+import {
+  and,
+  count,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  isNotNull,
+  isNull,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { QueryBuilder } from 'drizzle-orm/pg-core';
 
 import type { Json } from '../json';
 import { type SellerTier, tierPriceColumn } from '../seller-tier';
 import { getDb } from './client';
 import {
+  adminAuditEvents,
+  adminUsers,
   b2bQuoteRequests,
   blingOauthTokens,
   blingProducts,
+  emailActionTokens,
   sellers,
+  type AdminAuditEventRow,
+  type AdminUserRow,
   type BlingTokenRow,
+  type EmailActionTokenRow,
   type SellerRow,
   type SellerStatus,
 } from './schema';
@@ -231,6 +249,114 @@ export async function updateSellerStatus(
     .where(eq(sellers.id, id))
     .returning();
   return row ?? null;
+}
+
+export async function isAdminUser(userId: string): Promise<boolean> {
+  const [row] = await getDb()
+    .select({ userId: adminUsers.userId })
+    .from(adminUsers)
+    .where(eq(adminUsers.userId, userId))
+    .limit(1);
+  return row !== undefined;
+}
+
+export async function countAdminUsers(): Promise<number> {
+  const [row] = await getDb().select({ count: count() }).from(adminUsers);
+  return Number(row?.count ?? 0);
+}
+
+export async function createAdminUser(input: {
+  userId: string;
+  email: string;
+  createdBy?: string | null;
+}): Promise<void> {
+  await getDb().insert(adminUsers).values(input).onConflictDoNothing();
+}
+
+export async function listAdminUsers(): Promise<AdminUserRow[]> {
+  return getDb().select().from(adminUsers).orderBy(adminUsers.createdAt);
+}
+
+export async function deleteAdminUser(userId: string): Promise<boolean> {
+  const [row] = await getDb()
+    .delete(adminUsers)
+    .where(eq(adminUsers.userId, userId))
+    .returning({ userId: adminUsers.userId });
+  return row !== undefined;
+}
+
+export async function createEmailActionToken(input: {
+  jtiHash: string;
+  purpose: string;
+  sellerId: string;
+  expiresAt: string;
+}): Promise<void> {
+  await getDb().insert(emailActionTokens).values(input);
+}
+
+export async function consumeEmailActionToken(
+  jtiHash: string,
+  now: string,
+): Promise<EmailActionTokenRow | null> {
+  const [row] = await getDb()
+    .update(emailActionTokens)
+    .set({ consumedAt: now })
+    .where(
+      and(
+        eq(emailActionTokens.jtiHash, jtiHash),
+        isNull(emailActionTokens.consumedAt),
+        gte(emailActionTokens.expiresAt, now),
+      ),
+    )
+    .returning();
+  return row ?? null;
+}
+
+const sensitiveAuditMetadataKey = /token|secret|code|link|authorization/i;
+
+function containsSensitiveAuditMetadata(value: Json | undefined): boolean {
+  if (value === undefined || value === null || typeof value !== 'object') {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return value.some(containsSensitiveAuditMetadata);
+  }
+  return Object.entries(value).some(
+    ([key, nestedValue]) =>
+      sensitiveAuditMetadataKey.test(key) ||
+      containsSensitiveAuditMetadata(nestedValue),
+  );
+}
+
+export async function insertAdminAuditEvent(input: {
+  actorUserId?: string | null;
+  actorEmail?: string | null;
+  action: string;
+  targetSellerId?: string | null;
+  targetProductId?: number | null;
+  metadata?: Json;
+  outcome?: string;
+}): Promise<AdminAuditEventRow> {
+  if (containsSensitiveAuditMetadata(input.metadata)) {
+    throw new Error('sensitive audit metadata');
+  }
+
+  const [row] = await getDb()
+    .insert(adminAuditEvents)
+    .values({ ...input, metadata: input.metadata ?? {} })
+    .returning();
+  if (!row) throw new Error('admin_audit_event_save_failed');
+  return row;
+}
+
+export async function listAdminAuditEvents(
+  limit = 100,
+): Promise<AdminAuditEventRow[]> {
+  return getDb()
+    .select()
+    .from(adminAuditEvents)
+    .orderBy(desc(adminAuditEvents.createdAt))
+    .limit(limit);
 }
 
 export async function listActiveCatalogProducts(

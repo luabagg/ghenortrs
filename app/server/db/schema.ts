@@ -48,6 +48,47 @@ export const sellers = pgTable(
   (table) => [check('sellers_cnpj_digits', sql`${table.cnpj} ~ '^\\d{14}$'`)],
 );
 
+export const adminUsers = pgTable('admin_users', {
+  userId: uuid('user_id').primaryKey(),
+  email: text('email').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    .notNull()
+    .defaultNow(),
+  createdBy: uuid('created_by'),
+});
+
+export const emailActionTokens = pgTable('email_action_tokens', {
+  jtiHash: text('jti_hash').primaryKey(),
+  purpose: text('purpose').notNull(),
+  sellerId: uuid('seller_id')
+    .notNull()
+    .references(() => sellers.id, { onDelete: 'cascade' }),
+  expiresAt: timestamp('expires_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).notNull(),
+  consumedAt: timestamp('consumed_at', { withTimezone: true, mode: 'string' }),
+});
+
+export const adminAuditEvents = pgTable('admin_audit_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  actorUserId: uuid('actor_user_id'),
+  actorEmail: text('actor_email'),
+  action: text('action').notNull(),
+  targetSellerId: uuid('target_seller_id').references(() => sellers.id, {
+    onDelete: 'set null',
+  }),
+  targetProductId: bigint('target_product_id', { mode: 'number' }).references(
+    () => blingProducts.id,
+    { onDelete: 'set null' },
+  ),
+  metadata: jsonb('metadata').$type<Json>().notNull().default({}),
+  outcome: text('outcome').notNull().default('success'),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    .notNull()
+    .defaultNow(),
+});
+
 export const blingOauthTokens = pgTable(
   'bling_oauth_tokens',
   {
@@ -106,6 +147,9 @@ export const b2bQuoteRequests = pgTable('b2b_quote_requests', {
 
 export type SellerStatus = (typeof sellerStatusEnum.enumValues)[number];
 export type SellerRow = typeof sellers.$inferSelect;
+export type AdminUserRow = typeof adminUsers.$inferSelect;
+export type EmailActionTokenRow = typeof emailActionTokens.$inferSelect;
+export type AdminAuditEventRow = typeof adminAuditEvents.$inferSelect;
 export type BlingProductRow = typeof blingProducts.$inferSelect;
 export type BlingTokenRow = typeof blingOauthTokens.$inferSelect;
 export type QuoteRequestRow = typeof b2bQuoteRequests.$inferSelect;
