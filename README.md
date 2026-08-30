@@ -15,7 +15,6 @@ pnpm lint         # eslint
 pnpm build        # search:sync + remix vite:build
 npm start            # remix-serve production server
 pnpm search:sync  # refresh Nuvemshop search index
-pnpm catalog:sync # pull Bling catalog cache
 ```
 
 ## App layout

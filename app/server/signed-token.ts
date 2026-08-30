@@ -13,16 +13,9 @@ export type ApproveSellerToken = {
   exp: number;
 };
 
-export type BlingOAuthState = {
-  purpose: 'bling-oauth';
-  nonce: string;
-  exp: number;
-};
-
-export type SignedPayload = ApproveSellerToken | BlingOAuthState;
+export type SignedPayload = ApproveSellerToken;
 
 const DEFAULT_APPROVE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const DEFAULT_OAUTH_TTL_MS = 15 * 60 * 1000;
 
 function toBase64Url(value: Buffer | string): string {
   const buffer = typeof value === 'string' ? Buffer.from(value, 'utf8') : value;
@@ -85,29 +78,4 @@ export function buildApproveSellerToken(
 
 export function hashEmailActionTokenJti(jti: string): string {
   return createHash('sha256').update(jti).digest('hex');
-}
-
-export function buildBlingOAuthState(
-  secret: string,
-  ttlMs = DEFAULT_OAUTH_TTL_MS,
-): string {
-  return signToken(
-    {
-      purpose: 'bling-oauth',
-      nonce: crypto.randomUUID(),
-      exp: Date.now() + ttlMs,
-    },
-    secret,
-  );
-}
-
-/** Start-flow HMAC state, or the static `state` from Bling's invite URL. */
-export function isValidBlingOAuthState(
-  state: string | null | undefined,
-  secret: string,
-  inviteState?: string | null,
-): boolean {
-  if (verifyToken(state, secret, 'bling-oauth')) return true;
-  if (!state || !inviteState) return false;
-  return signaturesMatch(state, inviteState);
 }

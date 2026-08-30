@@ -27,10 +27,6 @@ export async function readJson<T>(req: Request): Promise<T | null> {
   }
 }
 
-export function readAdminSecret(req: Request): string | null {
-  return req.headers.get('x-admin-secret') ?? req.headers.get('X-Admin-Secret');
-}
-
 export function escHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')

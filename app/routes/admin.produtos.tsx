@@ -11,12 +11,27 @@ import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { buildNoIndexMeta } from '~/lib/seo';
+import type { BlingConnectResult } from '~/server/bling-oauth-state';
+import {
+  readBlingConnectResult,
+  serializeBlingConnectResult,
+  startBlingOAuth,
+} from '~/server/bling-oauth-state';
 import {
   ADMIN_PRODUCT_LIST_LIMIT,
   listAdminProducts,
   updateProductVisibleB2b,
 } from '~/server/db/queries';
 import { requireAdmin } from '~/server/require-admin.server';
+
+const CONNECT_MESSAGES: Record<BlingConnectResult, string> = {
+  connected: 'Bling conectado.',
+  denied: 'Autorização cancelada no Bling.',
+  invalid_state: 'A conexão expirou. Clique em Conectar Bling outra vez.',
+  not_configured:
+    'Bling não configurado. Defina BLING_CLIENT_ID, BLING_CLIENT_SECRET e BLING_REDIRECT_URI.',
+  failed: 'Falha ao conectar o Bling. Tente outra vez.',
+};
 
 export const meta: MetaFunction = () =>
   buildNoIndexMeta(
@@ -41,10 +56,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers } = await requireAdmin(request);
   const query = new URL(request.url).searchParams.get('q') ?? '';
   const products = await listAdminProducts(query);
+  const connect = await readBlingConnectResult(request);
+  if (connect.clearCookie) headers.append('Set-Cookie', connect.clearCookie);
+
   return json(
     {
       query,
       products,
+      connectResult: connect.result,
       truncated: products.length === ADMIN_PRODUCT_LIST_LIMIT,
     },
     { headers },
@@ -54,6 +73,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { headers } = await requireAdmin(request);
   const formData = await request.formData();
+
+  if (formData.get('intent') === 'connect-bling') {
+    try {
+      return await startBlingOAuth(headers);
+    } catch (error) {
+      console.error('bling connect start failed', error);
+      headers.append(
+        'Set-Cookie',
+        await serializeBlingConnectResult('not_configured'),
+      );
+      return redirect('/admin/produtos', { headers });
+    }
+  }
+
   const productId = Number(formData.get('productId'));
   const visibleB2b = parseVisibleB2b(String(formData.get('visibleB2b') ?? ''));
   const query = String(formData.get('q') ?? '').trim();
@@ -76,7 +109,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function AdminProducts() {
-  const { query, products, truncated } = useLoaderData<typeof loader>();
+  const { connectResult, query, products, truncated } =
+    useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   return (
@@ -85,11 +119,31 @@ export default function AdminProducts() {
       description="Oculte ou mostre SKUs no catálogo B2B. Sync do Bling não altera essa visibilidade. Produto inativo no Bling continua oculto para o lojista."
       title="Produtos B2B"
     >
+      {connectResult ? (
+        <p
+          className={
+            connectResult === 'connected'
+              ? 'text-sm text-primary'
+              : 'text-sm text-accent'
+          }
+          role="status"
+        >
+          {CONNECT_MESSAGES[connectResult]}
+        </p>
+      ) : null}
+
       {actionData && actionData.ok === false ? (
         <p className="text-sm text-accent" role="alert">
           Não foi possível atualizar o produto.
         </p>
       ) : null}
+
+      <Form method="post">
+        <input name="intent" type="hidden" value="connect-bling" />
+        <Button type="submit" variant="secondary">
+          Conectar Bling
+        </Button>
+      </Form>
 
       <Form
         className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end"
@@ -179,6 +233,7 @@ function VisibilityButton({
 }) {
   return (
     <Form method="post">
+      <input name="intent" type="hidden" value="toggle-visibility" />
       <input name="productId" type="hidden" value={productId} />
       <input
         name="visibleB2b"

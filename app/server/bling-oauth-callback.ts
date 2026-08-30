@@ -1,54 +1,64 @@
 // GET /api/bling-oauth-callback?code=&state=
-// Bling redirects here after app authorization. Stores tokens via Drizzle.
+// Bling returns the admin browser here. The state cookie proves the origin.
+
+import { redirect } from '@remix-run/node';
 
 import { exchangeAuthorizationCode, saveBlingTokens } from './bling';
-import { getServerEnv } from './env';
-import { json, methodNotAllowed } from './http';
-import { isValidBlingOAuthState } from './signed-token';
+import type { BlingConnectResult } from './bling-oauth-state';
+import {
+  serializeBlingConnectResult,
+  validateBlingOAuthCallback,
+} from './bling-oauth-state';
+import { insertAdminAuditEvent } from './db/queries';
+import { methodNotAllowed } from './http';
+import { requireAdmin } from './require-admin.server';
 
-export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== 'GET') return methodNotAllowed(['GET']);
+const PRODUCTS_PATH = '/admin/produtos';
 
-  const url = new URL(req.url);
-  const code = url.searchParams.get('code');
-  const state = url.searchParams.get('state');
-  const error = url.searchParams.get('error');
-
-  if (error) {
-    return json({ error: 'bling_oauth_denied', detail: error }, 400);
+async function recordConnectAudit(
+  actor: { id: string; email?: string | null },
+  result: BlingConnectResult,
+): Promise<void> {
+  try {
+    await insertAdminAuditEvent({
+      actorUserId: actor.id,
+      actorEmail: actor.email ?? null,
+      action: 'bling.oauth.connect',
+      metadata: { result },
+      outcome: result === 'connected' ? 'success' : 'failure',
+    });
+  } catch (error) {
+    console.error('bling connect audit failed', error);
   }
-  if (!code) return json({ error: 'code_required' }, 400);
+}
+
+export default async function handler(request: Request): Promise<Response> {
+  if (request.method !== 'GET') return methodNotAllowed(['GET']);
+
+  const { user, headers } = await requireAdmin(request);
+  const state = await validateBlingOAuthCallback(request);
+  for (const cookie of state.headers.getSetCookie()) {
+    headers.append('Set-Cookie', cookie);
+  }
+
+  const finish = async (result: BlingConnectResult): Promise<Response> => {
+    await recordConnectAudit(user, result);
+    headers.append('Set-Cookie', await serializeBlingConnectResult(result));
+    return redirect(PRODUCTS_PATH, { headers });
+  };
+
+  const url = new URL(request.url);
+  if (url.searchParams.get('error')) return finish('denied');
+  if (!state.valid) return finish('invalid_state');
+
+  const code = url.searchParams.get('code');
+  if (!code) return finish('failed');
 
   try {
-    const env = getServerEnv();
-    if (!env.adminApproveSecret) {
-      return json({ error: 'admin_secret_not_configured' }, 503);
-    }
-    if (
-      !isValidBlingOAuthState(
-        state,
-        env.adminApproveSecret,
-        env.blingOauthInviteState,
-      )
-    ) {
-      return json(
-        {
-          error: 'invalid_state',
-          message:
-            'Use /api/bling-oauth-start?secret=... or set BLING_OAUTH_INVITE_STATE to the state from Bling invite link.',
-        },
-        400,
-      );
-    }
-    const tokens = await exchangeAuthorizationCode(code);
-    await saveBlingTokens(tokens);
-    return json({
-      success: true,
-      message:
-        'Bling conectado. Rode /api/bling-sync ou pnpm catalog:sync para popular o catálogo.',
-    });
-  } catch (err) {
-    console.error('bling-oauth-callback failed', err);
-    return json({ error: 'oauth_callback_failed' }, 500);
+    await saveBlingTokens(await exchangeAuthorizationCode(code));
+  } catch (error) {
+    console.error('bling-oauth-callback failed', error);
+    return finish('failed');
   }
+  return finish('connected');
 }

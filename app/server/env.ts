@@ -14,11 +14,8 @@ export type ServerEnv = {
   blingClientId: string | null;
   blingClientSecret: string | null;
   blingRedirectUri: string | null;
-  blingOauthInviteState: string | null;
   blingApiBase: string;
   blingAuthBase: string;
-  /** Legacy Bling-only secret; removed with the cookie-bound OAuth flow. */
-  adminApproveSecret: string | null;
   approvalLinkSecret: string | null;
   adminBootstrapEmails: string[];
   defaultMinQuantity: number;
@@ -58,10 +55,8 @@ const serverEnvSchema = z
     BLING_CLIENT_ID: optionalEnv(),
     BLING_CLIENT_SECRET: optionalEnv(),
     BLING_REDIRECT_URI: optionalEnv(),
-    BLING_OAUTH_INVITE_STATE: optionalEnv(),
     BLING_API_BASE: optionalEnv(),
     BLING_AUTH_BASE: optionalEnv(),
-    B2B_ADMIN_APPROVE_SECRET: optionalEnv(),
     B2B_APPROVAL_LINK_SECRET: optionalEnv(),
     ADMIN_BOOTSTRAP_EMAILS: optionalEnv(),
     B2B_DEFAULT_MIN_QUANTITY: optionalEnv(),
@@ -90,11 +85,9 @@ const serverEnvSchema = z
       blingClientId: env.BLING_CLIENT_ID ?? null,
       blingClientSecret: env.BLING_CLIENT_SECRET ?? null,
       blingRedirectUri: env.BLING_REDIRECT_URI ?? null,
-      blingOauthInviteState: env.BLING_OAUTH_INVITE_STATE ?? null,
       blingApiBase: env.BLING_API_BASE ?? 'https://api.bling.com.br/Api/v3',
       blingAuthBase:
         env.BLING_AUTH_BASE ?? 'https://www.bling.com.br/Api/v3/oauth',
-      adminApproveSecret: env.B2B_ADMIN_APPROVE_SECRET ?? null,
       approvalLinkSecret: env.B2B_APPROVAL_LINK_SECRET ?? null,
       adminBootstrapEmails: parseAdminEmails(env.ADMIN_BOOTSTRAP_EMAILS),
       defaultMinQuantity:

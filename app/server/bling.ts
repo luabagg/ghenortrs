@@ -116,9 +116,7 @@ export async function saveBlingTokens(tokens: TokenResponse): Promise<void> {
 export async function getValidAccessToken(): Promise<string> {
   const stored = await readStoredBlingTokens();
   if (!stored) {
-    throw new Error(
-      'Bling OAuth not connected. Visit /api/bling-oauth-start once.',
-    );
+    throw new Error('Bling not connected. Connect it at /admin/produtos.');
   }
 
   const expiresAt = new Date(stored.expiresAt).getTime();
