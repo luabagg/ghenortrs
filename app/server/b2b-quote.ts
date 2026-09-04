@@ -117,7 +117,7 @@ export default async function handler(req: Request): Promise<Response> {
     const [teamEmail, sellerEmail] = await Promise.all([
       deliverEmail({
         label: 'b2b-quote team alert',
-        to: env.resendToEmail,
+        to: env.resendToEmails,
         subject: `[B2B orçamento] ${auth.seller.companyName}`,
         replyTo: auth.seller.email,
         html: buildQuoteRequestHtml({
@@ -136,7 +136,7 @@ export default async function handler(req: Request): Promise<Response> {
         label: 'b2b-quote seller receipt',
         to: auth.seller.email,
         subject: 'Recebemos sua solicitação de orçamento',
-        replyTo: env.resendToEmail ?? undefined,
+        replyTo: env.resendToEmails[0],
         html: buildSellerQuoteReceiptHtml({
           companyName: auth.seller.companyName,
           tier: pricing.tier,

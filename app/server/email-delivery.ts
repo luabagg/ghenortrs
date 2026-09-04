@@ -13,7 +13,7 @@ export type EmailOutcome = 'sent' | 'skipped' | 'failed';
 export async function deliverEmail(input: {
   /** Short name for the logs, e.g. "b2b-quote team alert". */
   label: string;
-  to: string | null;
+  to: string | string[] | null;
   subject: string;
   html: string;
   replyTo?: string;
@@ -24,14 +24,17 @@ export async function deliverEmail(input: {
     console.warn(`${input.label}: not sent, RESEND_API_KEY is missing`);
     return 'skipped';
   }
-  if (!input.to) {
+  const recipients = (Array.isArray(input.to) ? input.to : [input.to]).filter(
+    (entry): entry is string => Boolean(entry),
+  );
+  if (recipients.length === 0) {
     console.warn(`${input.label}: not sent, no recipient configured`);
     return 'skipped';
   }
 
   try {
     const result = await sendResendEmail({
-      to: input.to,
+      to: recipients,
       subject: input.subject,
       html: input.html,
       replyTo: input.replyTo,

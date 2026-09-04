@@ -68,7 +68,7 @@ beforeEach(() => {
   vi.mocked(getServerEnv).mockReturnValue({
     minimumOrderQuantity: 6,
     resendApiKey: 'test-key',
-    resendToEmail: 'contato@ghenortrs.com.br',
+    resendToEmails: ['admin@ghenortrs.com.br', 'contato@ghenortrs.com.br'],
   } as ReturnType<typeof getServerEnv>);
   vi.mocked(listActiveProductsByIds).mockResolvedValue(products);
   vi.mocked(insertQuoteRequest).mockResolvedValue({
@@ -148,9 +148,10 @@ describe('B2B quote handler', () => {
       'b2b-quote team alert',
       'b2b-quote seller receipt',
     ]);
-    expect(vi.mocked(deliverEmail).mock.calls[0][0].to).toBe(
+    expect(vi.mocked(deliverEmail).mock.calls[0][0].to).toEqual([
+      'admin@ghenortrs.com.br',
       'contato@ghenortrs.com.br',
-    );
+    ]);
     expect(vi.mocked(deliverEmail).mock.calls[1][0].to).toBe(
       'compras@norte.test',
     );

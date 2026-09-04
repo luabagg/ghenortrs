@@ -177,7 +177,7 @@ export default async function handler(req: Request): Promise<Response> {
   await Promise.all([
     deliverEmail({
       label: 'b2b-register team alert',
-      to: env.resendToEmail,
+      to: env.resendToEmails,
       subject: `[B2B cadastro] ${data.empresa}`,
       replyTo: data.email,
       html: buildSellerRegistrationHtml({
@@ -194,7 +194,7 @@ export default async function handler(req: Request): Promise<Response> {
       label: 'b2b-register seller receipt',
       to: data.email,
       subject: 'Recebemos seu cadastro B2B',
-      replyTo: env.resendToEmail ?? undefined,
+      replyTo: env.resendToEmails[0],
       html: buildSellerRegistrationReceiptHtml({ companyName: data.empresa }),
     }),
   ]);

@@ -9,7 +9,7 @@ export type ServerEnv = {
   supabaseServiceRoleKey: string;
   databaseUrl: string;
   resendApiKey: string | null;
-  resendToEmail: string | null;
+  resendToEmails: string[];
   resendFrom: string;
   blingClientId: string | null;
   blingClientSecret: string | null;
@@ -36,6 +36,18 @@ function requiredEnv(name: string) {
     normalizeEnvValue,
     z.string({ error: `Missing required env: ${name}` }),
   );
+}
+
+/**
+ * RESEND_TO_EMAIL takes one address or several, comma separated, so the team
+ * can add an inbox without a code change.
+ */
+export function parseEmailList(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return raw
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
 }
 
 const serverEnvSchema = z
@@ -80,7 +92,7 @@ const serverEnvSchema = z
       supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
       databaseUrl,
       resendApiKey: env.RESEND_API_KEY ?? null,
-      resendToEmail: env.RESEND_TO_EMAIL ?? null,
+      resendToEmails: parseEmailList(env.RESEND_TO_EMAIL),
       resendFrom: env.RESEND_FROM ?? 'GHENO B2B <noreply@ghenortrs.com.br>',
       blingClientId: env.BLING_CLIENT_ID ?? null,
       blingClientSecret: env.BLING_CLIENT_SECRET ?? null,

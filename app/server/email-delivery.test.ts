@@ -26,7 +26,7 @@ describe('deliverEmail', () => {
   it('sends and reports success', async () => {
     await expect(deliverEmail(input)).resolves.toBe('sent');
     expect(sendResendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({ to: 'team@example.test' }),
+      expect.objectContaining({ to: ['team@example.test'] }),
     );
   });
 
@@ -58,5 +58,20 @@ describe('deliverEmail', () => {
     vi.mocked(sendResendEmail).mockRejectedValue(new Error('network down'));
 
     await expect(deliverEmail(input)).resolves.toBe('failed');
+  });
+
+  it('sends to every configured recipient', async () => {
+    await expect(
+      deliverEmail({ ...input, to: ['a@example.test', 'b@example.test'] }),
+    ).resolves.toBe('sent');
+
+    expect(sendResendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: ['a@example.test', 'b@example.test'] }),
+    );
+  });
+
+  it('reports a skip for an empty recipient list', async () => {
+    await expect(deliverEmail({ ...input, to: [] })).resolves.toBe('skipped');
+    expect(sendResendEmail).not.toHaveBeenCalled();
   });
 });
