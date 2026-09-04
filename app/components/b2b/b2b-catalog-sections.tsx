@@ -61,6 +61,39 @@ export function TierLadder({ activeTier }: { activeTier: SellerTier }) {
   );
 }
 
+/**
+ * Bling hosts the file; we cache only its URL. The empty alt is deliberate.
+ * The product name sits beside the thumb, so announcing it twice adds noise.
+ * The placeholder keeps the same footprint so rows stay aligned.
+ */
+function ProductThumb({ src, name }: { src: string | null; name: string }) {
+  const frame =
+    'size-16 shrink-0 rounded-sm border border-border bg-background-soft';
+
+  if (!src) {
+    return (
+      <div
+        aria-hidden="true"
+        className={`${frame} grid place-items-center font-body text-[11px] text-secondary`}
+      >
+        sem foto
+      </div>
+    );
+  }
+
+  return (
+    <img
+      alt=""
+      className={`${frame} object-cover`}
+      height={64}
+      loading="lazy"
+      src={src}
+      title={name}
+      width={64}
+    />
+  );
+}
+
 export function ProductRow({
   product,
   quantity,
@@ -85,20 +118,23 @@ export function ProductRow({
 
   return (
     <li className="grid gap-3 py-4 sm:grid-cols-[1fr_auto_8rem] sm:items-start sm:gap-6">
-      <div className="grid gap-1">
-        <p className="font-body text-[14px] font-bold leading-5 text-primary">
-          {product.name}
-        </p>
-        {meta.length > 0 ? (
-          <p className="font-body text-[12px] leading-5 text-secondary">
-            {meta.join(' · ')}
+      <div className="flex items-start gap-3">
+        <ProductThumb name={product.name} src={product.imageUrl} />
+        <div className="grid gap-1">
+          <p className="font-body text-[14px] font-bold leading-5 text-primary">
+            {product.name}
           </p>
-        ) : null}
-        {product.description ? (
-          <p className="max-w-prose font-body text-[12px] leading-5 text-secondary">
-            {product.description}
-          </p>
-        ) : null}
+          {meta.length > 0 ? (
+            <p className="font-body text-[12px] leading-5 text-secondary">
+              {meta.join(' · ')}
+            </p>
+          ) : null}
+          {product.description ? (
+            <p className="max-w-prose font-body text-[12px] leading-5 text-secondary">
+              {product.description}
+            </p>
+          ) : null}
+        </div>
       </div>
 
       <div className="grid gap-1 sm:text-right">

@@ -29,7 +29,7 @@ const aro: B2BCatalogProduct = {
   sku: 'ARO-29',
   name: 'Aro 29',
   description: 'Alumínio 6061',
-  imageUrl: null,
+  imageUrl: 'https://bling.example/aro-29.jpg',
   prices: { startCents: 20_000, proCents: 18_000, maxCents: 15_000 },
   stock: 40,
   unit: 'UN',
@@ -105,6 +105,20 @@ beforeEach(() => {
 });
 
 describe('B2BCatalogPage', () => {
+  it('shows the Bling photo, and a placeholder when there is none', () => {
+    renderPage();
+
+    const rows = screen.getAllByRole('listitem');
+    const aroRow = rows.find((row) => row.textContent?.includes('Aro 29'));
+    const discoRow = rows.find((row) => row.textContent?.includes('Disco 180'));
+
+    expect(within(aroRow as HTMLElement).getByTitle('Aro 29')).toHaveAttribute(
+      'src',
+      'https://bling.example/aro-29.jpg',
+    );
+    expect(within(discoRow as HTMLElement).getByText('sem foto')).toBeVisible();
+  });
+
   it('never lets the seller pick a price table by hand', () => {
     renderPage();
 
