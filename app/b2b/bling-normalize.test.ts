@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { htmlToPlainText, normalizeBlingProduct } from '~/server/bling';
+import { normalizeBlingProduct } from '~/server/bling';
+import { htmlToPlainText } from '~/server/html-text';
 
 describe('normalizeBlingProduct', () => {
   it('converts the Bling price to cents', () => {

@@ -1,7 +1,7 @@
 // GET /api/b2b-catalog?q=&limit=
 // Approved sellers only. Reads cached Bling products.
 
-import { htmlToPlainText } from './bling';
+import { htmlToPlainText } from './html-text';
 import { listActiveCatalogProducts } from './db/queries';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed } from './http';

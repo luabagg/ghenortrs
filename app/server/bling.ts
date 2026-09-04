@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 
+import { htmlToPlainText } from './html-text';
 import type { Json } from './json';
 import {
   listStoredImageKeys,
@@ -41,37 +42,6 @@ function basicAuthHeader(clientId: string, clientSecret: string): string {
   }
   // Node fallback
   return `Basic ${Buffer.from(raw, 'utf8').toString('base64')}`;
-}
-
-const HTML_ENTITIES: Record<string, string> = {
-  amp: '&',
-  lt: '<',
-  gt: '>',
-  quot: '"',
-  '#39': "'",
-  nbsp: ' ',
-};
-
-/**
- * Bling stores the short description as seller-authored HTML. The catalog
- * shows it as text, so flatten it here instead of trusting markup later.
- */
-export function htmlToPlainText(html: string): string {
-  return html
-    .replace(/<\s*br\s*\/?>/gi, '\n')
-    .replace(/<\/\s*(p|div|li|h[1-6])\s*>/gi, '\n')
-    .replace(/<[^>]*>/g, '')
-    .replace(
-      /&(amp|lt|gt|quot|#39|nbsp);/g,
-      (_match, entity: string) => HTML_ENTITIES[entity] ?? ' ',
-    )
-    .replace(/\r/g, '')
-    .replace(/[ \t]+/g, ' ')
-    .split('\n')
-    .map((line) => line.trim())
-    .join('\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
 }
 
 export function getBlingAuthorizeUrl(state: string): string {

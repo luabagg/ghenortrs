@@ -1,4 +1,5 @@
 import { formatCentsToBRL } from '../lib/br-money';
+import { htmlToPlainText } from './html-text';
 import { escHtml } from './http';
 
 type SendEmailInput = {
@@ -88,6 +89,10 @@ export async function sendResendEmail(
       reply_to: input.replyTo,
       subject: input.subject,
       html: input.html,
+      // HTML-only mail scores worse with spam filters, and these messages are
+      // same-domain from an external sender, which is already suspicious.
+      // Resend turns the pair into multipart/alternative.
+      text: htmlToPlainText(input.html),
     }),
   });
 
