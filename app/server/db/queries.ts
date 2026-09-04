@@ -596,13 +596,26 @@ export type ProductImageRow = {
   sourceKey: string;
 };
 
+export type ProductImageVariant = 'catalog' | 'full';
+
+/**
+ * Reads one variant. Only the requested column is selected, so a catalog row
+ * never pulls the expanded image over the wire. `full` falls back to the
+ * catalog bytes for a row stored before the column existed.
+ */
 export async function getProductImage(
   productId: number,
+  variant: ProductImageVariant = 'catalog',
 ): Promise<ProductImageRow | null> {
+  const bytesColumn =
+    variant === 'full'
+      ? sql<Buffer>`coalesce(${blingProductImages.fullBytes}, ${blingProductImages.bytes})`
+      : blingProductImages.bytes;
+
   const [row] = await getDb()
     .select({
       contentType: blingProductImages.contentType,
-      bytes: blingProductImages.bytes,
+      bytes: bytesColumn,
       sourceKey: blingProductImages.sourceKey,
     })
     .from(blingProductImages)
@@ -611,14 +624,19 @@ export async function getProductImage(
   return row ?? null;
 }
 
-/** Product ids that already have bytes stored, keyed by their source key. */
+/**
+ * Source keys of rows that hold every variant the app serves. A row missing
+ * the full size is left out, so the next sync re-downloads and completes it
+ * instead of skipping on an unchanged key.
+ */
 export async function listStoredImageKeys(): Promise<Map<number, string>> {
   const rows = await getDb()
     .select({
       productId: blingProductImages.productId,
       sourceKey: blingProductImages.sourceKey,
     })
-    .from(blingProductImages);
+    .from(blingProductImages)
+    .where(isNotNull(blingProductImages.fullBytes));
   return new Map(rows.map((row) => [row.productId, row.sourceKey]));
 }
 
@@ -626,6 +644,7 @@ export async function upsertProductImage(input: {
   productId: number;
   contentType: string;
   bytes: Buffer;
+  fullBytes: Buffer;
   sourceKey: string;
 }): Promise<void> {
   await getDb()
@@ -636,6 +655,7 @@ export async function upsertProductImage(input: {
       set: {
         contentType: sql`excluded.content_type`,
         bytes: sql`excluded.bytes`,
+        fullBytes: sql`excluded.full_bytes`,
         sourceKey: sql`excluded.source_key`,
         fetchedAt: sql`excluded.fetched_at`,
       },

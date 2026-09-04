@@ -27,14 +27,16 @@ describe('B2B product image handler', () => {
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toBe('image/jpeg');
     expect(response.headers.get('cache-control')).toContain('max-age=31536000');
-    expect(response.headers.get('etag')).toBe('"c64a2e9f"');
+    expect(response.headers.get('etag')).toBe('"c64a2e9f-catalog"');
     expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
-    expect(getProductImage).toHaveBeenCalledWith(7);
+    expect(getProductImage).toHaveBeenCalledWith(7, 'catalog');
   });
 
   it('answers 304 when the client already has that image', async () => {
     const response = await handler(
-      get('/api/b2b-product-image/7', { 'if-none-match': '"c64a2e9f"' }),
+      get('/api/b2b-product-image/7', {
+        'if-none-match': '"c64a2e9f-catalog"',
+      }),
       '7',
     );
 
@@ -63,5 +65,22 @@ describe('B2B product image handler', () => {
     );
 
     expect(response.status).toBe(405);
+  });
+
+  it('serves the expanded variant when asked, under its own ETag', async () => {
+    const response = await handler(
+      get('/api/b2b-product-image/7?size=full'),
+      '7',
+    );
+
+    expect(getProductImage).toHaveBeenCalledWith(7, 'full');
+    // A shared ETag would serve one size out of the other's cache entry.
+    expect(response.headers.get('etag')).toBe('"c64a2e9f-full"');
+  });
+
+  it('defaults to the catalog variant', async () => {
+    await handler(get('/api/b2b-product-image/7?size=whatever'), '7');
+
+    expect(getProductImage).toHaveBeenCalledWith(7, 'catalog');
   });
 });

@@ -16,10 +16,11 @@ vi.mock('./db/queries', () => ({
   upsertBlingProducts: vi.fn(),
 }));
 vi.mock('./env', () => ({ getServerEnv: vi.fn() }));
+// Echoes the requested width, so a test can prove which sizes were produced.
 vi.mock('sharp', () => ({
   default: () => ({
-    resize: () => ({
-      webp: () => ({ toBuffer: async () => Buffer.from('resized-webp') }),
+    resize: ({ width }: { width: number }) => ({
+      webp: () => ({ toBuffer: async () => Buffer.from(`webp-${width}`) }),
     }),
   }),
 }));
@@ -101,13 +102,18 @@ describe('cacheBlingProductImages', () => {
     expect(result).toEqual({ stored: 1, skipped: 0, failed: 0 });
     expect(upsertProductImage).toHaveBeenCalledWith({
       productId: 7,
-      // Normalised at sync time: the original is a multi-megapixel PNG.
+      // Normalised at sync time: the original is a multi-megapixel PNG. The
+      // catalog size keeps a page of rows cheap; the full size feeds the
+      // expanded viewer in the product drawer.
       contentType: 'image/webp',
-      bytes: Buffer.from('resized-webp'),
+      bytes: Buffer.from('webp-400'),
+      fullBytes: Buffer.from('webp-1400'),
       sourceKey: 'abc123',
     });
   });
 
+  // listStoredImageKeys only reports rows that already hold every variant,
+  // so an incomplete row reaches the download path even on the same key.
   it('skips a product whose object key has not changed', async () => {
     vi.mocked(listStoredImageKeys).mockResolvedValue(new Map([[7, 'abc123']]));
     const fetchMock = stubBlingAndS3('abc123');

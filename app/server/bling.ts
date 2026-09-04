@@ -343,16 +343,19 @@ async function fetchFullSizeImageUrl(
 }
 
 /** Wide enough for the 80px row thumb and the drawer image on a 2x screen. */
-const STORED_IMAGE_WIDTH = 400;
+const CATALOG_IMAGE_WIDTH = 400;
+
+/** For the expanded viewer. Covers a phone at 2x and a desktop lightbox. */
+const FULL_IMAGE_WIDTH = 1400;
 
 /**
  * Bling originals run to 2160x2700 PNG, around 445 KB each. Serving that for
- * an 80px thumbnail is waste, so normalise once at sync time. The same source
- * lands at roughly 6 KB of WebP.
+ * an 80px thumbnail is waste, so normalise once at sync time into the two
+ * sizes the UI actually asks for.
  */
-async function normaliseImage(bytes: Buffer): Promise<Buffer> {
+async function normaliseImage(bytes: Buffer, width: number): Promise<Buffer> {
   return sharp(bytes)
-    .resize({ width: STORED_IMAGE_WIDTH, withoutEnlargement: true })
+    .resize({ width, withoutEnlargement: true })
     .webp({ quality: 80 })
     .toBuffer();
 }
@@ -398,10 +401,15 @@ export async function cacheBlingProductImages(
         throw new Error('payload is not an image');
       }
 
+      const [catalogBytes, fullBytes] = await Promise.all([
+        normaliseImage(downloaded, CATALOG_IMAGE_WIDTH),
+        normaliseImage(downloaded, FULL_IMAGE_WIDTH),
+      ]);
       await upsertProductImage({
         productId: product.id,
         contentType: 'image/webp',
-        bytes: await normaliseImage(downloaded),
+        bytes: catalogBytes,
+        fullBytes,
         sourceKey: key,
       });
       storedCount += 1;

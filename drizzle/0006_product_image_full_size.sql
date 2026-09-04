@@ -1,0 +1,1 @@
+ALTER TABLE "bling_product_images" ADD COLUMN "full_bytes" "bytea";

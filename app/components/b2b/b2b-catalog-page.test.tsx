@@ -328,6 +328,44 @@ describe('B2BCatalogPage detail drawer', () => {
 
     expect(screen.queryByRole('dialog')).toBeNull();
   });
+
+  it('expands the photo, and the drawer stays open behind it', () => {
+    renderPage();
+    const drawer = openDetail('Aro 29');
+
+    fireEvent.click(
+      within(drawer).getByRole('button', {
+        name: 'Ampliar a foto de Aro 29',
+      }),
+    );
+
+    const viewer = screen.getByRole('dialog', {
+      name: 'Foto ampliada: Aro 29',
+    });
+    // Requests the expanded variant, not the catalog thumbnail.
+    expect(viewer.querySelector('img')).toHaveAttribute(
+      'src',
+      'https://bling.example/aro-29.jpg?size=full',
+    );
+
+    // One Escape closes the viewer only.
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(
+      screen.getByRole('button', { name: 'Ampliar a foto de Aro 29' }),
+    ).toBeVisible();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('offers no expansion for a product with no photo', () => {
+    renderPage();
+    const drawer = openDetail('Disco 180');
+
+    expect(
+      within(drawer).queryByRole('button', { name: /^Ampliar a foto/ }),
+    ).toBeNull();
+  });
 });
 
 describe('B2BCatalogPage order bar and review', () => {

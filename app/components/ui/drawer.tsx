@@ -13,12 +13,15 @@ export function Drawer({
   onClose,
   children,
   footer,
+  closeOnEscape = true,
 }: {
   open: boolean;
   title: string;
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  /** Set false while a layer above owns Escape, so one press closes one thing. */
+  closeOnEscape?: boolean;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -29,13 +32,13 @@ export function Drawer({
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !closeOnEscape) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, onClose]);
+  }, [open, closeOnEscape, onClose]);
 
   if (!open) return null;
 

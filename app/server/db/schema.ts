@@ -148,7 +148,13 @@ export const blingProductImages = pgTable('bling_product_images', {
     .primaryKey()
     .references(() => blingProducts.id, { onDelete: 'cascade' }),
   contentType: text('content_type').notNull(),
+  /** Catalog size. Small enough that a full page of rows stays cheap. */
   bytes: bytea('bytes').notNull(),
+  /**
+   * Expanded size, for the viewer in the product drawer. Nullable so a row
+   * written before this column existed still serves its catalog image.
+   */
+  fullBytes: bytea('full_bytes'),
   /**
    * The S3 object key from the source URL, without the signature. Bling keys
    * are content addressed, so an unchanged key means unchanged bytes and the

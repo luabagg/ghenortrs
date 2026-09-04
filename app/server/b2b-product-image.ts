@@ -5,7 +5,7 @@
 // are catalogue photos of components already listed on the public storefront,
 // so gating them would cost the seller UI its images to protect nothing.
 
-import { getProductImage } from './db/queries';
+import { getProductImage, type ProductImageVariant } from './db/queries';
 import { methodNotAllowed } from './http';
 
 /** A year. The URL is stable per product and the bytes change only on sync. */
@@ -14,6 +14,17 @@ const CACHE_CONTROL = 'public, max-age=31536000, stale-while-revalidate=86400';
 function parseProductId(raw: string | undefined): number | null {
   const id = Number(raw);
   return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
+/** `?size=full` serves the expanded image; anything else the catalog one. */
+function parseVariant(url: string): ProductImageVariant {
+  try {
+    return new URL(url).searchParams.get('size') === 'full'
+      ? 'full'
+      : 'catalog';
+  } catch {
+    return 'catalog';
+  }
 }
 
 export default async function handler(
@@ -27,11 +38,14 @@ export default async function handler(
   const productId = parseProductId(productIdParam);
   if (productId === null) return new Response('Not Found', { status: 404 });
 
-  const image = await getProductImage(productId);
+  const variant = parseVariant(req.url);
+  const image = await getProductImage(productId, variant);
   if (!image) return new Response('Not Found', { status: 404 });
 
-  // The source key is content addressed, so it doubles as a strong ETag.
-  const etag = `"${image.sourceKey.split('/').pop() ?? productId}"`;
+  // The source key is content addressed, so it doubles as a strong ETag. The
+  // variant belongs in it too, or one size would be served from the other's
+  // cache entry.
+  const etag = `"${image.sourceKey.split('/').pop() ?? productId}-${variant}"`;
   if (req.headers.get('if-none-match') === etag) {
     return new Response(null, {
       status: 304,
