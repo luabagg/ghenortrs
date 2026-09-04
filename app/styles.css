@@ -198,3 +198,14 @@ select {
       color-mix(in srgb, var(--color-surface-glass) 96%, transparent);
   }
 }
+
+@layer base {
+  /* Tailwind v4 preflight gives buttons `cursor: default`. Every control
+     here is clickable, so restore the pointer the whole web expects. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+}

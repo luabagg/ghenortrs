@@ -20,7 +20,7 @@ function toPublicProduct(
     sku: row.sku,
     name: row.name,
     description: htmlToPlainText(row.description),
-    imageUrl: row.imageUrl,
+    imageUrl: row.hasImage ? `/api/b2b-product-image/${row.id}` : null,
     prices: {
       startCents: requirePrice(row.priceStartCents),
       proCents: requirePrice(row.priceProCents),

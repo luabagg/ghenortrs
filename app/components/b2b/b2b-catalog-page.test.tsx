@@ -102,7 +102,7 @@ function goToReview() {
 }
 
 function summary() {
-  return screen.getByText('Tabela aplicada').closest('dl') as HTMLElement;
+  return screen.getByRole('region', { name: 'Resumo do pedido' });
 }
 
 /** The row prints "Melhor valor:" plus the amount in its own accent span. */
@@ -226,9 +226,9 @@ describe('B2BCatalogPage prices', () => {
     expect(bestValue('Aro 29')).toBeNull();
 
     goToReview();
-    expect(within(summary()).getByText('Max')).toBeVisible();
+    expect(within(summary()).getByText(/tabela Max$/)).toBeVisible();
     expect(
-      screen.getByText('Você está na melhor tabela, a Max.'),
+      within(summary()).getByText('Você está na melhor tabela, a Max.'),
     ).toBeVisible();
   });
 
@@ -238,8 +238,8 @@ describe('B2BCatalogPage prices', () => {
     goToReview();
 
     expect(
-      screen.getByText(
-        'Some R$ 3.800,00 à base da tabela para chegar na tabela Max.',
+      within(summary()).getByText(
+        'Falta R$ 3.800,00 para a tabela Max, com preços melhores.',
       ),
     ).toBeVisible();
   });
@@ -365,7 +365,9 @@ describe('B2BCatalogPage order bar and review', () => {
     expect(
       screen.queryByPlaceholderText('Observações, prazos ou mix desejado'),
     ).toBeNull();
-    expect(screen.queryByText('Tabela aplicada')).toBeNull();
+    expect(
+      screen.queryByRole('region', { name: 'Resumo do pedido' }),
+    ).toBeNull();
   });
 
   it('returns to the catalog from the review step', () => {
@@ -395,9 +397,7 @@ describe('B2BCatalogPage order bar and review', () => {
       screen.getByPlaceholderText('Observações, prazos ou mix desejado'),
       { target: { value: 'Entrega em duas semanas' } },
     );
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Enviar solicitação à GHENO rotors' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar' }));
 
     await waitFor(() => {
       expect(mutate).toHaveBeenCalledWith({

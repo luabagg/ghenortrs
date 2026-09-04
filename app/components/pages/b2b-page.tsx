@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { Link } from '@remix-run/react';
+import { useNavigate } from '@remix-run/react';
 
 import {
   clearAuthRedirectError,
@@ -22,7 +22,6 @@ import {
 } from '~/components/pages/b2b-page-sections';
 import type { B2BActionData } from '~/components/pages/b2b-form-types';
 import { useB2BLeadForm } from '~/components/pages/use-b2b-lead-form';
-import { Button } from '~/components/ui/button';
 
 type GateMode = 'login' | 'register';
 
@@ -46,6 +45,11 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
   useEffect(() => {
     if (capturedLinkError) clearAuthRedirectError();
   }, [capturedLinkError]);
+  // An approved seller has nothing to do on this page. Send them straight in.
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (gate === 'approved') navigate('/b2b/catalogo', { replace: true });
+  }, [gate, navigate]);
   const linkError = capturedLinkError
     ? describeAuthRedirectError(capturedLinkError)
     : null;
@@ -81,28 +85,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
     return <B2BSuccessSection />;
   }
 
-  if (gate === 'approved') {
-    return (
-      <div className="grid gap-8">
-        <B2BAccessHeroSection
-          description="Seu acesso ao catálogo B2B já está liberado. Use o botão abaixo para acessar."
-          title="Catálogo B2B liberado."
-        />
-        <div className="flex flex-wrap gap-3">
-          <Button asChild variant="outline">
-            <Link to="/b2b/catalogo">Abrir catálogo B2B</Link>
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => void signOut()}
-          >
-            Sair
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  if (gate === 'approved') return null;
 
   if (gate === 'pending') {
     return (

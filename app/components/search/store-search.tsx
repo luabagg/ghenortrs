@@ -129,10 +129,12 @@ export function StoreSearch({
       {results.length > 0 ? (
         <div
           className={cn(
-            'grid gap-1 overflow-y-auto pr-1',
+            'grid gap-1 pr-1',
+            // The mobile sheet is the scroll container; nesting a second one
+            // inside it traps the wheel and the touch drag.
             mode === 'mobile'
-              ? 'max-h-[42dvh] overscroll-contain'
-              : 'max-h-[21rem] overscroll-contain',
+              ? ''
+              : 'max-h-[21rem] overflow-y-auto overscroll-contain',
           )}
           data-scroll-lock-scrollable={mode === 'mobile' ? true : undefined}
           id={resultListId}

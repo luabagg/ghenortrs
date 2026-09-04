@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@remix-run/react';
 
 import { B2B_MINIMUM_ORDER_QUANTITY } from '@/b2b/config';
@@ -46,6 +46,11 @@ export function B2BCatalogPage() {
 
   const draft = useOrderDraft(products);
   const submitQuote = useSubmitB2BQuoteMutation();
+
+  useEffect(() => {
+    // The two steps share a route, so the browser keeps the scroll position.
+    window.scrollTo({ top: 0 });
+  }, [step]);
 
   const detailProduct = products.find((item) => item.id === detailId) ?? null;
   const belowMinimum = draft.totalQuantity < minimumOrderQuantity;

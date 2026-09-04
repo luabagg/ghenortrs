@@ -129,7 +129,7 @@ export function B2BOrderReview({
           type="button"
           onClick={onSubmit}
         >
-          {submitting ? 'Enviando…' : 'Enviar solicitação à GHENO rotors'}
+          {submitting ? 'Enviando…' : 'Enviar'}
         </Button>
       </div>
     </div>

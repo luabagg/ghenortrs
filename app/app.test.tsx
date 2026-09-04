@@ -454,7 +454,7 @@ describe('App', () => {
     ).toHaveAttribute('href', 'mailto:contato@ghenortrs.com.br');
   });
 
-  it('directs approved sellers to the B2B catalog', () => {
+  it('shows an approved seller nothing on the access page', () => {
     const sessionSpy = vi.spyOn(b2bSession, 'useB2BSession').mockReturnValue({
       configured: true,
       error: null,
@@ -479,15 +479,13 @@ describe('App', () => {
     try {
       renderApp('/b2b');
 
+      // The page renders nothing for an approved seller; it redirects instead.
+      // b2b-page.test.tsx asserts the target, which this harness cannot follow.
       expect(
-        screen.getByText(
-          'Seu acesso ao catálogo B2B já está liberado. Use o botão abaixo para acessar.',
-        ),
-      ).toBeInTheDocument();
-      expect(screen.queryByText(/Luan Baggio/)).not.toBeInTheDocument();
-      expect(
-        screen.getByRole('link', { name: 'Abrir catálogo B2B' }),
-      ).toHaveAttribute('href', '/b2b/catalogo');
+        screen.queryByRole('link', { name: 'Abrir catálogo B2B' }),
+      ).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Sair' })).toBeNull();
+      expect(screen.getByRole('main')).toHaveTextContent('');
     } finally {
       sessionSpy.mockRestore();
     }

@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   check,
+  customType,
   integer,
   jsonb,
   numeric,
@@ -14,6 +15,11 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import type { Json } from '../json';
+
+/** Drizzle has no bytea column, and postgres.js hands it back as a Buffer. */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType: () => 'bytea',
+});
 
 export const sellerStatusEnum = pgEnum('seller_status', [
   'pending',
@@ -128,6 +134,28 @@ export const blingProducts = pgTable('bling_products', {
   raw: jsonb('raw').$type<Json>().notNull().default({}),
   searchTerms: text('search_terms').notNull().default(''),
   syncedAt: timestamp('synced_at', { withTimezone: true, mode: 'string' })
+    .notNull()
+    .defaultNow(),
+});
+
+/**
+ * Bling serves product photos as presigned S3 links that expire in days, so a
+ * cached URL turns into a 403. Keep the bytes instead. The store is small: one
+ * thumbnail-sized image per product.
+ */
+export const blingProductImages = pgTable('bling_product_images', {
+  productId: bigint('product_id', { mode: 'number' })
+    .primaryKey()
+    .references(() => blingProducts.id, { onDelete: 'cascade' }),
+  contentType: text('content_type').notNull(),
+  bytes: bytea('bytes').notNull(),
+  /**
+   * The S3 object key from the source URL, without the signature. Bling keys
+   * are content addressed, so an unchanged key means unchanged bytes and the
+   * sync can skip the download.
+   */
+  sourceKey: text('source_key').notNull(),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true, mode: 'string' })
     .notNull()
     .defaultNow(),
 });

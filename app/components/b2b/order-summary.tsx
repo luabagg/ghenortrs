@@ -2,6 +2,11 @@ import type { OrderPricing } from '@/b2b/order-pricing';
 import { TIER_LABELS } from '@/components/b2b/tier-ladder';
 import { formatCentsToBRL } from '@/lib/br-money';
 
+/**
+ * The seller needs three things: what it costs, what is in it, and what the
+ * next table would take. The qualifying subtotal is an internal mechanic and
+ * reading higher than the total only confused people, so it stays server side.
+ */
 export function OrderSummary({
   pricing,
   minimumOrderQuantity,
@@ -15,42 +20,39 @@ export function OrderSummary({
   );
 
   return (
-    <dl className="grid gap-3 border border-border bg-surface p-4 sm:grid-cols-2">
-      <SummaryRow
-        label="Unidades"
-        value={
-          missingUnits > 0
-            ? `${pricing.totalQuantity} de ${minimumOrderQuantity} (faltam ${missingUnits})`
-            : String(pricing.totalQuantity)
-        }
-      />
-      <SummaryRow label="Tabela aplicada" value={TIER_LABELS[pricing.tier]} />
-      <SummaryRow
-        label="Base da tabela"
-        value={formatCentsToBRL(pricing.startSubtotalCents)}
-      />
-      <SummaryRow
-        label="Total do pedido"
-        value={formatCentsToBRL(pricing.totalCents)}
-      />
-      <div className="sm:col-span-2">
-        <p className="font-body text-[12px] leading-5 text-secondary">
-          {pricing.nextTier
-            ? `Some ${formatCentsToBRL(pricing.amountToNextTierCents)} à base da tabela para chegar na tabela ${TIER_LABELS[pricing.nextTier]}.`
-            : 'Você está na melhor tabela, a Max.'}
-        </p>
-      </div>
-    </dl>
-  );
-}
+    <section
+      aria-label="Resumo do pedido"
+      className="grid gap-2 border border-border bg-surface p-5"
+    >
+      <p className="font-body text-[13px] font-bold uppercase tracking-[0.12em] text-secondary">
+        Total do pedido
+      </p>
+      <p className="font-heading text-[34px] leading-none tracking-[-0.03em] text-primary">
+        {formatCentsToBRL(pricing.totalCents)}
+      </p>
+      <p className="font-body text-[14px] leading-5 text-secondary">
+        {pricing.totalQuantity}{' '}
+        {pricing.totalQuantity === 1 ? 'unidade' : 'unidades'} · tabela{' '}
+        {TIER_LABELS[pricing.tier]}
+      </p>
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid gap-1">
-      <dt className="font-body text-[13px] font-bold uppercase tracking-[0.12em] text-secondary">
-        {label}
-      </dt>
-      <dd className="font-body text-[14px] leading-5 text-primary">{value}</dd>
-    </div>
+      {missingUnits > 0 ? (
+        <p className="font-body text-[13px] leading-5 text-accent">
+          Adicione mais {missingUnits}{' '}
+          {missingUnits === 1 ? 'unidade' : 'unidades'} para enviar o pedido.
+        </p>
+      ) : null}
+
+      {pricing.nextTier ? (
+        <p className="font-body text-[13px] leading-5 text-secondary">
+          Falta {formatCentsToBRL(pricing.amountToNextTierCents)} para a tabela{' '}
+          {TIER_LABELS[pricing.nextTier]}, com preços melhores.
+        </p>
+      ) : (
+        <p className="font-body text-[13px] leading-5 text-secondary">
+          Você está na melhor tabela, a Max.
+        </p>
+      )}
+    </section>
   );
 }

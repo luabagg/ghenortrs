@@ -31,7 +31,7 @@ describe('B2B catalog handler', () => {
         sku: 'ARO-29',
         name: 'Aro 29',
         description: '<p>Alumínio <strong>6061</strong></p>',
-        imageUrl: null,
+        hasImage: true,
         stock: 12,
         unit: 'UN',
         category: 'Aros',
@@ -53,6 +53,7 @@ describe('B2B catalog handler', () => {
         {
           id: 7,
           description: 'Alumínio 6061',
+          imageUrl: '/api/b2b-product-image/7',
           prices: {
             startCents: 12_000,
             proCents: 11_000,

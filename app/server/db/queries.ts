@@ -27,6 +27,7 @@ import {
   type AdminAuditEventRow,
   type AdminUserRow,
   type BlingTokenRow,
+  blingProductImages,
   type EmailActionTokenRow,
   type SellerRow,
   type SellerStatus,
@@ -39,7 +40,11 @@ export const catalogProductColumns = {
   sku: blingProducts.sku,
   name: blingProducts.name,
   description: blingProducts.description,
-  imageUrl: blingProducts.imageUrl,
+  /**
+   * True when the sync stored the photo. The seller UI builds its own URL from
+   * the product id; the Bling link in image_url expires and cannot be served.
+   */
+  hasImage: sql<boolean>`exists (select 1 from ${blingProductImages} where ${blingProductImages.productId} = ${blingProducts.id})`,
   stock: blingProducts.stock,
   unit: blingProducts.unit,
   category: blingProducts.category,
@@ -53,7 +58,7 @@ export type CatalogProductRow = {
   sku: string | null;
   name: string;
   description: string;
-  imageUrl: string | null;
+  hasImage: boolean;
   stock: number | null;
   unit: string | null;
   category: string | null;
@@ -583,6 +588,58 @@ export async function readStoredBlingTokens(): Promise<BlingTokenRow | null> {
     .where(eq(blingOauthTokens.id, 1))
     .limit(1);
   return row ?? null;
+}
+
+export type ProductImageRow = {
+  contentType: string;
+  bytes: Buffer;
+  sourceKey: string;
+};
+
+export async function getProductImage(
+  productId: number,
+): Promise<ProductImageRow | null> {
+  const [row] = await getDb()
+    .select({
+      contentType: blingProductImages.contentType,
+      bytes: blingProductImages.bytes,
+      sourceKey: blingProductImages.sourceKey,
+    })
+    .from(blingProductImages)
+    .where(eq(blingProductImages.productId, productId))
+    .limit(1);
+  return row ?? null;
+}
+
+/** Product ids that already have bytes stored, keyed by their source key. */
+export async function listStoredImageKeys(): Promise<Map<number, string>> {
+  const rows = await getDb()
+    .select({
+      productId: blingProductImages.productId,
+      sourceKey: blingProductImages.sourceKey,
+    })
+    .from(blingProductImages);
+  return new Map(rows.map((row) => [row.productId, row.sourceKey]));
+}
+
+export async function upsertProductImage(input: {
+  productId: number;
+  contentType: string;
+  bytes: Buffer;
+  sourceKey: string;
+}): Promise<void> {
+  await getDb()
+    .insert(blingProductImages)
+    .values({ ...input, fetchedAt: new Date().toISOString() })
+    .onConflictDoUpdate({
+      target: blingProductImages.productId,
+      set: {
+        contentType: sql`excluded.content_type`,
+        bytes: sql`excluded.bytes`,
+        sourceKey: sql`excluded.source_key`,
+        fetchedAt: sql`excluded.fetched_at`,
+      },
+    });
 }
 
 /** Sync upsert SET. Must omit visible_b2b and price_*_cents. */

@@ -1,8 +1,10 @@
 import type { Json } from './json';
 import {
+  listStoredImageKeys,
   readStoredBlingTokens,
   saveBlingTokens as persistBlingTokens,
   upsertBlingProducts,
+  upsertProductImage,
 } from './db/queries';
 import { getServerEnv } from './env';
 
@@ -266,8 +268,90 @@ export async function listAllBlingProducts(): Promise<BlingProduct[]> {
   return products;
 }
 
+const IMAGE_CONTENT_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/avif',
+]);
+
+const MAX_IMAGE_BYTES = 5_000_000;
+
+/**
+ * The S3 object key, without the query string that carries the signature and
+ * the expiry. Bling keys are content addressed, so an unchanged key means the
+ * bytes are unchanged and the download can be skipped.
+ */
+function imageSourceKey(url: string): string | null {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Copies each product photo into our own storage. Bling hands out presigned
+ * S3 links that expire within days, so the link is only usable right now, at
+ * sync time. Storing the URL is what left the catalog full of 403s.
+ */
+export async function cacheBlingProductImages(
+  products: Array<{ id: number; imageUrl: string | null }>,
+): Promise<{ stored: number; skipped: number; failed: number }> {
+  const stored = await listStoredImageKeys();
+  let storedCount = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const product of products) {
+    const key = product.imageUrl ? imageSourceKey(product.imageUrl) : null;
+    if (!product.imageUrl || !key) {
+      skipped += 1;
+      continue;
+    }
+    if (stored.get(product.id) === key) {
+      skipped += 1;
+      continue;
+    }
+
+    try {
+      const res = await fetch(product.imageUrl);
+      if (!res.ok) throw new Error(`image ${res.status}`);
+
+      const contentType = (res.headers.get('content-type') ?? '')
+        .split(';')[0]
+        .trim()
+        .toLowerCase();
+      if (!IMAGE_CONTENT_TYPES.has(contentType)) {
+        throw new Error(`unexpected content-type ${contentType || 'none'}`);
+      }
+
+      const bytes = Buffer.from(await res.arrayBuffer());
+      if (bytes.length === 0 || bytes.length > MAX_IMAGE_BYTES) {
+        throw new Error(`unexpected size ${bytes.length}`);
+      }
+
+      await upsertProductImage({
+        productId: product.id,
+        contentType,
+        bytes,
+        sourceKey: key,
+      });
+      storedCount += 1;
+    } catch (error) {
+      // One bad photo must not fail the whole product sync.
+      console.error('bling image cache failed', product.id, error);
+      failed += 1;
+    }
+  }
+
+  return { stored: storedCount, skipped, failed };
+}
+
 export async function syncBlingProductsToCache(): Promise<{
   upserted: number;
+  images: { stored: number; skipped: number; failed: number };
 }> {
   const products = await listAllBlingProducts();
   const rows = products.map((product) => {
@@ -290,12 +374,17 @@ export async function syncBlingProductsToCache(): Promise<{
     };
   });
 
-  if (rows.length === 0) return { upserted: 0 };
+  if (rows.length === 0) {
+    return { upserted: 0, images: { stored: 0, skipped: 0, failed: 0 } };
+  }
 
   const chunkSize = 100;
   for (let i = 0; i < rows.length; i += chunkSize) {
     await upsertBlingProducts(rows.slice(i, i + chunkSize));
   }
 
-  return { upserted: rows.length };
+  // Products first: the image rows reference them.
+  const images = await cacheBlingProductImages(rows);
+
+  return { upserted: rows.length, images };
 }

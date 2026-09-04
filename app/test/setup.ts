@@ -56,3 +56,9 @@ class TestIntersectionObserver implements IntersectionObserver {
 }
 
 globalThis.IntersectionObserver = TestIntersectionObserver;
+
+// Known harness limit: a programmatic navigation inside a test throws
+// "RequestInit: Expected signal to be an instance of AbortSignal" from
+// @remix-run/router, because jsdom and Node's fetch disagree on which realm
+// owns AbortSignal. Assert the navigate call itself instead of the landing
+// route, the way b2b-page.test.tsx does.
