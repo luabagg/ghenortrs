@@ -59,7 +59,7 @@ const serverEnvSchema = z
     BLING_AUTH_BASE: optionalEnv(),
     B2B_APPROVAL_LINK_SECRET: optionalEnv(),
     ADMIN_BOOTSTRAP_EMAILS: optionalEnv(),
-    B2B_MINIMUM_ORDER_QUANTITY: optionalEnv(),
+    B2B_DEFAULT_MIN_QUANTITY: optionalEnv(),
   })
   .transform((env): ServerEnv => {
     const databaseUrl =
@@ -72,7 +72,7 @@ const serverEnvSchema = z
         'Missing required env: DATABASE_URL (or POSTGRES_URL / POSTGRES_PRISMA_URL)',
       );
     }
-    const minimumOrderQuantity = Number(env.B2B_MINIMUM_ORDER_QUANTITY ?? '6');
+    const minimumOrderQuantity = Number(env.B2B_DEFAULT_MIN_QUANTITY ?? '6');
     return {
       siteUrl: env.SITE_URL ?? env.VITE_SITE_URL ?? 'http://localhost:5173',
       supabaseUrl: env.SUPABASE_URL,

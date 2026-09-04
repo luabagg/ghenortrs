@@ -423,7 +423,7 @@ describe('App', () => {
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(
       screen.getByText(
-        'Lojistas, oficinas e revendas, solicitem o atendimento comercial e acesso ao catálogo B2B.',
+        'Lojistas, oficinas e revendas, solicitem atendimento comercial e acesso ao catálogo B2B.',
       ),
     ).toBeInTheDocument();
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
