@@ -11,7 +11,7 @@ import {
 
 export function B2BAccessHeroSection({
   title = 'Cadastro comercial GHENO rotors.',
-  description = 'Lojistas, oficinas e revendas podem solicitar atendimento comercial e acesso ao catálogo B2B.',
+  description = 'Lojistas, oficinas e revendas, solicitem o atendimento comercial e acesso ao catálogo B2B.',
 }: {
   title?: string;
   description?: string;

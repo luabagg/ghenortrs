@@ -85,7 +85,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
     return (
       <div className="grid gap-8">
         <B2BAccessHeroSection
-          description={`${session.seller?.companyName ?? 'Sua empresa'} já possui acesso ao catálogo comercial Bling.`}
+          description="Seu acesso ao catálogo B2B já está liberado. Use o botão abaixo para acessar."
           title="Catálogo B2B liberado."
         />
         <div className="flex flex-wrap gap-3">

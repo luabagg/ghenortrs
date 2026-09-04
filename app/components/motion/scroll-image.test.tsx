@@ -30,7 +30,9 @@ describe('ScrollImage', () => {
     expect(image).toHaveAttribute('loading', 'lazy');
     expect(image).toHaveAttribute('data-motion-image', 'zoom');
     // Layout classes land on the measured frame; cover is applied on the img.
+    // <picture> sits between the two and stays out of layout.
     expect(image).toHaveClass('object-cover');
-    expect(image.parentElement).toHaveClass('object-cover');
+    expect(image.parentElement?.tagName).toBe('PICTURE');
+    expect(image.closest('div')).toHaveClass('object-cover');
   });
 });

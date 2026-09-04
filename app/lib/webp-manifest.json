@@ -1,0 +1,43 @@
+{
+  "aro-gheno": [
+    480,
+    960,
+    1280
+  ],
+  "b2b-race-context": [
+    480,
+    960,
+    1440,
+    1600
+  ],
+  "b2b-trail-validation": [
+    480,
+    960,
+    1066
+  ],
+  "cubo-gheno": [
+    480,
+    960,
+    1280
+  ],
+  "cubo-gheno-proof": [
+    480,
+    900
+  ],
+  "disco-gheno": [
+    480,
+    960,
+    1080
+  ],
+  "mtb-action-hero": [
+    480,
+    960,
+    1440,
+    1800
+  ],
+  "pastilhas-gheno": [
+    480,
+    960,
+    1280
+  ]
+}

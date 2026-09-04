@@ -74,6 +74,7 @@ export function ProductProofSection() {
               effect="zoom"
               loading="lazy"
               src={image.src}
+              webpSizes="(min-width: 1024px) 17vw, (min-width: 640px) 33vw, 70vw"
             />
           </figure>
         ))}

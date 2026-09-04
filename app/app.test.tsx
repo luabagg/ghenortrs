@@ -1,5 +1,7 @@
 import { fireEvent, screen, within } from '@testing-library/react';
+import { vi } from 'vitest';
 
+import * as b2bSession from '~/b2b/use-b2b-session';
 import { renderApp } from '~/test/render-app';
 
 describe('App', () => {
@@ -30,6 +32,18 @@ describe('App', () => {
       'src',
       '/reference-images/mtb-action-hero.jpg',
     );
+    expect(heroImage).toHaveAttribute('fetchpriority', 'high');
+    expect(heroImage).toHaveAttribute('loading', 'eager');
+    expect(heroImage).toHaveAttribute('width', '1800');
+    expect(heroImage).toHaveAttribute('height', '1201');
+    const heroWebpSource = heroImage
+      .closest('picture')
+      ?.querySelector('source[type="image/webp"]');
+    expect(heroWebpSource).toHaveAttribute(
+      'srcset',
+      '/reference-images/mtb-action-hero-480.webp 480w, /reference-images/mtb-action-hero-960.webp 960w, /reference-images/mtb-action-hero-1440.webp 1440w, /reference-images/mtb-action-hero-1800.webp 1800w',
+    );
+    expect(heroWebpSource).toHaveAttribute('sizes', '100vw');
     expect(heroImage).not.toHaveAttribute('data-motion-image');
     expect(heroImage).toHaveClass(
       'motion-safe:animate-[gheno-hero-settle_1.4s_cubic-bezier(0.16,1,0.3,1)_both]',
@@ -407,6 +421,11 @@ describe('App', () => {
       screen.queryByRole('heading', { name: 'Solicitar cadastro.' }),
     ).toBeNull();
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(
+      screen.getByText(
+        'Lojistas, oficinas e revendas, solicitem o atendimento comercial e acesso ao catálogo B2B.',
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText('Empresa')).toHaveAttribute('for', 'b2b-company');
     expect(screen.getByText('CNPJ')).toHaveAttribute('for', 'b2b-cnpj');
     expect(screen.getByText('Telefone / WhatsApp')).toHaveAttribute(
@@ -433,6 +452,45 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'contato@ghenortrs.com.br' }),
     ).toHaveAttribute('href', 'mailto:contato@ghenortrs.com.br');
+  });
+
+  it('directs approved sellers to the B2B catalog', () => {
+    const sessionSpy = vi.spyOn(b2bSession, 'useB2BSession').mockReturnValue({
+      configured: true,
+      error: null,
+      gate: 'approved',
+      refresh: vi.fn(async () => undefined),
+      session: {
+        authenticated: true,
+        email: 'luan@example.com',
+        gate: 'approved',
+        seller: {
+          id: 'seller-1',
+          email: 'luan@example.com',
+          companyName: 'Luan Baggio',
+          status: 'approved',
+          cnpj: '12345678000195',
+          phone: '11999999999',
+        },
+      },
+      signOut: vi.fn(async () => undefined),
+    });
+
+    try {
+      renderApp('/b2b');
+
+      expect(
+        screen.getByText(
+          'Seu acesso ao catálogo B2B já está liberado. Use o botão abaixo para acessar.',
+        ),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Luan Baggio/)).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: 'Abrir catálogo B2B' }),
+      ).toHaveAttribute('href', '/b2b/catalogo');
+    } finally {
+      sessionSpy.mockRestore();
+    }
   });
 
   it('renders the gated B2B catalog route without crashing when logged out', () => {

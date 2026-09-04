@@ -35,7 +35,9 @@ export function MobileMenuOverlay({
       <img
         alt=""
         className="absolute inset-0 h-[47dvh] w-full object-cover opacity-50"
-        src="/reference-images/mtb-action-hero.jpg"
+        height={641}
+        src="/reference-images/mtb-action-hero-960.webp"
+        width={960}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-background/35 via-background/72 to-background" />
       <MobileMenuHeader closeRef={closeRef} onClose={onClose} />

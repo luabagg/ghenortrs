@@ -1,6 +1,7 @@
 import { Link } from '@remix-run/react';
 
 import { PageIntro } from '@/components/landing/section-cards';
+import { WebpSource } from '@/components/media/webp-source';
 import { Button } from '@/components/ui/button';
 import { SectionBand } from '@/components/ui/section-band';
 import { cn } from '@/lib/utils';
@@ -38,12 +39,18 @@ export function ComponentFamilyCard({
         data-threejs-slot={family.id}
       >
         {/* Image stage today; mount Three.js into [data-threejs-slot] later. */}
-        <img
-          alt={family.imageAlt}
-          className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-[0.82]"
-          loading="lazy"
-          src={family.imageSrc}
-        />
+        <picture className="contents">
+          <WebpSource
+            sizes="(min-width: 1024px) 58vw, 100vw"
+            src={family.imageSrc}
+          />
+          <img
+            alt={family.imageAlt}
+            className="absolute inset-0 h-full w-full object-cover opacity-90 saturate-[0.82]"
+            loading="lazy"
+            src={family.imageSrc}
+          />
+        </picture>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-background/10" />
       </div>
 

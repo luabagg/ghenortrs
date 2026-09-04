@@ -1,4 +1,5 @@
 import type {
+  LinkDescriptor,
   LinksFunction,
   LoaderFunctionArgs,
   MetaFunction,
@@ -22,9 +23,30 @@ import { B2BQueryProvider } from '~/b2b/query-provider';
 import { PageIntro } from '~/components/landing/section-cards';
 import { AppShell } from '~/components/navigation/app-shell';
 import { Button } from '~/components/ui/button';
+import { HERO_IMAGE } from '~/lib/hero-image';
+import { webpSrcSet } from '~/lib/responsive-image';
 import { buildSeoMetaForPath } from '~/lib/seo';
 
 import styles from '~/styles.css?url';
+
+const HERO_WEBP_SRCSET = webpSrcSet(HERO_IMAGE.src);
+
+/**
+ * The home hero is the LCP. Without this the browser only finds it after it
+ * parses the hero markup. The descriptor matches the <picture> source exactly,
+ * so the two requests dedupe instead of downloading the image twice.
+ */
+const heroPreload: LinkDescriptor[] = HERO_WEBP_SRCSET
+  ? [
+      {
+        rel: 'preload',
+        as: 'image',
+        type: 'image/webp',
+        imageSrcSet: HERO_WEBP_SRCSET,
+        imageSizes: HERO_IMAGE.sizes,
+      },
+    ]
+  : [];
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -38,6 +60,7 @@ export const links: LinksFunction = () => [
     href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Sora:wght@650;700&display=swap',
   },
   { rel: 'stylesheet', href: styles },
+  ...heroPreload,
   { rel: 'icon', href: '/brand/favicon.png', type: 'image/png' },
   { rel: 'apple-touch-icon', href: '/brand/favicon.png' },
   {

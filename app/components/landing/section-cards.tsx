@@ -1,5 +1,6 @@
 import { Link } from '@remix-run/react';
 
+import { WebpSource } from '@/components/media/webp-source';
 import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { MetaLabel } from '@/components/ui/meta-label';
 import { cn } from '@/lib/utils';
@@ -74,12 +75,18 @@ export function ProductFamilyCard({
     >
       <Card className="flex h-full flex-col gap-0 overflow-hidden rounded-md border-border bg-surface transition-colors group-hover:border-primary/35">
         <div className="relative h-36 shrink-0 overflow-hidden bg-background-soft sm:h-48 lg:h-44">
-          <img
-            alt={imageAlt}
-            className="h-full w-full object-cover opacity-90 saturate-[0.8]"
-            loading="lazy"
-            src={imageSrc}
-          />
+          <picture className="contents">
+            <WebpSource
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              src={imageSrc}
+            />
+            <img
+              alt={imageAlt}
+              className="h-full w-full object-cover opacity-90 saturate-[0.8]"
+              loading="lazy"
+              src={imageSrc}
+            />
+          </picture>
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent" />
         </div>
         <CardHeader className="flex flex-1 flex-col gap-2 px-3 py-4 sm:px-5 sm:py-5">

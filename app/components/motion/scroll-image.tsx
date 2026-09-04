@@ -13,6 +13,7 @@ import {
   useTransform,
 } from 'motion/react';
 
+import { WebpSource } from '@/components/media/webp-source';
 import { cn } from '@/lib/utils';
 
 type ScrollImageProps = Omit<
@@ -20,6 +21,8 @@ type ScrollImageProps = Omit<
   'ref' | 'style'
 > & {
   effect: 'zoom';
+  /** Layout width of the frame. Omit to serve the JPG at its full size. */
+  webpSizes?: string;
 };
 
 const ZOOM_REST_SCALE = 1.06;
@@ -31,6 +34,7 @@ const useIsomorphicLayoutEffect =
 export function ScrollImage({
   effect,
   className,
+  webpSizes,
   ...imageProps
 }: ScrollImageProps) {
   // Measure a non-transformed frame. Transforms on the scroll target feed back
@@ -60,12 +64,17 @@ export function ScrollImage({
 
   return (
     <div ref={frameRef} className={cn('overflow-hidden', className)}>
-      <motion.img
-        data-motion-image={effect}
-        className="size-full max-w-none object-cover will-change-transform"
-        style={{ scale: allowMotion ? zoomScale : ZOOM_REST_SCALE }}
-        {...imageProps}
-      />
+      <picture className="contents">
+        {webpSizes && typeof imageProps.src === 'string' ? (
+          <WebpSource sizes={webpSizes} src={imageProps.src} />
+        ) : null}
+        <motion.img
+          data-motion-image={effect}
+          className="size-full max-w-none object-cover will-change-transform"
+          style={{ scale: allowMotion ? zoomScale : ZOOM_REST_SCALE }}
+          {...imageProps}
+        />
+      </picture>
     </div>
   );
 }

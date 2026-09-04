@@ -2,12 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { Link } from '@remix-run/react';
 
+import { WebpSource } from '@/components/media/webp-source';
 import { Button } from '@/components/ui/button';
-
-const HERO_IMAGE = {
-  src: '/reference-images/mtb-action-hero.jpg',
-  alt: 'Rider GHENO rotors em trilha com controle total',
-} as const;
+import { HERO_IMAGE } from '@/lib/hero-image';
 
 const DISCIPLINES = ['Downhill', 'Enduro', 'E-bike'] as const;
 
@@ -72,11 +69,18 @@ export function HomeHeroSection() {
   return (
     <section className="relative z-0 bg-background" data-section="hero">
       <div className="relative isolate min-h-[100dvh] overflow-hidden bg-background">
-        <img
-          alt={HERO_IMAGE.alt}
-          className="absolute inset-0 size-full origin-[69%_center] object-cover object-[69%_center] opacity-80 motion-safe:animate-[gheno-hero-settle_1.4s_cubic-bezier(0.16,1,0.3,1)_both] sm:origin-center sm:object-center"
-          src={HERO_IMAGE.src}
-        />
+        <picture className="contents">
+          <WebpSource sizes={HERO_IMAGE.sizes} src={HERO_IMAGE.src} />
+          <img
+            alt={HERO_IMAGE.alt}
+            className="absolute inset-0 size-full origin-[69%_center] object-cover object-[69%_center] opacity-80 motion-safe:animate-[gheno-hero-settle_1.4s_cubic-bezier(0.16,1,0.3,1)_both] sm:origin-center sm:object-center"
+            fetchpriority="high"
+            height={HERO_IMAGE.height}
+            loading="eager"
+            src={HERO_IMAGE.src}
+            width={HERO_IMAGE.width}
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-r from-background/78 via-background/45 to-background/10 sm:from-background sm:via-background/70 sm:to-background/15" />
         <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--color-background)_0%,var(--color-background)_8%,transparent_45%)]" />
 
