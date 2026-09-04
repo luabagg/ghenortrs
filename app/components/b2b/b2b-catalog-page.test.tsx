@@ -409,4 +409,40 @@ describe('B2BCatalogPage order bar and review', () => {
       });
     });
   });
+
+  it('confirms the request instead of dropping back into the catalog', async () => {
+    renderPage();
+    setQuantity('Aro 29', 6);
+    goToReview();
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar' }));
+
+    expect(await screen.findByText('Solicitação enviada')).toBeVisible();
+    expect(
+      screen.getByRole('heading', {
+        name: 'Iremos retornar com as condições assim que possível.',
+      }),
+    ).toBeVisible();
+    // The numbers survive the draft being cleared.
+    expect(screen.getByText('R$ 1.080,00')).toBeVisible();
+    expect(
+      screen.getByText('Enviamos uma cópia do pedido para compras@norte.test.'),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('list', { name: 'Produtos do catálogo' }),
+    ).toBeNull();
+  });
+
+  it('returns to an empty catalog from the confirmation', async () => {
+    renderPage();
+    setQuantity('Aro 29', 6);
+    goToReview();
+    fireEvent.click(screen.getByRole('button', { name: 'Enviar' }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Voltar ao catálogo' }),
+    );
+
+    expect(catalog()).toBeVisible();
+    expect(screen.queryByLabelText('Quantidade de Aro 29')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Revisar pedido' })).toBeNull();
+  });
 });

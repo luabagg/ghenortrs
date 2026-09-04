@@ -11,6 +11,10 @@ vi.mock('@remix-run/react', async () => {
   return {
     ...actual,
     useSubmit: () => vi.fn(),
+    // Real navigation cannot run here (see the note at the bottom of this
+    // file), and letting it try throws an unhandled error. Tests that care
+    // about a redirect mock this hook themselves and assert the call.
+    useNavigate: () => vi.fn(),
     useNavigation: () => ({ state: 'idle', formData: undefined }),
     useActionData: () => undefined,
     useFetcher: () => ({

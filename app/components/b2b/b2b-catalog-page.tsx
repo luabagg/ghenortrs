@@ -6,6 +6,10 @@ import { useB2BCatalogQuery, useSubmitB2BQuoteMutation } from '@/b2b/queries';
 import { useB2BSession } from '@/b2b/use-b2b-session';
 import { useOrderDraft } from '@/b2b/use-order-draft';
 import { B2BOrderReview } from '@/components/b2b/b2b-order-review';
+import {
+  B2BOrderSent,
+  type SentSummary,
+} from '@/components/b2b/b2b-order-sent';
 import { B2BProductDrawer } from '@/components/b2b/b2b-product-drawer';
 import { ProductRow, ProductRowSkeleton } from '@/components/b2b/product-row';
 import { TierLadder } from '@/components/b2b/tier-ladder';
@@ -26,9 +30,11 @@ export function B2BCatalogPage() {
   const { gate, session, configured } = useB2BSession();
   const [query, setQuery] = useState('');
   const [notes, setNotes] = useState('');
-  const [step, setStep] = useState<'catalog' | 'review'>('catalog');
+  const [step, setStep] = useState<'catalog' | 'review' | 'sent'>('catalog');
   // Hold the id, not the product. A refetch replaces the objects.
   const [detailId, setDetailId] = useState<number | null>(null);
+  // Snapshot taken before the draft is cleared, so the receipt has numbers.
+  const [sentSummary, setSentSummary] = useState<SentSummary | null>(null);
 
   const {
     data: catalog,
@@ -62,9 +68,16 @@ export function B2BCatalogPage() {
         notes,
       });
       if (!result.success) return;
+      // Keep the confirmation on screen. Dropping straight back into the
+      // catalog left the seller unsure the request had gone anywhere.
+      setSentSummary({
+        totalQuantity: draft.totalQuantity,
+        totalCents: draft.pricing.totalCents,
+        itemCount: draft.items.length,
+      });
       draft.clear();
       setNotes('');
-      setStep('catalog');
+      setStep('sent');
     } catch {
       // Surfaced via submitQuote.status below.
     }
@@ -110,6 +123,19 @@ export function B2BCatalogPage() {
     );
   }
 
+  if (step === 'sent' && sentSummary) {
+    return (
+      <B2BOrderSent
+        sellerEmail={session.seller?.email ?? null}
+        summary={sentSummary}
+        onBackToCatalog={() => {
+          setSentSummary(null);
+          setStep('catalog');
+        }}
+      />
+    );
+  }
+
   if (step === 'review') {
     return (
       <B2BOrderReview
@@ -150,12 +176,6 @@ export function B2BCatalogPage() {
       {error ? (
         <p className="text-accent" role="alert">
           Falha ao carregar o catálogo ({error}). Tente novamente em instantes.
-        </p>
-      ) : null}
-
-      {submitMessage && !submitFailed ? (
-        <p className="text-sm text-secondary" role="status">
-          {submitMessage}
         </p>
       ) : null}
 

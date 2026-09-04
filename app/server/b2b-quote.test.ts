@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import handler from './b2b-quote';
 import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
-import { sendResendEmail } from './resend';
+import { deliverEmail } from './email-delivery';
 import { requireApprovedSeller } from './supabase';
 
 vi.mock('./db/queries', () => ({
@@ -12,9 +12,10 @@ vi.mock('./db/queries', () => ({
 }));
 vi.mock('./env', () => ({ getServerEnv: vi.fn() }));
 vi.mock('./resend', () => ({
-  buildQuoteRequestHtml: vi.fn(() => '<html>quote</html>'),
-  sendResendEmail: vi.fn(),
+  buildQuoteRequestHtml: vi.fn(() => '<html>team</html>'),
+  buildSellerQuoteReceiptHtml: vi.fn(() => '<html>receipt</html>'),
 }));
+vi.mock('./email-delivery', () => ({ deliverEmail: vi.fn() }));
 vi.mock('./supabase', () => ({ requireApprovedSeller: vi.fn() }));
 
 const seller = {
@@ -66,15 +67,15 @@ beforeEach(() => {
   vi.mocked(requireApprovedSeller).mockResolvedValue({ seller } as never);
   vi.mocked(getServerEnv).mockReturnValue({
     minimumOrderQuantity: 6,
-    resendApiKey: null,
-    resendToEmail: null,
+    resendApiKey: 'test-key',
+    resendToEmail: 'contato@ghenortrs.com.br',
   } as ReturnType<typeof getServerEnv>);
   vi.mocked(listActiveProductsByIds).mockResolvedValue(products);
   vi.mocked(insertQuoteRequest).mockResolvedValue({
     id: 'quote-1',
     createdAt: '2026-09-04T00:00:00.000Z',
   });
-  vi.mocked(sendResendEmail).mockResolvedValue({ ok: true });
+  vi.mocked(deliverEmail).mockResolvedValue('sent');
 });
 
 describe('B2B quote handler', () => {
@@ -127,5 +128,47 @@ describe('B2B quote handler', () => {
       totalQuantity: 5,
     });
     expect(insertQuoteRequest).not.toHaveBeenCalled();
+  });
+
+  it('emails the team and the seller, and reports both outcomes', async () => {
+    const response = await handler(
+      quoteRequest([{ productId: 1, quantity: 6 }]),
+    );
+
+    await expect(response.json()).resolves.toMatchObject({
+      success: true,
+      teamEmail: 'sent',
+      sellerEmail: 'sent',
+    });
+
+    const labels = vi
+      .mocked(deliverEmail)
+      .mock.calls.map((call) => call[0].label);
+    expect(labels).toEqual([
+      'b2b-quote team alert',
+      'b2b-quote seller receipt',
+    ]);
+    expect(vi.mocked(deliverEmail).mock.calls[0][0].to).toBe(
+      'contato@ghenortrs.com.br',
+    );
+    expect(vi.mocked(deliverEmail).mock.calls[1][0].to).toBe(
+      'compras@norte.test',
+    );
+  });
+
+  it('still saves the quote when an email fails', async () => {
+    vi.mocked(deliverEmail).mockResolvedValue('failed');
+
+    const response = await handler(
+      quoteRequest([{ productId: 1, quantity: 6 }]),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      success: true,
+      id: 'quote-1',
+      teamEmail: 'failed',
+    });
+    expect(insertQuoteRequest).toHaveBeenCalled();
   });
 });

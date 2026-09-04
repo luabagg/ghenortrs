@@ -1,3 +1,5 @@
+import sharp from 'sharp';
+
 import type { Json } from './json';
 import {
   listStoredImageKeys,
@@ -268,27 +270,91 @@ export async function listAllBlingProducts(): Promise<BlingProduct[]> {
   return products;
 }
 
-const IMAGE_CONTENT_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/gif',
-  'image/avif',
-]);
+/**
+ * Bling's S3 serves every photo as application/octet-stream, so the header
+ * says nothing. Sniff the magic bytes instead. This also stops an HTML error
+ * page from being stored and served as an image.
+ */
+function sniffImageType(bytes: Buffer): string | null {
+  if (bytes.length < 12) return null;
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return 'image/jpeg';
+  }
+  if (bytes.subarray(0, 8).equals(PNG_MAGIC)) return 'image/png';
+  if (bytes.subarray(0, 4).toString('latin1') === 'GIF8') return 'image/gif';
+  if (
+    bytes.subarray(0, 4).toString('latin1') === 'RIFF' &&
+    bytes.subarray(8, 12).toString('latin1') === 'WEBP'
+  ) {
+    return 'image/webp';
+  }
+  if (bytes.subarray(4, 8).toString('latin1') === 'ftyp') {
+    const brand = bytes.subarray(8, 12).toString('latin1');
+    if (brand === 'avif' || brand === 'avis') return 'image/avif';
+  }
+  return null;
+}
+
+const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 const MAX_IMAGE_BYTES = 5_000_000;
 
 /**
- * The S3 object key, without the query string that carries the signature and
- * the expiry. Bling keys are content addressed, so an unchanged key means the
- * bytes are unchanged and the download can be skipped.
+ * The content hash S3 uses as the object name, without the signature or the
+ * expiry. The thumbnail and the full size share it, so the sync can decide to
+ * skip from the cheap list response before spending a detail call.
  */
 function imageSourceKey(url: string): string | null {
   try {
-    return new URL(url).pathname;
+    const last = new URL(url).pathname.split('/').pop();
+    return last && last.length > 0 ? last : null;
   } catch {
     return null;
   }
+}
+
+type BlingProductMedia = {
+  midia?: {
+    imagens?: {
+      internas?: Array<{ link?: string | null; linkMiniatura?: string | null }>;
+    };
+  };
+};
+
+/**
+ * The list endpoint only carries `imagemURL`, which is a 70px thumbnail. The
+ * detail endpoint carries the original, so ask for it one product at a time.
+ * Falls back to the thumbnail rather than leaving the row with no photo.
+ */
+async function fetchFullSizeImageUrl(
+  productId: number,
+  thumbnailUrl: string,
+): Promise<string> {
+  try {
+    const res = await blingFetch<{ data: BlingProductMedia }>(
+      `/produtos/${productId}`,
+    );
+    const first = res.data.midia?.imagens?.internas?.[0];
+    return first?.link ?? first?.linkMiniatura ?? thumbnailUrl;
+  } catch (error) {
+    console.error('bling image detail failed', productId, error);
+    return thumbnailUrl;
+  }
+}
+
+/** Wide enough for the 80px row thumb and the drawer image on a 2x screen. */
+const STORED_IMAGE_WIDTH = 400;
+
+/**
+ * Bling originals run to 2160x2700 PNG, around 445 KB each. Serving that for
+ * an 80px thumbnail is waste, so normalise once at sync time. The same source
+ * lands at roughly 6 KB of WebP.
+ */
+async function normaliseImage(bytes: Buffer): Promise<Buffer> {
+  return sharp(bytes)
+    .resize({ width: STORED_IMAGE_WIDTH, withoutEnlargement: true })
+    .webp({ quality: 80 })
+    .toBuffer();
 }
 
 /**
@@ -316,26 +382,26 @@ export async function cacheBlingProductImages(
     }
 
     try {
-      const res = await fetch(product.imageUrl);
+      const sourceUrl = await fetchFullSizeImageUrl(
+        product.id,
+        product.imageUrl,
+      );
+      const res = await fetch(sourceUrl);
       if (!res.ok) throw new Error(`image ${res.status}`);
 
-      const contentType = (res.headers.get('content-type') ?? '')
-        .split(';')[0]
-        .trim()
-        .toLowerCase();
-      if (!IMAGE_CONTENT_TYPES.has(contentType)) {
-        throw new Error(`unexpected content-type ${contentType || 'none'}`);
+      const downloaded = Buffer.from(await res.arrayBuffer());
+      if (downloaded.length === 0 || downloaded.length > MAX_IMAGE_BYTES) {
+        throw new Error(`unexpected size ${downloaded.length}`);
       }
-
-      const bytes = Buffer.from(await res.arrayBuffer());
-      if (bytes.length === 0 || bytes.length > MAX_IMAGE_BYTES) {
-        throw new Error(`unexpected size ${bytes.length}`);
+      // Guard before sharp so an HTML error page gives a clear reason.
+      if (!sniffImageType(downloaded)) {
+        throw new Error('payload is not an image');
       }
 
       await upsertProductImage({
         productId: product.id,
-        contentType,
-        bytes,
+        contentType: 'image/webp',
+        bytes: await normaliseImage(downloaded),
         sourceKey: key,
       });
       storedCount += 1;

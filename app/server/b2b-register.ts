@@ -5,7 +5,11 @@
 import { parseB2BRegistration } from '../b2b/schemas';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed, readJson } from './http';
-import { buildSellerRegistrationHtml, sendResendEmail } from './resend';
+import { deliverEmail } from './email-delivery';
+import {
+  buildSellerRegistrationHtml,
+  buildSellerRegistrationReceiptHtml,
+} from './resend';
 import {
   createEmailActionToken,
   getSellerByEmail,
@@ -170,8 +174,9 @@ export default async function handler(req: Request): Promise<Response> {
     approveUrl = `${env.siteUrl.replace(/\/$/, '')}/admin/approve?token=${encodeURIComponent(approvalToken)}`;
   }
 
-  if (env.resendApiKey && env.resendToEmail) {
-    const mailed = await sendResendEmail({
+  await Promise.all([
+    deliverEmail({
+      label: 'b2b-register team alert',
       to: env.resendToEmail,
       subject: `[B2B cadastro] ${data.empresa}`,
       replyTo: data.email,
@@ -183,15 +188,16 @@ export default async function handler(req: Request): Promise<Response> {
         message: data.mensagem,
         approveUrl,
       }),
-    });
-    if (!mailed.ok) {
-      console.error('b2b-register notify skipped', mailed.reason);
-    }
-  } else {
-    console.warn(
-      'b2b-register: registration saved but GHENO alert not sent (set RESEND_API_KEY and RESEND_TO_EMAIL)',
-    );
-  }
+    }),
+    // Tells the seller the wait is expected, so they do not register twice.
+    deliverEmail({
+      label: 'b2b-register seller receipt',
+      to: data.email,
+      subject: 'Recebemos seu cadastro B2B',
+      replyTo: env.resendToEmail ?? undefined,
+      html: buildSellerRegistrationReceiptHtml({ companyName: data.empresa }),
+    }),
+  ]);
 
   return json({
     success: true,

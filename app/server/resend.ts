@@ -170,6 +170,97 @@ export function buildSellerCatalogAccessHtml(input: {
   });
 }
 
+type QuoteLine = {
+  name: string;
+  sku: string | null;
+  quantity: number;
+  unit: string | null;
+  unitPriceCents: number;
+  lineTotalCents: number;
+};
+
+function buildQuoteLinesTable(items: QuoteLine[], showSku: boolean): string {
+  const rows = items
+    .map(
+      (item) =>
+        `<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(item.name)}</td>
+          ${showSku ? `<td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(item.sku ?? '—')}</td>` : ''}
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${item.quantity}${item.unit ? ` ${escHtml(item.unit)}` : ''}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(formatCentsToBRL(item.unitPriceCents))}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(formatCentsToBRL(item.lineTotalCents))}</td>
+        </tr>`,
+    )
+    .join('');
+
+  return `<table style="width:100%;border-collapse:collapse;margin-top:16px">
+    <thead>
+      <tr style="background:#f5f5f5;text-align:left">
+        <th style="padding:8px 12px">Produto</th>
+        ${showSku ? '<th style="padding:8px 12px">SKU</th>' : ''}
+        <th style="padding:8px 12px">Qtd</th>
+        <th style="padding:8px 12px">Preço un.</th>
+        <th style="padding:8px 12px">Total</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+/** Sent to the seller right after a registration, so the wait is expected. */
+export function buildSellerRegistrationReceiptHtml(input: {
+  companyName: string;
+}): string {
+  const content = `
+  <h2 style="color:#E81414">Recebemos seu cadastro</h2>
+  <p>Olá, ${escHtml(input.companyName)}.</p>
+  <p>Seu pedido de acesso comercial está em análise. A equipe GHENO rotors confere os dados e libera o catálogo B2B.</p>
+  <p>Você recebe um e-mail assim que o acesso estiver liberado. Não é preciso enviar o cadastro novamente.</p>
+  <p style="color:#666;font-size:14px">Se precisar falar com a equipe antes disso, responda este e-mail.</p>`;
+
+  return buildEmailShell({
+    title: 'Cadastro B2B recebido',
+    content,
+  });
+}
+
+/** Sent to the seller after a quote, so they hold a copy of the request. */
+export function buildSellerQuoteReceiptHtml(input: {
+  companyName: string;
+  tier: 'start' | 'pro' | 'max';
+  totalQuantity: number;
+  totalCents: number;
+  notes: string;
+  items: QuoteLine[];
+}): string {
+  const content = `
+  <h2 style="color:#E81414">Recebemos sua solicitação</h2>
+  <p>Olá, ${escHtml(input.companyName)}.</p>
+  <p>Iremos retornar com as condições assim que possível. Abaixo está o que você solicitou.</p>
+  ${buildLabelValueTable([
+    { label: 'Tabela', value: escHtml(input.tier.toUpperCase()) },
+    { label: 'Unidades', value: String(input.totalQuantity) },
+    {
+      label: 'Total estimado',
+      value: escHtml(formatCentsToBRL(input.totalCents)),
+    },
+  ])}
+  ${buildQuoteLinesTable(input.items, false)}
+  ${
+    input.notes
+      ? `<p style="margin-top:16px"><strong>Suas observações:</strong></p>
+         <p style="white-space:pre-wrap">${escHtml(input.notes)}</p>`
+      : ''
+  }
+  <p style="color:#666;font-size:14px;margin-top:16px">Os valores acima são uma estimativa pela tabela do pedido. As condições finais, prazos e disponibilidade vêm na nossa resposta.</p>`;
+
+  return buildEmailShell({
+    title: 'Solicitação B2B recebida',
+    maxWidth: '720px',
+    content,
+  });
+}
+
 export function buildQuoteRequestHtml(input: {
   companyName: string;
   email: string;

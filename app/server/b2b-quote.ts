@@ -9,8 +9,9 @@ import {
 import { parseB2BQuoteRequest } from '../b2b/schemas';
 import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
+import { deliverEmail } from './email-delivery';
 import { json, methodNotAllowed, readJson } from './http';
-import { buildQuoteRequestHtml, sendResendEmail } from './resend';
+import { buildQuoteRequestHtml, buildSellerQuoteReceiptHtml } from './resend';
 import { requireApprovedSeller } from './supabase';
 
 function productPrices(product: {
@@ -111,8 +112,11 @@ export default async function handler(req: Request): Promise<Response> {
       notes,
     });
 
-    if (env.resendApiKey && env.resendToEmail) {
-      await sendResendEmail({
+    // The quote is already saved, so a mail problem must not fail the request.
+    // Both outcomes are reported so a missing email is never silent.
+    const [teamEmail, sellerEmail] = await Promise.all([
+      deliverEmail({
+        label: 'b2b-quote team alert',
         to: env.resendToEmail,
         subject: `[B2B orçamento] ${auth.seller.companyName}`,
         replyTo: auth.seller.email,
@@ -127,8 +131,22 @@ export default async function handler(req: Request): Promise<Response> {
           notes,
           items: lineItems,
         }),
-      });
-    }
+      }),
+      deliverEmail({
+        label: 'b2b-quote seller receipt',
+        to: auth.seller.email,
+        subject: 'Recebemos sua solicitação de orçamento',
+        replyTo: env.resendToEmail ?? undefined,
+        html: buildSellerQuoteReceiptHtml({
+          companyName: auth.seller.companyName,
+          tier: pricing.tier,
+          totalQuantity: pricing.totalQuantity,
+          totalCents: pricing.totalCents,
+          notes,
+          items: lineItems,
+        }),
+      }),
+    ]);
 
     return json({
       success: true,
@@ -139,6 +157,8 @@ export default async function handler(req: Request): Promise<Response> {
       totalQuantity: pricing.totalQuantity,
       qualifyingSubtotalCents: pricing.startSubtotalCents,
       totalCents: pricing.totalCents,
+      teamEmail,
+      sellerEmail,
       message: 'Iremos retornar com as condições assim que possível.',
     });
   } catch (error) {
