@@ -1,11 +1,6 @@
 // Admin edits on cached products. Every change records who made it.
 
-import { MIN_QUANTITY_LIMIT } from '../lib/product-rules';
-import {
-  insertAdminAuditEvent,
-  updateProductMinQuantity,
-  updateProductsVisibleB2b,
-} from './db/queries';
+import { insertAdminAuditEvent, updateProductsVisibleB2b } from './db/queries';
 
 type Actor = {
   id: string;
@@ -39,40 +34,4 @@ export async function setProductsVisibility(input: {
   }
 
   return { updated };
-}
-
-export type MinQuantityResult =
-  | { ok: true }
-  | { ok: false; error: 'invalid_min_quantity' | 'product_not_found' };
-
-export async function setProductMinQuantity(input: {
-  actor: Actor;
-  productId: number;
-  minQuantity: number;
-}): Promise<MinQuantityResult> {
-  const { minQuantity } = input;
-  if (
-    !Number.isInteger(minQuantity) ||
-    minQuantity < 1 ||
-    minQuantity > MIN_QUANTITY_LIMIT
-  ) {
-    return { ok: false, error: 'invalid_min_quantity' };
-  }
-
-  const updated = await updateProductMinQuantity(input.productId, minQuantity);
-  if (!updated) return { ok: false, error: 'product_not_found' };
-
-  try {
-    await insertAdminAuditEvent({
-      actorUserId: input.actor.id,
-      actorEmail: input.actor.email ?? null,
-      action: 'product.min_quantity',
-      targetProductId: input.productId,
-      metadata: { minQuantity },
-    });
-  } catch (error) {
-    console.error('product min quantity audit failed', error);
-  }
-
-  return { ok: true };
 }

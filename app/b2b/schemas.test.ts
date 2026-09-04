@@ -18,38 +18,31 @@ describe('validateB2BFields', () => {
 });
 
 describe('parseB2BQuoteRequest', () => {
-  it('keeps valid items and notes', () => {
+  it('keeps positive integer quantities and ignores a client-supplied tier', () => {
     const parsed = parseB2BQuoteRequest({
-      tier: 'pro',
+      tier: 'max',
       items: [
-        { productId: 1, quantity: 6 },
+        { productId: 1, quantity: 4 },
+        { productId: 2, quantity: 2 },
+        { productId: 3, quantity: 1.5 },
         { productId: 'nope', quantity: 1 },
       ],
       notes: '  mix semanal  ',
     });
     expect(parsed).toEqual({
       ok: true,
-      tier: 'pro',
-      items: [{ productId: 1, quantity: 6 }],
+      items: [
+        { productId: 1, quantity: 4 },
+        { productId: 2, quantity: 2 },
+      ],
       notes: 'mix semanal',
     });
   });
 
   it('rejects a missing item list', () => {
-    expect(parseB2BQuoteRequest({ tier: 'start' })).toEqual({
+    expect(parseB2BQuoteRequest({})).toEqual({
       ok: false,
       error: 'items_required',
-    });
-  });
-
-  it('rejects a missing price table', () => {
-    expect(
-      parseB2BQuoteRequest({
-        items: [{ productId: 1, quantity: 6 }],
-      }),
-    ).toEqual({
-      ok: false,
-      error: 'tier_invalid',
     });
   });
 });

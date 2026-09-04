@@ -2,7 +2,7 @@ import { Form } from '@remix-run/react';
 
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
-import { formatCentsToBRL } from '~/server/br-money';
+import { formatCentsToBRL } from '~/lib/br-money';
 import type { PriceImportPreview } from '~/server/price-list-import';
 import type { SellerTier } from '~/server/seller-tier';
 import { SELLER_TIERS } from '~/server/seller-tier';

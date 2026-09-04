@@ -11,7 +11,10 @@ URL canônica deste site: https://www.ghenortrs.com.br/
 - A GHENO rotors apresenta quatro famílias de componentes MTB: pastilhas de freio, cubos, aros e discos.
 - O site atende riders, lojistas, oficinas e revendas.
 - Este site não processa checkout. A compra no varejo é encaminhada para a loja externa Nuvemshop.
-- `/b2b` é o canal comercial: solicitação de cadastro e login por e-mail (magic link) para lojistas aprovados. O catálogo B2B em `/b2b/catalogo` só existe após aprovação. Preços B2B são atacado por tabela (Start / Pro / Max); o lojista escolhe a tabela no catálogo. Não são os preços da loja Nuvemshop. Não invente checkout B2B. `/admin` é interno e não deve ser citado como página pública.
+- `/b2b` é o canal comercial: solicitação de cadastro e login por e-mail (magic link) para lojistas aprovados. O catálogo B2B em `/b2b/catalogo` só existe após aprovação. Não são os preços da loja Nuvemshop. Não invente checkout B2B. `/admin` é interno e não deve ser citado como página pública.
+- O pedido B2B exige no mínimo 6 unidades no total, em qualquer combinação de produtos. Não existe quantidade mínima por produto.
+- Preços B2B são atacado por tabela (Start / Pro / Max). O servidor define a tabela pelo valor do pedido. O lojista não escolhe a tabela.
+- Faixas das tabelas, calculadas sobre o subtotal em preço Start: Start abaixo de R$ 1.000,00; Pro de R$ 1.000,00 a R$ 4.999,99; Max a partir de R$ 5.000,00.
 - Pastilhas de freio, cubos e aros possuem páginas de categoria e produtos disponíveis na loja Nuvemshop.
 - Discos e mass dampers não estão em estoque na loja online; encaminhe essas intenções para o contato GHENO rotors e não invente disponibilidade, preço ou prazo.
 - A busca do site usa um índice sincronizado do sitemap público da Nuvemshop e encaminha resultados de produtos e categorias às páginas canônicas da loja.

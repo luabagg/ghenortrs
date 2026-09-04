@@ -1,11 +1,16 @@
 // GET /api/b2b-catalog?q=&limit=
 // Approved sellers only. Reads cached Bling products.
 
+import { htmlToPlainText } from './bling';
 import { listActiveCatalogProducts } from './db/queries';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed } from './http';
-import { parseSellerTier } from './seller-tier';
 import { requireApprovedSeller } from './supabase';
+
+function requirePrice(value: number | null): number {
+  if (value === null) throw new Error('catalog_price_missing');
+  return value;
+}
 
 function toPublicProduct(
   row: Awaited<ReturnType<typeof listActiveCatalogProducts>>[number],
@@ -14,12 +19,15 @@ function toPublicProduct(
     id: row.id,
     sku: row.sku,
     name: row.name,
-    description: row.description,
+    description: htmlToPlainText(row.description),
     imageUrl: row.imageUrl,
-    priceCents: row.priceCents,
+    prices: {
+      startCents: requirePrice(row.priceStartCents),
+      proCents: requirePrice(row.priceProCents),
+      maxCents: requirePrice(row.priceMaxCents),
+    },
     stock: row.stock,
     unit: row.unit,
-    minQuantity: row.minQuantity,
     category: row.category,
   };
 }
@@ -40,17 +48,15 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const env = getServerEnv();
-    const tier = parseSellerTier(url.searchParams.get('tier'));
-    const products = (await listActiveCatalogProducts(q, limit, tier)).map(
+    const products = (await listActiveCatalogProducts(q, limit)).map(
       toPublicProduct,
     );
 
     return json({
       source: 'bling_cache',
-      defaultMinQuantity: env.defaultMinQuantity,
+      minimumOrderQuantity: env.minimumOrderQuantity,
       count: products.length,
       products,
-      tier,
       seller: {
         companyName: auth.seller.companyName,
         email: auth.seller.email,

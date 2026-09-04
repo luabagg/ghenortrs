@@ -3,22 +3,17 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getAdminProductDetail } from '~/server/db/queries';
-import {
-  setProductMinQuantity,
-  setProductsVisibility,
-} from '~/server/product-admin';
+import { setProductsVisibility } from '~/server/product-admin';
 import { requireAdmin } from '~/server/require-admin.server';
 import { action, loader } from './admin.produtos.$id';
 
 vi.mock('~/server/db/queries', () => ({ getAdminProductDetail: vi.fn() }));
 vi.mock('~/server/product-admin', () => ({
-  setProductMinQuantity: vi.fn(),
   setProductsVisibility: vi.fn(),
 }));
 vi.mock('~/server/require-admin.server', () => ({ requireAdmin: vi.fn() }));
 
 const getAdminProductDetailMock = vi.mocked(getAdminProductDetail);
-const setProductMinQuantityMock = vi.mocked(setProductMinQuantity);
 const setProductsVisibilityMock = vi.mocked(setProductsVisibility);
 const requireAdminMock = vi.mocked(requireAdmin);
 
@@ -75,36 +70,15 @@ describe('/admin/produtos/:id', () => {
     expect(getAdminProductDetailMock).toHaveBeenCalledTimes(1);
   });
 
-  it('saves a new minimum quantity', async () => {
-    setProductMinQuantityMock.mockResolvedValue({ ok: true });
-
-    const response = await action(
-      post('7', { intent: 'set-min-quantity', minQuantity: '12' }),
-    );
-
-    expect(setProductMinQuantityMock).toHaveBeenCalledWith({
-      actor: { id: admin.id, email: admin.email },
-      productId: 7,
-      minQuantity: 12,
-    });
-    expect(response.status).toBe(302);
-  });
-
-  it('reports an invalid minimum without redirecting', async () => {
-    setProductMinQuantityMock.mockResolvedValue({
-      ok: false,
-      error: 'invalid_min_quantity',
-    });
-
-    const response = await action(
-      post('7', { intent: 'set-min-quantity', minQuantity: '0' }),
-    );
+  it('refuses an unknown intent', async () => {
+    const response = await action(post('7', { intent: 'set-min-quantity' }));
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({
       ok: false,
-      error: 'invalid_min_quantity',
+      error: 'invalid_intent',
     });
+    expect(setProductsVisibilityMock).not.toHaveBeenCalled();
   });
 
   it('hides the product from its own page', async () => {
@@ -123,9 +97,9 @@ describe('/admin/produtos/:id', () => {
   it('never edits without an admin session', async () => {
     requireAdminMock.mockRejectedValue(redirect('/admin/login'));
 
-    await expect(
-      action(post('7', { intent: 'set-min-quantity', minQuantity: '12' })),
-    ).rejects.toEqual(expect.objectContaining({ status: 302 }));
-    expect(setProductMinQuantityMock).not.toHaveBeenCalled();
+    await expect(action(post('7', { intent: 'hide-product' }))).rejects.toEqual(
+      expect.objectContaining({ status: 302 }),
+    );
+    expect(setProductsVisibilityMock).not.toHaveBeenCalled();
   });
 });

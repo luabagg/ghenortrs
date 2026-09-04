@@ -29,6 +29,13 @@
       "when": 1788111280022,
       "tag": "0003_product_cost_price",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788487916427,
+      "tag": "0004_drop_product_min_quantity",
+      "breakpoints": true
     }
   ]
 }

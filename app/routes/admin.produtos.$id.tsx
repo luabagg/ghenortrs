@@ -8,16 +8,10 @@ import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 
 import { AdminChrome } from '~/components/admin/admin-chrome';
 import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
-import { MIN_QUANTITY_LIMIT } from '~/lib/product-rules';
 import { buildNoIndexMeta } from '~/lib/seo';
-import { formatCentsToBRL } from '~/server/br-money';
+import { formatCentsToBRL } from '~/lib/br-money';
 import { getAdminProductDetail } from '~/server/db/queries';
-import {
-  setProductMinQuantity,
-  setProductsVisibility,
-} from '~/server/product-admin';
+import { setProductsVisibility } from '~/server/product-admin';
 import { requireAdmin } from '~/server/require-admin.server';
 
 export const meta: MetaFunction = () =>
@@ -27,7 +21,6 @@ export const meta: MetaFunction = () =>
   );
 
 const ERROR_MESSAGES: Record<string, string> = {
-  invalid_min_quantity: `Informe um número inteiro entre 1 e ${MIN_QUANTITY_LIMIT}.`,
   product_not_found: 'Produto não encontrado.',
   invalid_intent: 'Ação inválida.',
 };
@@ -60,21 +53,6 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const intent = String(formData.get('intent') ?? '');
   const actor = { id: user.id, email: user.email };
-
-  if (intent === 'set-min-quantity') {
-    const result = await setProductMinQuantity({
-      actor,
-      productId: id,
-      minQuantity: Number(formData.get('minQuantity')),
-    });
-    if (!result.ok) {
-      return json(
-        { ok: false as const, error: result.error },
-        { status: 400, headers },
-      );
-    }
-    return redirect(`/admin/produtos/${id}`, { headers });
-  }
 
   if (intent === 'show-product' || intent === 'hide-product') {
     await setProductsVisibility({
@@ -141,32 +119,6 @@ export default function AdminProductDetail() {
       </section>
 
       <section className="grid gap-4 border border-border bg-surface p-4">
-        <Form
-          className="grid gap-3 sm:grid-cols-[160px_auto] sm:items-end"
-          method="post"
-        >
-          <input name="intent" type="hidden" value="set-min-quantity" />
-          <div className="grid gap-2">
-            <Label htmlFor="min-quantity">Quantidade mínima</Label>
-            <Input
-              defaultValue={product.minQuantity}
-              id="min-quantity"
-              max={MIN_QUANTITY_LIMIT}
-              min={1}
-              name="minQuantity"
-              step={1}
-              type="number"
-            />
-          </div>
-          <Button type="submit" variant="secondary">
-            Salvar
-          </Button>
-        </Form>
-        <p className="text-sm text-secondary">
-          O lojista não pode pedir menos que isso. A sincronização do Bling não
-          altera este valor.
-        </p>
-
         <Form method="post">
           <Button
             name="intent"

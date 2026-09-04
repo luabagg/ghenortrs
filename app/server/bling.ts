@@ -198,7 +198,6 @@ export type NormalizedBlingProduct = {
   cost_cents: number | null;
   stock: number | null;
   unit: string | null;
-  min_quantity: number;
   active: boolean;
   category: string | null;
   search_terms: string;
@@ -207,7 +206,6 @@ export type NormalizedBlingProduct = {
 
 export function normalizeBlingProduct(
   product: BlingProduct,
-  defaultMinQuantity: number,
 ): NormalizedBlingProduct {
   const toCents = (value: number | null | undefined): number | null =>
     typeof value === 'number' && Number.isFinite(value)
@@ -243,7 +241,6 @@ export function normalizeBlingProduct(
     cost_cents: toCents(product.precoCusto),
     stock,
     unit: product.unidade ?? null,
-    min_quantity: defaultMinQuantity,
     active,
     category: product.categoria?.descricao ?? null,
     search_terms: terms,
@@ -269,12 +266,12 @@ export async function listAllBlingProducts(): Promise<BlingProduct[]> {
   return products;
 }
 
-export async function syncBlingProductsToCache(
-  defaultMinQuantity: number,
-): Promise<{ upserted: number }> {
+export async function syncBlingProductsToCache(): Promise<{
+  upserted: number;
+}> {
   const products = await listAllBlingProducts();
   const rows = products.map((product) => {
-    const normalized = normalizeBlingProduct(product, defaultMinQuantity);
+    const normalized = normalizeBlingProduct(product);
     return {
       id: normalized.id,
       sku: normalized.sku,
@@ -285,7 +282,6 @@ export async function syncBlingProductsToCache(
       costCents: normalized.cost_cents,
       stock: normalized.stock,
       unit: normalized.unit,
-      minQuantity: normalized.min_quantity,
       active: normalized.active,
       category: normalized.category,
       searchTerms: normalized.search_terms,

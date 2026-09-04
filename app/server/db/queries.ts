@@ -40,11 +40,12 @@ export const catalogProductColumns = {
   name: blingProducts.name,
   description: blingProducts.description,
   imageUrl: blingProducts.imageUrl,
-  priceCents: blingProducts.priceCents,
   stock: blingProducts.stock,
   unit: blingProducts.unit,
-  minQuantity: blingProducts.minQuantity,
   category: blingProducts.category,
+  priceStartCents: blingProducts.priceStartCents,
+  priceProCents: blingProducts.priceProCents,
+  priceMaxCents: blingProducts.priceMaxCents,
 } as const;
 
 export type CatalogProductRow = {
@@ -53,30 +54,25 @@ export type CatalogProductRow = {
   name: string;
   description: string;
   imageUrl: string | null;
-  priceCents: number | null;
   stock: number | null;
   unit: string | null;
-  minQuantity: number;
   category: string | null;
+  priceStartCents: number | null;
+  priceProCents: number | null;
+  priceMaxCents: number | null;
 };
 
 export function sanitizeCatalogQuery(raw: string): string {
   return raw.replace(/[%_,.()'"]/g, ' ').trim();
 }
 
-export function catalogSelectColumns(tier: SellerTier) {
-  const priceCol = blingProducts[tierPriceColumn(tier)];
-  return {
-    ...catalogProductColumns,
-    priceCents: sql<number | null>`${priceCol}`.as('priceCents'),
-  };
-}
-
-export function catalogVisibilityConditions(tier: SellerTier) {
+export function catalogVisibilityConditions() {
   return [
     eq(blingProducts.active, true),
     eq(blingProducts.visibleB2b, true),
-    isNotNull(blingProducts[tierPriceColumn(tier)]),
+    isNotNull(blingProducts.priceStartCents),
+    isNotNull(blingProducts.priceProCents),
+    isNotNull(blingProducts.priceMaxCents),
   ] as const;
 }
 
@@ -141,7 +137,6 @@ export type AdminProductDetailRow = {
   unit: string | null;
   active: boolean;
   visibleB2b: boolean;
-  minQuantity: number;
   stock: number | null;
   priceCents: number | null;
   costCents: number | null;
@@ -165,7 +160,6 @@ export async function getAdminProductDetail(
       unit: blingProducts.unit,
       active: blingProducts.active,
       visibleB2b: blingProducts.visibleB2b,
-      minQuantity: blingProducts.minQuantity,
       stock: blingProducts.stock,
       priceCents: blingProducts.priceCents,
       costCents: blingProducts.costCents,
@@ -178,19 +172,6 @@ export async function getAdminProductDetail(
     .where(eq(blingProducts.id, id))
     .limit(1);
   return row ?? null;
-}
-
-/** Per-product order minimum. The sync no longer overwrites this column. */
-export async function updateProductMinQuantity(
-  id: number,
-  minQuantity: number,
-): Promise<boolean> {
-  const [row] = await getDb()
-    .update(blingProducts)
-    .set({ minQuantity })
-    .where(eq(blingProducts.id, id))
-    .returning({ id: blingProducts.id });
-  return row !== undefined;
 }
 
 /** Sets an explicit visibility on exactly the given product IDs. */
@@ -272,19 +253,15 @@ export async function updateTierPrices(
   });
 }
 
-export function buildCatalogSearchSql(
-  query: string,
-  limit: number,
-  tier: SellerTier,
-) {
+export function buildCatalogSearchSql(query: string, limit: number) {
   const safe = sanitizeCatalogQuery(query);
   const pattern = `%${safe}%`;
   return qb
-    .select(catalogSelectColumns(tier))
+    .select(catalogProductColumns)
     .from(blingProducts)
     .where(
       and(
-        ...catalogVisibilityConditions(tier),
+        ...catalogVisibilityConditions(),
         or(
           ilike(blingProducts.name, pattern),
           ilike(blingProducts.sku, pattern),
@@ -491,9 +468,8 @@ export async function listAdminAuditEvents(
 export async function listActiveCatalogProducts(
   query: string,
   limit: number,
-  tier: SellerTier,
 ): Promise<CatalogProductRow[]> {
-  const conditions = [...catalogVisibilityConditions(tier)];
+  const conditions = [...catalogVisibilityConditions()];
   const safe = sanitizeCatalogQuery(query);
   if (safe) {
     const pattern = `%${safe}%`;
@@ -508,7 +484,7 @@ export async function listActiveCatalogProducts(
   }
 
   return getDb()
-    .select(catalogSelectColumns(tier))
+    .select(catalogProductColumns)
     .from(blingProducts)
     .where(and(...conditions))
     .orderBy(blingProducts.name)
@@ -517,14 +493,13 @@ export async function listActiveCatalogProducts(
 
 export async function listActiveProductsByIds(
   ids: number[],
-  tier: SellerTier,
 ): Promise<CatalogProductRow[]> {
   if (ids.length === 0) return [];
   return getDb()
-    .select(catalogSelectColumns(tier))
+    .select(catalogProductColumns)
     .from(blingProducts)
     .where(
-      and(inArray(blingProducts.id, ids), ...catalogVisibilityConditions(tier)),
+      and(inArray(blingProducts.id, ids), ...catalogVisibilityConditions()),
     );
 }
 
@@ -610,7 +585,7 @@ export async function readStoredBlingTokens(): Promise<BlingTokenRow | null> {
   return row ?? null;
 }
 
-/** Sync upsert SET. Must omit visible_b2b, min_quantity, and price_*_cents. */
+/** Sync upsert SET. Must omit visible_b2b and price_*_cents. */
 export const blingProductSyncConflictSet = {
   sku: sql`excluded.sku`,
   name: sql`excluded.name`,
@@ -637,7 +612,6 @@ export async function upsertBlingProducts(
     priceCents: number | null;
     stock: number | null;
     unit: string | null;
-    minQuantity: number;
     active: boolean;
     category: string | null;
     searchTerms: string;

@@ -3,7 +3,7 @@
 
 import { createHash } from 'node:crypto';
 
-import { parseBrMoneyToCents } from './br-money';
+import { parseBrMoneyToCents } from '../lib/br-money';
 import {
   insertAdminAuditEvent,
   listProductsBySkus,

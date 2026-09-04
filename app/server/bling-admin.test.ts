@@ -3,15 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { syncBlingProductsToCache } from './bling';
 import { getBlingConnectionStatus, syncBlingCatalog } from './bling-admin';
 import { insertAdminAuditEvent, readBlingTokenStatus } from './db/queries';
-import { getServerEnv } from './env';
 
 vi.mock('./bling', () => ({ syncBlingProductsToCache: vi.fn() }));
 vi.mock('./db/queries', () => ({
   insertAdminAuditEvent: vi.fn(),
   readBlingTokenStatus: vi.fn(),
 }));
-vi.mock('./env', () => ({ getServerEnv: vi.fn() }));
-
 const insertAdminAuditEventMock = vi.mocked(insertAdminAuditEvent);
 const readBlingTokenStatusMock = vi.mocked(readBlingTokenStatus);
 const syncBlingProductsToCacheMock = vi.mocked(syncBlingProductsToCache);
@@ -20,9 +17,6 @@ const actor = { id: 'admin-1', email: 'admin@example.com' };
 
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(getServerEnv).mockReturnValue({
-    defaultMinQuantity: 6,
-  } as ReturnType<typeof getServerEnv>);
   insertAdminAuditEventMock.mockResolvedValue({} as never);
 });
 
@@ -56,7 +50,7 @@ describe('syncBlingCatalog', () => {
     const result = await syncBlingCatalog({ actor });
 
     expect(syncBlingProductsToCacheMock).toHaveBeenCalledOnce();
-    expect(syncBlingProductsToCacheMock).toHaveBeenCalledWith(6);
+    expect(syncBlingProductsToCacheMock).toHaveBeenCalledWith();
     expect(result).toMatchObject({ ok: true, upserted: 12 });
     expect(insertAdminAuditEventMock).toHaveBeenCalledOnce();
     expect(insertAdminAuditEventMock).toHaveBeenCalledWith(

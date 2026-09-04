@@ -7,7 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_B2B_SUBMIT_URL?: string;
   readonly VITE_SUPABASE_URL?: string;
   readonly VITE_SUPABASE_ANON_KEY?: string;
-  readonly VITE_B2B_DEFAULT_MIN_QUANTITY?: string;
+  readonly VITE_B2B_MINIMUM_ORDER_QUANTITY?: string;
   readonly VITE_GTM_ID?: string;
 }
 

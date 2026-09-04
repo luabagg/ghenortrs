@@ -1,4 +1,4 @@
-import { formatCentsToBRL } from './br-money';
+import { formatCentsToBRL } from '../lib/br-money';
 import { escHtml } from './http';
 
 type SendEmailInput = {
@@ -175,13 +175,17 @@ export function buildQuoteRequestHtml(input: {
   email: string;
   phone: string;
   tier: 'start' | 'pro' | 'max';
+  totalQuantity: number;
+  qualifyingSubtotalCents: number;
+  totalCents: number;
   notes: string;
   items: Array<{
     name: string;
     sku: string | null;
     quantity: number;
-    minQuantity: number;
+    unit: string | null;
     unitPriceCents: number;
+    lineTotalCents: number;
   }>;
 }): string {
   const rows = input.items
@@ -190,9 +194,9 @@ export function buildQuoteRequestHtml(input: {
         `<tr>
           <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(item.name)}</td>
           <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(item.sku ?? '—')}</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #eee">${item.quantity}</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #eee">${item.minQuantity}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${item.quantity}${item.unit ? ` ${escHtml(item.unit)}` : ''}</td>
           <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(formatCentsToBRL(item.unitPriceCents))}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">${escHtml(formatCentsToBRL(item.lineTotalCents))}</td>
         </tr>`,
     )
     .join('');
@@ -200,15 +204,26 @@ export function buildQuoteRequestHtml(input: {
   const content = `
   <h2 style="color:#E81414">Solicitação de orçamento B2B</h2>
   <p><strong>${escHtml(input.companyName)}</strong> · ${escHtml(input.email)} · ${escHtml(input.phone)}</p>
-  <p>Tabela: <strong>${escHtml(input.tier.toUpperCase())}</strong></p>
+  ${buildLabelValueTable([
+    { label: 'Tabela', value: escHtml(input.tier.toUpperCase()) },
+    { label: 'Unidades', value: String(input.totalQuantity) },
+    {
+      label: 'Base da tabela',
+      value: escHtml(formatCentsToBRL(input.qualifyingSubtotalCents)),
+    },
+    {
+      label: 'Total do pedido',
+      value: escHtml(formatCentsToBRL(input.totalCents)),
+    },
+  ])}
   <table style="width:100%;border-collapse:collapse;margin-top:16px">
     <thead>
       <tr style="background:#f5f5f5;text-align:left">
         <th style="padding:8px 12px">Produto</th>
         <th style="padding:8px 12px">SKU</th>
         <th style="padding:8px 12px">Qtd</th>
-        <th style="padding:8px 12px">Mín.</th>
         <th style="padding:8px 12px">Preço un.</th>
+        <th style="padding:8px 12px">Total</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>

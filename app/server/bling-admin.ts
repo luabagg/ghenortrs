@@ -4,7 +4,6 @@ import { createCookie } from '@remix-run/node';
 
 import { syncBlingProductsToCache } from './bling';
 import { insertAdminAuditEvent, readBlingTokenStatus } from './db/queries';
-import { getServerEnv } from './env';
 
 const FLASH_TTL_SECONDS = 60;
 
@@ -59,9 +58,7 @@ export async function syncBlingCatalog(input: {
 }): Promise<BlingSyncResult> {
   let upserted: number;
   try {
-    upserted = (
-      await syncBlingProductsToCache(getServerEnv().defaultMinQuantity)
-    ).upserted;
+    upserted = (await syncBlingProductsToCache()).upserted;
   } catch (error) {
     console.error('bling catalog sync failed', error);
     await recordSyncAudit(input.actor, 'failure', null);

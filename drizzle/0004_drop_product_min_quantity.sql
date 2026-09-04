@@ -1,0 +1,1 @@
+ALTER TABLE "bling_products" DROP COLUMN "min_quantity";

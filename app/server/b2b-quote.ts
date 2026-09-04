@@ -1,12 +1,36 @@
 // POST /api/b2b-quote
-// Approved sellers submit a quote request (no checkout). Enforces min quantities.
+// Approved sellers submit a quote request. The server derives pricing from the order.
 
+import {
+  calculateOrderPricing,
+  type B2BTierPrices,
+  unitPriceForTier,
+} from '../b2b/order-pricing';
 import { parseB2BQuoteRequest } from '../b2b/schemas';
 import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
 import { json, methodNotAllowed, readJson } from './http';
 import { buildQuoteRequestHtml, sendResendEmail } from './resend';
 import { requireApprovedSeller } from './supabase';
+
+function productPrices(product: {
+  priceStartCents: number | null;
+  priceProCents: number | null;
+  priceMaxCents: number | null;
+}): B2BTierPrices | null {
+  if (
+    product.priceStartCents === null ||
+    product.priceProCents === null ||
+    product.priceMaxCents === null
+  ) {
+    return null;
+  }
+  return {
+    startCents: product.priceStartCents,
+    proCents: product.priceProCents,
+    maxCents: product.priceMaxCents,
+  };
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return methodNotAllowed(['POST']);
@@ -18,73 +42,72 @@ export default async function handler(req: Request): Promise<Response> {
   const parsed = parseB2BQuoteRequest(body);
   if (!parsed.ok) return json({ error: parsed.error }, 400);
 
-  const { items: requested, notes, tier } = parsed;
+  const { items: requested, notes } = parsed;
 
   try {
     const env = getServerEnv();
-    const ids = requested.map((item) => item.productId);
-    const products = await listActiveProductsByIds(ids, tier);
-    const byId = new Map(products.map((product) => [product.id, product]));
-
-    const lineItems: Array<{
-      productId: number;
-      name: string;
-      sku: string | null;
-      quantity: number;
-      minQuantity: number;
-      unit: string | null;
-      unitPriceCents: number;
-    }> = [];
-    const violations: Array<{
-      productId: number;
-      name: string;
-      quantity: number;
-      minQuantity: number;
-    }> = [];
-
+    const quantitiesById = new Map<number, number>();
     for (const item of requested) {
-      const product = byId.get(item.productId);
-      if (!product || product.priceCents == null) {
-        return json(
-          { error: 'product_not_found', productId: item.productId },
-          400,
-        );
-      }
-      const minQuantity = product.minQuantity || env.defaultMinQuantity;
-      if (item.quantity < minQuantity) {
-        violations.push({
-          productId: product.id,
-          name: product.name,
-          quantity: item.quantity,
-          minQuantity,
-        });
-        continue;
-      }
-      lineItems.push({
-        productId: product.id,
-        name: product.name,
-        sku: product.sku,
-        quantity: Math.floor(item.quantity),
-        minQuantity,
-        unit: product.unit,
-        unitPriceCents: product.priceCents,
-      });
+      quantitiesById.set(
+        item.productId,
+        (quantitiesById.get(item.productId) ?? 0) + item.quantity,
+      );
     }
 
-    if (violations.length > 0) {
+    const ids = [...quantitiesById.keys()];
+    const products = await listActiveProductsByIds(ids);
+    const byId = new Map(products.map((product) => [product.id, product]));
+    const pricedItems: Array<{
+      product: (typeof products)[number];
+      quantity: number;
+      prices: B2BTierPrices;
+    }> = [];
+
+    for (const [productId, quantity] of quantitiesById) {
+      const product = byId.get(productId);
+      const prices = product ? productPrices(product) : null;
+      if (!product || !prices) {
+        return json({ error: 'product_not_found', productId }, 400);
+      }
+      pricedItems.push({ product, quantity, prices });
+    }
+
+    const pricing = calculateOrderPricing(pricedItems);
+    if (pricing.totalQuantity < env.minimumOrderQuantity) {
       return json(
         {
-          error: 'min_quantity_not_met',
-          message: 'Um ou mais itens estão abaixo da quantidade mínima B2B.',
-          violations,
+          error: 'minimum_order_quantity_not_met',
+          message: `Selecione pelo menos ${env.minimumOrderQuantity} unidades no total.`,
+          minimumOrderQuantity: env.minimumOrderQuantity,
+          totalQuantity: pricing.totalQuantity,
         },
         400,
       );
     }
 
+    const lineItems = pricedItems.map(({ product, quantity, prices }) => {
+      const unitPriceCents = unitPriceForTier(prices, pricing.tier);
+      return {
+        productId: product.id,
+        name: product.name,
+        sku: product.sku,
+        quantity,
+        unit: product.unit,
+        unitPriceCents,
+        lineTotalCents: unitPriceCents * quantity,
+      };
+    });
+
+    const quoteSummary = {
+      tier: pricing.tier,
+      totalQuantity: pricing.totalQuantity,
+      qualifyingSubtotalCents: pricing.startSubtotalCents,
+      totalCents: pricing.totalCents,
+      lines: lineItems,
+    };
     const saved = await insertQuoteRequest({
       sellerId: auth.seller.id,
-      items: { tier, lines: lineItems },
+      items: quoteSummary,
       notes,
     });
 
@@ -97,15 +120,12 @@ export default async function handler(req: Request): Promise<Response> {
           companyName: auth.seller.companyName,
           email: auth.seller.email,
           phone: auth.seller.phone,
-          tier,
+          tier: pricing.tier,
+          totalQuantity: pricing.totalQuantity,
+          qualifyingSubtotalCents: pricing.startSubtotalCents,
+          totalCents: pricing.totalCents,
           notes,
-          items: lineItems.map((item) => ({
-            name: item.name,
-            sku: item.sku,
-            quantity: item.quantity,
-            minQuantity: item.minQuantity,
-            unitPriceCents: item.unitPriceCents,
-          })),
+          items: lineItems,
         }),
       });
     }
@@ -115,6 +135,10 @@ export default async function handler(req: Request): Promise<Response> {
       id: saved.id,
       createdAt: saved.createdAt,
       itemCount: lineItems.length,
+      tier: pricing.tier,
+      totalQuantity: pricing.totalQuantity,
+      qualifyingSubtotalCents: pricing.startSubtotalCents,
+      totalCents: pricing.totalCents,
       message:
         'Solicitação enviada. A equipe GHENO retorna com condições comerciais.',
     });

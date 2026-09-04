@@ -1,3 +1,5 @@
+import type { B2BTierPrices } from './order-pricing';
+
 export type SellerGate =
   | 'anonymous'
   | 'needs_registration'
@@ -7,8 +9,6 @@ export type SellerGate =
   | 'suspended'
   | 'loading'
   | 'unconfigured';
-
-export type SellerTier = 'start' | 'pro' | 'max';
 
 export type SellerSummary = {
   id: string;
@@ -33,10 +33,9 @@ export type B2BCatalogProduct = {
   name: string;
   description: string;
   imageUrl: string | null;
-  priceCents: number | null;
+  prices: B2BTierPrices;
   stock: number | null;
   unit: string | null;
-  minQuantity: number;
   category: string | null;
 };
 

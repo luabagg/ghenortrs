@@ -1,20 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  insertAdminAuditEvent,
-  updateProductMinQuantity,
-  updateProductsVisibleB2b,
-} from './db/queries';
-import { setProductMinQuantity, setProductsVisibility } from './product-admin';
+import { insertAdminAuditEvent, updateProductsVisibleB2b } from './db/queries';
+import { setProductsVisibility } from './product-admin';
 
 vi.mock('./db/queries', () => ({
   insertAdminAuditEvent: vi.fn(),
-  updateProductMinQuantity: vi.fn(),
   updateProductsVisibleB2b: vi.fn(),
 }));
 
 const insertAdminAuditEventMock = vi.mocked(insertAdminAuditEvent);
-const updateProductMinQuantityMock = vi.mocked(updateProductMinQuantity);
 const updateProductsVisibleB2bMock = vi.mocked(updateProductsVisibleB2b);
 
 const actor = { id: 'admin-1', email: 'admin@example.com' };
@@ -82,42 +76,5 @@ describe('setProductsVisibility', () => {
     expect(insertAdminAuditEventMock).toHaveBeenCalledWith(
       expect.objectContaining({ outcome: 'failure' }),
     );
-  });
-});
-
-describe('setProductMinQuantity', () => {
-  it('stores a valid minimum and audits it', async () => {
-    updateProductMinQuantityMock.mockResolvedValue(true);
-
-    await expect(
-      setProductMinQuantity({ actor, productId: 7, minQuantity: 12 }),
-    ).resolves.toEqual({ ok: true });
-
-    expect(updateProductMinQuantityMock).toHaveBeenCalledWith(7, 12);
-    expect(insertAdminAuditEventMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: 'product.min_quantity',
-        metadata: { minQuantity: 12 },
-        targetProductId: 7,
-      }),
-    );
-  });
-
-  it.each([0, -1, 1.5, 10_001, Number.NaN])(
-    'refuses %s without touching the row',
-    async (value) => {
-      await expect(
-        setProductMinQuantity({ actor, productId: 7, minQuantity: value }),
-      ).resolves.toEqual({ ok: false, error: 'invalid_min_quantity' });
-      expect(updateProductMinQuantityMock).not.toHaveBeenCalled();
-    },
-  );
-
-  it('reports a product that does not exist', async () => {
-    updateProductMinQuantityMock.mockResolvedValue(false);
-
-    await expect(
-      setProductMinQuantity({ actor, productId: 7, minQuantity: 6 }),
-    ).resolves.toEqual({ ok: false, error: 'product_not_found' });
   });
 });

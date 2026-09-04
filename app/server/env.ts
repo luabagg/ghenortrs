@@ -18,7 +18,7 @@ export type ServerEnv = {
   blingAuthBase: string;
   approvalLinkSecret: string | null;
   adminBootstrapEmails: string[];
-  defaultMinQuantity: number;
+  minimumOrderQuantity: number;
 };
 
 function normalizeEnvValue(value: unknown): string | undefined {
@@ -59,7 +59,7 @@ const serverEnvSchema = z
     BLING_AUTH_BASE: optionalEnv(),
     B2B_APPROVAL_LINK_SECRET: optionalEnv(),
     ADMIN_BOOTSTRAP_EMAILS: optionalEnv(),
-    B2B_DEFAULT_MIN_QUANTITY: optionalEnv(),
+    B2B_MINIMUM_ORDER_QUANTITY: optionalEnv(),
   })
   .transform((env): ServerEnv => {
     const databaseUrl =
@@ -72,7 +72,7 @@ const serverEnvSchema = z
         'Missing required env: DATABASE_URL (or POSTGRES_URL / POSTGRES_PRISMA_URL)',
       );
     }
-    const defaultMin = Number(env.B2B_DEFAULT_MIN_QUANTITY ?? '6');
+    const minimumOrderQuantity = Number(env.B2B_MINIMUM_ORDER_QUANTITY ?? '6');
     return {
       siteUrl: env.SITE_URL ?? env.VITE_SITE_URL ?? 'http://localhost:5173',
       supabaseUrl: env.SUPABASE_URL,
@@ -90,8 +90,10 @@ const serverEnvSchema = z
         env.BLING_AUTH_BASE ?? 'https://www.bling.com.br/Api/v3/oauth',
       approvalLinkSecret: env.B2B_APPROVAL_LINK_SECRET ?? null,
       adminBootstrapEmails: parseAdminEmails(env.ADMIN_BOOTSTRAP_EMAILS),
-      defaultMinQuantity:
-        Number.isFinite(defaultMin) && defaultMin > 0 ? defaultMin : 6,
+      minimumOrderQuantity:
+        Number.isFinite(minimumOrderQuantity) && minimumOrderQuantity > 0
+          ? minimumOrderQuantity
+          : 6,
     };
   });
 
