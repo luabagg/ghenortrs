@@ -11,6 +11,7 @@ import {
   ProductRow,
   TierLadder,
 } from '@/components/b2b/b2b-catalog-sections';
+import { B2BProductDrawer } from '@/components/b2b/b2b-product-drawer';
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,8 @@ export function B2BCatalogPage() {
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState<Record<number, number>>({});
   const [notes, setNotes] = useState('');
+  // Hold the id, not the product. A refetch replaces the objects.
+  const [detailId, setDetailId] = useState<number | null>(null);
 
   const {
     data: catalog,
@@ -65,6 +68,12 @@ export function B2BCatalogPage() {
   );
 
   const belowMinimum = pricing.totalQuantity < minimumOrderQuantity;
+  const detailProduct =
+    products.find((product) => product.id === detailId) ?? null;
+
+  function setQuantity(productId: number, next: number) {
+    setSelection((prev) => ({ ...prev, [productId]: next }));
+  }
 
   async function onSubmitQuote() {
     try {
@@ -89,7 +98,8 @@ export function B2BCatalogPage() {
         : undefined) ??
       'Não foi possível enviar a solicitação.')
     : submitQuote.data?.success
-      ? (submitQuote.data.message ?? 'Solicitação enviada.')
+      ? (submitQuote.data.message ??
+        'Iremos retornar com as condições assim que possível.')
       : null;
 
   if (!configured) {
@@ -158,16 +168,18 @@ export function B2BCatalogPage() {
         </p>
       ) : null}
 
-      <ul className="divide-y divide-border border-y border-border">
+      <ul
+        aria-label="Produtos do catálogo"
+        className="divide-y divide-border border-y border-border"
+      >
         {products.map((product) => (
           <ProductRow
             key={product.id}
             product={product}
             quantity={selection[product.id] ?? 0}
             tier={pricing.tier}
-            onQuantityChange={(next) =>
-              setSelection((prev) => ({ ...prev, [product.id]: next }))
-            }
+            onOpenDetail={() => setDetailId(product.id)}
+            onQuantityChange={(next) => setQuantity(product.id, next)}
           />
         ))}
       </ul>
@@ -177,7 +189,7 @@ export function B2BCatalogPage() {
           Solicitação de orçamento
         </h2>
         <p className="font-body text-[14px] leading-5 text-secondary">
-          A GHENO rotors retorna com condições, prazos e disponibilidade.
+          Iremos retornar com as condições assim que possível.
         </p>
 
         <OrderSummary
@@ -210,6 +222,16 @@ export function B2BCatalogPage() {
             : 'Enviar solicitação à GHENO rotors'}
         </Button>
       </section>
+
+      <B2BProductDrawer
+        product={detailProduct}
+        quantity={detailProduct ? (selection[detailProduct.id] ?? 0) : 0}
+        tier={pricing.tier}
+        onClose={() => setDetailId(null)}
+        onQuantityChange={(next) => {
+          if (detailProduct) setQuantity(detailProduct.id, next);
+        }}
+      />
     </div>
   );
 }

@@ -139,8 +139,7 @@ export default async function handler(req: Request): Promise<Response> {
       totalQuantity: pricing.totalQuantity,
       qualifyingSubtotalCents: pricing.startSubtotalCents,
       totalCents: pricing.totalCents,
-      message:
-        'Solicitação enviada. A equipe GHENO retorna com condições comerciais.',
+      message: 'Iremos retornar com as condições assim que possível.',
     });
   } catch (error) {
     console.error('b2b-quote failed', error);

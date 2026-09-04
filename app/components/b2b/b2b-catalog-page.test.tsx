@@ -26,9 +26,9 @@ const useB2BSessionMock = vi.mocked(useB2BSession);
 /** R$ 200,00 / R$ 180,00 / R$ 150,00 — one unit crosses no threshold alone. */
 const aro: B2BCatalogProduct = {
   id: 1,
-  sku: 'ARO-29',
+  sku: 'RIMS-HEAV-27.5',
   name: 'Aro 29',
-  description: 'Alumínio 6061',
+  description: 'Alumínio 6061\nAro tubeless',
   imageUrl: 'https://bling.example/aro-29.jpg',
   prices: { startCents: 20_000, proCents: 18_000, maxCents: 15_000 },
   stock: 40,
@@ -58,10 +58,35 @@ function renderPage() {
   );
 }
 
+function catalog() {
+  return screen.getByRole('list', { name: 'Produtos do catálogo' });
+}
+
+function row(productName: string) {
+  const found = within(catalog())
+    .getAllByRole('listitem')
+    .find((item) => item.textContent?.includes(productName));
+  if (!found) throw new Error(`no row for ${productName}`);
+  return found;
+}
+
+function addToOrder(productName: string) {
+  fireEvent.click(
+    screen.getByRole('button', { name: `Adicionar ${productName} ao pedido` }),
+  );
+}
+
 function setQuantity(productName: string, quantity: number) {
-  fireEvent.change(screen.getByLabelText(`Quantidade de ${productName}`), {
+  const label = `Quantidade de ${productName}`;
+  if (!screen.queryByLabelText(label)) addToOrder(productName);
+  fireEvent.change(screen.getByLabelText(label), {
     target: { value: String(quantity) },
   });
+}
+
+function openDetail(productName: string) {
+  fireEvent.click(within(row(productName)).getByText(productName));
+  return screen.getByRole('dialog', { name: productName });
 }
 
 function summary() {
@@ -104,19 +129,24 @@ beforeEach(() => {
   } as never);
 });
 
-describe('B2BCatalogPage', () => {
+describe('B2BCatalogPage rows', () => {
   it('shows the Bling photo, and a placeholder when there is none', () => {
     renderPage();
 
-    const rows = screen.getAllByRole('listitem');
-    const aroRow = rows.find((row) => row.textContent?.includes('Aro 29'));
-    const discoRow = rows.find((row) => row.textContent?.includes('Disco 180'));
-
-    expect(within(aroRow as HTMLElement).getByTitle('Aro 29')).toHaveAttribute(
+    expect(row('Aro 29').querySelector('img')).toHaveAttribute(
       'src',
       'https://bling.example/aro-29.jpg',
     );
-    expect(within(discoRow as HTMLElement).getByText('sem foto')).toBeVisible();
+    expect(row('Disco 180').querySelector('img')).toBeNull();
+    expect(within(row('Disco 180')).getByText('sem foto')).toBeVisible();
+  });
+
+  it('keeps the SKU and the description out of the row', () => {
+    renderPage();
+
+    expect(row('Aro 29').textContent).not.toContain('RIMS-HEAV-27.5');
+    expect(row('Aro 29').textContent).not.toContain('Alumínio 6061');
+    expect(within(row('Aro 29')).getByText('Aros · estoque 40')).toBeVisible();
   });
 
   it('never lets the seller pick a price table by hand', () => {
@@ -125,16 +155,137 @@ describe('B2BCatalogPage', () => {
     expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Usar mínimo' })).toBeNull();
   });
+});
 
-  it('starts on Start and shows the Max price the order can reach', () => {
+describe('B2BCatalogPage prices', () => {
+  it('starts on Start and marks the Max price in accent', () => {
     renderPage();
 
-    const row = screen.getByLabelText('Quantidade de Aro 29').closest('li');
-    expect(within(row as HTMLElement).getByText(/R\$ 200,00/)).toBeVisible();
-    expect(within(row as HTMLElement).getByText('Max R$ 150,00')).toBeVisible();
+    expect(within(row('Aro 29')).getByText('R$ 200,00')).toBeVisible();
+    const max = within(row('Aro 29')).getByText('Max R$ 150,00');
+    expect(max).toBeVisible();
+    expect(max).toHaveClass('text-accent');
     expect(within(summary()).getByText('Start')).toBeVisible();
   });
 
+  it('moves every row to Pro once the Start base reaches R$ 1.000', () => {
+    renderPage();
+    setQuantity('Aro 29', 5);
+
+    expect(within(summary()).getByText('Pro')).toBeVisible();
+    expect(within(row('Aro 29')).getByText('R$ 180,00')).toBeVisible();
+    expect(within(row('Disco 180')).getByText('R$ 270,00')).toBeVisible();
+  });
+
+  it('drops the Max line once the order qualifies for Max', () => {
+    renderPage();
+    setQuantity('Aro 29', 25);
+
+    expect(within(summary()).getByText('Max')).toBeVisible();
+    expect(screen.queryByText('Max R$ 150,00')).toBeNull();
+    expect(
+      screen.getByText('Você está na melhor tabela, a Max.'),
+    ).toBeVisible();
+  });
+
+  it('reports how much the order still needs for the next table', () => {
+    renderPage();
+    setQuantity('Aro 29', 6);
+
+    expect(
+      screen.getByText(
+        'Some R$ 3.800,00 à base da tabela para chegar na tabela Max.',
+      ),
+    ).toBeVisible();
+  });
+});
+
+describe('B2BCatalogPage quantity stepper', () => {
+  it('opens as a single Adicionar button', () => {
+    renderPage();
+
+    expect(
+      within(row('Aro 29')).getByRole('button', { name: /^Adicionar Aro 29/ }),
+    ).toBeVisible();
+    expect(screen.queryByLabelText('Quantidade de Aro 29')).toBeNull();
+  });
+
+  it('becomes a stepper that adds, removes and accepts typing', () => {
+    renderPage();
+    addToOrder('Aro 29');
+
+    expect(screen.getByLabelText('Quantidade de Aro 29')).toHaveValue(1);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Adicionar uma unidade de Aro 29' }),
+    );
+    expect(screen.getByLabelText('Quantidade de Aro 29')).toHaveValue(2);
+
+    fireEvent.change(screen.getByLabelText('Quantidade de Aro 29'), {
+      target: { value: '60' },
+    });
+    expect(screen.getByLabelText('Quantidade de Aro 29')).toHaveValue(60);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Remover uma unidade de Aro 29' }),
+    );
+    expect(screen.getByLabelText('Quantidade de Aro 29')).toHaveValue(59);
+  });
+
+  it('returns to Adicionar when the last unit comes off', () => {
+    renderPage();
+    addToOrder('Aro 29');
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Remover uma unidade de Aro 29' }),
+    );
+
+    expect(
+      within(row('Aro 29')).getByRole('button', { name: /^Adicionar Aro 29/ }),
+    ).toBeVisible();
+  });
+});
+
+describe('B2BCatalogPage detail drawer', () => {
+  it('carries the SKU, the description and every table price', () => {
+    renderPage();
+    const drawer = openDetail('Aro 29');
+
+    expect(
+      within(drawer).getByText(
+        'SKU RIMS-HEAV-27.5 · Aros · Unidade UN · Estoque 40',
+      ),
+    ).toBeVisible();
+    expect(within(drawer).getByText(/Alumínio 6061/)).toBeVisible();
+    expect(within(drawer).getByText('Start · aplicada agora')).toBeVisible();
+    expect(within(drawer).getByText('R$ 200,00')).toBeVisible();
+    expect(within(drawer).getByText('R$ 180,00')).toBeVisible();
+    expect(within(drawer).getByText('R$ 150,00')).toBeVisible();
+  });
+
+  it('adds to the same order the row edits', () => {
+    renderPage();
+    const drawer = openDetail('Aro 29');
+    fireEvent.click(
+      within(drawer).getByRole('button', {
+        name: 'Adicionar Aro 29 ao pedido',
+      }),
+    );
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(screen.getByLabelText('Quantidade de Aro 29')).toHaveValue(1);
+  });
+
+  it('closes on Escape', () => {
+    renderPage();
+    openDetail('Aro 29');
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+describe('B2BCatalogPage submit', () => {
   it('states the global minimum and blocks the submit below it', () => {
     renderPage();
     setQuantity('Aro 29', 5);
@@ -149,38 +300,6 @@ describe('B2BCatalogPage', () => {
     expect(
       screen.getByRole('button', { name: 'Enviar solicitação à GHENO rotors' }),
     ).toBeEnabled();
-  });
-
-  it('moves every row to Pro once the Start base reaches R$ 1.000', () => {
-    renderPage();
-    setQuantity('Aro 29', 5);
-
-    expect(within(summary()).getByText('Pro')).toBeVisible();
-    expect(within(summary()).getByText('R$ 1.000,00')).toBeVisible();
-    expect(screen.getByText(/R\$ 180,00/)).toBeVisible();
-    expect(screen.getByText(/R\$ 270,00/)).toBeVisible();
-  });
-
-  it('reports how much the order still needs for the next table', () => {
-    renderPage();
-    setQuantity('Aro 29', 6);
-
-    expect(
-      screen.getByText(
-        'Some R$ 3.800,00 à base da tabela para chegar na tabela Max.',
-      ),
-    ).toBeVisible();
-  });
-
-  it('drops the Max comparison once the order qualifies for Max', () => {
-    renderPage();
-    setQuantity('Aro 29', 25);
-
-    expect(within(summary()).getByText('Max')).toBeVisible();
-    expect(screen.queryByText('Max R$ 150,00')).toBeNull();
-    expect(
-      screen.getByText('Você está na melhor tabela, a Max.'),
-    ).toBeVisible();
   });
 
   it('sends only the products and the notes, never a tier', async () => {
