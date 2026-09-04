@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
 import { MobileMenuActions } from '@/components/navigation/mobile-menu-actions';
+import { MobileMenuSession } from '@/components/navigation/mobile-menu-session';
 import { StoreSearch } from '@/components/search/store-search';
 import { useBodyScrollLock } from '@/lib/use-body-scroll-lock';
 
@@ -55,6 +56,7 @@ export function MobileMenuOverlay({
             Ações rápidas
           </p>
           <MobileMenuActions onClose={onClose} />
+          <MobileMenuSession onClose={onClose} />
         </div>
       </div>
     </div>

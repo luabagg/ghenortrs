@@ -1,4 +1,5 @@
 import { ScrollImage } from '@/components/motion/scroll-image';
+import { HEADING_SECTION } from '@/lib/typography';
 
 const PROOF_POINTS = [
   'Encaixe e acabamento feitos para o conjunto real da bike',
@@ -34,7 +35,7 @@ export function ProductProofSection() {
             Em uso real
           </p>
           <h2
-            className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
+            className={`max-w-2xl text-balance ${HEADING_SECTION}`}
             id="prova-heading"
           >
             Tecnologia que aguenta prova e trilha.

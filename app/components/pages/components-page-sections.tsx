@@ -7,6 +7,7 @@ import { SectionBand } from '@/components/ui/section-band';
 import { cn } from '@/lib/utils';
 
 import type { ComponentProductFamily } from './components-page-data';
+import { HEADING_SECTION } from '@/lib/typography';
 
 export function ComponentsPageIntro() {
   return (
@@ -62,7 +63,7 @@ export function ComponentFamilyCard({
       >
         <div className="flex flex-col gap-3">
           <h2
-            className="text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
+            className={`text-balance ${HEADING_SECTION}`}
             id={`${family.id}-heading`}
           >
             {family.title}
@@ -121,7 +122,7 @@ export function ComponentsB2BCTA() {
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-on-primary/55">
             B2B
           </p>
-          <h2 className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]">
+          <h2 className={`max-w-2xl text-balance ${HEADING_SECTION}`}>
             Atendimento comercial para oficinas e revendas.
           </h2>
           <p className="max-w-xl font-body text-[14px] leading-5 text-on-primary/72">

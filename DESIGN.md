@@ -185,6 +185,8 @@ The type system should separate impact from readability.
 
 Headlines should feel compressed and forceful, with tight tracking and short lines. Body copy should stay clean and neutral so the product and imagery carry the emotion.
 
+The `h1` and `h2` sizes above are the desktop ceiling, not a fixed value. Headings scale down fluidly on small screens. Use the shared scales in `app/lib/typography.ts` (`HEADING_DISPLAY` for the hero, `HEADING_PAGE` for page titles, `HEADING_SECTION` for section titles) instead of writing a fixed pixel size. A 50px headline on a 360px screen breaks the line into single words.
+
 ## Layout
 
 Layouts should feel asymmetric and intentional, closer to Stripe than to sports-template landing pages. Avoid centered, template-looking hero sections. The first screen should place copy and CTA weight with generous breathing room, a dominant full-bleed image plane, and restrained overlays.

@@ -3,6 +3,7 @@ import { Link } from '@remix-run/react';
 import { WebpSource } from '@/components/media/webp-source';
 import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { MetaLabel } from '@/components/ui/meta-label';
+import { HEADING_PAGE } from '@/lib/typography';
 import { cn } from '@/lib/utils';
 
 export function PageIntro({
@@ -26,7 +27,7 @@ export function PageIntro({
   const body = (
     <>
       {eyebrow ? <MetaLabel className="mb-1">{eyebrow}</MetaLabel> : null}
-      <Heading className="max-w-4xl text-balance font-heading text-[50px] leading-none tracking-[-0.05em]">
+      <Heading className={`max-w-4xl text-balance ${HEADING_PAGE}`}>
         {title}
       </Heading>
       <p className="max-w-2xl font-body text-[14px] leading-5 text-secondary">

@@ -1,21 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link } from '@remix-run/react';
 
 import { B2B_MINIMUM_ORDER_QUANTITY } from '@/b2b/config';
-import { calculateOrderPricing } from '@/b2b/order-pricing';
 import { useB2BCatalogQuery, useSubmitB2BQuoteMutation } from '@/b2b/queries';
-import type { QuoteSelectionItem } from '@/b2b/types';
 import { useB2BSession } from '@/b2b/use-b2b-session';
-import {
-  OrderSummary,
-  ProductRow,
-  TierLadder,
-} from '@/components/b2b/b2b-catalog-sections';
+import { useOrderDraft } from '@/b2b/use-order-draft';
+import { B2BOrderReview } from '@/components/b2b/b2b-order-review';
 import { B2BProductDrawer } from '@/components/b2b/b2b-product-drawer';
+import { ProductRow, ProductRowSkeleton } from '@/components/b2b/product-row';
+import { TierLadder } from '@/components/b2b/tier-ladder';
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { formatCentsToBRL } from '@/lib/br-money';
 
 const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
   minimum_order_quantity_not_met:
@@ -23,11 +20,13 @@ const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
   product_not_found: 'Um dos produtos saiu do catálogo. Atualize a página.',
 };
 
+const SKELETON_ROWS = [0, 1, 2, 3, 4];
+
 export function B2BCatalogPage() {
-  const { gate, session, signOut, configured } = useB2BSession();
+  const { gate, session, configured } = useB2BSession();
   const [query, setQuery] = useState('');
-  const [selection, setSelection] = useState<Record<number, number>>({});
   const [notes, setNotes] = useState('');
+  const [step, setStep] = useState<'catalog' | 'review'>('catalog');
   // Hold the id, not the product. A refetch replaces the objects.
   const [detailId, setDetailId] = useState<number | null>(null);
 
@@ -36,7 +35,7 @@ export function B2BCatalogPage() {
     isLoading: loading,
     error: catalogError,
   } = useB2BCatalogQuery(query, gate === 'approved');
-  const products = useMemo(() => catalog?.products ?? [], [catalog?.products]);
+  const products = catalog?.products ?? [];
   const minimumOrderQuantity =
     catalog?.minimumOrderQuantity ?? B2B_MINIMUM_ORDER_QUANTITY;
   const error = catalogError
@@ -45,45 +44,22 @@ export function B2BCatalogPage() {
       : 'catalog_failed'
     : null;
 
+  const draft = useOrderDraft(products);
   const submitQuote = useSubmitB2BQuoteMutation();
 
-  const selectedItems: QuoteSelectionItem[] = useMemo(() => {
-    return products
-      .filter((product) => (selection[product.id] ?? 0) > 0)
-      .map((product) => ({
-        product,
-        quantity: selection[product.id] ?? 0,
-      }));
-  }, [products, selection]);
-
-  const pricing = useMemo(
-    () =>
-      calculateOrderPricing(
-        selectedItems.map((item) => ({
-          quantity: item.quantity,
-          prices: item.product.prices,
-        })),
-      ),
-    [selectedItems],
-  );
-
-  const belowMinimum = pricing.totalQuantity < minimumOrderQuantity;
-  const detailProduct =
-    products.find((product) => product.id === detailId) ?? null;
-
-  function setQuantity(productId: number, next: number) {
-    setSelection((prev) => ({ ...prev, [productId]: next }));
-  }
+  const detailProduct = products.find((item) => item.id === detailId) ?? null;
+  const belowMinimum = draft.totalQuantity < minimumOrderQuantity;
 
   async function onSubmitQuote() {
     try {
       const result = await submitQuote.mutateAsync({
-        items: selectedItems,
+        items: draft.items,
         notes,
       });
       if (!result.success) return;
-      setSelection({});
+      draft.clear();
       setNotes('');
+      setStep('catalog');
     } catch {
       // Surfaced via submitQuote.status below.
     }
@@ -104,12 +80,10 @@ export function B2BCatalogPage() {
 
   if (!configured) {
     return (
-      <div className="grid gap-6">
-        <PageIntro
-          description="Conecte Supabase e Bling para liberar o catálogo B2B."
-          title="Catálogo comercial"
-        />
-      </div>
+      <PageIntro
+        description="O catálogo comercial está indisponível no momento. Tente novamente mais tarde."
+        title="Catálogo comercial"
+      />
     );
   }
 
@@ -131,107 +105,135 @@ export function B2BCatalogPage() {
     );
   }
 
-  return (
-    <div className="grid gap-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <PageIntro
-          description={`${session.seller?.companyName ?? 'Sua empresa'} · pedido mínimo de ${minimumOrderQuantity} unidades no total, em qualquer combinação de produtos. A tabela de preço segue o valor do pedido.`}
-          title="Selecione itens e solicite orçamento."
-        />
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => void signOut()}
-        >
-          Sair
-        </Button>
-      </div>
+  if (step === 'review') {
+    return (
+      <B2BOrderReview
+        draft={draft}
+        failed={submitFailed}
+        message={submitMessage}
+        minimumOrderQuantity={minimumOrderQuantity}
+        notes={notes}
+        submitting={submitQuote.isPending}
+        onBack={() => setStep('catalog')}
+        onNotesChange={setNotes}
+        onSubmit={() => void onSubmitQuote()}
+      />
+    );
+  }
 
-      <TierLadder activeTier={pricing.tier} />
+  return (
+    <div className="grid gap-10 pb-24">
+      <PageIntro
+        description={`${session.seller?.companyName ?? 'Sua empresa'} · pedido mínimo de ${minimumOrderQuantity} unidades no total, em qualquer combinação de produtos. A tabela de preço segue o valor do pedido.`}
+        title="Selecione itens e solicite orçamento."
+      />
+
+      <TierLadder activeTier={draft.pricing.tier} />
 
       <div className="grid gap-3 sm:max-w-md">
         <label className="text-sm font-bold" htmlFor="b2b-catalog-search">
-          Buscar no catálogo Bling
+          Buscar produtos
         </label>
         <Input
           id="b2b-catalog-search"
-          placeholder="Nome, SKU ou categoria"
+          placeholder="Nome ou categoria"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
       </div>
 
-      {loading ? <p className="text-secondary">Carregando produtos…</p> : null}
       {error ? (
         <p className="text-accent" role="alert">
-          Falha ao carregar catálogo ({error}). Confirme o sync Bling.
+          Falha ao carregar o catálogo ({error}). Tente novamente em instantes.
+        </p>
+      ) : null}
+
+      {submitMessage && !submitFailed ? (
+        <p className="text-sm text-secondary" role="status">
+          {submitMessage}
         </p>
       ) : null}
 
       <ul
+        aria-busy={loading}
         aria-label="Produtos do catálogo"
         className="divide-y divide-border border-y border-border"
       >
-        {products.map((product) => (
-          <ProductRow
-            key={product.id}
-            product={product}
-            quantity={selection[product.id] ?? 0}
-            tier={pricing.tier}
-            onOpenDetail={() => setDetailId(product.id)}
-            onQuantityChange={(next) => setQuantity(product.id, next)}
-          />
-        ))}
+        {loading
+          ? SKELETON_ROWS.map((key) => <ProductRowSkeleton key={key} />)
+          : products.map((product) => (
+              <ProductRow
+                key={product.id}
+                product={product}
+                quantity={draft.quantityOf(product.id)}
+                tier={draft.pricing.tier}
+                onOpenDetail={() => setDetailId(product.id)}
+                onQuantityChange={(next) => draft.setQuantity(product.id, next)}
+              />
+            ))}
       </ul>
 
-      <section className="grid gap-4">
-        <h2 className="font-heading text-[30px] leading-none tracking-[-0.03em]">
-          Solicitação de orçamento
-        </h2>
-        <p className="font-body text-[14px] leading-5 text-secondary">
-          Iremos retornar com as condições assim que possível.
+      {!loading && products.length === 0 && !error ? (
+        <p className="font-body text-[14px] text-secondary">
+          Nenhum produto encontrado para esta busca.
         </p>
+      ) : null}
 
-        <OrderSummary
-          minimumOrderQuantity={minimumOrderQuantity}
-          pricing={pricing}
-        />
-
-        <Textarea
-          placeholder="Observações, prazos ou mix desejado"
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
-        />
-        {submitMessage ? (
-          <p
-            className={
-              submitFailed ? 'text-sm text-accent' : 'text-sm text-secondary'
-            }
-            role="status"
-          >
-            {submitMessage}
-          </p>
-        ) : null}
-        <Button
-          disabled={belowMinimum || submitQuote.isPending}
-          type="button"
-          onClick={() => void onSubmitQuote()}
-        >
-          {submitQuote.isPending
-            ? 'Enviando…'
-            : 'Enviar solicitação à GHENO rotors'}
-        </Button>
-      </section>
+      <OrderBar
+        belowMinimum={belowMinimum}
+        minimumOrderQuantity={minimumOrderQuantity}
+        totalCents={draft.pricing.totalCents}
+        totalQuantity={draft.totalQuantity}
+        onReview={() => setStep('review')}
+      />
 
       <B2BProductDrawer
         product={detailProduct}
-        quantity={detailProduct ? (selection[detailProduct.id] ?? 0) : 0}
-        tier={pricing.tier}
+        quantity={detailProduct ? draft.quantityOf(detailProduct.id) : 0}
+        tier={draft.pricing.tier}
         onClose={() => setDetailId(null)}
         onQuantityChange={(next) => {
-          if (detailProduct) setQuantity(detailProduct.id, next);
+          if (detailProduct) draft.setQuantity(detailProduct.id, next);
         }}
       />
+    </div>
+  );
+}
+
+/** Sticky order bar. It only appears once the order holds something. */
+function OrderBar({
+  totalQuantity,
+  totalCents,
+  minimumOrderQuantity,
+  belowMinimum,
+  onReview,
+}: {
+  totalQuantity: number;
+  totalCents: number;
+  minimumOrderQuantity: number;
+  belowMinimum: boolean;
+  onReview: () => void;
+}) {
+  if (totalQuantity === 0) return null;
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/96 backdrop-blur">
+      <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-6 py-3 sm:px-10 lg:px-16">
+        <div className="grid gap-0.5">
+          <p className="font-body text-[14px] font-bold leading-5 text-primary">
+            {totalQuantity} {totalQuantity === 1 ? 'unidade' : 'unidades'} ·{' '}
+            {formatCentsToBRL(totalCents)}
+          </p>
+          {belowMinimum ? (
+            <p className="font-body text-[12px] leading-4 text-secondary">
+              Mínimo de {minimumOrderQuantity} unidades.
+            </p>
+          ) : null}
+        </div>
+        <Button disabled={belowMinimum} type="button" onClick={onReview}>
+          Revisar pedido
+        </Button>
+      </div>
     </div>
   );
 }

@@ -6,12 +6,13 @@ import {
   type ComponentFamily,
 } from '@/components/landing/component-families-data';
 import { Button } from '@/components/ui/button';
+import { HEADING_SECTION } from '@/lib/typography';
 
 export function ComponentFamiliesIntro() {
   return (
     <div className="flex flex-col gap-5 lg:pt-3">
       <h2
-        className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
+        className={`max-w-2xl text-balance ${HEADING_SECTION}`}
         id="familias-heading"
       >
         Peças para a sua bike.

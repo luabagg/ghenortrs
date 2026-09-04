@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { HEADING_PAGE } from '@/lib/typography';
 
 export function B2BAccessHeroSection({
   title = 'Cadastro comercial GHENO rotors.',
@@ -25,9 +26,7 @@ export function B2BAccessHeroSection({
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-secondary">
           B2B
         </p>
-        <h1 className="text-balance font-heading text-[50px] leading-[0.95] tracking-[-0.05em]">
-          {title}
-        </h1>
+        <h1 className={`text-balance ${HEADING_PAGE}`}>{title}</h1>
         <p className="max-w-xl font-body text-[14px] leading-5 text-secondary">
           {description}
         </p>

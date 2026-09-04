@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { SectionBand } from '@/components/ui/section-band';
+import { HEADING_SECTION } from '@/lib/typography';
 
 function B2BTeaserIntro() {
   return (
@@ -7,7 +8,7 @@ function B2BTeaserIntro() {
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-on-primary/55">
         B2B
       </p>
-      <h2 className="max-w-2xl text-balance font-heading text-[50px] leading-none tracking-[-0.04em]">
+      <h2 className={`max-w-2xl text-balance ${HEADING_SECTION}`}>
         Atendimento comercial para oficinas e revendas.
       </h2>
       <p className="max-w-xl font-body text-[14px] leading-5 text-on-primary/72">

@@ -4,6 +4,7 @@ import { HomeHeroSection } from '@/components/landing/home-hero-section';
 import { OperationalHighlightsSection } from '@/components/landing/operational-highlights-section';
 import { ProductProofSection } from '@/components/landing/product-proof-section';
 import { Button } from '@/components/ui/button';
+import { HEADING_SECTION } from '@/lib/typography';
 
 function ClosingCTASection() {
   return (
@@ -14,7 +15,7 @@ function ClosingCTASection() {
     >
       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
         <h2
-          className="shrink-0 text-balance font-heading text-[50px] leading-none tracking-[-0.04em]"
+          className={`shrink-0 text-balance ${HEADING_SECTION}`}
           id="fechamento-heading"
         >
           Acesse nossa loja online.

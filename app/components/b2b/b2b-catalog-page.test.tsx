@@ -89,8 +89,25 @@ function openDetail(productName: string) {
   return screen.getByRole('dialog', { name: productName });
 }
 
+/** The ladder marks the table the order currently qualifies for. */
+function activeTier() {
+  const ladder = screen.getByRole('list', { name: 'Tabelas de preço' });
+  return within(ladder)
+    .getAllByRole('listitem')
+    .find((band) => band.getAttribute('aria-current') === 'true');
+}
+
+function goToReview() {
+  fireEvent.click(screen.getByRole('button', { name: 'Revisar pedido' }));
+}
+
 function summary() {
   return screen.getByText('Tabela aplicada').closest('dl') as HTMLElement;
+}
+
+/** The row prints "Melhor valor:" plus the amount in its own accent span. */
+function bestValue(productName: string) {
+  return within(row(productName)).queryByText(/^Melhor valor:/);
 }
 
 beforeEach(() => {
@@ -146,7 +163,30 @@ describe('B2BCatalogPage rows', () => {
 
     expect(row('Aro 29').textContent).not.toContain('RIMS-HEAV-27.5');
     expect(row('Aro 29').textContent).not.toContain('Alumínio 6061');
+    expect(row('Aro 29').textContent).not.toContain('Ver detalhes');
     expect(within(row('Aro 29')).getByText('Aros · estoque 40')).toBeVisible();
+  });
+
+  it('shows skeleton rows while the catalog loads', () => {
+    useB2BCatalogQueryMock.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+    } as never);
+    renderPage();
+
+    expect(catalog()).toHaveAttribute('aria-busy', 'true');
+    expect(within(catalog()).getAllByRole('listitem')).toHaveLength(5);
+  });
+
+  it('never names Bling in the seller UI', () => {
+    renderPage();
+
+    expect(document.body.textContent).not.toContain('Bling');
+    expect(screen.getByLabelText('Buscar produtos')).toHaveAttribute(
+      'placeholder',
+      'Nome ou categoria',
+    );
   });
 
   it('never lets the seller pick a price table by hand', () => {
@@ -158,31 +198,35 @@ describe('B2BCatalogPage rows', () => {
 });
 
 describe('B2BCatalogPage prices', () => {
-  it('starts on Start and marks the Max price in accent', () => {
+  it('starts on Start and marks the best reachable price in accent', () => {
     renderPage();
 
+    expect(activeTier()).toHaveTextContent('Tabela Start');
+
     expect(within(row('Aro 29')).getByText('R$ 200,00')).toBeVisible();
-    const max = within(row('Aro 29')).getByText('Max R$ 150,00');
-    expect(max).toBeVisible();
-    expect(max).toHaveClass('text-accent');
-    expect(within(summary()).getByText('Start')).toBeVisible();
+    expect(bestValue('Aro 29')).toHaveTextContent('Melhor valor: R$ 150,00');
+    expect(within(row('Aro 29')).getByText('R$ 150,00')).toHaveClass(
+      'text-accent',
+    );
   });
 
   it('moves every row to Pro once the Start base reaches R$ 1.000', () => {
     renderPage();
     setQuantity('Aro 29', 5);
 
-    expect(within(summary()).getByText('Pro')).toBeVisible();
     expect(within(row('Aro 29')).getByText('R$ 180,00')).toBeVisible();
     expect(within(row('Disco 180')).getByText('R$ 270,00')).toBeVisible();
+    expect(activeTier()).toHaveTextContent('Tabela Pro');
   });
 
-  it('drops the Max line once the order qualifies for Max', () => {
+  it('drops the best-value line once the order qualifies for Max', () => {
     renderPage();
     setQuantity('Aro 29', 25);
 
+    expect(bestValue('Aro 29')).toBeNull();
+
+    goToReview();
     expect(within(summary()).getByText('Max')).toBeVisible();
-    expect(screen.queryByText('Max R$ 150,00')).toBeNull();
     expect(
       screen.getByText('Você está na melhor tabela, a Max.'),
     ).toBeVisible();
@@ -191,6 +235,7 @@ describe('B2BCatalogPage prices', () => {
   it('reports how much the order still needs for the next table', () => {
     renderPage();
     setQuantity('Aro 29', 6);
+    goToReview();
 
     expect(
       screen.getByText(
@@ -285,27 +330,67 @@ describe('B2BCatalogPage detail drawer', () => {
   });
 });
 
-describe('B2BCatalogPage submit', () => {
-  it('states the global minimum and blocks the submit below it', () => {
+describe('B2BCatalogPage order bar and review', () => {
+  it('hides the order bar until the order holds something', () => {
+    renderPage();
+
+    expect(screen.queryByRole('button', { name: 'Revisar pedido' })).toBeNull();
+
+    setQuantity('Aro 29', 1);
+
+    expect(
+      screen.getByRole('button', { name: 'Revisar pedido' }),
+    ).toBeVisible();
+  });
+
+  it('blocks the review step below the global minimum', () => {
     renderPage();
     setQuantity('Aro 29', 5);
 
-    expect(within(summary()).getByText('5 de 6 (faltam 1)')).toBeVisible();
+    expect(screen.getByText('Mínimo de 6 unidades.')).toBeVisible();
     expect(
-      screen.getByRole('button', { name: 'Enviar solicitação à GHENO rotors' }),
+      screen.getByRole('button', { name: 'Revisar pedido' }),
     ).toBeDisabled();
 
     setQuantity('Aro 29', 6);
 
     expect(
-      screen.getByRole('button', { name: 'Enviar solicitação à GHENO rotors' }),
+      screen.getByRole('button', { name: 'Revisar pedido' }),
     ).toBeEnabled();
+  });
+
+  it('keeps the submit form off the catalog step', () => {
+    renderPage();
+
+    expect(
+      screen.queryByPlaceholderText('Observações, prazos ou mix desejado'),
+    ).toBeNull();
+    expect(screen.queryByText('Tabela aplicada')).toBeNull();
+  });
+
+  it('returns to the catalog from the review step', () => {
+    renderPage();
+    setQuantity('Aro 29', 6);
+    goToReview();
+
+    expect(
+      screen.getByRole('heading', { name: 'Revise o pedido.' }),
+    ).toBeVisible();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: '← Voltar ao catálogo' }),
+    );
+
+    expect(
+      screen.getByRole('list', { name: 'Produtos do catálogo' }),
+    ).toBeVisible();
   });
 
   it('sends only the products and the notes, never a tier', async () => {
     renderPage();
     setQuantity('Aro 29', 4);
     setQuantity('Disco 180', 2);
+    goToReview();
     fireEvent.change(
       screen.getByPlaceholderText('Observações, prazos ou mix desejado'),
       { target: { value: 'Entrega em duas semanas' } },
