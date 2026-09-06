@@ -116,6 +116,13 @@ function openFilters() {
   fireEvent.click(screen.getByRole('button', { name: 'Mostrar filtros' }));
 }
 
+/** Opens the category drawer and picks one option ("Todas" clears it). */
+function selectCategory(name: string) {
+  fireEvent.click(screen.getByRole('button', { name: /^Categoria/ }));
+  const drawer = screen.getByRole('dialog', { name: 'Categoria' });
+  fireEvent.click(within(drawer).getByRole('button', { name }));
+}
+
 /** The tier control reports the table the order currently qualifies for. */
 function activeTier() {
   return screen.getByRole('button', { name: /Tabela atual:/ });
@@ -284,23 +291,52 @@ describe('B2BCatalogPage catalog controls', () => {
     expect(rowNames()).toEqual(['Aro 29', 'Disco 180', 'Cubo XD']);
   });
 
-  it('composes search, category and price filters', () => {
+  it('composes search and category filters', () => {
     renderPage();
     openFilters();
 
     fireEvent.change(screen.getByLabelText('Buscar produtos'), {
       target: { value: 'cubo' },
     });
-    fireEvent.change(screen.getByLabelText('Categoria'), {
-      target: { value: 'Cubos' },
-    });
-    fireEvent.change(screen.getByLabelText('Preço base'), {
-      target: { value: '50000-' },
-    });
+    selectCategory('Cubos');
 
     expect(rowNames()).toEqual(['Cubo XD']);
     expect(screen.queryByText('Aro 29')).toBeNull();
     expect(screen.queryByText('Disco 180')).toBeNull();
+  });
+
+  it('opens the category drawer and lists every catalog category', () => {
+    renderPage();
+    openFilters();
+
+    fireEvent.click(screen.getByRole('button', { name: /^Categoria/ }));
+    const drawer = screen.getByRole('dialog', { name: 'Categoria' });
+
+    expect(within(drawer).getByRole('button', { name: 'Todas' })).toBeVisible();
+    expect(within(drawer).getByRole('button', { name: 'Aros' })).toBeVisible();
+    expect(within(drawer).getByRole('button', { name: 'Cubos' })).toBeVisible();
+  });
+
+  it('shows the active filters as removable chips below the filter bar', () => {
+    renderPage();
+    openFilters();
+
+    fireEvent.change(screen.getByLabelText('Buscar produtos'), {
+      target: { value: 'cubo' },
+    });
+    selectCategory('Cubos');
+
+    const chips = screen.getByRole('group', { name: 'Filtros ativos' });
+    expect(within(chips).getByText('Busca: "cubo"')).toBeVisible();
+    expect(within(chips).getByText('Categoria: Cubos')).toBeVisible();
+
+    fireEvent.click(within(chips).getByText('Categoria: Cubos'));
+    expect(rowNames()).toEqual(['Cubo XD']);
+    expect(
+      within(screen.getByRole('group', { name: 'Filtros ativos' })).queryByText(
+        /^Categoria:/,
+      ),
+    ).toBeNull();
   });
 
   it('resets filters from the empty state', () => {
@@ -326,9 +362,7 @@ describe('B2BCatalogPage catalog controls', () => {
     setQuantity('Aro 29', 3);
     openFilters();
 
-    fireEvent.change(screen.getByLabelText('Categoria'), {
-      target: { value: 'Cubos' },
-    });
+    selectCategory('Cubos');
 
     expect(screen.queryByLabelText('Quantidade de Aro 29')).toBeNull();
     expect(
