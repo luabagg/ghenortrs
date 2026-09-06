@@ -3,6 +3,7 @@
 
 import {
   calculateOrderPricing,
+  MINIMUM_ORDER_SUBTOTAL_CENTS,
   type B2BTierPrices,
   unitPriceForTier,
 } from '../b2b/order-pricing';
@@ -74,12 +75,15 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     const pricing = calculateOrderPricing(pricedItems);
-    if (pricing.totalQuantity < env.minimumOrderQuantity) {
+    if (pricing.amountToMinimumSubtotalCents > 0) {
       return json(
         {
-          error: 'minimum_order_quantity_not_met',
-          message: `Selecione pelo menos ${env.minimumOrderQuantity} unidades no total.`,
-          minimumOrderQuantity: env.minimumOrderQuantity,
+          error: 'minimum_order_subtotal_not_met',
+          message:
+            'Pedido mínimo de R$ 500,00 em mercadorias antes dos descontos.',
+          minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+          qualifyingSubtotalCents: pricing.startSubtotalCents,
+          amountToMinimumSubtotalCents: pricing.amountToMinimumSubtotalCents,
           totalQuantity: pricing.totalQuantity,
         },
         400,

@@ -14,12 +14,6 @@ function readPublicEnv(name: string): string | undefined {
   return undefined;
 }
 
-export const B2B_MINIMUM_ORDER_QUANTITY = Number(
-  readPublicEnv('VITE_B2B_DEFAULT_MIN_QUANTITY') ??
-    readPublicEnv('B2B_DEFAULT_MIN_QUANTITY') ??
-    6,
-);
-
 export const SUPABASE_URL =
   readPublicEnv('VITE_SUPABASE_URL') ?? readPublicEnv('SUPABASE_URL');
 

@@ -54,13 +54,25 @@ export async function registerSeller(input: {
   };
 }
 
-export async function fetchB2BCatalog(query = ''): Promise<{
+type FetchCatalogInput =
+  | string
+  | {
+      query?: string;
+      limit?: number;
+    };
+
+export async function fetchB2BCatalog(input: FetchCatalogInput = ''): Promise<{
   products: B2BCatalogProduct[];
-  minimumOrderQuantity: number;
+  minimumOrderSubtotalCents: number;
 }> {
   const headers = await authHeaders();
   const url = new URL(apiUrl('/api/b2b-catalog'));
+  const query = typeof input === 'string' ? input : (input.query ?? '');
+  const limit = typeof input === 'string' ? undefined : input.limit;
   if (query.trim()) url.searchParams.set('q', query.trim());
+  if (limit && Number.isFinite(limit)) {
+    url.searchParams.set('limit', String(Math.floor(limit)));
+  }
   const res = await fetch(url, { headers });
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -68,7 +80,7 @@ export async function fetchB2BCatalog(query = ''): Promise<{
   }
   return (await res.json()) as {
     products: B2BCatalogProduct[];
-    minimumOrderQuantity: number;
+    minimumOrderSubtotalCents: number;
   };
 }
 

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateOrderPricing,
   MAX_MINIMUM_SUBTOTAL_CENTS,
+  MINIMUM_ORDER_SUBTOTAL_CENTS,
   PRO_MINIMUM_SUBTOTAL_CENTS,
   resolveOrderTier,
 } from './order-pricing';
@@ -15,7 +16,8 @@ const prices = {
 
 describe('resolveOrderTier', () => {
   it.each([
-    [0, 'start'],
+    [49_999, 'start'],
+    [MINIMUM_ORDER_SUBTOTAL_CENTS, 'start'],
     [PRO_MINIMUM_SUBTOTAL_CENTS - 1, 'start'],
     [PRO_MINIMUM_SUBTOTAL_CENTS, 'pro'],
     [MAX_MINIMUM_SUBTOTAL_CENTS - 1, 'pro'],
@@ -29,12 +31,57 @@ describe('resolveOrderTier', () => {
 });
 
 describe('calculateOrderPricing', () => {
-  it('uses total units across different products and qualifies from Start prices', () => {
+  it.each([
+    [49_999, 1],
+    [50_000, 0],
+  ] as const)(
+    'reports how many cents are missing from the R$500 merchandise minimum at %d cents',
+    (startCents, missingCents) => {
+      expect(
+        calculateOrderPricing([
+          {
+            quantity: 1,
+            prices: {
+              startCents,
+              proCents: Math.max(0, startCents - 1_000),
+              maxCents: Math.max(0, startCents - 2_000),
+            },
+          },
+        ]),
+      ).toMatchObject({
+        startSubtotalCents: startCents,
+        minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+        amountToMinimumSubtotalCents: missingCents,
+      });
+    },
+  );
+
+  it('lets a single R$500 item qualify for review without changing the tier', () => {
     expect(
       calculateOrderPricing([
-        { quantity: 4, prices },
         {
-          quantity: 6,
+          quantity: 1,
+          prices: { startCents: 50_000, proCents: 45_000, maxCents: 40_000 },
+        },
+      ]),
+    ).toEqual({
+      tier: 'start',
+      totalQuantity: 1,
+      startSubtotalCents: 50_000,
+      totalCents: 50_000,
+      nextTier: 'pro',
+      amountToNextTierCents: 100_000,
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+      amountToMinimumSubtotalCents: 0,
+    });
+  });
+
+  it('uses total units across different products and qualifies Pro from Start prices before discounts', () => {
+    expect(
+      calculateOrderPricing([
+        { quantity: 3, prices },
+        {
+          quantity: 10,
           prices: {
             startCents: 12_000,
             proCents: 10_500,
@@ -44,22 +91,26 @@ describe('calculateOrderPricing', () => {
       ]),
     ).toEqual({
       tier: 'pro',
-      totalQuantity: 10,
-      startSubtotalCents: 112_000,
-      totalCents: 99_000,
+      totalQuantity: 13,
+      startSubtotalCents: 150_000,
+      totalCents: 132_000,
       nextTier: 'max',
-      amountToNextTierCents: 388_000,
+      amountToNextTierCents: 250_000,
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+      amountToMinimumSubtotalCents: 0,
     });
   });
 
   it('returns the Max total without a next tier', () => {
-    expect(calculateOrderPricing([{ quantity: 50, prices }])).toEqual({
+    expect(calculateOrderPricing([{ quantity: 40, prices }])).toEqual({
       tier: 'max',
-      totalQuantity: 50,
-      startSubtotalCents: 500_000,
-      totalCents: 400_000,
+      totalQuantity: 40,
+      startSubtotalCents: 400_000,
+      totalCents: 320_000,
       nextTier: null,
       amountToNextTierCents: 0,
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+      amountToMinimumSubtotalCents: 0,
     });
   });
 });

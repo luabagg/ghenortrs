@@ -54,6 +54,21 @@ describe('ui primitives', () => {
     );
   });
 
+  it('shows distinct pointer affordances for enabled and disabled actions', () => {
+    const { rerender } = render(<Button>Continuar</Button>);
+    expect(screen.getByRole('button', { name: 'Continuar' })).toHaveClass(
+      'enabled:cursor-pointer',
+    );
+
+    rerender(<Button disabled>Continuar</Button>);
+    expect(screen.getByRole('button', { name: 'Continuar' })).toHaveClass(
+      'disabled:cursor-not-allowed',
+      'disabled:pointer-events-auto',
+      'disabled:opacity-50',
+    );
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeDisabled();
+  });
+
   it('renders GHENO rotors card, label, input, and textarea primitives with branded surface styling', () => {
     render(
       <div>

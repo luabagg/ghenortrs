@@ -7,6 +7,7 @@ import { createCookie, json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 
 import { AdminChrome } from '~/components/admin/admin-chrome';
+import { AdminProductDrawer } from '~/components/admin/admin-product-drawer';
 import { PriceListImportPanel } from '~/components/admin/price-list-import-panel';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -190,11 +191,15 @@ function productsRedirect(query: string, headers: Headers) {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers } = await requireAdmin(request);
   const query = new URL(request.url).searchParams.get('q') ?? '';
-  const products = await listAdminProducts(query);
-  const connection = await getBlingConnectionStatus();
-  const connect = await readBlingConnectResult(request);
-  const sync = await readBlingSyncResult(request);
-  const priceImport = await readPriceImportFlash(request);
+  // These reads are independent after the admin gate. Running them together
+  // avoids making the loader latency the sum of four I/O round trips.
+  const [products, connection, connect, sync, priceImport] = await Promise.all([
+    listAdminProducts(query),
+    getBlingConnectionStatus(),
+    readBlingConnectResult(request),
+    readBlingSyncResult(request),
+    readPriceImportFlash(request),
+  ]);
   if (connect.clearCookie) headers.append('Set-Cookie', connect.clearCookie);
   if (sync.clearCookie) headers.append('Set-Cookie', sync.clearCookie);
   if (priceImport.clearCookie) {
@@ -523,16 +528,19 @@ export default function AdminProducts() {
                       {product.visibleB2b ? 'Visível' : 'Oculto'}
                     </td>
                     <td className="px-4 py-3">
-                      <Button
-                        name={
-                          product.visibleB2b ? 'hideProduct' : 'showProduct'
-                        }
-                        type="submit"
-                        value={product.id}
-                        variant="secondary"
-                      >
-                        {product.visibleB2b ? 'Ocultar' : 'Mostrar'}
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <AdminProductDrawer product={product} />
+                        <Button
+                          name={
+                            product.visibleB2b ? 'hideProduct' : 'showProduct'
+                          }
+                          type="submit"
+                          value={product.id}
+                          variant="secondary"
+                        >
+                          {product.visibleB2b ? 'Ocultar' : 'Mostrar'}
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}

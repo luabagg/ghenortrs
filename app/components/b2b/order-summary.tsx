@@ -7,18 +7,7 @@ import { formatCentsToBRL } from '@/lib/br-money';
  * next table would take. The qualifying subtotal is an internal mechanic and
  * reading higher than the total only confused people, so it stays server side.
  */
-export function OrderSummary({
-  pricing,
-  minimumOrderQuantity,
-}: {
-  pricing: OrderPricing;
-  minimumOrderQuantity: number;
-}) {
-  const missingUnits = Math.max(
-    0,
-    minimumOrderQuantity - pricing.totalQuantity,
-  );
-
+export function OrderSummary({ pricing }: { pricing: OrderPricing }) {
   return (
     <section
       aria-label="Resumo do pedido"
@@ -36,10 +25,11 @@ export function OrderSummary({
         {TIER_LABELS[pricing.tier]}
       </p>
 
-      {missingUnits > 0 ? (
+      {pricing.amountToMinimumSubtotalCents > 0 ? (
         <p className="font-body text-[13px] leading-5 text-accent">
-          Adicione mais {missingUnits}{' '}
-          {missingUnits === 1 ? 'unidade' : 'unidades'} para enviar o pedido.
+          Falta {formatCentsToBRL(pricing.amountToMinimumSubtotalCents)} para o
+          pedido mínimo de {formatCentsToBRL(pricing.minimumOrderSubtotalCents)}{' '}
+          em mercadorias.
         </p>
       ) : null}
 

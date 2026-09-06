@@ -48,6 +48,18 @@ const disco: B2BCatalogProduct = {
   category: null,
 };
 
+const cubo: B2BCatalogProduct = {
+  id: 3,
+  sku: 'CUBO-XD',
+  name: 'Cubo XD',
+  description: '',
+  imageUrl: null,
+  prices: { startCents: 50_000, proCents: 45_000, maxCents: 40_000 },
+  stock: 8,
+  unit: 'UN',
+  category: 'Cubos',
+};
+
 const mutate = vi.fn();
 
 function renderPage() {
@@ -68,6 +80,17 @@ function row(productName: string) {
     .find((item) => item.textContent?.includes(productName));
   if (!found) throw new Error(`no row for ${productName}`);
   return found;
+}
+
+function rowNames() {
+  return within(catalog())
+    .getAllByRole('listitem')
+    .map((item) => {
+      if (item.textContent?.includes('Aro 29')) return 'Aro 29';
+      if (item.textContent?.includes('Disco 180')) return 'Disco 180';
+      if (item.textContent?.includes('Cubo XD')) return 'Cubo XD';
+      return item.textContent ?? '';
+    });
 }
 
 function addToOrder(productName: string) {
@@ -134,7 +157,7 @@ beforeEach(() => {
     signOut: vi.fn(async () => undefined),
   });
   useB2BCatalogQueryMock.mockReturnValue({
-    data: { products: [aro, disco], minimumOrderQuantity: 6 },
+    data: { products: [aro, disco, cubo], minimumOrderSubtotalCents: 50_000 },
     isLoading: false,
     error: null,
   } as never);
@@ -185,7 +208,7 @@ describe('B2BCatalogPage rows', () => {
     expect(document.body.textContent).not.toContain('Bling');
     expect(screen.getByLabelText('Buscar produtos')).toHaveAttribute(
       'placeholder',
-      'Nome ou categoria',
+      'Nome, SKU ou categoria',
     );
   });
 
@@ -194,6 +217,89 @@ describe('B2BCatalogPage rows', () => {
 
     expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Usar mínimo' })).toBeNull();
+  });
+});
+
+describe('B2BCatalogPage catalog controls', () => {
+  it('keeps the filter panel on two columns until the xl breakpoint', () => {
+    renderPage();
+
+    const filters = screen.getByRole('group', { name: 'Filtros do catálogo' });
+    expect(filters).toHaveClass('sm:grid-cols-2');
+    expect(filters.className).toContain('xl:grid-cols-[');
+    expect(filters.className).not.toContain('lg:grid-cols-[');
+
+    expect(screen.getByRole('button', { name: 'Limpar filtros' })).toHaveClass(
+      'sm:col-span-2',
+      'xl:col-span-1',
+    );
+  });
+
+  it('sorts products by base price ascending and descending', () => {
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('Ordenar'), {
+      target: { value: 'price-desc' },
+    });
+    expect(rowNames()).toEqual(['Cubo XD', 'Disco 180', 'Aro 29']);
+
+    fireEvent.change(screen.getByLabelText('Ordenar'), {
+      target: { value: 'price-asc' },
+    });
+    expect(rowNames()).toEqual(['Aro 29', 'Disco 180', 'Cubo XD']);
+  });
+
+  it('composes search, category and price filters', () => {
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('Buscar produtos'), {
+      target: { value: 'cubo' },
+    });
+    fireEvent.change(screen.getByLabelText('Categoria'), {
+      target: { value: 'Cubos' },
+    });
+    fireEvent.change(screen.getByLabelText('Preço base'), {
+      target: { value: '50000-' },
+    });
+
+    expect(rowNames()).toEqual(['Cubo XD']);
+    expect(screen.queryByText('Aro 29')).toBeNull();
+    expect(screen.queryByText('Disco 180')).toBeNull();
+  });
+
+  it('resets filters from the empty state', () => {
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText('Buscar produtos'), {
+      target: { value: 'guidão' },
+    });
+
+    expect(
+      screen.getByText('Nenhum produto encontrado para os filtros atuais.'),
+    ).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+
+    expect(screen.getByLabelText('Buscar produtos')).toHaveValue('');
+    expect(rowNames()).toEqual(['Aro 29', 'Cubo XD', 'Disco 180']);
+  });
+
+  it('keeps selected quantities when filters hide and show rows again', () => {
+    renderPage();
+    setQuantity('Aro 29', 3);
+
+    fireEvent.change(screen.getByLabelText('Categoria'), {
+      target: { value: 'Cubos' },
+    });
+
+    expect(screen.queryByLabelText('Quantidade de Aro 29')).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Revisar pedido' }),
+    ).toBeEnabled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+
+    expect(screen.getByLabelText('Quantidade de Aro 29')).toHaveValue(3);
   });
 });
 
@@ -210,9 +316,9 @@ describe('B2BCatalogPage prices', () => {
     );
   });
 
-  it('moves every row to Pro once the Start base reaches R$ 1.000', () => {
+  it('moves every row to Pro once the Start base reaches R$ 1.500', () => {
     renderPage();
-    setQuantity('Aro 29', 5);
+    setQuantity('Aro 29', 8);
 
     expect(within(row('Aro 29')).getByText('R$ 180,00')).toBeVisible();
     expect(within(row('Disco 180')).getByText('R$ 270,00')).toBeVisible();
@@ -221,7 +327,7 @@ describe('B2BCatalogPage prices', () => {
 
   it('drops the best-value line once the order qualifies for Max', () => {
     renderPage();
-    setQuantity('Aro 29', 25);
+    setQuantity('Aro 29', 20);
 
     expect(bestValue('Aro 29')).toBeNull();
 
@@ -239,7 +345,7 @@ describe('B2BCatalogPage prices', () => {
 
     expect(
       within(summary()).getByText(
-        'Falta R$ 3.800,00 para a tabela Max, com preços melhores.',
+        'Falta R$ 300,00 para a tabela Pro, com preços melhores.',
       ),
     ).toBeVisible();
   });
@@ -383,14 +489,27 @@ describe('B2BCatalogPage order bar and review', () => {
 
   it('blocks the review step below the global minimum', () => {
     renderPage();
-    setQuantity('Aro 29', 5);
+    setQuantity('Aro 29', 2);
 
-    expect(screen.getByText('Mínimo de 6 unidades.')).toBeVisible();
+    expect(
+      screen.getByText(
+        'Falta R$ 100,00 para o pedido mínimo de R$ 500,00 em mercadorias.',
+      ),
+    ).toBeVisible();
     expect(
       screen.getByRole('button', { name: 'Revisar pedido' }),
     ).toBeDisabled();
 
-    setQuantity('Aro 29', 6);
+    setQuantity('Aro 29', 3);
+
+    expect(
+      screen.getByRole('button', { name: 'Revisar pedido' }),
+    ).toBeEnabled();
+  });
+
+  it('allows review for one item when it reaches the R$500 merchandise minimum', () => {
+    renderPage();
+    setQuantity('Cubo XD', 1);
 
     expect(
       screen.getByRole('button', { name: 'Revisar pedido' }),
@@ -461,7 +580,7 @@ describe('B2BCatalogPage order bar and review', () => {
       }),
     ).toBeVisible();
     // The numbers survive the draft being cleared.
-    expect(screen.getByText('R$ 1.080,00')).toBeVisible();
+    expect(screen.getByText('R$ 1.200,00')).toBeVisible();
     expect(
       screen.getByText('Enviamos uma cópia do pedido para compras@norte.test.'),
     ).toBeVisible();

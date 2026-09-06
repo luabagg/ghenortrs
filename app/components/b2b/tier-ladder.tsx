@@ -1,5 +1,6 @@
 import {
   MAX_MINIMUM_SUBTOTAL_CENTS,
+  MINIMUM_ORDER_SUBTOTAL_CENTS,
   PRO_MINIMUM_SUBTOTAL_CENTS,
 } from '@/b2b/order-pricing';
 import { formatCentsToBRL } from '@/lib/br-money';
@@ -14,7 +15,7 @@ export const TIER_LABELS: Record<SellerTier, string> = {
 const TIER_BANDS: Array<{ tier: SellerTier; range: string }> = [
   {
     tier: 'start',
-    range: `Até ${formatCentsToBRL(PRO_MINIMUM_SUBTOTAL_CENTS - 1)}`,
+    range: `${formatCentsToBRL(MINIMUM_ORDER_SUBTOTAL_CENTS)} a ${formatCentsToBRL(PRO_MINIMUM_SUBTOTAL_CENTS - 1)}`,
   },
   {
     tier: 'pro',

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@remix-run/react';
 
-import { B2B_MINIMUM_ORDER_QUANTITY } from '@/b2b/config';
+import { MINIMUM_ORDER_SUBTOTAL_CENTS } from '@/b2b/order-pricing';
 import { useB2BCatalogQuery, useSubmitB2BQuoteMutation } from '@/b2b/queries';
 import { useB2BSession } from '@/b2b/use-b2b-session';
+import type { B2BCatalogProduct } from '@/b2b/types';
 import { useOrderDraft } from '@/b2b/use-order-draft';
 import { B2BOrderReview } from '@/components/b2b/b2b-order-review';
 import {
@@ -19,16 +20,88 @@ import { Input } from '@/components/ui/input';
 import { formatCentsToBRL } from '@/lib/br-money';
 
 const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
-  minimum_order_quantity_not_met:
-    'O pedido ainda não alcança a quantidade mínima.',
+  minimum_order_subtotal_not_met:
+    'O pedido ainda não alcança o mínimo em mercadorias.',
   product_not_found: 'Um dos produtos saiu do catálogo. Atualize a página.',
 };
 
 const SKELETON_ROWS = [0, 1, 2, 3, 4];
+const EMPTY_CATALOG_PRODUCTS: B2BCatalogProduct[] = [];
+
+const PRICE_FILTERS = [
+  { value: 'all', label: 'Todos os preços', min: null, max: null },
+  { value: '-25000', label: 'Até R$ 249,99', min: null, max: 24_999 },
+  {
+    value: '25000-49999',
+    label: 'R$ 250,00 a R$ 499,99',
+    min: 25_000,
+    max: 49_999,
+  },
+  { value: '50000-', label: 'A partir de R$ 500,00', min: 50_000, max: null },
+] as const;
+
+type PriceFilterValue = (typeof PRICE_FILTERS)[number]['value'];
+type CatalogSort = 'name-asc' | 'price-asc' | 'price-desc';
+
+const SELECT_CONTROL_CLASS =
+  'h-11 w-full rounded-button border border-strong bg-background-soft px-3.5 py-2 font-body text-sm text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
+
+function normalizeCatalogText(value: string | null | undefined) {
+  return (value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function matchesSearch(product: B2BCatalogProduct, query: string) {
+  const needle = normalizeCatalogText(query.trim());
+  if (!needle) return true;
+  return normalizeCatalogText(
+    [product.name, product.sku, product.category, product.description].join(
+      ' ',
+    ),
+  ).includes(needle);
+}
+
+function matchesPriceFilter(
+  product: B2BCatalogProduct,
+  priceFilter: PriceFilterValue,
+) {
+  const filter = PRICE_FILTERS.find((item) => item.value === priceFilter);
+  if (!filter || filter.value === 'all') return true;
+  const price = product.prices.startCents;
+  if (filter.min !== null && price < filter.min) return false;
+  if (filter.max !== null && price > filter.max) return false;
+  return true;
+}
+
+function sortCatalogProducts(
+  products: B2BCatalogProduct[],
+  sort: CatalogSort,
+): B2BCatalogProduct[] {
+  return [...products].sort((a, b) => {
+    if (sort === 'price-asc') {
+      return (
+        a.prices.startCents - b.prices.startCents ||
+        a.name.localeCompare(b.name, 'pt-BR')
+      );
+    }
+    if (sort === 'price-desc') {
+      return (
+        b.prices.startCents - a.prices.startCents ||
+        a.name.localeCompare(b.name, 'pt-BR')
+      );
+    }
+    return a.name.localeCompare(b.name, 'pt-BR');
+  });
+}
 
 export function B2BCatalogPage() {
   const { gate, session, configured } = useB2BSession();
   const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('all');
+  const [priceFilter, setPriceFilter] = useState<PriceFilterValue>('all');
+  const [sort, setSort] = useState<CatalogSort>('name-asc');
   const [notes, setNotes] = useState('');
   const [step, setStep] = useState<'catalog' | 'review' | 'sent'>('catalog');
   // Hold the id, not the product. A refetch replaces the objects.
@@ -40,10 +113,33 @@ export function B2BCatalogPage() {
     data: catalog,
     isLoading: loading,
     error: catalogError,
-  } = useB2BCatalogQuery(query, gate === 'approved');
-  const products = catalog?.products ?? [];
-  const minimumOrderQuantity =
-    catalog?.minimumOrderQuantity ?? B2B_MINIMUM_ORDER_QUANTITY;
+  } = useB2BCatalogQuery('', gate === 'approved');
+  const products = catalog?.products ?? EMPTY_CATALOG_PRODUCTS;
+  const categories = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          products
+            .map((product) => product.category?.trim())
+            .filter((item): item is string => Boolean(item)),
+        ),
+      ).sort((a, b) => a.localeCompare(b, 'pt-BR')),
+    [products],
+  );
+  const visibleProducts = useMemo(() => {
+    const filtered = products.filter(
+      (product) =>
+        matchesSearch(product, query) &&
+        (category === 'all' || product.category?.trim() === category) &&
+        matchesPriceFilter(product, priceFilter),
+    );
+    return sortCatalogProducts(filtered, sort);
+  }, [category, priceFilter, products, query, sort]);
+  const filtersActive =
+    query.trim() !== '' || category !== 'all' || priceFilter !== 'all';
+  const controlsActive = filtersActive || sort !== 'name-asc';
+  const minimumOrderSubtotalCents =
+    catalog?.minimumOrderSubtotalCents ?? MINIMUM_ORDER_SUBTOTAL_CENTS;
   const error = catalogError
     ? catalogError instanceof Error
       ? catalogError.message
@@ -59,7 +155,11 @@ export function B2BCatalogPage() {
   }, [step]);
 
   const detailProduct = products.find((item) => item.id === detailId) ?? null;
-  const belowMinimum = draft.totalQuantity < minimumOrderQuantity;
+  const amountToMinimumSubtotalCents = Math.max(
+    0,
+    minimumOrderSubtotalCents - draft.pricing.startSubtotalCents,
+  );
+  const belowMinimum = amountToMinimumSubtotalCents > 0;
 
   async function onSubmitQuote() {
     try {
@@ -142,7 +242,6 @@ export function B2BCatalogPage() {
         draft={draft}
         failed={submitFailed}
         message={submitMessage}
-        minimumOrderQuantity={minimumOrderQuantity}
         notes={notes}
         submitting={submitQuote.isPending}
         onBack={() => setStep('catalog')}
@@ -155,22 +254,94 @@ export function B2BCatalogPage() {
   return (
     <div className="grid gap-10 pb-24">
       <PageIntro
-        description={`${session.seller?.companyName ?? 'Sua empresa'} · pedido mínimo de ${minimumOrderQuantity} unidades no total, em qualquer combinação de produtos. A tabela de preço segue o valor do pedido.`}
+        description={`${session.seller?.companyName ?? 'Sua empresa'} · pedido mínimo de ${formatCentsToBRL(minimumOrderSubtotalCents)} em mercadorias antes dos descontos. Frete não entra no mínimo.`}
         title="Selecione itens e solicite orçamento."
       />
 
       <TierLadder activeTier={draft.pricing.tier} />
 
-      <div className="grid gap-3 sm:max-w-md">
-        <label className="text-sm font-bold" htmlFor="b2b-catalog-search">
-          Buscar produtos
-        </label>
-        <Input
-          id="b2b-catalog-search"
-          placeholder="Nome ou categoria"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
+      <div
+        aria-label="Filtros do catálogo"
+        className="grid gap-4 border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[minmax(16rem,1fr)_minmax(10rem,0.7fr)_minmax(12rem,0.8fr)_minmax(10rem,0.7fr)_auto] xl:items-end"
+        role="group"
+      >
+        <div className="grid gap-2">
+          <label className="text-sm font-bold" htmlFor="b2b-catalog-search">
+            Buscar produtos
+          </label>
+          <Input
+            id="b2b-catalog-search"
+            placeholder="Nome, SKU ou categoria"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-bold" htmlFor="b2b-catalog-category">
+            Categoria
+          </label>
+          <select
+            className={SELECT_CONTROL_CLASS}
+            id="b2b-catalog-category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+          >
+            <option value="all">Todas</option>
+            {categories.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-bold" htmlFor="b2b-catalog-price">
+            Preço base
+          </label>
+          <select
+            className={SELECT_CONTROL_CLASS}
+            id="b2b-catalog-price"
+            value={priceFilter}
+            onChange={(event) =>
+              setPriceFilter(event.target.value as PriceFilterValue)
+            }
+          >
+            {PRICE_FILTERS.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-bold" htmlFor="b2b-catalog-sort">
+            Ordenar
+          </label>
+          <select
+            className={SELECT_CONTROL_CLASS}
+            id="b2b-catalog-sort"
+            value={sort}
+            onChange={(event) => setSort(event.target.value as CatalogSort)}
+          >
+            <option value="name-asc">Nome (A-Z)</option>
+            <option value="price-asc">Menor preço</option>
+            <option value="price-desc">Maior preço</option>
+          </select>
+        </div>
+        <Button
+          className="w-full sm:col-span-2 xl:col-span-1 xl:w-auto"
+          disabled={!controlsActive}
+          type="button"
+          variant="secondary"
+          onClick={() => {
+            setQuery('');
+            setCategory('all');
+            setPriceFilter('all');
+            setSort('name-asc');
+          }}
+        >
+          Limpar filtros
+        </Button>
       </div>
 
       {error ? (
@@ -186,7 +357,7 @@ export function B2BCatalogPage() {
       >
         {loading
           ? SKELETON_ROWS.map((key) => <ProductRowSkeleton key={key} />)
-          : products.map((product) => (
+          : visibleProducts.map((product) => (
               <ProductRow
                 key={product.id}
                 product={product}
@@ -198,15 +369,20 @@ export function B2BCatalogPage() {
             ))}
       </ul>
 
-      {!loading && products.length === 0 && !error ? (
-        <p className="font-body text-[14px] text-secondary">
-          Nenhum produto encontrado para esta busca.
-        </p>
+      {!loading && visibleProducts.length === 0 && !error ? (
+        <div className="border border-border bg-surface p-4">
+          <p className="font-body text-[14px] text-secondary">
+            {filtersActive
+              ? 'Nenhum produto encontrado para os filtros atuais.'
+              : 'Nenhum produto disponível no catálogo.'}
+          </p>
+        </div>
       ) : null}
 
       <OrderBar
+        amountToMinimumSubtotalCents={amountToMinimumSubtotalCents}
         belowMinimum={belowMinimum}
-        minimumOrderQuantity={minimumOrderQuantity}
+        minimumOrderSubtotalCents={minimumOrderSubtotalCents}
         totalCents={draft.pricing.totalCents}
         totalQuantity={draft.totalQuantity}
         onReview={() => setStep('review')}
@@ -229,13 +405,15 @@ export function B2BCatalogPage() {
 function OrderBar({
   totalQuantity,
   totalCents,
-  minimumOrderQuantity,
+  minimumOrderSubtotalCents,
+  amountToMinimumSubtotalCents,
   belowMinimum,
   onReview,
 }: {
   totalQuantity: number;
   totalCents: number;
-  minimumOrderQuantity: number;
+  minimumOrderSubtotalCents: number;
+  amountToMinimumSubtotalCents: number;
   belowMinimum: boolean;
   onReview: () => void;
 }) {
@@ -251,7 +429,9 @@ function OrderBar({
           </p>
           {belowMinimum ? (
             <p className="font-body text-[12px] leading-4 text-secondary">
-              Mínimo de {minimumOrderQuantity} unidades.
+              Falta {formatCentsToBRL(amountToMinimumSubtotalCents)} para o
+              pedido mínimo de {formatCentsToBRL(minimumOrderSubtotalCents)} em
+              mercadorias.
             </p>
           ) : null}
         </div>

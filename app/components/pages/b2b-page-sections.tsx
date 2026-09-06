@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { HEADING_PAGE } from '@/lib/typography';
+import { cn } from '@/lib/utils';
 
 export function B2BAccessHeroSection({
   title = 'Cadastro comercial GHENO rotors.',
@@ -36,16 +37,18 @@ export function B2BAccessHeroSection({
 }
 
 export function B2BRegisterAside({
+  className,
   configured,
   mode,
   onModeChange,
 }: {
+  className?: string;
   configured: boolean;
   mode: 'login' | 'register';
   onModeChange: (mode: 'login' | 'register') => void;
 }) {
   return (
-    <aside className="grid content-start gap-6">
+    <aside className={cn('grid content-start gap-6', className)}>
       {configured ? (
         <div className="flex flex-wrap gap-3">
           <Button

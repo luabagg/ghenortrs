@@ -1,9 +1,9 @@
 // GET /api/b2b-catalog?q=&limit=
 // Approved sellers only. Reads cached Bling products.
 
+import { MINIMUM_ORDER_SUBTOTAL_CENTS } from '@/b2b/order-pricing';
 import { htmlToPlainText } from './html-text';
 import { listActiveCatalogProducts } from './db/queries';
-import { getServerEnv } from './env';
 import { json, methodNotAllowed } from './http';
 import { requireApprovedSeller } from './supabase';
 
@@ -47,14 +47,13 @@ export default async function handler(req: Request): Promise<Response> {
       : 48;
 
   try {
-    const env = getServerEnv();
     const products = (await listActiveCatalogProducts(q, limit)).map(
       toPublicProduct,
     );
 
     return json({
       source: 'bling_cache',
-      minimumOrderQuantity: env.minimumOrderQuantity,
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
       count: products.length,
       products,
       seller: {

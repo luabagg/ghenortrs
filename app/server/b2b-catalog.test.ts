@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { MINIMUM_ORDER_SUBTOTAL_CENTS } from '@/b2b/order-pricing';
 import handler from './b2b-catalog';
 import { listActiveCatalogProducts } from './db/queries';
-import { getServerEnv } from './env';
 import { requireApprovedSeller } from './supabase';
 
 vi.mock('./db/queries', () => ({ listActiveCatalogProducts: vi.fn() }));
-vi.mock('./env', () => ({ getServerEnv: vi.fn() }));
 vi.mock('./supabase', () => ({ requireApprovedSeller: vi.fn() }));
 
 const seller = {
@@ -18,9 +17,6 @@ const seller = {
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(requireApprovedSeller).mockResolvedValue({ seller } as never);
-  vi.mocked(getServerEnv).mockReturnValue({
-    minimumOrderQuantity: 6,
-  } as ReturnType<typeof getServerEnv>);
 });
 
 describe('B2B catalog handler', () => {
@@ -47,7 +43,7 @@ describe('B2B catalog handler', () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      minimumOrderQuantity: 6,
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
       count: 1,
       products: [
         {

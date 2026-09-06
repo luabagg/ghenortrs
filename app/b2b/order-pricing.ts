@@ -1,7 +1,8 @@
 import type { SellerTier } from '@/server/seller-tier';
 
-export const PRO_MINIMUM_SUBTOTAL_CENTS = 100_000;
-export const MAX_MINIMUM_SUBTOTAL_CENTS = 500_000;
+export const MINIMUM_ORDER_SUBTOTAL_CENTS = 50_000;
+export const PRO_MINIMUM_SUBTOTAL_CENTS = 150_000;
+export const MAX_MINIMUM_SUBTOTAL_CENTS = 400_000;
 
 export type B2BTierPrices = {
   startCents: number;
@@ -21,6 +22,8 @@ export type OrderPricing = {
   totalCents: number;
   nextTier: Exclude<SellerTier, 'start'> | null;
   amountToNextTierCents: number;
+  minimumOrderSubtotalCents: number;
+  amountToMinimumSubtotalCents: number;
 };
 
 export function resolveOrderTier(startSubtotalCents: number): SellerTier {
@@ -55,6 +58,11 @@ export function calculateOrderPricing(items: PricedOrderItem[]): OrderPricing {
     0,
   );
 
+  const amountToMinimumSubtotalCents = Math.max(
+    0,
+    MINIMUM_ORDER_SUBTOTAL_CENTS - startSubtotalCents,
+  );
+
   if (tier === 'max') {
     return {
       tier,
@@ -63,6 +71,8 @@ export function calculateOrderPricing(items: PricedOrderItem[]): OrderPricing {
       totalCents,
       nextTier: null,
       amountToNextTierCents: 0,
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+      amountToMinimumSubtotalCents,
     };
   }
 
@@ -79,5 +89,7 @@ export function calculateOrderPricing(items: PricedOrderItem[]): OrderPricing {
     totalCents,
     nextTier,
     amountToNextTierCents: Math.max(0, nextThreshold - startSubtotalCents),
+    minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+    amountToMinimumSubtotalCents,
   };
 }

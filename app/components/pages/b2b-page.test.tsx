@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -54,5 +54,64 @@ describe('B2BPage', () => {
     );
 
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('keeps registration first and login as a visible secondary action', () => {
+    mockGate('needs_registration');
+
+    const { container } = render(
+      <MemoryRouter>
+        <B2BPage />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('form', { name: 'Cadastro comercial' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Já tenho cadastro' }),
+    ).toBeVisible();
+
+    const text = container.textContent ?? '';
+    expect(text.indexOf('Empresa')).toBeLessThan(
+      text.indexOf('Já tenho cadastro'),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Já tenho cadastro' }));
+
+    expect(screen.getByRole('form', { name: 'Login comercial' })).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Solicitar cadastro' }),
+    ).toBeVisible();
+  });
+
+  it('moves focus to the first field when the seller switches forms', async () => {
+    mockGate('needs_registration');
+
+    render(
+      <MemoryRouter>
+        <B2BPage />
+      </MemoryRouter>,
+    );
+
+    const loginButton = screen.getByRole('button', {
+      name: 'Já tenho cadastro',
+    });
+    loginButton.focus();
+    expect(loginButton).toHaveFocus();
+
+    fireEvent.click(loginButton);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('E-mail comercial')).toHaveFocus();
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Ainda não tenho cadastro' }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Empresa')).toHaveFocus();
+    });
   });
 });

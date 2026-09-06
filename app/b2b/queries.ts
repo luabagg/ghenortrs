@@ -14,9 +14,12 @@ import {
 import { isB2BAuthConfigured } from '@/b2b/config';
 import type { B2BSessionResponse, QuoteSelectionItem } from '@/b2b/types';
 
+const B2B_CATALOG_CLIENT_LIMIT = 100;
+
 export const b2bKeys = {
   session: ['b2b', 'session'] as const,
-  catalog: (query: string) => ['b2b', 'catalog', query] as const,
+  catalog: (query: string) =>
+    ['b2b', 'catalog', query, B2B_CATALOG_CLIENT_LIMIT] as const,
 };
 
 export function useB2BSessionQuery(): UseQueryResult<B2BSessionResponse> {
@@ -30,7 +33,7 @@ export function useB2BSessionQuery(): UseQueryResult<B2BSessionResponse> {
 export function useB2BCatalogQuery(query: string, enabled: boolean) {
   return useQuery({
     queryKey: b2bKeys.catalog(query),
-    queryFn: () => fetchB2BCatalog(query),
+    queryFn: () => fetchB2BCatalog({ query, limit: B2B_CATALOG_CLIENT_LIMIT }),
     enabled,
   });
 }

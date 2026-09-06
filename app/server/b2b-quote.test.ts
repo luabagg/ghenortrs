@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { MINIMUM_ORDER_SUBTOTAL_CENTS } from '@/b2b/order-pricing';
 import handler from './b2b-quote';
 import { insertQuoteRequest, listActiveProductsByIds } from './db/queries';
 import { getServerEnv } from './env';
@@ -52,13 +53,29 @@ const products = [
     priceProCents: 27_000,
     priceMaxCents: 24_000,
   },
+  {
+    id: 3,
+    sku: 'C',
+    name: 'Produto C',
+    description: '',
+    imageUrl: null,
+    stock: 10,
+    unit: 'UN',
+    category: null,
+    priceStartCents: 50_000,
+    priceProCents: 45_000,
+    priceMaxCents: 40_000,
+  },
 ];
 
-function quoteRequest(items: Array<{ productId: number; quantity: number }>) {
+function quoteRequest(
+  items: Array<{ productId: number; quantity: number }>,
+  extra: Record<string, unknown> = {},
+) {
   return new Request('https://gheno.test/api/b2b-quote', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tier: 'max', items, notes: 'Mix mensal' }),
+    body: JSON.stringify({ tier: 'max', items, notes: 'Mix mensal', ...extra }),
   });
 }
 
@@ -66,7 +83,6 @@ beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(requireApprovedSeller).mockResolvedValue({ seller } as never);
   vi.mocked(getServerEnv).mockReturnValue({
-    minimumOrderQuantity: 6,
     resendApiKey: 'test-key',
     resendToEmails: ['admin@ghenortrs.com.br', 'contato@ghenortrs.com.br'],
   } as ReturnType<typeof getServerEnv>);
@@ -79,11 +95,11 @@ beforeEach(() => {
 });
 
 describe('B2B quote handler', () => {
-  it('accepts six units across SKUs and derives Pro from the Start subtotal', async () => {
+  it('derives Pro from the Start subtotal before discounts and ignores the client-supplied tier', async () => {
     const response = await handler(
       quoteRequest([
-        { productId: 1, quantity: 4 },
-        { productId: 2, quantity: 2 },
+        { productId: 1, quantity: 3 },
+        { productId: 2, quantity: 4 },
       ]),
     );
 
@@ -91,9 +107,9 @@ describe('B2B quote handler', () => {
     await expect(response.json()).resolves.toMatchObject({
       success: true,
       tier: 'pro',
-      totalQuantity: 6,
-      qualifyingSubtotalCents: 100_000,
-      totalCents: 90_000,
+      totalQuantity: 7,
+      qualifyingSubtotalCents: 150_000,
+      totalCents: 135_000,
     });
     expect(listActiveProductsByIds).toHaveBeenCalledWith([1, 2]);
     expect(insertQuoteRequest).toHaveBeenCalledWith({
@@ -101,9 +117,9 @@ describe('B2B quote handler', () => {
       notes: 'Mix mensal',
       items: {
         tier: 'pro',
-        totalQuantity: 6,
-        qualifyingSubtotalCents: 100_000,
-        totalCents: 90_000,
+        totalQuantity: 7,
+        qualifyingSubtotalCents: 150_000,
+        totalCents: 135_000,
         lines: [
           expect.objectContaining({ productId: 1, unitPriceCents: 9_000 }),
           expect.objectContaining({ productId: 2, unitPriceCents: 27_000 }),
@@ -112,20 +128,44 @@ describe('B2B quote handler', () => {
     });
   });
 
-  it('rejects fewer than six total units without applying per-item minimums', async () => {
+  it('accepts a qualifying one-item order at the R$500 merchandise subtotal minimum', async () => {
     const response = await handler(
-      quoteRequest([
-        { productId: 1, quantity: 4 },
-        { productId: 2, quantity: 1 },
-      ]),
+      quoteRequest([{ productId: 3, quantity: 1 }]),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      success: true,
+      tier: 'start',
+      totalQuantity: 1,
+      qualifyingSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+      totalCents: 50_000,
+    });
+    expect(insertQuoteRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        items: expect.objectContaining({
+          tier: 'start',
+          lines: [
+            expect.objectContaining({ productId: 3, unitPriceCents: 50_000 }),
+          ],
+        }),
+      }),
+    );
+  });
+
+  it('rejects orders below R$500 in merchandise even when the request includes a shipping-like extra value', async () => {
+    const response = await handler(
+      quoteRequest([{ productId: 1, quantity: 4 }], { shippingCents: 20_000 }),
     );
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({
-      error: 'minimum_order_quantity_not_met',
-      message: 'Selecione pelo menos 6 unidades no total.',
-      minimumOrderQuantity: 6,
-      totalQuantity: 5,
+      error: 'minimum_order_subtotal_not_met',
+      message: 'Pedido mínimo de R$ 500,00 em mercadorias antes dos descontos.',
+      minimumOrderSubtotalCents: MINIMUM_ORDER_SUBTOTAL_CENTS,
+      qualifyingSubtotalCents: 40_000,
+      amountToMinimumSubtotalCents: 10_000,
+      totalQuantity: 4,
     });
     expect(insertQuoteRequest).not.toHaveBeenCalled();
   });

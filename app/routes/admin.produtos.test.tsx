@@ -3,6 +3,8 @@ import type { ActionFunctionArgs } from '@remix-run/node';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  getBlingConnectionStatus,
+  readBlingSyncResult,
   serializeBlingSyncResult,
   syncBlingCatalog,
 } from '~/server/bling-admin';
@@ -13,7 +15,9 @@ import {
 } from '~/server/price-list-import';
 import { setProductsVisibility } from '~/server/product-admin';
 import { requireAdmin } from '~/server/require-admin.server';
-import { action } from './admin.produtos';
+import { action, loader } from './admin.produtos';
+import { listAdminProducts } from '~/server/db/queries';
+import { readBlingConnectResult } from '~/server/bling-oauth-state';
 
 vi.mock('~/server/bling-admin', () => ({
   getBlingConnectionStatus: vi.fn(),
@@ -42,6 +46,9 @@ vi.mock('~/server/require-admin.server', () => ({ requireAdmin: vi.fn() }));
 
 const buildPriceImportPreviewMock = vi.mocked(buildPriceImportPreview);
 const commitPriceImportMock = vi.mocked(commitPriceImport);
+const getBlingConnectionStatusMock = vi.mocked(getBlingConnectionStatus);
+const listAdminProductsMock = vi.mocked(listAdminProducts);
+const readBlingSyncResultMock = vi.mocked(readBlingSyncResult);
 const requireAdminMock = vi.mocked(requireAdmin);
 const setProductsVisibilityMock = vi.mocked(setProductsVisibility);
 const syncBlingCatalogMock = vi.mocked(syncBlingCatalog);
@@ -68,6 +75,49 @@ beforeEach(() => {
     headers: new Headers(),
   } as never);
   vi.mocked(serializeBlingSyncResult).mockResolvedValue('bling_sync_result=x');
+  getBlingConnectionStatusMock.mockResolvedValue({
+    connected: false,
+    expiresAt: null,
+  });
+  readBlingSyncResultMock.mockResolvedValue({
+    result: null,
+    clearCookie: null,
+  });
+  listAdminProductsMock.mockResolvedValue([]);
+  vi.mocked(readBlingConnectResult).mockResolvedValue({
+    result: null,
+    clearCookie: null,
+  });
+});
+
+describe('/admin/produtos loader', () => {
+  it('starts independent product and status reads concurrently', async () => {
+    const pending = <T,>() => {
+      let resolve!: (value: T) => void;
+      const promise = new Promise<T>((next) => {
+        resolve = next;
+      });
+      return { promise, resolve };
+    };
+    const products = pending<never[]>();
+    const connection = pending<{ connected: boolean; expiresAt: null }>();
+    listAdminProductsMock.mockReturnValue(products.promise);
+    getBlingConnectionStatusMock.mockReturnValue(connection.promise);
+
+    const responsePromise = loader({
+      request: new Request('https://example.com/admin/produtos'),
+      context: {},
+      params: {},
+    });
+    await Promise.resolve();
+
+    expect(listAdminProductsMock).toHaveBeenCalledWith('');
+    expect(getBlingConnectionStatusMock).toHaveBeenCalledOnce();
+
+    products.resolve([]);
+    connection.resolve({ connected: false, expiresAt: null });
+    await expect(responsePromise).resolves.toMatchObject({ status: 200 });
+  });
 });
 
 describe('/admin/produtos action', () => {

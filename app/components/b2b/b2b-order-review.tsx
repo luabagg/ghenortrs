@@ -11,7 +11,6 @@ import { HEADING_PAGE } from '@/lib/typography';
 /** Step two: confirm what is in the order, then send it. */
 export function B2BOrderReview({
   draft,
-  minimumOrderQuantity,
   notes,
   onNotesChange,
   onBack,
@@ -21,7 +20,6 @@ export function B2BOrderReview({
   failed,
 }: {
   draft: OrderDraft;
-  minimumOrderQuantity: number;
   notes: string;
   onNotesChange: (next: string) => void;
   onBack: () => void;
@@ -31,7 +29,7 @@ export function B2BOrderReview({
   failed: boolean;
 }) {
   const { items, pricing } = draft;
-  const belowMinimum = pricing.totalQuantity < minimumOrderQuantity;
+  const belowMinimum = pricing.amountToMinimumSubtotalCents > 0;
 
   return (
     <div className="grid gap-8">
@@ -96,10 +94,7 @@ export function B2BOrderReview({
         </ul>
       )}
 
-      <OrderSummary
-        minimumOrderQuantity={minimumOrderQuantity}
-        pricing={pricing}
-      />
+      <OrderSummary pricing={pricing} />
 
       <div className="grid gap-4">
         <label

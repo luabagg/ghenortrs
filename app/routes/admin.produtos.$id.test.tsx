@@ -3,17 +3,22 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getAdminProductDetail } from '~/server/db/queries';
-import { setProductsVisibility } from '~/server/product-admin';
+import {
+  setProductTierPrice,
+  setProductsVisibility,
+} from '~/server/product-admin';
 import { requireAdmin } from '~/server/require-admin.server';
-import { action, loader } from './admin.produtos.$id';
+import { action, loader, PRICE_UNIT_GUIDANCE } from './admin.produtos.$id';
 
 vi.mock('~/server/db/queries', () => ({ getAdminProductDetail: vi.fn() }));
 vi.mock('~/server/product-admin', () => ({
+  setProductTierPrice: vi.fn(),
   setProductsVisibility: vi.fn(),
 }));
 vi.mock('~/server/require-admin.server', () => ({ requireAdmin: vi.fn() }));
 
 const getAdminProductDetailMock = vi.mocked(getAdminProductDetail);
+const setProductTierPriceMock = vi.mocked(setProductTierPrice);
 const setProductsVisibilityMock = vi.mocked(setProductsVisibility);
 const requireAdminMock = vi.mocked(requireAdmin);
 
@@ -45,9 +50,20 @@ beforeEach(() => {
     user: admin,
     headers: new Headers(),
   } as never);
+  getAdminProductDetailMock.mockResolvedValue({
+    id: 7,
+    name: 'Rotor',
+    sku: 'ROT-7',
+  } as never);
 });
 
 describe('/admin/produtos/:id', () => {
+  it('documents that editable prices use integer centavos', () => {
+    expect(PRICE_UNIT_GUIDANCE).toBe(
+      'Informe o valor em centavos. Exemplo: R$ 500,00 = 50000 centavos.',
+    );
+  });
+
   it('loads the product the URL names', async () => {
     getAdminProductDetailMock.mockResolvedValue({
       id: 16624954933,
@@ -91,6 +107,97 @@ describe('/admin/produtos/:id', () => {
       ids: [7],
       query: '',
       visibleB2b: false,
+    });
+  });
+
+  it.each([
+    ['missing price', undefined],
+    ['blank price', ''],
+    ['whitespace-only price', '   '],
+    ['negative price', '-1'],
+    ['nonfinite price', 'Infinity'],
+    ['fractional price', '12.5'],
+    ['unsafe integer price', '9007199254740992'],
+  ])('rejects %s without writing', async (_label, price) => {
+    const fields: Record<string, string> = {
+      intent: 'save-tier-price',
+      tier: 'start',
+    };
+    if (price !== undefined) fields.priceCents = price;
+
+    const response = await action(post('7', fields));
+
+    expect(response.status).toBe(400);
+    expect(setProductTierPriceMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects a non-string price form value', async () => {
+    const formData = new FormData();
+    formData.set('intent', 'save-tier-price');
+    formData.set('tier', 'start');
+    formData.set('priceCents', new File(['12'], 'price.txt'));
+
+    const response = await action({
+      request: {
+        formData: async () => formData,
+      } as unknown as Request,
+      context: {},
+      params: { id: '7' },
+    });
+
+    expect(response.status).toBe(400);
+    expect(setProductTierPriceMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects an invalid tier without writing', async () => {
+    const response = await action(
+      post('7', {
+        intent: 'save-tier-price',
+        tier: 'enterprise',
+        priceCents: '1200',
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    expect(setProductTierPriceMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['a valid price', '1200'],
+    ['an explicit zero price', '0'],
+  ])('saves %s through the admin seam', async (_label, priceCents) => {
+    setProductTierPriceMock.mockResolvedValue({ updated: 1 });
+
+    const response = await action(
+      post('7', { intent: 'save-tier-price', tier: 'PRO', priceCents }),
+    );
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get('Location')).toBe('/admin/produtos/7');
+    expect(setProductTierPriceMock).toHaveBeenCalledWith({
+      actor: { id: admin.id, email: admin.email },
+      productId: 7,
+      sku: 'ROT-7',
+      tier: 'pro',
+      priceCents: Number(priceCents),
+    });
+  });
+
+  it('reports a failed price update without redirecting', async () => {
+    setProductTierPriceMock.mockResolvedValue({ updated: 0 });
+
+    const response = await action(
+      post('7', {
+        intent: 'save-tier-price',
+        tier: 'start',
+        priceCents: '1200',
+      }),
+    );
+
+    expect(response.status).toBe(404);
+    await expect(response.json()).resolves.toEqual({
+      ok: false,
+      error: 'price_update_failed',
     });
   });
 

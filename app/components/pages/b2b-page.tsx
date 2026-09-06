@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useNavigate } from '@remix-run/react';
 
 import {
@@ -35,6 +35,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
   const [mode, setMode] = useState<GateMode>(
     actionData?.gateHint === 'login' ? 'login' : 'register',
   );
+  const pendingFocusMode = useRef<GateMode | null>(null);
   // SSR always sees `null` (see auth-redirect-error.ts); React reconciles
   // to the real client value right after hydration, no manual effect needed.
   const capturedLinkError = useSyncExternalStore(
@@ -53,6 +54,22 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
   const linkError = capturedLinkError
     ? describeAuthRedirectError(capturedLinkError)
     : null;
+
+  function activateMode(nextMode: GateMode) {
+    if (nextMode === mode) return;
+    pendingFocusMode.current = nextMode;
+    setMode(nextMode);
+  }
+
+  useEffect(() => {
+    if (pendingFocusMode.current !== mode) return;
+
+    const firstField = document.querySelector<HTMLInputElement>(
+      mode === 'login' ? '#b2b-login-email' : '#b2b-company',
+    );
+    firstField?.focus({ preventScroll: true });
+    pendingFocusMode.current = null;
+  }, [mode]);
   const {
     errors,
     fields,
@@ -131,7 +148,7 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
             <button
               className="mt-2 text-sm font-semibold text-primary underline"
               type="button"
-              onClick={() => setMode('login')}
+              onClick={() => activateMode('login')}
             >
               Solicitar novo link de acesso
             </button>
@@ -143,29 +160,32 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
         className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-14"
         id="cadastro"
       >
+        <div className="order-1 lg:order-2">
+          {mode === 'login' && configured ? (
+            <B2BLoginCard
+              initialEmail={fields.email}
+              onSwitchToRegister={() => activateMode('register')}
+            />
+          ) : (
+            <B2BForm
+              errors={errors}
+              fields={fields}
+              honeypot={honeypot}
+              message={actionData?.message}
+              status={status}
+              onFieldChange={handleFieldChange}
+              onHoneypotChange={setHoneypot}
+              onSubmit={handleSubmit}
+            />
+          )}
+        </div>
+
         <B2BRegisterAside
+          className="order-2 lg:order-1"
           configured={configured}
           mode={mode}
-          onModeChange={setMode}
+          onModeChange={activateMode}
         />
-
-        {mode === 'login' && configured ? (
-          <B2BLoginCard
-            initialEmail={fields.email}
-            onSwitchToRegister={() => setMode('register')}
-          />
-        ) : (
-          <B2BForm
-            errors={errors}
-            fields={fields}
-            honeypot={honeypot}
-            message={actionData?.message}
-            status={status}
-            onFieldChange={handleFieldChange}
-            onHoneypotChange={setHoneypot}
-            onSubmit={handleSubmit}
-          />
-        )}
       </section>
     </div>
   );
