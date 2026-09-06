@@ -18,9 +18,16 @@ vi.mock('./db/queries', async (importOriginal) => ({
 }));
 vi.mock('./env', () => ({ getServerEnv: vi.fn() }));
 
-/** The detail endpoint answer. The list endpoint carries no categoria. */
-function detail(categoria: { descricao?: string | null } | null) {
+/** The product detail answer. The list endpoint carries no categoria. */
+function detail(categoria: { id?: number; descricao?: string | null } | null) {
   return new Response(JSON.stringify({ data: { id: 1, categoria } }), {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+  });
+}
+
+function categoryDetail(id: number, descricao: string | null) {
+  return new Response(JSON.stringify({ data: { id, descricao } }), {
     status: 200,
     headers: { 'content-type': 'application/json' },
   });
@@ -39,10 +46,14 @@ beforeEach(() => {
 });
 
 describe('fetchBlingProductCategories', () => {
-  it('reads the category name the list endpoint never sends', async () => {
+  it('resolves the category id returned by the product detail endpoint', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () => detail({ descricao: 'Aros' })),
+      vi.fn(async (url: string) =>
+        url.endsWith('/categorias/produtos/42')
+          ? categoryDetail(42, 'Aros')
+          : detail({ id: 42 }),
+      ),
     );
 
     await expect(fetchBlingProductCategories([7])).resolves.toEqual(
@@ -50,14 +61,19 @@ describe('fetchBlingProductCategories', () => {
     );
   });
 
-  it('asks the detail endpoint once per product', async () => {
-    const fetchMock = vi.fn(async () => detail({ descricao: 'Cubos' }));
+  it('asks once per product and once per distinct category', async () => {
+    const fetchMock = vi.fn(async (url: string) =>
+      url.includes('/categorias/produtos/')
+        ? categoryDetail(42, 'Cubos')
+        : detail({ id: 42 }),
+    );
     vi.stubGlobal('fetch', fetchMock);
 
     await fetchBlingProductCategories([7, 8]);
 
     expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
       'https://api.bling.test/Api/v3/produtos/7',
+      'https://api.bling.test/Api/v3/categorias/produtos/42',
       'https://api.bling.test/Api/v3/produtos/8',
     ]);
   });

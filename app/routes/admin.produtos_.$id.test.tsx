@@ -8,7 +8,7 @@ import {
   setProductsVisibility,
 } from '~/server/product-admin';
 import { requireAdmin } from '~/server/require-admin.server';
-import { action, loader, PRICE_UNIT_GUIDANCE } from './admin.produtos.$id';
+import { action, loader, PRICE_UNIT_GUIDANCE } from './admin.produtos_.$id';
 
 vi.mock('~/server/db/queries', () => ({ getAdminProductDetail: vi.fn() }));
 vi.mock('~/server/product-admin', () => ({
@@ -172,8 +172,8 @@ describe('/admin/produtos/:id', () => {
       post('7', { intent: 'save-tier-price', tier: 'PRO', priceCents }),
     );
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toBe('/admin/produtos/7');
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ ok: true });
     expect(setProductTierPriceMock).toHaveBeenCalledWith({
       actor: { id: admin.id, email: admin.email },
       productId: 7,

@@ -25,7 +25,7 @@ export type BlingProduct = {
   tipo?: string | null;
   unidade?: string | null;
   descricaoCurta?: string | null;
-  categoria?: { descricao?: string | null } | null;
+  categoria?: { id?: number | null; descricao?: string | null } | null;
 };
 
 type TokenResponse = {
@@ -254,14 +254,34 @@ export async function fetchBlingProductCategories(
   ids: number[],
 ): Promise<Map<number, string | null>> {
   const categories = new Map<number, string | null>();
+  const names = new Map<number, string | null>();
 
   for (const id of ids) {
     try {
       const res = await blingFetch<{ data: BlingProduct }>(`/produtos/${id}`);
-      const description = res.data.categoria?.descricao?.trim();
-      categories.set(id, description ? description : null);
+      const category = res.data.categoria;
+      const inlineDescription = category?.descricao?.trim();
+      if (inlineDescription) {
+        categories.set(id, inlineDescription);
+        continue;
+      }
+
+      const categoryId = category?.id;
+      if (!Number.isSafeInteger(categoryId) || Number(categoryId) <= 0) {
+        categories.set(id, null);
+        continue;
+      }
+
+      if (!names.has(Number(categoryId))) {
+        const categoryRes = await blingFetch<{
+          data: { descricao?: string | null };
+        }>(`/categorias/produtos/${categoryId}`);
+        const description = categoryRes.data.descricao?.trim();
+        names.set(Number(categoryId), description || null);
+      }
+      categories.set(id, names.get(Number(categoryId)) ?? null);
     } catch (error) {
-      // One unreadable product must not fail the whole sync.
+      // One unreadable product or category must not fail the whole sync.
       console.error('bling category detail failed', id, error);
     }
   }

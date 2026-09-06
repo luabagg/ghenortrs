@@ -172,17 +172,11 @@ describe('/admin/produtos action', () => {
     expect(response.headers.get('Location')).toBe('/admin/produtos?q=pad');
   });
 
-  it('shows one product from its row button', async () => {
-    setProductsVisibilityMock.mockResolvedValue({ updated: 1 });
+  it('refuses the removed per-row visibility action', async () => {
+    const response = await action(postIntent({ showProduct: '7' }));
 
-    await action(postIntent({ showProduct: '7' }));
-
-    expect(setProductsVisibilityMock).toHaveBeenCalledWith({
-      actor: { id: admin.id, email: admin.email },
-      ids: [7],
-      query: '',
-      visibleB2b: true,
-    });
+    expect(response.status).toBe(400);
+    expect(setProductsVisibilityMock).not.toHaveBeenCalled();
   });
 
   it('refuses a bulk request with no selection', async () => {

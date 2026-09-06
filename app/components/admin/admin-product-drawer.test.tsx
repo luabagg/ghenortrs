@@ -1,30 +1,40 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const product = {
+import type {
+  AdminProductDetailRow,
+  AdminProductRow,
+} from '~/server/db/queries';
+
+const product: AdminProductRow = {
   id: 7,
   sku: 'GH-7',
   name: 'Rotor Gheno',
   active: true,
   visibleB2b: true,
-  category: 'Rotor',
+  category: 'Rotores',
+};
+
+const detail: AdminProductDetailRow = {
+  ...product,
+  description: 'Descrição técnica',
+  imageUrl: 'https://bling.example/rotor.jpg',
+  unit: 'UN',
+  stock: 4,
+  priceCents: 50_000,
+  costCents: 30_000,
+  priceStartCents: 50_000,
+  priceProCents: 45_000,
+  priceMaxCents: 40_000,
+  syncedAt: '2026-09-06T10:00:00.000Z',
 };
 
 const loadMock = vi.fn();
-let fetcherState: 'idle' | 'loading' = 'idle';
+let fetcherState: 'idle' | 'loading' | 'submitting' = 'idle';
 let fetcherData:
-  | {
-      product: typeof product & {
-        description: string;
-        imageUrl: string | null;
-        unit: string | null;
-        stock: number | null;
-        priceStartCents: number | null;
-        priceProCents: number | null;
-        priceMaxCents: number | null;
-      };
-    }
+  | { product: AdminProductDetailRow }
+  | { ok: true }
+  | { ok: false; error: string }
   | undefined;
 
 vi.mock('@remix-run/react', async (importOriginal) => {
@@ -35,26 +45,12 @@ vi.mock('@remix-run/react', async (importOriginal) => {
       data: fetcherData,
       load: loadMock,
       state: fetcherState,
+      Form: ({ children, ...props }: React.ComponentProps<'form'>) => (
+        <form {...props}>{children}</form>
+      ),
     }),
   };
 });
-
-vi.mock('~/components/catalog/product-detail-content', () => ({
-  ProductDetailContent: ({
-    onImageExpandedChange,
-    product: detail,
-  }: {
-    onImageExpandedChange?: (expanded: boolean) => void;
-    product: { description: string };
-  }) => (
-    <>
-      <button type="button" onClick={() => onImageExpandedChange?.(true)}>
-        Abrir imagem
-      </button>
-      <p>{detail.description}</p>
-    </>
-  ),
-}));
 
 import { AdminProductDrawer } from './admin-product-drawer';
 
@@ -65,82 +61,52 @@ describe('AdminProductDrawer', () => {
     fetcherData = undefined;
   });
 
-  it('loads details once and shows an accessible pending state', () => {
-    const { rerender } = render(
-      <MemoryRouter>
-        <AdminProductDrawer product={product} />
-      </MemoryRouter>,
-    );
+  it('loads the selected product and exposes a pending state', () => {
+    render(<AdminProductDrawer product={product} onClose={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+    expect(loadMock).toHaveBeenCalledWith('/admin/produtos/7');
     expect(screen.getByRole('status')).toHaveTextContent(
       'Carregando detalhes do produto…',
     );
-    expect(loadMock).toHaveBeenCalledTimes(1);
-
-    fetcherState = 'loading';
-    rerender(
-      <MemoryRouter>
-        <AdminProductDrawer product={product} />
-      </MemoryRouter>,
-    );
-    expect(loadMock).toHaveBeenCalledTimes(1);
   });
 
-  it('renders the loaded detail instead of the pending state', () => {
-    fetcherData = {
-      product: {
-        ...product,
-        description: 'Descrição técnica',
-        imageUrl: null,
-        unit: 'un',
-        stock: 4,
-        priceStartCents: 50000,
-        priceProCents: 45000,
-        priceMaxCents: 40000,
-      },
-    };
+  it('renders admin-only details and edit controls', () => {
+    fetcherData = { product: detail };
 
-    render(
-      <MemoryRouter>
-        <AdminProductDrawer product={product} />
-      </MemoryRouter>,
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+    render(<AdminProductDrawer product={product} onClose={vi.fn()} />);
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByText('Rotores')).toBeInTheDocument();
     expect(screen.getByText('Descrição técnica')).toBeInTheDocument();
+    expect(screen.getByLabelText('Tabela Start (centavos)')).toHaveValue(
+      50_000,
+    );
+    expect(screen.getByLabelText('Tabela Pro (centavos)')).toHaveValue(45_000);
+    expect(screen.getByLabelText('Tabela Max (centavos)')).toHaveValue(40_000);
+    expect(
+      screen.getByRole('button', { name: 'Ocultar do catálogo B2B' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Editar preços e visibilidade')).toBeNull();
   });
 
-  it('keeps the drawer open when Escape closes the expanded image first', () => {
-    fetcherData = {
-      product: {
-        ...product,
-        description: '',
-        imageUrl: null,
-        unit: null,
-        stock: null,
-        priceStartCents: null,
-        priceProCents: null,
-        priceMaxCents: null,
-      },
-    };
-    render(
-      <MemoryRouter>
-        <AdminProductDrawer product={product} />
-      </MemoryRouter>,
+  it('closes through the shared drawer control', () => {
+    const onClose = vi.fn();
+    fetcherData = { product: detail };
+    render(<AdminProductDrawer product={product} onClose={onClose} />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Fechar' })[1]);
+
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('reloads product details after a successful edit', () => {
+    const { rerender } = render(
+      <AdminProductDrawer product={product} onClose={vi.fn()} />,
     );
+    loadMock.mockClear();
+    fetcherData = { ok: true };
 
-    fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
-    expect(
-      screen.getByRole('dialog', { name: product.name }),
-    ).toBeInTheDocument();
+    rerender(<AdminProductDrawer product={product} onClose={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Abrir imagem' }));
-    fireEvent.keyDown(document, { key: 'Escape' });
-
-    expect(
-      screen.getByRole('dialog', { name: product.name }),
-    ).toBeInTheDocument();
+    expect(loadMock).toHaveBeenCalledWith('/admin/produtos/7');
   });
 });

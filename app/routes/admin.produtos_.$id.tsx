@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 
 import { ProductDetailContent } from '~/components/catalog/product-detail-content';
@@ -111,7 +111,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
         { status: 404, headers },
       );
     }
-    return redirect(`/admin/produtos/${id}`, { headers });
+    return json({ ok: true as const }, { headers });
   }
 
   if (intent === 'show-product' || intent === 'hide-product') {
@@ -121,7 +121,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
       query: '',
       visibleB2b: intent === 'show-product',
     });
-    return redirect(`/admin/produtos/${id}`, { headers });
+    return json({ ok: true as const }, { headers });
   }
 
   return json(

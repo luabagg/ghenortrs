@@ -4,10 +4,10 @@ import type {
   MetaFunction,
 } from '@remix-run/node';
 import { createCookie, json, redirect } from '@remix-run/node';
-import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
+import { Form, useActionData, useLoaderData } from '@remix-run/react';
 
 import { AdminChrome } from '~/components/admin/admin-chrome';
-import { AdminProductDrawer } from '~/components/admin/admin-product-drawer';
+import { AdminProductsTable } from '~/components/admin/admin-products-table';
 import { PriceListImportPanel } from '~/components/admin/price-list-import-panel';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -154,21 +154,10 @@ function parseProductId(value: FormDataEntryValue | null): number | null {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
-/** Reads an explicit show/hide target. There is no implicit toggle. */
+/** Reads an explicit bulk show/hide target. There is no implicit toggle. */
 function readVisibilityTarget(
   formData: FormData,
 ): { ids: number[]; visibleB2b: boolean } | null {
-  const single = [
-    { field: 'showProduct', visibleB2b: true },
-    { field: 'hideProduct', visibleB2b: false },
-  ];
-  for (const option of single) {
-    const raw = formData.get(option.field);
-    if (raw === null) continue;
-    const id = parseProductId(raw);
-    return id === null ? null : { ids: [id], visibleB2b: option.visibleB2b };
-  }
-
   const intent = String(formData.get('intent') ?? '');
   if (intent !== 'bulk-show' && intent !== 'bulk-hide') return null;
 
@@ -457,97 +446,7 @@ export default function AdminProducts() {
             : 'Nenhum produto sincronizado.'}
         </p>
       ) : (
-        <Form className="grid gap-3" method="post">
-          <input name="q" type="hidden" value={query} />
-
-          <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm text-secondary">
-              Marque os produtos e escolha o estado no catálogo B2B.
-            </p>
-            <Button
-              name="intent"
-              type="submit"
-              value="bulk-show"
-              variant="secondary"
-            >
-              Mostrar marcados
-            </Button>
-            <Button
-              name="intent"
-              type="submit"
-              value="bulk-hide"
-              variant="secondary"
-            >
-              Ocultar marcados
-            </Button>
-          </div>
-
-          <div className="overflow-x-auto border border-border bg-surface">
-            <table className="w-full min-w-160 text-left text-sm">
-              <thead className="border-b border-border text-secondary">
-                <tr>
-                  <th className="px-4 py-3 font-bold">
-                    <span className="sr-only">Selecionar</span>
-                  </th>
-                  <th className="px-4 py-3 font-bold">SKU</th>
-                  <th className="px-4 py-3 font-bold">Produto</th>
-                  <th className="px-4 py-3 font-bold">Bling</th>
-                  <th className="px-4 py-3 font-bold">Catálogo</th>
-                  <th className="px-4 py-3 font-bold">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => (
-                  <tr
-                    key={product.id}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="px-4 py-3">
-                      <input
-                        aria-label={`Selecionar ${product.name}`}
-                        name="productIds"
-                        type="checkbox"
-                        value={product.id}
-                      />
-                    </td>
-                    <td className="px-4 py-3 text-secondary">
-                      {product.sku ?? '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Link
-                        className="text-primary underline"
-                        to={`/admin/produtos/${product.id}`}
-                      >
-                        {product.name}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-secondary">
-                      {product.active ? 'Ativo' : 'Inativo'}
-                    </td>
-                    <td className="px-4 py-3 text-primary">
-                      {product.visibleB2b ? 'Visível' : 'Oculto'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        <AdminProductDrawer product={product} />
-                        <Button
-                          name={
-                            product.visibleB2b ? 'hideProduct' : 'showProduct'
-                          }
-                          type="submit"
-                          value={product.id}
-                          variant="secondary"
-                        >
-                          {product.visibleB2b ? 'Ocultar' : 'Mostrar'}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Form>
+        <AdminProductsTable products={products} query={query} />
       )}
     </AdminChrome>
   );
