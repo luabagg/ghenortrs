@@ -13,7 +13,7 @@ import {
 } from '@/components/b2b/b2b-order-sent';
 import { B2BProductDrawer } from '@/components/b2b/b2b-product-drawer';
 import { ProductRow, ProductRowSkeleton } from '@/components/b2b/product-row';
-import { TierLadder } from '@/components/b2b/tier-ladder';
+import { TierDropdown } from '@/components/b2b/tier-dropdown';
 import { PageIntro } from '@/components/landing/section-cards';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +45,24 @@ type CatalogSort = 'name-asc' | 'price-asc' | 'price-desc';
 
 const SELECT_CONTROL_CLASS =
   'h-11 w-full rounded-button border border-strong bg-background-soft px-3.5 py-2 font-body text-sm text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
+
+function FilterIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M4 6h16M7 12h10m-7 6h4"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
 
 function normalizeCatalogText(value: string | null | undefined) {
   return (value ?? '')
@@ -102,6 +120,7 @@ export function B2BCatalogPage() {
   const [category, setCategory] = useState('all');
   const [priceFilter, setPriceFilter] = useState<PriceFilterValue>('all');
   const [sort, setSort] = useState<CatalogSort>('name-asc');
+  const [openPanel, setOpenPanel] = useState<'tiers' | 'filters' | null>(null);
   const [notes, setNotes] = useState('');
   const [step, setStep] = useState<'catalog' | 'review' | 'sent'>('catalog');
   // Hold the id, not the product. A refetch replaces the objects.
@@ -258,90 +277,128 @@ export function B2BCatalogPage() {
         title="Selecione itens e solicite orçamento."
       />
 
-      <TierLadder activeTier={draft.pricing.tier} />
-
-      <div
-        aria-label="Filtros do catálogo"
-        className="grid gap-4 border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[minmax(16rem,1fr)_minmax(10rem,0.7fr)_minmax(12rem,0.8fr)_minmax(10rem,0.7fr)_auto] xl:items-end"
-        role="group"
-      >
-        <div className="grid gap-2">
-          <label className="text-sm font-bold" htmlFor="b2b-catalog-search">
-            Buscar produtos
-          </label>
-          <Input
-            id="b2b-catalog-search"
-            placeholder="Nome, SKU ou categoria"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
+      <div className="grid gap-3">
+        <div
+          aria-label="Tabelas e filtros do catálogo"
+          className="relative grid grid-cols-2 gap-2 sm:w-fit sm:grid-cols-[14rem_12rem]"
+          role="group"
+        >
+          <TierDropdown
+            activeTier={draft.pricing.tier}
+            open={openPanel === 'tiers'}
+            onToggle={() =>
+              setOpenPanel((current) => (current === 'tiers' ? null : 'tiers'))
+            }
           />
-        </div>
-        <div className="grid gap-2">
-          <label className="text-sm font-bold" htmlFor="b2b-catalog-category">
-            Categoria
-          </label>
-          <select
-            className={SELECT_CONTROL_CLASS}
-            id="b2b-catalog-category"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-          >
-            <option value="all">Todas</option>
-            {categories.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="grid gap-2">
-          <label className="text-sm font-bold" htmlFor="b2b-catalog-price">
-            Preço base
-          </label>
-          <select
-            className={SELECT_CONTROL_CLASS}
-            id="b2b-catalog-price"
-            value={priceFilter}
-            onChange={(event) =>
-              setPriceFilter(event.target.value as PriceFilterValue)
+          <Button
+            aria-controls="b2b-catalog-filters"
+            aria-expanded={openPanel === 'filters'}
+            aria-label={
+              openPanel === 'filters' ? 'Ocultar filtros' : 'Mostrar filtros'
+            }
+            className="w-full justify-between px-3 sm:px-5"
+            type="button"
+            variant="secondary"
+            onClick={() =>
+              setOpenPanel((current) =>
+                current === 'filters' ? null : 'filters',
+              )
             }
           >
-            {PRICE_FILTERS.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+            <span>Filtros</span>
+            <FilterIcon />
+          </Button>
         </div>
-        <div className="grid gap-2">
-          <label className="text-sm font-bold" htmlFor="b2b-catalog-sort">
-            Ordenar
-          </label>
-          <select
-            className={SELECT_CONTROL_CLASS}
-            id="b2b-catalog-sort"
-            value={sort}
-            onChange={(event) => setSort(event.target.value as CatalogSort)}
+
+        {openPanel === 'filters' ? (
+          <div
+            aria-label="Filtros do catálogo"
+            className="grid gap-4 border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[minmax(16rem,1fr)_minmax(10rem,0.7fr)_minmax(12rem,0.8fr)_minmax(10rem,0.7fr)_auto] xl:items-end"
+            id="b2b-catalog-filters"
+            role="group"
           >
-            <option value="name-asc">Nome (A-Z)</option>
-            <option value="price-asc">Menor preço</option>
-            <option value="price-desc">Maior preço</option>
-          </select>
-        </div>
-        <Button
-          className="w-full sm:col-span-2 xl:col-span-1 xl:w-auto"
-          disabled={!controlsActive}
-          type="button"
-          variant="secondary"
-          onClick={() => {
-            setQuery('');
-            setCategory('all');
-            setPriceFilter('all');
-            setSort('name-asc');
-          }}
-        >
-          Limpar filtros
-        </Button>
+            <div className="grid gap-2">
+              <label className="text-sm font-bold" htmlFor="b2b-catalog-search">
+                Buscar produtos
+              </label>
+              <Input
+                id="b2b-catalog-search"
+                placeholder="Nome, SKU ou categoria"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label
+                className="text-sm font-bold"
+                htmlFor="b2b-catalog-category"
+              >
+                Categoria
+              </label>
+              <select
+                className={SELECT_CONTROL_CLASS}
+                id="b2b-catalog-category"
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+              >
+                <option value="all">Todas</option>
+                {categories.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-bold" htmlFor="b2b-catalog-price">
+                Preço base
+              </label>
+              <select
+                className={SELECT_CONTROL_CLASS}
+                id="b2b-catalog-price"
+                value={priceFilter}
+                onChange={(event) =>
+                  setPriceFilter(event.target.value as PriceFilterValue)
+                }
+              >
+                {PRICE_FILTERS.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-bold" htmlFor="b2b-catalog-sort">
+                Ordenar
+              </label>
+              <select
+                className={SELECT_CONTROL_CLASS}
+                id="b2b-catalog-sort"
+                value={sort}
+                onChange={(event) => setSort(event.target.value as CatalogSort)}
+              >
+                <option value="name-asc">Nome (A-Z)</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+              </select>
+            </div>
+            <Button
+              className="w-full sm:col-span-2 xl:col-span-1 xl:w-auto"
+              disabled={!controlsActive}
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setQuery('');
+                setCategory('all');
+                setPriceFilter('all');
+                setSort('name-asc');
+              }}
+            >
+              Limpar filtros
+            </Button>
+          </div>
+        ) : null}
       </div>
 
       {error ? (

@@ -112,12 +112,13 @@ function openDetail(productName: string) {
   return screen.getByRole('dialog', { name: productName });
 }
 
-/** The ladder marks the table the order currently qualifies for. */
+function openFilters() {
+  fireEvent.click(screen.getByRole('button', { name: 'Mostrar filtros' }));
+}
+
+/** The tier control reports the table the order currently qualifies for. */
 function activeTier() {
-  const ladder = screen.getByRole('list', { name: 'Tabelas de preço' });
-  return within(ladder)
-    .getAllByRole('listitem')
-    .find((band) => band.getAttribute('aria-current') === 'true');
+  return screen.getByRole('button', { name: /Tabela atual:/ });
 }
 
 function goToReview() {
@@ -206,6 +207,7 @@ describe('B2BCatalogPage rows', () => {
     renderPage();
 
     expect(document.body.textContent).not.toContain('Bling');
+    openFilters();
     expect(screen.getByLabelText('Buscar produtos')).toHaveAttribute(
       'placeholder',
       'Nome, SKU ou categoria',
@@ -221,22 +223,55 @@ describe('B2BCatalogPage rows', () => {
 });
 
 describe('B2BCatalogPage catalog controls', () => {
-  it('keeps the filter panel on two columns until the xl breakpoint', () => {
+  it('keeps tiers and filters in one compact toolbar', () => {
     renderPage();
 
-    const filters = screen.getByRole('group', { name: 'Filtros do catálogo' });
-    expect(filters).toHaveClass('sm:grid-cols-2');
-    expect(filters.className).toContain('xl:grid-cols-[');
-    expect(filters.className).not.toContain('lg:grid-cols-[');
+    const toolbar = screen.getByRole('group', {
+      name: 'Tabelas e filtros do catálogo',
+    });
+    expect(
+      within(toolbar).getByRole('button', { name: /Tabela atual:/ }),
+    ).toBeVisible();
+    expect(
+      within(toolbar).getByRole('button', { name: 'Mostrar filtros' }),
+    ).toBeVisible();
+  });
 
-    expect(screen.getByRole('button', { name: 'Limpar filtros' })).toHaveClass(
-      'sm:col-span-2',
-      'xl:col-span-1',
-    );
+  it('only exposes filters after the filter control is expanded', () => {
+    renderPage();
+
+    const toggle = screen.getByRole('button', { name: 'Mostrar filtros' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(
+      screen.queryByRole('group', { name: 'Filtros do catálogo' }),
+    ).toBeNull();
+
+    fireEvent.click(toggle);
+
+    expect(
+      screen.getByRole('button', { name: 'Ocultar filtros' }),
+    ).toHaveAttribute('aria-expanded', 'true');
+    expect(
+      screen.getByRole('group', { name: 'Filtros do catálogo' }),
+    ).toBeVisible();
+  });
+
+  it('expands the tier dropdown with the current tier selected', () => {
+    renderPage();
+
+    expect(screen.queryByRole('list', { name: 'Tabelas de preço' })).toBeNull();
+    fireEvent.click(activeTier());
+
+    const tiers = screen.getByRole('list', { name: 'Tabelas de preço' });
+    const selected = within(tiers)
+      .getAllByRole('listitem')
+      .find((item) => item.getAttribute('aria-current') === 'true');
+    expect(selected).toHaveTextContent('Tabela Start');
   });
 
   it('sorts products by base price ascending and descending', () => {
     renderPage();
+    openFilters();
 
     fireEvent.change(screen.getByLabelText('Ordenar'), {
       target: { value: 'price-desc' },
@@ -251,6 +286,7 @@ describe('B2BCatalogPage catalog controls', () => {
 
   it('composes search, category and price filters', () => {
     renderPage();
+    openFilters();
 
     fireEvent.change(screen.getByLabelText('Buscar produtos'), {
       target: { value: 'cubo' },
@@ -269,6 +305,7 @@ describe('B2BCatalogPage catalog controls', () => {
 
   it('resets filters from the empty state', () => {
     renderPage();
+    openFilters();
 
     fireEvent.change(screen.getByLabelText('Buscar produtos'), {
       target: { value: 'guidão' },
@@ -287,6 +324,7 @@ describe('B2BCatalogPage catalog controls', () => {
   it('keeps selected quantities when filters hide and show rows again', () => {
     renderPage();
     setQuantity('Aro 29', 3);
+    openFilters();
 
     fireEvent.change(screen.getByLabelText('Categoria'), {
       target: { value: 'Cubos' },

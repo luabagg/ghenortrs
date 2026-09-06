@@ -2,7 +2,7 @@
 
 GHENO rotors marketing + B2B site on **Remix (Vite)** + React + TypeScript.
 
-Styling tokens live in `DESIGN.md` / `app/styles.css`. Planning lives in Linear project `Gheno rotors`.
+Styling tokens live in `DESIGN.md` / `app/styles.css`.
 
 ## Commands
 

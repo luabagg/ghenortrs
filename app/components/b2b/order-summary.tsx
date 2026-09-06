@@ -1,5 +1,5 @@
 import type { OrderPricing } from '@/b2b/order-pricing';
-import { TIER_LABELS } from '@/components/b2b/tier-ladder';
+import { TIER_LABELS } from '@/components/b2b/tier-dropdown';
 import { formatCentsToBRL } from '@/lib/br-money';
 
 /**

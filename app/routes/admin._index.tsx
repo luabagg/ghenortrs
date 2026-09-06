@@ -10,6 +10,7 @@ import { AdminChrome } from '~/components/admin/admin-chrome';
 import { Button } from '~/components/ui/button';
 import { buildNoIndexMeta } from '~/lib/seo';
 import {
+  getSellerById,
   insertAdminAuditEvent,
   listSellers,
   updateSellerStatus,
@@ -32,15 +33,37 @@ const catalogAccessFlash = createCookie('admin_catalog_access', {
   secure: process.env.NODE_ENV === 'production',
 });
 
-const STATUSES: SellerStatus[] = [
-  'approved',
-  'suspended',
-  'rejected',
-  'pending',
-];
+const STATUS_LABELS: Record<SellerStatus, string> = {
+  pending: 'Pendente',
+  approved: 'Aprovado',
+  rejected: 'Recusado',
+  suspended: 'Suspenso',
+};
+
+/**
+ * Status changes the panel offers. The action accepts no other change.
+ * "Recusar" answers a registration that was never approved. An approved seller
+ * can only be suspended, and a suspended seller can only go back to approved.
+ */
+const STATUS_ACTIONS: Record<
+  SellerStatus,
+  Array<{ status: SellerStatus; label: string }>
+> = {
+  pending: [
+    { status: 'approved', label: 'Aprovar' },
+    { status: 'rejected', label: 'Recusar' },
+  ],
+  approved: [{ status: 'suspended', label: 'Suspender' }],
+  suspended: [{ status: 'approved', label: 'Reativar' }],
+  rejected: [{ status: 'approved', label: 'Aprovar' }],
+};
 
 function isSellerStatus(value: string): value is SellerStatus {
-  return STATUSES.includes(value as SellerStatus);
+  return Object.hasOwn(STATUS_LABELS, value);
+}
+
+function allowsStatusChange(from: SellerStatus, to: SellerStatus): boolean {
+  return STATUS_ACTIONS[from].some((action) => action.status === to);
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -99,6 +122,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json(
       { ok: false, error: 'invalid_status' },
       { status: 400, headers },
+    );
+  }
+
+  const seller = await getSellerById(sellerId);
+  if (!seller) {
+    return json(
+      { ok: false, error: 'seller_not_found' },
+      { status: 404, headers },
+    );
+  }
+  if (!allowsStatusChange(seller.status, statusRaw)) {
+    return json(
+      { ok: false, error: 'invalid_transition' },
+      { status: 409, headers },
     );
   }
 
@@ -162,7 +199,9 @@ export default function AdminIndex() {
       ) : null}
       {actionData && 'ok' in actionData && actionData.ok === false ? (
         <p className="text-sm text-accent" role="alert">
-          Não foi possível atualizar o lojista.
+          {actionData.error === 'invalid_transition'
+            ? 'O status deste lojista mudou. Recarregue a página e tente de novo.'
+            : 'Não foi possível atualizar o lojista.'}
         </p>
       ) : null}
 
@@ -189,26 +228,23 @@ export default function AdminIndex() {
                     {seller.companyName}
                   </td>
                   <td className="px-4 py-3 text-secondary">{seller.email}</td>
-                  <td className="px-4 py-3 text-primary">{seller.status}</td>
+                  <td className="px-4 py-3 text-primary">
+                    {STATUS_LABELS[seller.status]}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">
-                      {seller.status !== 'approved' ? (
-                        <StatusButton sellerId={seller.id} status="approved">
-                          Aprovar
-                        </StatusButton>
-                      ) : (
+                      {seller.status === 'approved' ? (
                         <CatalogAccessButton sellerId={seller.id} />
-                      )}
-                      {seller.status !== 'suspended' ? (
-                        <StatusButton sellerId={seller.id} status="suspended">
-                          Suspender
-                        </StatusButton>
                       ) : null}
-                      {seller.status !== 'rejected' ? (
-                        <StatusButton sellerId={seller.id} status="rejected">
-                          Recusar
+                      {STATUS_ACTIONS[seller.status].map((action) => (
+                        <StatusButton
+                          key={action.status}
+                          sellerId={seller.id}
+                          status={action.status}
+                        >
+                          {action.label}
                         </StatusButton>
-                      ) : null}
+                      ))}
                     </div>
                   </td>
                 </tr>

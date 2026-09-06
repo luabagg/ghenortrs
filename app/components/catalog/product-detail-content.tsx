@@ -1,6 +1,6 @@
 import { B2BImageViewer } from '~/components/b2b/b2b-image-viewer';
 import { ProductThumb } from '~/components/b2b/product-row';
-import { TIER_LABELS } from '~/components/b2b/tier-ladder';
+import { TIER_LABELS } from '~/components/b2b/tier-dropdown';
 import { formatCentsToBRL } from '~/lib/br-money';
 import { SELLER_TIERS, type SellerTier } from '~/server/seller-tier';
 import { useState } from 'react';
