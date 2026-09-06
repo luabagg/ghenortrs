@@ -662,7 +662,13 @@ export async function upsertProductImage(input: {
     });
 }
 
-/** Sync upsert SET. Must omit visible_b2b and price_*_cents. */
+/**
+ * Sync upsert SET. Must omit visible_b2b and price_*_cents.
+ *
+ * Also omits category: the list response this upsert is built from never
+ * carries one. It arrives from the detail endpoint instead, through
+ * updateProductCategories, which must not be undone here.
+ */
 export const blingProductSyncConflictSet = {
   sku: sql`excluded.sku`,
   name: sql`excluded.name`,
@@ -673,11 +679,30 @@ export const blingProductSyncConflictSet = {
   stock: sql`excluded.stock`,
   unit: sql`excluded.unit`,
   active: sql`excluded.active`,
-  category: sql`excluded.category`,
   searchTerms: sql`excluded.search_terms`,
   raw: sql`excluded.raw`,
   syncedAt: sql`excluded.synced_at`,
 };
+
+/**
+ * Writes the categories the sync read from Bling's detail endpoint. Only the
+ * products it could actually read are passed in, so a failed detail call
+ * leaves the stored category as it was.
+ */
+export async function updateProductCategories(
+  categories: Map<number, string | null>,
+): Promise<number> {
+  let updated = 0;
+  for (const [id, category] of categories) {
+    const rows = await getDb()
+      .update(blingProducts)
+      .set({ category })
+      .where(eq(blingProducts.id, id))
+      .returning({ id: blingProducts.id });
+    updated += rows.length;
+  }
+  return updated;
+}
 
 export async function upsertBlingProducts(
   rows: Array<{

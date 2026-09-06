@@ -6,6 +6,7 @@ import {
   listStoredImageKeys,
   readStoredBlingTokens,
   saveBlingTokens as persistBlingTokens,
+  updateProductCategories,
   upsertBlingProducts,
   upsertProductImage,
 } from './db/queries';
@@ -241,6 +242,34 @@ export async function listAllBlingProducts(): Promise<BlingProduct[]> {
 }
 
 /**
+ * The list endpoint never carries `categoria`, so every synced product used
+ * to land with a null category and the catalog filter had nothing to group
+ * by. Only the detail endpoint knows it, so ask one product at a time.
+ *
+ * A product whose call fails is left out of the map, not mapped to null, so
+ * the caller can tell "Bling says no category" from "we could not ask" and
+ * leave the stored value alone.
+ */
+export async function fetchBlingProductCategories(
+  ids: number[],
+): Promise<Map<number, string | null>> {
+  const categories = new Map<number, string | null>();
+
+  for (const id of ids) {
+    try {
+      const res = await blingFetch<{ data: BlingProduct }>(`/produtos/${id}`);
+      const description = res.data.categoria?.descricao?.trim();
+      categories.set(id, description ? description : null);
+    } catch (error) {
+      // One unreadable product must not fail the whole sync.
+      console.error('bling category detail failed', id, error);
+    }
+  }
+
+  return categories;
+}
+
+/**
  * Bling's S3 serves every photo as application/octet-stream, so the header
  * says nothing. Sniff the magic bytes instead. This also stops an HTML error
  * page from being stored and served as an image.
@@ -395,6 +424,7 @@ export async function cacheBlingProductImages(
 
 export async function syncBlingProductsToCache(): Promise<{
   upserted: number;
+  categories: { updated: number; failed: number };
   images: { stored: number; skipped: number; failed: number };
 }> {
   const products = await listAllBlingProducts();
@@ -419,7 +449,11 @@ export async function syncBlingProductsToCache(): Promise<{
   });
 
   if (rows.length === 0) {
-    return { upserted: 0, images: { stored: 0, skipped: 0, failed: 0 } };
+    return {
+      upserted: 0,
+      categories: { updated: 0, failed: 0 },
+      images: { stored: 0, skipped: 0, failed: 0 },
+    };
   }
 
   const chunkSize = 100;
@@ -427,8 +461,16 @@ export async function syncBlingProductsToCache(): Promise<{
     await upsertBlingProducts(rows.slice(i, i + chunkSize));
   }
 
+  // The rows must exist before the category update can match them.
+  const ids = rows.map((row) => row.id);
+  const fetched = await fetchBlingProductCategories(ids);
+  const categories = {
+    updated: await updateProductCategories(fetched),
+    failed: ids.length - fetched.size,
+  };
+
   // Products first: the image rows reference them.
   const images = await cacheBlingProductImages(rows);
 
-  return { upserted: rows.length, images };
+  return { upserted: rows.length, categories, images };
 }

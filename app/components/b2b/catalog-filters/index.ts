@@ -1,4 +1,3 @@
-export { CatalogFilterBar } from './catalog-filter-bar';
-export { CategoryFilterDrawer } from './category-filter-drawer';
+export { CatalogFilterPopover } from './catalog-filter-popover';
 export { SelectedFilters } from './selected-filters';
 export { useCatalogFilters, type CatalogSort } from './use-catalog-filters';

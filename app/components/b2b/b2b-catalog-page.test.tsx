@@ -116,11 +116,23 @@ function openFilters() {
   fireEvent.click(screen.getByRole('button', { name: 'Mostrar filtros' }));
 }
 
-/** Opens the category drawer and picks one option ("Todas" clears it). */
+function filterPanel() {
+  return screen.getByRole('group', { name: 'Filtros do catálogo' });
+}
+
+/** Picks one option from a filter column ("Todas" clears the category). */
+function selectFilterOption(facet: RegExp, listName: string, option: string) {
+  fireEvent.click(within(filterPanel()).getByRole('button', { name: facet }));
+  const list = within(filterPanel()).getByRole('list', { name: listName });
+  fireEvent.click(within(list).getByRole('button', { name: option }));
+}
+
 function selectCategory(name: string) {
-  fireEvent.click(screen.getByRole('button', { name: /^Categoria/ }));
-  const drawer = screen.getByRole('dialog', { name: 'Categoria' });
-  fireEvent.click(within(drawer).getByRole('button', { name }));
+  selectFilterOption(/^Categoria/, 'Categorias', name);
+}
+
+function selectSort(name: string) {
+  selectFilterOption(/^Ordenar/, 'Ordenação', name);
 }
 
 /** The tier control reports the table the order currently qualifies for. */
@@ -280,14 +292,10 @@ describe('B2BCatalogPage catalog controls', () => {
     renderPage();
     openFilters();
 
-    fireEvent.change(screen.getByLabelText('Ordenar'), {
-      target: { value: 'price-desc' },
-    });
+    selectSort('Maior preço');
     expect(rowNames()).toEqual(['Cubo XD', 'Disco 180', 'Aro 29']);
 
-    fireEvent.change(screen.getByLabelText('Ordenar'), {
-      target: { value: 'price-asc' },
-    });
+    selectSort('Menor preço');
     expect(rowNames()).toEqual(['Aro 29', 'Disco 180', 'Cubo XD']);
   });
 
@@ -305,16 +313,37 @@ describe('B2BCatalogPage catalog controls', () => {
     expect(screen.queryByText('Disco 180')).toBeNull();
   });
 
-  it('opens the category drawer and lists every catalog category', () => {
+  it('lists the categories in a second column, never over the whole screen', () => {
     renderPage();
     openFilters();
 
-    fireEvent.click(screen.getByRole('button', { name: /^Categoria/ }));
-    const drawer = screen.getByRole('dialog', { name: 'Categoria' });
+    const panel = filterPanel();
+    fireEvent.click(within(panel).getByRole('button', { name: /^Categoria/ }));
+    const list = within(panel).getByRole('list', { name: 'Categorias' });
 
-    expect(within(drawer).getByRole('button', { name: 'Todas' })).toBeVisible();
-    expect(within(drawer).getByRole('button', { name: 'Aros' })).toBeVisible();
-    expect(within(drawer).getByRole('button', { name: 'Cubos' })).toBeVisible();
+    expect(within(list).getByRole('button', { name: 'Todas' })).toBeVisible();
+    expect(within(list).getByRole('button', { name: 'Aros' })).toBeVisible();
+    expect(within(list).getByRole('button', { name: 'Cubos' })).toBeVisible();
+    // The picker is a column inside the panel, not a dialog over the page.
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('floats the panel over the list instead of pushing it down', () => {
+    renderPage();
+    openFilters();
+
+    expect(filterPanel().className).toContain('absolute');
+  });
+
+  it('closes the panel on Escape', () => {
+    renderPage();
+    openFilters();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(
+      screen.queryByRole('group', { name: 'Filtros do catálogo' }),
+    ).toBeNull();
   });
 
   it('shows the active filters as removable chips below the filter bar', () => {
@@ -337,6 +366,20 @@ describe('B2BCatalogPage catalog controls', () => {
         /^Categoria:/,
       ),
     ).toBeNull();
+  });
+
+  it('keeps the chips visible after the filter panel closes', () => {
+    renderPage();
+    openFilters();
+    selectCategory('Cubos');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ocultar filtros' }));
+
+    expect(
+      screen.queryByRole('group', { name: 'Filtros do catálogo' }),
+    ).toBeNull();
+    const chips = screen.getByRole('group', { name: 'Filtros ativos' });
+    expect(within(chips).getByText('Categoria: Cubos')).toBeVisible();
   });
 
   it('resets filters from the empty state', () => {

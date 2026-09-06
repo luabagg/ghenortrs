@@ -13,8 +13,7 @@ import {
 } from '@/components/b2b/b2b-order-sent';
 import { B2BProductDrawer } from '@/components/b2b/b2b-product-drawer';
 import {
-  CatalogFilterBar,
-  CategoryFilterDrawer,
+  CatalogFilterPopover,
   SelectedFilters,
   useCatalogFilters,
 } from '@/components/b2b/catalog-filters';
@@ -33,28 +32,9 @@ const SUBMIT_ERROR_MESSAGES: Record<string, string> = {
 const SKELETON_ROWS = [0, 1, 2, 3, 4];
 const EMPTY_CATALOG_PRODUCTS: B2BCatalogProduct[] = [];
 
-function FilterIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-4 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M4 6h16M7 12h10m-7 6h4"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
-
 export function B2BCatalogPage() {
   const { gate, session, configured } = useB2BSession();
   const [openPanel, setOpenPanel] = useState<'tiers' | 'filters' | null>(null);
-  const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
   const [notes, setNotes] = useState('');
   const [step, setStep] = useState<'catalog' | 'review' | 'sent'>('catalog');
   // Hold the id, not the product. A refetch replaces the objects.
@@ -202,55 +182,33 @@ export function B2BCatalogPage() {
               setOpenPanel((current) => (current === 'tiers' ? null : 'tiers'))
             }
           />
-          <Button
-            aria-controls="b2b-catalog-filters"
-            aria-expanded={openPanel === 'filters'}
-            aria-label={
-              openPanel === 'filters' ? 'Ocultar filtros' : 'Mostrar filtros'
-            }
-            className="w-full justify-between px-3 sm:px-5"
-            type="button"
-            variant="secondary"
-            onClick={() =>
+          <CatalogFilterPopover
+            categories={filters.categories}
+            category={filters.category}
+            controlsActive={filters.controlsActive}
+            open={openPanel === 'filters'}
+            query={filters.query}
+            sort={filters.sort}
+            onCategoryChange={filters.setCategory}
+            onClear={filters.clear}
+            onClose={() => setOpenPanel(null)}
+            onQueryChange={filters.setQuery}
+            onSortChange={filters.setSort}
+            onToggle={() =>
               setOpenPanel((current) =>
                 current === 'filters' ? null : 'filters',
               )
             }
-          >
-            <span>Filtros</span>
-            <FilterIcon />
-          </Button>
+          />
         </div>
 
-        {openPanel === 'filters' ? (
-          <div className="grid gap-3" id="b2b-catalog-filters">
-            <CatalogFilterBar
-              category={filters.category}
-              controlsActive={filters.controlsActive}
-              query={filters.query}
-              sort={filters.sort}
-              onCategoryOpen={() => setCategoryDrawerOpen(true)}
-              onClear={filters.clear}
-              onQueryChange={filters.setQuery}
-              onSortChange={filters.setSort}
-            />
-            <SelectedFilters
-              category={filters.category}
-              query={filters.query}
-              onClearCategory={() => filters.setCategory('all')}
-              onClearQuery={() => filters.setQuery('')}
-            />
-          </div>
-        ) : null}
+        <SelectedFilters
+          category={filters.category}
+          query={filters.query}
+          onClearCategory={() => filters.setCategory('all')}
+          onClearQuery={() => filters.setQuery('')}
+        />
       </div>
-
-      <CategoryFilterDrawer
-        activeCategory={filters.category}
-        categories={filters.categories}
-        open={categoryDrawerOpen}
-        onClose={() => setCategoryDrawerOpen(false)}
-        onSelect={filters.setCategory}
-      />
 
       {error ? (
         <p className="text-accent" role="alert">
