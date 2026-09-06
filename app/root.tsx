@@ -6,6 +6,7 @@ import type {
 } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { Analytics } from '@vercel/analytics/remix';
+import { SpeedInsights } from '@vercel/speed-insights/remix';
 import type { ReactNode } from 'react';
 import {
   isRouteErrorResponse,
@@ -115,6 +116,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         ) : null}
         {children}
         <Analytics />
+        <SpeedInsights />
         <ScrollRestoration />
         <Scripts />
       </body>
