@@ -61,6 +61,7 @@ const cubo: B2BCatalogProduct = {
 };
 
 const mutate = vi.fn();
+const signOut = vi.fn();
 
 function renderPage() {
   return render(
@@ -156,6 +157,7 @@ function bestValue(productName: string) {
 beforeEach(() => {
   vi.resetAllMocks();
   mutate.mockResolvedValue({ success: true });
+  signOut.mockResolvedValue(undefined);
   useB2BSessionMock.mockReturnValue({
     configured: true,
     error: null,
@@ -174,7 +176,7 @@ beforeEach(() => {
         phone: '11999999999',
       },
     },
-    signOut: vi.fn(async () => undefined),
+    signOut,
   });
   useB2BCatalogQueryMock.mockReturnValue({
     data: { products: [aro, disco, cubo], minimumOrderSubtotalCents: 50_000 },
@@ -190,6 +192,14 @@ beforeEach(() => {
 });
 
 describe('B2BCatalogPage rows', () => {
+  it('exposes sign out from the desktop catalog', () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sair' }));
+
+    expect(signOut).toHaveBeenCalledOnce();
+  });
+
   it('shows the Bling photo, and a placeholder when there is none', () => {
     renderPage();
 

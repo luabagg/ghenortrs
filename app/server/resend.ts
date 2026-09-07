@@ -160,13 +160,13 @@ export function buildSellerApprovedHtml(input: {
 
 export function buildSellerCatalogAccessHtml(input: {
   companyName: string;
-  actionLink: string;
+  accessUrl: string;
 }): string {
   const content = `
   <h2 style="color:#E81414">Acesse o catálogo B2B</h2>
   <p>Olá, ${escHtml(input.companyName)}.</p>
   <p>Use este link para entrar no catálogo B2B GHENO:</p>
-  ${buildPrimaryButton(input.actionLink, 'Acessar catálogo B2B')}
+  ${buildPrimaryButton(input.accessUrl, 'Acessar catálogo B2B')}
   <p style="color:#666;font-size:14px">Selecione os itens no catálogo e envie a solicitação de orçamento. A GHENO responde com condições, prazos e disponibilidade.</p>`;
 
   return buildEmailShell({

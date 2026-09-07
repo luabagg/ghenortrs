@@ -22,6 +22,7 @@ export type B2BFieldChangeHandler = (
 export type B2BSubmitHandler = (e: FormEvent<HTMLFormElement>) => void;
 
 export type B2BActionData = {
+  intent?: 'login' | 'register';
   status: SubmitStatus;
   errors?: Partial<B2BFields>;
   message?: string;

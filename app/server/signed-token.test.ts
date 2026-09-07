@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildApproveSellerToken,
+  buildSellerCatalogAccessToken,
   signToken,
   verifyToken,
 } from './signed-token';
@@ -37,6 +38,24 @@ describe('signed tokens', () => {
     expect(verifyToken(first, SECRET, 'approve-seller')).toMatchObject({
       jti: expect.any(String),
       status: 'approved',
+    });
+  });
+
+  it('round-trips unique seller catalog access tokens', () => {
+    const first = buildSellerCatalogAccessToken(
+      { sellerId: '00000000-0000-0000-0000-000000000001' },
+      SECRET,
+    );
+    const second = buildSellerCatalogAccessToken(
+      { sellerId: '00000000-0000-0000-0000-000000000001' },
+      SECRET,
+    );
+
+    expect(first).not.toEqual(second);
+    expect(verifyToken(first, SECRET, 'seller-catalog-access')).toMatchObject({
+      purpose: 'seller-catalog-access',
+      sellerId: '00000000-0000-0000-0000-000000000001',
+      jti: expect.any(String),
     });
   });
 

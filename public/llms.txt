@@ -11,7 +11,7 @@ URL canônica deste site: https://www.ghenortrs.com.br/
 - A GHENO rotors apresenta quatro famílias de componentes MTB: pastilhas de freio, cubos, aros e discos.
 - O site atende riders, lojistas, oficinas e revendas.
 - Este site não processa checkout. A compra no varejo é encaminhada para a loja externa Nuvemshop.
-- `/b2b` é o canal comercial: solicitação de cadastro e login por e-mail (magic link) para lojistas aprovados. O catálogo B2B em `/b2b/catalogo` só existe após aprovação e oferece busca, filtro por categoria e ordenação por preço. Não há filtro de faixa de preço. Não são os preços da loja Nuvemshop. Não invente checkout B2B. `/admin` é interno e não deve ser citado como página pública.
+- `/b2b` é o canal comercial: solicitação de cadastro e login por e-mail para lojistas aprovados. O link é de uso único e exige confirmação antes de abrir `/b2b/catalogo`. O catálogo B2B só existe após aprovação e oferece busca, filtro por categoria e ordenação por preço. Não há filtro de faixa de preço. Não são os preços da loja Nuvemshop. Não invente checkout B2B. `/admin` é interno e não deve ser citado como página pública.
 - O pedido B2B exige no mínimo R$ 500,00 em mercadorias antes dos descontos, excluindo frete. Não existe quantidade mínima por produto; um item já qualifica se alcançar o subtotal mínimo.
 - Preços B2B são atacado por tabela (Start / Pro / Max). O servidor define a tabela pelo subtotal do pedido em preço Start. O lojista não escolhe a tabela.
 - Faixas das tabelas, calculadas sobre o subtotal em preço Start: Start de R$ 500,00 a R$ 1.499,99; Pro de R$ 1.500,00 a R$ 3.999,99; Max a partir de R$ 4.000,00.

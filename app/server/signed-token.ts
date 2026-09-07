@@ -13,9 +13,17 @@ export type ApproveSellerToken = {
   exp: number;
 };
 
-export type SignedPayload = ApproveSellerToken;
+export type SellerCatalogAccessToken = {
+  purpose: 'seller-catalog-access';
+  sellerId: string;
+  jti: string;
+  exp: number;
+};
+
+export type SignedPayload = ApproveSellerToken | SellerCatalogAccessToken;
 
 const DEFAULT_APPROVE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const DEFAULT_CATALOG_ACCESS_TTL_MS = 15 * 60 * 1000;
 
 function toBase64Url(value: Buffer | string): string {
   const buffer = typeof value === 'string' ? Buffer.from(value, 'utf8') : value;
@@ -71,6 +79,21 @@ export function buildApproveSellerToken(
       status: 'approved',
       jti: randomUUID(),
       exp: Date.now() + (input.ttlMs ?? DEFAULT_APPROVE_TTL_MS),
+    },
+    secret,
+  );
+}
+
+export function buildSellerCatalogAccessToken(
+  input: { sellerId: string; ttlMs?: number },
+  secret: string,
+): string {
+  return signToken(
+    {
+      purpose: 'seller-catalog-access',
+      sellerId: input.sellerId,
+      jti: randomUUID(),
+      exp: Date.now() + (input.ttlMs ?? DEFAULT_CATALOG_ACCESS_TTL_MS),
     },
     secret,
   );

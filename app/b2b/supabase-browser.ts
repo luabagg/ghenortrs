@@ -11,7 +11,6 @@ import {
 } from '@/b2b/auth-callback';
 import {
   isB2BAuthConfigured,
-  SITE_URL,
   SUPABASE_ANON_KEY,
   SUPABASE_URL,
 } from '@/b2b/config';
@@ -88,39 +87,6 @@ export async function getBrowserSession(): Promise<Session | null> {
   await consumeSellerAuth(supabase);
   const { data } = await supabase.auth.getSession();
   return data.session;
-}
-
-export async function requestMagicLink(email: string): Promise<{
-  ok: boolean;
-  error?: string;
-}> {
-  const supabase = getSupabaseBrowserClient();
-  if (!supabase) {
-    return { ok: false, error: 'auth_unconfigured' };
-  }
-
-  // PKCE stores the verifier in this browser. Redirect must match the
-  // origin that requested the link — never a baked localhost SITE_URL.
-  const origin =
-    typeof window !== 'undefined' && window.location.origin
-      ? window.location.origin
-      : SITE_URL;
-  if (!origin) {
-    return { ok: false, error: 'auth_unconfigured' };
-  }
-  const redirectTo = `${origin.replace(/\/$/, '')}/b2b`;
-  const { error } = await supabase.auth.signInWithOtp({
-    email: email.trim().toLowerCase(),
-    options: {
-      emailRedirectTo: redirectTo,
-      shouldCreateUser: false,
-    },
-  });
-
-  if (error) {
-    return { ok: false, error: error.message };
-  }
-  return { ok: true };
 }
 
 export async function signOutBrowser(): Promise<void> {

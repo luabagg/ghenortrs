@@ -16,5 +16,9 @@ describe('B2B route manifest', () => {
       path: 'b2b/catalogo',
     });
     expect(routes['routes/b2b.catalogo']).toBeUndefined();
+    expect(routes['routes/b2b_.acesso']).toMatchObject({
+      parentId: 'root',
+      path: 'b2b/acesso',
+    });
   });
 });

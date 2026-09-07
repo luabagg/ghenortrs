@@ -405,6 +405,37 @@ export async function createEmailActionToken(input: {
   await getDb().insert(emailActionTokens).values(input);
 }
 
+export async function reserveRateLimitedEmailActionToken(
+  input: {
+    jtiHash: string;
+    purpose: string;
+    sellerId: string;
+    expiresAt: string;
+  },
+  since: string,
+  limit: number,
+): Promise<boolean> {
+  return getDb().transaction(async (tx) => {
+    await tx.execute(
+      sql`select pg_advisory_xact_lock(hashtextextended(${input.sellerId}, 0))`,
+    );
+    const [recent] = await tx
+      .select({ count: count() })
+      .from(emailActionTokens)
+      .where(
+        and(
+          eq(emailActionTokens.sellerId, input.sellerId),
+          eq(emailActionTokens.purpose, input.purpose),
+          gte(emailActionTokens.createdAt, since),
+        ),
+      );
+    if ((recent?.count ?? 0) >= limit) return false;
+
+    await tx.insert(emailActionTokens).values(input);
+    return true;
+  });
+}
+
 export async function consumeEmailActionToken(
   jtiHash: string,
   now: string,

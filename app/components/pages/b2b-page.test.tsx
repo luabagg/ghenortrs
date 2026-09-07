@@ -85,6 +85,35 @@ describe('B2BPage', () => {
     ).toBeVisible();
   });
 
+  it('shows the login result and starts a visible resend countdown', () => {
+    mockGate('needs_registration');
+
+    render(
+      <MemoryRouter>
+        <B2BPage
+          actionData={{
+            intent: 'login',
+            status: 'success',
+            message:
+              'Se o e-mail estiver liberado, enviaremos um link de acesso.',
+          }}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        'Se o e-mail estiver liberado, enviaremos um link de acesso.',
+      ),
+    ).toBeVisible();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Receber link de acesso' }),
+    );
+    expect(
+      screen.getByRole('button', { name: 'Solicitar novamente em 60s' }),
+    ).toBeDisabled();
+  });
+
   it('moves focus to the first field when the seller switches forms', async () => {
     mockGate('needs_registration');
 

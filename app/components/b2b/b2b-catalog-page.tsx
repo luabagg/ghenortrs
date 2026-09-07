@@ -33,7 +33,7 @@ const SKELETON_ROWS = [0, 1, 2, 3, 4];
 const EMPTY_CATALOG_PRODUCTS: B2BCatalogProduct[] = [];
 
 export function B2BCatalogPage() {
-  const { gate, session, configured } = useB2BSession();
+  const { gate, session, configured, signOut } = useB2BSession();
   const [openPanel, setOpenPanel] = useState<'tiers' | 'filters' | null>(null);
   const [notes, setNotes] = useState('');
   const [step, setStep] = useState<'catalog' | 'review' | 'sent'>('catalog');
@@ -164,10 +164,20 @@ export function B2BCatalogPage() {
 
   return (
     <div className="grid gap-10 pb-24">
-      <PageIntro
-        description={`${session.seller?.companyName ?? 'Sua empresa'} · pedido mínimo de ${formatCentsToBRL(minimumOrderSubtotalCents)} em mercadorias antes dos descontos. Frete não entra no mínimo.`}
-        title="Selecione itens e solicite orçamento."
-      />
+      <div className="flex items-start justify-between gap-6">
+        <PageIntro
+          description={`${session.seller?.companyName ?? 'Sua empresa'} · pedido mínimo de ${formatCentsToBRL(minimumOrderSubtotalCents)} em mercadorias antes dos descontos. Frete não entra no mínimo.`}
+          title="Selecione itens e solicite orçamento."
+        />
+        <Button
+          className="hidden shrink-0 sm:inline-flex"
+          type="button"
+          variant="secondary"
+          onClick={() => void signOut()}
+        >
+          Sair
+        </Button>
+      </div>
 
       <div className="grid gap-3">
         <div

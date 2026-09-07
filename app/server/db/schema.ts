@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   customType,
+  index,
   integer,
   jsonb,
   numeric,
@@ -63,18 +64,34 @@ export const adminUsers = pgTable('admin_users', {
   createdBy: uuid('created_by'),
 });
 
-export const emailActionTokens = pgTable('email_action_tokens', {
-  jtiHash: text('jti_hash').primaryKey(),
-  purpose: text('purpose').notNull(),
-  sellerId: uuid('seller_id')
-    .notNull()
-    .references(() => sellers.id, { onDelete: 'cascade' }),
-  expiresAt: timestamp('expires_at', {
-    withTimezone: true,
-    mode: 'string',
-  }).notNull(),
-  consumedAt: timestamp('consumed_at', { withTimezone: true, mode: 'string' }),
-});
+export const emailActionTokens = pgTable(
+  'email_action_tokens',
+  {
+    jtiHash: text('jti_hash').primaryKey(),
+    purpose: text('purpose').notNull(),
+    sellerId: uuid('seller_id')
+      .notNull()
+      .references(() => sellers.id, { onDelete: 'cascade' }),
+    expiresAt: timestamp('expires_at', {
+      withTimezone: true,
+      mode: 'string',
+    }).notNull(),
+    consumedAt: timestamp('consumed_at', {
+      withTimezone: true,
+      mode: 'string',
+    }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index('email_action_tokens_rate_limit_idx').on(
+      table.sellerId,
+      table.purpose,
+      table.createdAt,
+    ),
+  ],
+);
 
 export const adminAuditEvents = pgTable('admin_audit_events', {
   id: uuid('id').primaryKey().defaultRandom(),

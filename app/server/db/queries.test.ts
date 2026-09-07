@@ -11,12 +11,18 @@ import {
   consumeEmailActionToken,
   createEmailActionToken,
   insertAdminAuditEvent,
+  reserveRateLimitedEmailActionToken,
   sanitizeCatalogQuery,
   updateProductsVisibleB2b,
   updateTierPrices,
 } from './queries';
 import { getDb } from './client';
-import { blingProducts, sellerStatusEnum, sellers } from './schema';
+import {
+  blingProducts,
+  emailActionTokens,
+  sellerStatusEnum,
+  sellers,
+} from './schema';
 
 vi.mock('./client', () => ({ getDb: vi.fn() }));
 
@@ -159,6 +165,63 @@ describe('admin operations queries', () => {
     ).toBeNull();
   });
 
+  it('reserves an email action token below the rolling limit', async () => {
+    const execute = vi.fn().mockResolvedValue(undefined);
+    const where = vi.fn().mockResolvedValue([{ count: 4 }]);
+    const from = vi.fn(() => ({ where }));
+    const select = vi.fn(() => ({ from }));
+    const values = vi.fn().mockResolvedValue(undefined);
+    const insert = vi.fn(() => ({ values }));
+    getDbMock.mockReturnValue({
+      transaction: (run: (tx: unknown) => unknown) =>
+        run({ execute, insert, select }),
+    } as never);
+
+    await expect(
+      reserveRateLimitedEmailActionToken(
+        {
+          jtiHash: 'hash',
+          purpose: 'seller-catalog-access',
+          sellerId: '00000000-0000-0000-0000-000000000001',
+          expiresAt: '2026-09-07T15:00:00.000Z',
+        },
+        '2026-09-07T14:44:00.000Z',
+        5,
+      ),
+    ).resolves.toBe(true);
+
+    expect(execute).toHaveBeenCalledOnce();
+    expect(insert).toHaveBeenCalledWith(emailActionTokens);
+    expect(values).toHaveBeenCalledWith(
+      expect.objectContaining({ purpose: 'seller-catalog-access' }),
+    );
+  });
+
+  it('rejects an email action token at the rolling limit', async () => {
+    const execute = vi.fn().mockResolvedValue(undefined);
+    const where = vi.fn().mockResolvedValue([{ count: 5 }]);
+    const insert = vi.fn();
+    getDbMock.mockReturnValue({
+      transaction: (run: (tx: unknown) => unknown) =>
+        run({ execute, insert, select: () => ({ from: () => ({ where }) }) }),
+    } as never);
+
+    await expect(
+      reserveRateLimitedEmailActionToken(
+        {
+          jtiHash: 'hash',
+          purpose: 'seller-catalog-access',
+          sellerId: '00000000-0000-0000-0000-000000000001',
+          expiresAt: '2026-09-07T15:00:00.000Z',
+        },
+        '2026-09-07T14:44:00.000Z',
+        5,
+      ),
+    ).resolves.toBe(false);
+
+    expect(insert).not.toHaveBeenCalled();
+  });
+
   it('updates exactly the selected product IDs to an explicit value', async () => {
     const returning = vi.fn().mockResolvedValue([{ id: 1 }, { id: 2 }]);
     const where = vi.fn(() => ({ returning }));
@@ -236,6 +299,7 @@ describe('drizzle schema contract', () => {
     ]);
     expect(sellers.companyName.name).toBe('company_name');
     expect(sellers.volume).toBeUndefined();
+    expect(emailActionTokens.createdAt.name).toBe('created_at');
     expect(blingProducts.searchTerms.name).toBe('search_terms');
 
     const { sql } = new QueryBuilder()

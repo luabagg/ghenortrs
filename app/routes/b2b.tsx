@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useActionData, useNavigation } from '@remix-run/react';
 
-import { validateB2BFields } from '~/b2b/schemas';
+import { b2bRegistrationSchema, validateB2BFields } from '~/b2b/schemas';
 import { B2BPage } from '~/components/pages/b2b-page';
 import type {
   B2BActionData,
@@ -10,6 +10,7 @@ import type {
 } from '~/components/pages/b2b-form-types';
 import { buildSeoMetaForPath } from '~/lib/seo';
 import registerHandler from '~/server/b2b-register';
+import { requestSellerCatalogAccessLink } from '~/server/seller-access-link';
 
 export const meta: MetaFunction = () => buildSeoMetaForPath('/b2b');
 
@@ -33,6 +34,46 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const intent = String(formData.get('intent') ?? 'register');
   const honeypot = String(formData.get('website') ?? '');
+
+  if (intent === 'login') {
+    const parsedEmail = b2bRegistrationSchema.shape.email.safeParse(
+      String(formData.get('email') ?? ''),
+    );
+    if (!parsedEmail.success) {
+      return json<B2BActionData>(
+        {
+          intent: 'login',
+          status: 'error',
+          message: 'Informe um e-mail válido.',
+        },
+        { status: 400 },
+      );
+    }
+
+    let result;
+    try {
+      result = await requestSellerCatalogAccessLink(parsedEmail.data);
+    } catch (error) {
+      console.error('b2b access-link request failed', error);
+      result = { ok: false as const };
+    }
+    if (!result.ok) {
+      return json<B2BActionData>(
+        {
+          intent: 'login',
+          status: 'error',
+          message: 'Não foi possível enviar o link. Tente novamente.',
+        },
+        { status: 503 },
+      );
+    }
+
+    return json<B2BActionData>({
+      intent: 'login',
+      status: 'success',
+      message: 'Se o e-mail estiver liberado, enviaremos um link de acesso.',
+    });
+  }
 
   // Honeypot: pretend success.
   if (honeypot.trim()) {
@@ -115,9 +156,16 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function B2BRoute() {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
-  const isSubmitting =
-    navigation.state === 'submitting' &&
-    navigation.formData?.get('intent') === 'register';
+  const submittingIntent =
+    navigation.state === 'submitting'
+      ? navigation.formData?.get('intent')
+      : null;
 
-  return <B2BPage actionData={actionData} isSubmitting={isSubmitting} />;
+  return (
+    <B2BPage
+      actionData={actionData}
+      isLoginSubmitting={submittingIntent === 'login'}
+      isSubmitting={submittingIntent === 'register'}
+    />
+  );
 }

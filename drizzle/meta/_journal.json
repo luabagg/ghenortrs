@@ -50,6 +50,13 @@
       "when": 1788532484487,
       "tag": "0006_product_image_full_size",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788794904512,
+      "tag": "0007_tiny_khan",
+      "breakpoints": true
     }
   ]
 }

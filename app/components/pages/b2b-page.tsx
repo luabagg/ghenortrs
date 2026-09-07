@@ -27,13 +27,20 @@ type GateMode = 'login' | 'register';
 
 type B2BPageProps = {
   actionData?: B2BActionData;
+  isLoginSubmitting?: boolean;
   isSubmitting?: boolean;
 };
 
-export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
+export function B2BPage({
+  actionData,
+  isLoginSubmitting = false,
+  isSubmitting = false,
+}: B2BPageProps) {
   const { configured, gate, session, signOut, refresh } = useB2BSession();
   const [mode, setMode] = useState<GateMode>(
-    actionData?.gateHint === 'login' ? 'login' : 'register',
+    actionData?.gateHint === 'login' || actionData?.intent === 'login'
+      ? 'login'
+      : 'register',
   );
   const pendingFocusMode = useRef<GateMode | null>(null);
   // SSR always sees `null` (see auth-redirect-error.ts); React reconciles
@@ -98,7 +105,11 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
     );
   }
 
-  if (status === 'success' && gate !== 'approved') {
+  if (
+    status === 'success' &&
+    actionData?.intent !== 'login' &&
+    gate !== 'approved'
+  ) {
     return <B2BSuccessSection />;
   }
 
@@ -164,6 +175,13 @@ export function B2BPage({ actionData, isSubmitting = false }: B2BPageProps) {
           {mode === 'login' && configured ? (
             <B2BLoginCard
               initialEmail={fields.email}
+              isSubmitting={isLoginSubmitting}
+              message={
+                actionData?.intent === 'login' ? actionData.message : undefined
+              }
+              status={
+                actionData?.intent === 'login' ? actionData.status : undefined
+              }
               onSwitchToRegister={() => activateMode('register')}
             />
           ) : (

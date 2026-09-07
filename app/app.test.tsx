@@ -1,8 +1,19 @@
 import { fireEvent, screen, within } from '@testing-library/react';
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
 import * as b2bSession from '~/b2b/use-b2b-session';
 import { renderApp } from '~/test/render-app';
+
+beforeEach(() => {
+  vi.spyOn(b2bSession, 'useB2BSession').mockReturnValue({
+    configured: false,
+    error: null,
+    gate: 'unconfigured',
+    refresh: vi.fn(async () => undefined),
+    session: { authenticated: false, gate: 'anonymous', seller: null },
+    signOut: vi.fn(async () => undefined),
+  });
+});
 
 describe('App', () => {
   it('renders the home route inside the shared shell', () => {

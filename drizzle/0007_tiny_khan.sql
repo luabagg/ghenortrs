@@ -1,0 +1,2 @@
+ALTER TABLE "email_action_tokens" ADD COLUMN "created_at" timestamp with time zone DEFAULT now() NOT NULL;--> statement-breakpoint
+CREATE INDEX "email_action_tokens_rate_limit_idx" ON "email_action_tokens" USING btree ("seller_id","purpose","created_at");
