@@ -25,6 +25,14 @@ const CONTACT_PATHS = [
     variant: 'outline' as const,
   },
   {
+    label: 'Discos e mass dampers',
+    description:
+      'Discos e mass dampers não estão na loja online. Consulte modelos e disponibilidade em contato@ghenortrs.com.br.',
+    action: 'Enviar e-mail',
+    href: 'mailto:contato@ghenortrs.com.br',
+    variant: 'secondary' as const,
+  },
+  {
     label: 'Instagram',
     description:
       'Acompanhe a GHENO rotors e envie uma mensagem pelo perfil oficial.',
@@ -38,11 +46,11 @@ export function ContactPage() {
   return (
     <div className="grid gap-12" data-section="contact-page">
       <PageIntro
-        description="Compre no catálogo online, solicite atendimento B2B ou fale com a GHENO rotors pelo Instagram."
+        description="Compre na loja online, solicite atendimento B2B ou fale com a GHENO rotors por e-mail ou Instagram."
         title="Compra, revenda e atendimento."
       />
 
-      <div className="grid gap-5 md:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {CONTACT_PATHS.map((path) => (
           <Card
             className="flex h-full flex-col rounded-md border-border bg-surface px-0 py-0"

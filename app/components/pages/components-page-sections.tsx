@@ -12,7 +12,7 @@ import { HEADING_SECTION } from '@/lib/typography';
 export function ComponentsPageIntro() {
   return (
     <PageIntro
-      description="Pastilhas, cubos, aros e discos com espaço para detalhe de produto — e, em breve, visualização 3D das peças."
+      description="Pastilhas de freio, cubos e aros disponíveis na loja online. Discos sob consulta com a equipe GHENO rotors."
       title="Componentes GHENO rotors para frenagem e controle."
     />
   );

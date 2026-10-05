@@ -2,6 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { beforeEach, vi } from 'vitest';
 
 import * as b2bSession from '~/b2b/use-b2b-session';
+import { SEO_ROUTES } from '~/seo/seo-config';
 import { renderApp } from '~/test/render-app';
 
 beforeEach(() => {
@@ -407,22 +408,33 @@ describe('App', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Componentes GHENO rotors para MTB.',
+        level: 1,
+        name: 'Componentes MTB criados por quem corre downhill.',
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'A GHENO rotors atua com componentes para mountain bike, com foco em frenagem, controle e uso técnico.',
-      ),
+      screen.getByText(/começou em 2023 com discos de freio para downhill/),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'O que entregamos' }),
-    ).toBeInTheDocument();
+      screen.getByRole('link', { name: 'Solicitar cadastro B2B' }),
+    ).toHaveAttribute('href', '/b2b');
+    // Every JSON-LD founder must be a person the page shows.
+    const aboutGraph = SEO_ROUTES.find((route) => route.path === '/sobre')!
+      .jsonLd['@graph'] as { '@type': string; founder?: unknown }[];
+    const founders = aboutGraph.find(
+      (node) => node['@type'] === 'Organization',
+    )!.founder as { '@id': string; name: string }[];
+    expect(founders.length).toBeGreaterThan(0);
+    for (const founder of founders) {
+      const section = document.getElementById(founder['@id'].split('#')[1]);
+      expect(section).not.toBeNull();
+      expect(
+        within(section!).getByRole('heading', { name: founder.name }),
+      ).toBeInTheDocument();
+    }
     expect(
-      screen.getByText(
-        'Linha de pastilhas, cubos, aros e discos para mountain bike.',
-      ),
-    ).toBeInTheDocument();
+      screen.getByRole('link', { name: 'Instagram de Andrei Gheno' }),
+    ).toHaveAttribute('href', 'https://www.instagram.com/andrei_gheno_/');
   });
 
   it('renders the B2B route with registration form when auth is not configured', () => {
@@ -586,7 +598,7 @@ describe('App', () => {
 
     expect(
       screen.getByRole('link', {
-        name: /Aro HEAVYDUTY Para Mtb GHENO Rotors/i,
+        name: /Aro HEAVYDUTY para MTB - GHENO rotors/i,
       }),
     ).toHaveAttribute(
       'href',

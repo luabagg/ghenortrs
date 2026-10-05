@@ -11,14 +11,31 @@ export type SeoRoute = {
   description: string;
   image: string;
   imageAlt: string;
-  staticContent: {
-    heading: string;
-    links: readonly { href: string; label: string }[];
-  };
   jsonLd: JsonLd;
 };
 
 const absoluteUrl = (path: string) => new URL(path, SITE_ORIGIN).toString();
+
+// Each @id fragment matches a founder section id on /sobre.
+const andreiGheno = {
+  '@type': 'Person',
+  '@id': `${absoluteUrl('/sobre')}#andrei-gheno`,
+  name: 'Andrei Gheno',
+  url: `${absoluteUrl('/sobre')}#andrei-gheno`,
+  description:
+    'Cofundador e sócio da GHENO rotors. Atleta profissional de downhill.',
+  sameAs: ['https://www.instagram.com/andrei_gheno_/'],
+};
+
+const luanBaggio = {
+  '@type': 'Person',
+  '@id': `${absoluteUrl('/sobre')}#luan-baggio`,
+  name: 'Luan Baggio',
+  url: `${absoluteUrl('/sobre')}#luan-baggio`,
+  description:
+    'Cofundador e sócio da GHENO rotors. Responsável por projetos, tecnologia e operação.',
+  sameAs: ['https://www.linkedin.com/in/luabagg/'],
+};
 
 const websiteReference = {
   '@type': 'WebSite',
@@ -33,7 +50,14 @@ const organizationReference = {
   '@type': 'Organization',
   '@id': `${SITE_ORIGIN}/#organization`,
   name: 'GHENO rotors',
+  // The CNPJ and the Nuvemshop product brand use this name.
+  alternateName: 'GHENOrtrs',
+  description:
+    'Marca brasileira de componentes para mountain bike: pastilhas de freio, cubos, aros e discos.',
   url: `${SITE_ORIGIN}/`,
+  email: 'contato@ghenortrs.com.br',
+  foundingDate: '2023',
+  founder: [andreiGheno, luanBaggio],
   logo: {
     '@type': 'ImageObject',
     url: absoluteUrl('/brand/logo-square.jpg'),
@@ -70,10 +94,11 @@ function breadcrumbs(
 function webpage(
   name: string,
   description: string,
-  path: Exclude<SeoRoute['path'], '/'>,
+  path: SeoRoute['path'],
+  type: 'WebPage' | 'AboutPage' | 'ContactPage' = 'WebPage',
 ): JsonLd {
   return {
-    '@type': 'WebPage',
+    '@type': type,
     '@id': `${absoluteUrl(path)}#webpage`,
     url: absoluteUrl(path),
     name,
@@ -91,9 +116,9 @@ const componentsDescription =
 const b2bDescription =
   'Canal GHENO rotors para lojistas, oficinas e revendas solicitarem cadastro e atendimento comercial de componentes MTB.';
 const aboutDescription =
-  'Conheça a GHENO rotors e seu foco em componentes para mountain bike, frenagem, controle e uso técnico.';
+  'A GHENO rotors começou em 2023 com discos de freio para downhill. Conheça a marca e seus fundadores, Andrei Gheno e Luan Baggio.';
 const contactDescription =
-  'Encontre os canais oficiais GHENO rotors para comprar no varejo, solicitar atendimento B2B ou acompanhar a marca no Instagram.';
+  'Canais oficiais GHENO rotors: loja online, cadastro B2B, e-mail para discos e mass dampers e Instagram.';
 
 export const SEO_ROUTES: readonly SeoRoute[] = [
   {
@@ -102,20 +127,13 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     description: homeDescription,
     image: absoluteUrl('/reference-images/mtb-action-hero.jpg'),
     imageAlt: 'Rider GHENO rotors em trilha de mountain bike',
-    staticContent: {
-      heading: 'Frenagem e controle para MTB.',
-      links: [
-        { href: '/componentes', label: 'Conhecer componentes' },
-        {
-          href: 'https://store.ghenortrs.com.br/',
-          label: 'Ver catálogo GHENO rotors',
-        },
-        { href: '/b2b', label: 'Solicitar cadastro B2B' },
-      ],
-    },
     jsonLd: {
       '@context': 'https://schema.org',
-      '@graph': [websiteReference, organizationReference],
+      '@graph': [
+        websiteReference,
+        organizationReference,
+        webpage('GHENO rotors', homeDescription, '/'),
+      ],
     },
   },
   {
@@ -124,24 +142,6 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     description: componentsDescription,
     image: absoluteUrl('/reference-images/disco-gheno.jpg'),
     imageAlt: 'Componentes GHENO rotors para mountain bike',
-    staticContent: {
-      heading: 'Pastilhas, cubos, aros e discos GHENO rotors.',
-      links: [
-        {
-          href: 'https://store.ghenortrs.com.br/freios/pastilhas-de-freio/',
-          label: 'Pastilhas de freio',
-        },
-        {
-          href: 'https://store.ghenortrs.com.br/cubos/',
-          label: 'Cubos GHENO rotors',
-        },
-        {
-          href: 'https://store.ghenortrs.com.br/aros/',
-          label: 'Aros GHENO rotors',
-        },
-        { href: '/contato', label: 'Discos GHENO rotors' },
-      ],
-    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -164,7 +164,7 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
             ],
             ['Cubos GHENO rotors', 'https://store.ghenortrs.com.br/cubos/'],
             ['Aros GHENO rotors', 'https://store.ghenortrs.com.br/aros/'],
-            ['Discos GHENO rotors', absoluteUrl('/contato')],
+            ['Discos GHENO rotors', absoluteUrl('/componentes#discos')],
           ].map(([name, url], index) => ({
             '@type': 'ListItem',
             position: index + 1,
@@ -181,13 +181,6 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     description: b2bDescription,
     image: absoluteUrl('/reference-images/b2b-brake-detail.jpg'),
     imageAlt: 'Detalhe de freio e disco em bicicleta de mountain bike',
-    staticContent: {
-      heading: 'Cadastro comercial GHENO rotors.',
-      links: [
-        { href: '/contato', label: 'Ver canais de contato' },
-        { href: '/componentes', label: 'Conhecer componentes' },
-      ],
-    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -204,18 +197,16 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     description: aboutDescription,
     image: absoluteUrl('/reference-images/hero-gheno-jump.jpg'),
     imageAlt: 'Rider com componentes GHENO rotors em salto de competição',
-    staticContent: {
-      heading: 'Componentes GHENO rotors para MTB.',
-      links: [
-        { href: '/componentes', label: 'Conhecer componentes' },
-        { href: '/contato', label: 'Falar com a GHENO rotors' },
-      ],
-    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
         websiteReference,
-        webpage('Sobre a GHENO rotors', aboutDescription, '/sobre'),
+        webpage(
+          'Sobre a GHENO rotors',
+          aboutDescription,
+          '/sobre',
+          'AboutPage',
+        ),
         breadcrumbs('Sobre a GHENO rotors', '/sobre'),
         organizationReference,
       ],
@@ -227,26 +218,17 @@ export const SEO_ROUTES: readonly SeoRoute[] = [
     description: contactDescription,
     image: absoluteUrl('/reference-images/trilha-controle-gheno.jpg'),
     imageAlt: 'Rider GHENO rotors em trecho técnico de mountain bike',
-    staticContent: {
-      heading: 'Canais de contato GHENO rotors.',
-      links: [
-        {
-          href: 'https://store.ghenortrs.com.br/',
-          label: 'Catálogo de varejo',
-        },
-        { href: '/b2b', label: 'Cadastro B2B' },
-        {
-          href: 'https://www.instagram.com/gheno_rtrs/',
-          label: 'Instagram GHENO rotors',
-        },
-      ],
-    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
         websiteReference,
         organizationReference,
-        webpage('Contato GHENO rotors', contactDescription, '/contato'),
+        webpage(
+          'Contato GHENO rotors',
+          contactDescription,
+          '/contato',
+          'ContactPage',
+        ),
         breadcrumbs('Contato', '/contato'),
       ],
     },

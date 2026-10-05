@@ -190,6 +190,76 @@ describe('syncStoreSearchIndex', () => {
     });
   });
 
+  const CUBO_PAGE_URL =
+    'https://store.ghenortrs.com.br/produtos/cubo-dianteiro-gheno-go/';
+
+  function storeFetch(productPage) {
+    return async (url) => {
+      if (url === COMMERCE_MAP.sitemapUrl) return new Response(SITEMAP_FIXTURE);
+      if (url === CUBO_PAGE_URL) return productPage();
+      return new Response('<html></html>');
+    };
+  }
+
+  async function readEntry(outputPath, id) {
+    const index = JSON.parse(await readFile(outputPath, 'utf8'));
+    return index.entries.find((entry) => entry.id === id);
+  }
+
+  it('names products with the title the store page shows', async () => {
+    const paths = await createPaths();
+
+    await syncStoreSearchIndex({
+      ...paths,
+      fetchImpl: storeFetch(
+        () =>
+          new Response(
+            '<meta property="og:title" content="Cubo Dianteiro GO 20x110 &amp; 15x110 - GHENO rotors" />',
+          ),
+      ),
+      warn: () => {},
+    });
+
+    expect(
+      await readEntry(paths.outputPath, 'product:cubo-dianteiro-gheno-go'),
+    ).toMatchObject({
+      title: 'Cubo Dianteiro GO 20x110 & 15x110 - GHENO rotors',
+      href: CUBO_PAGE_URL,
+    });
+  });
+
+  it('keeps the committed product name when the product page fails', async () => {
+    const paths = await createPaths();
+    const warnings = [];
+    await writeFile(
+      paths.outputPath,
+      JSON.stringify({
+        entries: [
+          {
+            id: 'product:cubo-dianteiro-gheno-go',
+            title: 'Cubo Dianteiro GO - GHENO rotors',
+          },
+        ],
+      }),
+      'utf8',
+    );
+
+    await syncStoreSearchIndex({
+      ...paths,
+      fetchImpl: storeFetch(() => new Response('', { status: 503 })),
+      warn: (message) => warnings.push(message),
+    });
+
+    expect(
+      await readEntry(paths.outputPath, 'product:cubo-dianteiro-gheno-go'),
+    ).toMatchObject({ title: 'Cubo Dianteiro GO - GHENO rotors' });
+    expect(warnings).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/cubo-dianteiro-gheno-go; committed title kept/),
+      ]),
+    );
+  });
+
   it('retains a committed index when the store is unreachable', async () => {
     const paths = await createPaths();
     const committedIndex = '{"entries":[{"id":"existing"}]}\n';

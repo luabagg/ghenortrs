@@ -43,7 +43,7 @@ describe('StoreSearch', () => {
 
     expect(
       screen.getByRole('link', {
-        name: /Hayes Dominion A4 Pastilha de Freio GHENO Ultra/i,
+        name: /Hayes Dominion A4 - Pastilha de Freio GHENO Ultra/i,
       }),
     ).toHaveAttribute(
       'href',
@@ -62,7 +62,7 @@ describe('StoreSearch', () => {
     );
 
     expect(
-      screen.getByRole('link', { name: /Disco Elite 3 223mm/i }),
+      screen.getByRole('link', { name: /Disco Elite\.III 223 mm/i }),
     ).toHaveAttribute('href', '/contato');
   });
 

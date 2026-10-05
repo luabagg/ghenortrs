@@ -1,9 +1,16 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useB2BSession } from '~/b2b/use-b2b-session';
 import { B2BPage } from '~/components/pages/b2b-page';
+import { SEARCH_ENTRIES } from '~/search/search-data';
 
 const navigate = vi.fn();
 
@@ -42,6 +49,54 @@ describe('B2BPage', () => {
     );
 
     expect(navigate).toHaveBeenCalledWith('/b2b/catalogo', { replace: true });
+  });
+
+  // The server never resolves the session, so this is what crawlers read.
+  it('renders the public page while the session is still loading', () => {
+    mockGate('loading');
+
+    render(
+      <MemoryRouter>
+        <B2BPage />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Cadastro comercial GHENO rotors.',
+      }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('form', { name: 'Cadastro comercial' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: 'Produtos para a sua loja.' }),
+    ).toBeVisible();
+  });
+
+  it('lists every product with its link and no price', () => {
+    mockGate('anonymous');
+
+    const { container } = render(
+      <MemoryRouter>
+        <B2BPage />
+      </MemoryRouter>,
+    );
+    const linkedHrefs = within(
+      container.querySelector<HTMLElement>(
+        '[data-section="b2b-product-lines"]',
+      )!,
+    )
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href'));
+    const products = SEARCH_ENTRIES.filter((entry) => entry.kind === 'product');
+
+    expect(products.length).toBeGreaterThan(0);
+    for (const product of products) {
+      expect(linkedHrefs).toContain(product.href);
+    }
+    expect(container.textContent).not.toMatch(/R\$/);
   });
 
   it('keeps a seller who is not approved on the access page', () => {
