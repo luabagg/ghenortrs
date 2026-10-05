@@ -176,35 +176,107 @@ export function parseStoreSitemap(xml, commerceMapInput) {
     }
   }
 
-  return entries.sort((a, b) => {
-    if (a.kind !== b.kind) return a.kind === 'category' ? -1 : 1;
-    return a.title.localeCompare(b.title, 'pt-BR');
-  });
+  return entries.sort(compareEntries);
 }
 
-async function fetchSitemap(url, fetchImpl, timeoutMs) {
+function compareEntries(a, b) {
+  if (a.kind !== b.kind) return a.kind === 'category' ? -1 : 1;
+  return a.title.localeCompare(b.title, 'pt-BR');
+}
+
+async function fetchText(url, fetchImpl, timeoutMs, accept) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetchImpl(url, {
-      headers: { accept: 'application/xml,text/xml;q=0.9' },
+      headers: { accept },
       signal: controller.signal,
     });
-    if (!response.ok) {
-      throw new SitemapFetchError(
-        `Nuvemshop sitemap request failed with HTTP ${response.status}`,
-      );
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return await response.text();
-  } catch (error) {
-    if (error instanceof SitemapFetchError) throw error;
-    throw new SitemapFetchError(
-      error instanceof Error ? error.message : 'Nuvemshop sitemap request failed',
-    );
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchSitemap(url, fetchImpl, timeoutMs) {
+  try {
+    return await fetchText(
+      url,
+      fetchImpl,
+      timeoutMs,
+      'application/xml,text/xml;q=0.9',
+    );
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : 'unknown error';
+    throw new SitemapFetchError(`Nuvemshop sitemap request failed: ${reason}`);
+  }
+}
+
+const OG_TITLE_PATTERN = /<meta\s+property="og:title"\s+content="([^"]*)"/i;
+const NAMED_ENTITIES = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' };
+
+function decodeHtmlEntities(text) {
+  return text.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (match, code) => {
+    if (code.startsWith('#x') || code.startsWith('#X')) {
+      return String.fromCodePoint(parseInt(code.slice(2), 16));
+    }
+    if (code.startsWith('#')) {
+      return String.fromCodePoint(parseInt(code.slice(1), 10));
+    }
+    return NAMED_ENTITIES[code.toLowerCase()] ?? match;
+  });
+}
+
+function readStoreProductName(html) {
+  const match = html.match(OG_TITLE_PATTERN);
+  const name = match ? decodeHtmlEntities(match[1]).trim() : '';
+  return name || null;
+}
+
+function withTitle(entry, title) {
+  return { ...entry, title, terms: [...new Set([title, ...entry.terms])] };
+}
+
+async function readCommittedTitles(outputPath) {
+  try {
+    const index = await readJson(outputPath);
+    return new Map(index.entries.map((entry) => [entry.id, entry.title]));
+  } catch {
+    return new Map();
+  }
+}
+
+/**
+ * Sitemap slugs drop punctuation ("Magura MT5 MT7"). The product page og:title
+ * holds the name the store shows ("Magura MT5 / MT7"). The site shows these
+ * names to visitors and crawlers, so a failed fetch keeps the committed title.
+ */
+async function nameStoreProducts(entries, options) {
+  const { storeOrigin, fetchImpl, timeoutMs, committedTitles, warn } = options;
+
+  return Promise.all(
+    entries.map(async (entry) => {
+      if (entry.kind !== 'product') return entry;
+      const slug = entry.id.slice('product:'.length);
+      const url = new URL(`/produtos/${slug}/`, storeOrigin).toString();
+
+      try {
+        const html = await fetchText(url, fetchImpl, timeoutMs, 'text/html');
+        const name = readStoreProductName(html);
+        if (!name) throw new Error('page has no og:title');
+        return withTitle(entry, name);
+      } catch (error) {
+        const committedTitle = committedTitles.get(entry.id);
+        const reason = error instanceof Error ? error.message : 'unknown error';
+        warn(
+          `Store product name not fetched for ${slug}; ${committedTitle ? 'committed' : 'slug'} title kept: ${reason}`,
+        );
+        return committedTitle ? withTitle(entry, committedTitle) : entry;
+      }
+    }),
+  );
 }
 
 async function readJson(path) {
@@ -237,10 +309,18 @@ export async function syncStoreSearchIndex({
     throw error;
   }
 
-  const entries = parseStoreSitemap(xml, commerceMap);
-  if (entries.length === 0) {
+  const sitemapEntries = parseStoreSitemap(xml, commerceMap);
+  if (sitemapEntries.length === 0) {
     throw new Error('Nuvemshop sitemap produced an empty search index');
   }
+  const namedEntries = await nameStoreProducts(sitemapEntries, {
+    storeOrigin: commerceMap.storeOrigin,
+    fetchImpl,
+    timeoutMs,
+    committedTitles: await readCommittedTitles(outputPath),
+    warn,
+  });
+  const entries = namedEntries.sort(compareEntries);
 
   const payload = {
     source: commerceMap.sitemapUrl,

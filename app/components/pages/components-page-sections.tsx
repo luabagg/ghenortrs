@@ -12,9 +12,42 @@ import { HEADING_SECTION } from '@/lib/typography';
 export function ComponentsPageIntro() {
   return (
     <PageIntro
-      description="Pastilhas, cubos, aros e discos com espaço para detalhe de produto — e, em breve, visualização 3D das peças."
+      description="Pastilhas de freio, cubos e aros disponíveis na loja online. Discos sob consulta com a equipe GHENO rotors."
       title="Componentes GHENO rotors para frenagem e controle."
     />
+  );
+}
+
+export function ComponentsCategoryNavigation({
+  families,
+}: {
+  families: ComponentProductFamily[];
+}) {
+  return (
+    <aside className="sticky top-[4.5rem] z-30 -mx-6 mb-8 border-y border-border bg-background px-6 sm:-mx-10 sm:top-20 sm:px-10 xl:static xl:mx-0 xl:mb-0 xl:border-0 xl:px-0">
+      <div className="xl:sticky xl:top-24">
+        <p className="mb-4 hidden font-heading text-lg font-semibold tracking-tight xl:block">
+          Componentes
+        </p>
+        <nav
+          aria-label="Categorias de componentes"
+          className="flex overflow-x-auto xl:flex-col xl:overflow-visible xl:border-l xl:border-border"
+        >
+          {families.map((family, index) => (
+            <a
+              className="group flex shrink-0 items-center gap-2.5 border-b-2 border-transparent py-3 pr-5 font-body text-xs font-semibold text-secondary transition-colors hover:border-accent hover:text-primary focus-visible:border-accent focus-visible:text-primary focus-visible:outline-none xl:border-b-0 xl:border-l-2 xl:py-2 xl:pl-3 xl:pr-0"
+              href={`#${family.id}`}
+              key={family.id}
+            >
+              <span className="font-mono text-[11px] tabular-nums text-secondary/70">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span className="leading-snug">{family.title}</span>
+            </a>
+          ))}
+        </nav>
+      </div>
+    </aside>
   );
 }
 

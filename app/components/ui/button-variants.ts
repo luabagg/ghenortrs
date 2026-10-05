@@ -16,7 +16,7 @@ export const buttonVariants = cva(
         secondary:
           'border border-primary/55 bg-transparent text-primary hover:border-primary hover:bg-primary/8',
         ghost:
-          'min-h-0 border-transparent bg-transparent px-0 text-secondary hover:text-primary',
+          'min-h-0 border-transparent bg-transparent text-secondary hover:text-primary',
         nav: 'min-h-0 rounded-none border-transparent bg-transparent p-0 text-primary/88 hover:text-primary',
         'nav-active':
           'min-h-0 rounded-none border-transparent bg-transparent p-0 text-primary',
@@ -26,6 +26,11 @@ export const buttonVariants = cva(
         nav: 'px-0 py-0',
       },
     },
+    // Size classes come after variant classes, so the default `px-5` would
+    // indent ghost text away from the copy it sits under.
+    compoundVariants: [
+      { variant: 'ghost', size: 'default', className: 'px-0' },
+    ],
     defaultVariants: {
       variant: 'primary',
       size: 'default',

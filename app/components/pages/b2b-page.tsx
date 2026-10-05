@@ -20,6 +20,7 @@ import {
   B2BRegisterAside,
   B2BSuccessSection,
 } from '~/components/pages/b2b-page-sections';
+import { B2BProductLines } from '~/components/pages/b2b-product-lines';
 import type { B2BActionData } from '~/components/pages/b2b-form-types';
 import { useB2BLeadForm } from '~/components/pages/use-b2b-lead-form';
 
@@ -93,18 +94,6 @@ export function B2BPage({
     },
   });
 
-  if (gate === 'loading') {
-    return (
-      <div className="grid gap-8">
-        <B2BAccessHeroSection
-          description="Verificando sessão comercial…"
-          title="B2B GHENO rotors."
-        />
-        <p className="text-secondary">Carregando…</p>
-      </div>
-    );
-  }
-
   if (
     status === 'success' &&
     actionData?.intent !== 'login' &&
@@ -145,6 +134,8 @@ export function B2BPage({
     );
   }
 
+  // Anonymous visitors and an unresolved session ('loading') get the public
+  // page. The server never resolves the session, so crawlers receive this.
   return (
     <div className="grid gap-10 sm:gap-12">
       <B2BAccessHeroSection />
@@ -205,6 +196,8 @@ export function B2BPage({
           onModeChange={activateMode}
         />
       </section>
+
+      <B2BProductLines />
     </div>
   );
 }

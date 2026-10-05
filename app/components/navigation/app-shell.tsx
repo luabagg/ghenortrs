@@ -15,7 +15,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div
       data-testid="app-shell"
-      className="flex min-h-screen flex-col overflow-x-hidden bg-background font-body text-primary"
+      className="flex min-h-screen flex-col overflow-x-clip bg-background font-body text-primary"
     >
       <a
         className="sr-only z-50 rounded-button bg-primary px-4 py-3 text-on-primary focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
