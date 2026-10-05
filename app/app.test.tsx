@@ -360,6 +360,16 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Discos GHENO rotors' }),
     ).toBeInTheDocument();
+
+    const categoryNavigation = screen.getByRole('navigation', {
+      name: 'Categorias de componentes',
+    });
+    expect(
+      within(categoryNavigation)
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href')),
+    ).toEqual(['#pastilhas', '#cubos', '#aros', '#discos']);
+
     expect(
       screen.getByText(
         /Discos 203 e 223 mm para potência, controle térmico e uso extremo em MTB\./i,
